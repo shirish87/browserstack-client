@@ -1,26 +1,32 @@
 {
   "api": {
-    "apiRoot": "https://api.browserstack.com/4",
+    "v4": {
+      "apiRoot": "https://api.browserstack.com/4",
 
-    "envUsername": "BROWSERSTACK_USERNAME",
-    "envKey": "BROWSERSTACK_KEY",
+      "envUsername": "BROWSERSTACK_USERNAME",
+      "envKey": "BROWSERSTACK_KEY",
 
-    "useCache": true,
-    "cacheExpiry": 864e5
+      "useCache": true,
+      "cacheExpiry": 864e5
+    }
   },
 
   "automate": {
-    "apiRoot": "https://www.browserstack.com/automate",
+    "v1": {
+      "apiRoot": "https://www.browserstack.com/automate",
 
-    "useCache": true,
-    "cacheExpiry": 864e5
+      "useCache": true,
+      "cacheExpiry": 864e5
+    }
   },
 
   "screenshots": {
-    "apiRoot": "https://www.browserstack.com/screenshots",
+    "v1": {
+      "apiRoot": "https://www.browserstack.com/screenshots",
 
-    "useCache": true,
-    "cacheExpiry": 864e5
+      "useCache": true,
+      "cacheExpiry": 864e5
+    }
   }
 
 }
