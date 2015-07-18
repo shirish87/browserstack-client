@@ -1,0 +1,12 @@
+{
+  "source": {
+    "include": [ "lib/" ],
+    "includePattern": ".+\\.js(doc)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "opts": {
+    "recurse": true,
+    "encoding": "utf8",
+    "destination": "./docs/"
+  }
+}

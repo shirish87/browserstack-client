@@ -1,0 +1,18 @@
+{
+  "name": "browserstack-client",
+  "version": "1.0.0",
+  "description": "BrowserStack APIs client library for node.js",
+  "main": "index.js",
+  "scripts": {
+    "lint": "jshint lib",
+    "docs": "jsdoc -c jsdoc.json ./README.md",
+    "test": "mocha --reporter spec --timeout 4000"
+  },
+  "author": "Shirish Kamath",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "~2.9.34",
+    "diagnostics": "~1.0.1",
+    "needle": "~0.10.0"
+  }
+}
