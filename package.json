@@ -1,6 +1,6 @@
 {
   "name": "browserstack-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "BrowserStack APIs client library for node.js",
   "main": "index.js",
   "scripts": {
