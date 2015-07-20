@@ -108,7 +108,7 @@ Spec: [https://github.com/browserstack/api/tree/v4](https://github.com/browserst
 | --- | --- | --- |
 | options | <code>object</code> | Options for APIClient. Optional. |
 | options.username | <code>string</code> | Username for the BrowserStack account. Optional. If not supplied, `BROWSERSTACK_USERNAME` environment variable is used. |
-| options.key | <code>string</code> | API Key for this product subscription. Optional. |
+| options.key | <code>string</code> | API Key for this product subscription. Optional. If not supplied, `BROWSERSTACK_KEY` environment variable is used. |
 | options.returnHeaders | <code>boolean</code> | Return the API response headers along with the response. If enabled, the response will be available under the `data` node of the result object. Default: `false`. |
 | options.useCache | <code>boolean</code> | Cache the list of browsers returned by the `getBrowsers()` method. Optional. Default: `true`. |
 | options.cacheExpiry | <code>number</code> | Time in milliseconds after which the cache expires. Optional. Default: `864e5`. |
@@ -216,7 +216,8 @@ Set a new URL for a worker-browser instance to navigate to.
 | Param | Type | Description |
 | --- | --- | --- |
 | workerId | <code>string</code> | Worker ID for the worker to be captured. |
-| options | <code>options</code> | Options for this request. |
+| options | <code>object</code> | Options for this request. |
+| options.url | <code>string</code> | New URL to navigate to. |
 | callback | <code>callback</code> | Optional callback. Use promise or callback. |
 
 <a name="APIClient+getStatus"></a>
@@ -265,7 +266,7 @@ Spec: [https://www.browserstack.com/automate/rest-api](https://www.browserstack.
 | --- | --- | --- |
 | options | <code>object</code> | Options for AutomateClient. Optional. |
 | options.username | <code>string</code> | Username for the BrowserStack account. Optional. If not supplied, `BROWSERSTACK_USERNAME` environment variable is used. |
-| options.key | <code>string</code> | API Key for this product subscription. Optional. |
+| options.key | <code>string</code> | API Key for this product subscription. Optional. If not supplied, `BROWSERSTACK_KEY` environment variable is used. |
 | options.returnHeaders | <code>boolean</code> | Return the API response headers along with the response. If enabled, the response will be available under the `data` node of the result object. Default: `false`. |
 | options.useCache | <code>boolean</code> | Cache the list of browsers returned by the `getBrowsers()` method. Optional. Default: `true`. |
 | options.cacheExpiry | <code>number</code> | Time in milliseconds after which the cache expires. Optional. Default: `864e5`. |
@@ -425,7 +426,7 @@ Create and manage Screenshot jobs running under the BrowserStack Screenshots API
   * [new ScreenshotsClient(options)](#new_ScreenshotsClient_new)
   * [.getBrowsers(callback)](#ScreenshotsClient+getBrowsers) ⇒ <code>Promise</code>
   * [.createJob(options, callback)](#ScreenshotsClient+createJob) ⇒ <code>Promise</code>
-  * [.getJob(jobId)](#ScreenshotsClient+getJob) ⇒ <code>Promise</code>
+  * [.getJob(jobId, callback)](#ScreenshotsClient+getJob) ⇒ <code>Promise</code>
 
 <a name="new_ScreenshotsClient_new"></a>
 ### new ScreenshotsClient(options)
@@ -438,7 +439,7 @@ Spec: [https://www.browserstack.com/screenshots/api](https://www.browserstack.co
 | --- | --- | --- |
 | options | <code>object</code> | Options for ScreenshotsClient. Optional. |
 | options.username | <code>string</code> | Username for the BrowserStack account. Optional. If not supplied, `BROWSERSTACK_USERNAME` environment variable is used. |
-| options.key | <code>string</code> | API Key for this product subscription. Optional. |
+| options.key | <code>string</code> | API Key for this product subscription. Optional. If not supplied, `BROWSERSTACK_KEY` environment variable is used. |
 | options.returnHeaders | <code>boolean</code> | Return the API response headers along with the response. If enabled, the response will be available under the `data` node of the result object. Default: `false`. |
 | options.useCache | <code>boolean</code> | Cache the list of browsers returned by the `getBrowsers()` method. Optional. Default: `true`. |
 | options.cacheExpiry | <code>number</code> | Time in milliseconds after which the cache expires. Optional. Default: `864e5`. |
@@ -485,7 +486,7 @@ Creates a new Screenshots Job.
 | callback | <code>callback</code> | Optional callback. Use promise or callback. |
 
 <a name="ScreenshotsClient+getJob"></a>
-### screenshotsClient.getJob(jobId) ⇒ <code>Promise</code>
+### screenshotsClient.getJob(jobId, callback) ⇒ <code>Promise</code>
 Gets the properties of a Screenshots Job.
 
 **Kind**: instance method of <code>[ScreenshotsClient](#ScreenshotsClient)</code>  
@@ -495,6 +496,7 @@ Gets the properties of a Screenshots Job.
 | Param | Type | Description |
 | --- | --- | --- |
 | jobId | <code>string</code> | Job ID for the screenshots job. |
+| callback | <code>callback</code> | Optional callback. Use promise or callback. |
 
 
 
