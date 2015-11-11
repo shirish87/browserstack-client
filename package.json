@@ -17,6 +17,6 @@
   "dependencies": {
     "bluebird": "~2.9.34",
     "diagnostics": "~1.0.1",
-    "needle": "~0.10.0"
+    "needle": "~0.11.0"
   }
 }
