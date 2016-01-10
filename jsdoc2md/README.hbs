@@ -29,7 +29,7 @@ BROWSERSTACK_KEY=<your-access-key>
 var BrowserStack = require('browserstack-client');
 
 // BrowserStack JavaScript Testing API
-var apiClient = new BrowserStack.APIClient();
+var apiClient = new BrowserStack.Client();
 
 // BrowserStack Automate API
 var automateClient = new BrowserStack.AutomateClient();
@@ -67,7 +67,7 @@ Please refer to the documentation below for methods available for each of these 
 
 {{>global-index-dl kind="class" title="Documentation"}}
 
-{{#class name="APIClient"}}{{>docs}}{{/class}}
+{{#class name="Client"}}{{>docs}}{{/class}}
 
 {{#class name="AutomateClient"}}{{>docs}}{{/class}}
 
