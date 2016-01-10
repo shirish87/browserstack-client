@@ -4,7 +4,7 @@
 var Promise = require('bluebird');
 var BrowserStack = require('..');
 
-var apiClient = new BrowserStack.APIClient();
+var apiClient = new BrowserStack.Client();
 var automateClient = new BrowserStack.AutomateClient();
 var screenshotsClient = new BrowserStack.ScreenshotsClient();
 
