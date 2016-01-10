@@ -1,3 +1,6 @@
 node_modules
 docs
 *.tar.*
+lib/tunnel/bin/BrowserStackLocal
+lib/tunnel/bin/*.json
+lib/tunnel/bin/*.log
