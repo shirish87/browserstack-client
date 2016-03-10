@@ -66,8 +66,9 @@ Please refer to the documentation below for methods available for each of these 
 * * *
 
 ## Documentation
+
 <dl>
-<dt><a href="#Client">Client</a></dt>
+<dt><a href="#APIClient">APIClient</a></dt>
 <dd><p>Create and manage workers for automated JavaScript testing.</p>
 </dd>
 <dt><a href="#AutomateClient">AutomateClient</a></dt>
@@ -76,163 +77,13 @@ Please refer to the documentation below for methods available for each of these 
 <dt><a href="#ScreenshotsClient">ScreenshotsClient</a></dt>
 <dd><p>Create and manage Screenshot jobs running under the BrowserStack Screenshots API.</p>
 </dd>
+<dt><a href="#BrowserStackTunnel">BrowserStackTunnel</a></dt>
+<dd><p>Downloads and manages the BrowserStackLocal binary.</p>
+</dd>
 </dl>
 
-<a name="Client"></a>
-## Client
-Create and manage workers for automated JavaScript testing.
 
-**Kind**: global class  
-**Access:** public  
-**Version**: v4  
-
-* [Client](#Client)
-  * [new Client(options)](#new_Client_new)
-  * [.getBrowsers(options, callback)](#Client+getBrowsers) ⇒ <code>Promise</code>
-  * [.getWorkers(callback)](#Client+getWorkers) ⇒ <code>Promise</code>
-  * [.createWorker(options, callback)](#Client+createWorker) ⇒ <code>Promise</code>
-  * [.terminateWorker(workerId, callback)](#Client+terminateWorker) ⇒ <code>Promise</code>
-  * [.getWorker(workerId, callback)](#Client+getWorker) ⇒ <code>Promise</code>
-  * [.takeScreenshot(workerId, callback)](#Client+takeScreenshot) ⇒ <code>Promise</code>
-  * [.changeUrl(workerId, options, callback)](#Client+changeUrl) ⇒ <code>Promise</code>
-  * [.getStatus(callback)](#Client+getStatus) ⇒ <code>Promise</code>
-
-<a name="new_Client_new"></a>
-### new Client(options)
-BrowserStack JavaScript Testing API.
-<br/>
-Spec: [https://github.com/browserstack/api/tree/v4](https://github.com/browserstack/api/tree/v4)
-
-
-| Param | Type | Description |
-| --- | --- | --- |
-| options | <code>object</code> | Options for Client. Optional. |
-| options.username | <code>string</code> | Username for the BrowserStack account. Optional. If not supplied, `BROWSERSTACK_USERNAME` environment variable is used. |
-| options.key | <code>string</code> | API Key for this product subscription. Optional. If not supplied, `BROWSERSTACK_KEY` environment variable is used. |
-| options.returnHeaders | <code>boolean</code> | Return the API response headers along with the response. If enabled, the response will be available under the `data` node of the result object. Default: `false`. |
-| options.useCache | <code>boolean</code> | Cache the list of browsers returned by the `getBrowsers()` method. Optional. Default: `true`. |
-| options.cacheExpiry | <code>number</code> | Time in milliseconds after which the cache expires. Optional. Default: `864e5`. |
-
-<a name="Client+getBrowsers"></a>
-### apiClient.getBrowsers(options, callback) ⇒ <code>Promise</code>
-Fetches all available browsers.
-
-Note that this method may returned cached data. To turn off caching,
-please create an instance of this class with `options.useCache = false`.
-
-**Kind**: instance method of <code>[Client](#Client)</code>  
-**Returns**: <code>Promise</code> - Bluebird Promise object  
-**Access:** public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| options | <code>object</code> | Options for this request. |
-| options.flat | <code>boolean</code> | Get browser list as a flat JSON structure. |
-| options.all | <code>boolean</code> | Include beta/dev versions of browsers. |
-| callback | <code>callback</code> | Optional callback. Use promise or callback. |
-
-<a name="Client+getWorkers"></a>
-### apiClient.getWorkers(callback) ⇒ <code>Promise</code>
-Gets the list of current workers with their statuses.
-
-**Kind**: instance method of <code>[Client](#Client)</code>  
-**Returns**: <code>Promise</code> - Bluebird Promise object  
-**Access:** public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>callback</code> | Optional callback. Use promise or callback. |
-
-<a name="Client+createWorker"></a>
-### apiClient.createWorker(options, callback) ⇒ <code>Promise</code>
-A browser worker is simply a new browser instance.
-
-**Kind**: instance method of <code>[Client](#Client)</code>  
-**Returns**: <code>Promise</code> - Bluebird Promise object  
-**Access:** public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| options | <code>object</code> | Options for this request. |
-| options.url | <code>string</code> | URL to be opened in the remote browser. |
-| options.os | <code>string</code> | OS name. |
-| options.os_version | <code>string</code> | OS version. |
-| options.browser | <code>string</code> | Browser name. |
-| options.browser_version | <code>string</code> | Browser version (skip for device). |
-| options.device | <code>string</code> | Device to be used (skip for desktop). Defaults to the first available device for the provided OS version. |
-| options.timeout | <code>number</code> | Time in seconds before the worker is terminated. Defaults to 300; max value 1800. Optional. |
-| options.name | <code>string</code> | Name for the worker/session. Optional. |
-| options.build | <code>string</code> | Name of the build the session is running under. Optional. |
-| options.project | <code>string</code> | Name of the project the build is under. Optional. |
-| callback | <code>callback</code> | Optional callback. Use promise or callback. |
-
-<a name="Client+terminateWorker"></a>
-### apiClient.terminateWorker(workerId, callback) ⇒ <code>Promise</code>
-Terminate a worker by its ID.
-
-**Kind**: instance method of <code>[Client](#Client)</code>  
-**Returns**: <code>Promise</code> - Bluebird Promise object  
-**Access:** public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| workerId | <code>string</code> | Worker ID for the worker to be terminated. |
-| callback | <code>callback</code> | Optional callback. Use promise or callback. |
-
-<a name="Client+getWorker"></a>
-### apiClient.getWorker(workerId, callback) ⇒ <code>Promise</code>
-Gets the properties of a worker by its ID.
-
-**Kind**: instance method of <code>[Client](#Client)</code>  
-**Returns**: <code>Promise</code> - Bluebird Promise object  
-**Access:** public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| workerId | <code>string</code> | Worker ID for the worker to be fetched. |
-| callback | <code>callback</code> | Optional callback. Use promise or callback. |
-
-<a name="Client+takeScreenshot"></a>
-### apiClient.takeScreenshot(workerId, callback) ⇒ <code>Promise</code>
-Take a screenshot at the current state of the worker.
-
-**Kind**: instance method of <code>[Client](#Client)</code>  
-**Returns**: <code>Promise</code> - Bluebird Promise object  
-**Access:** public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| workerId | <code>string</code> | Worker ID for the worker to be captured. |
-| callback | <code>callback</code> | Optional callback. Use promise or callback. |
-
-<a name="Client+changeUrl"></a>
-### apiClient.changeUrl(workerId, options, callback) ⇒ <code>Promise</code>
-Set a new URL for a worker-browser instance to navigate to.
-
-**Kind**: instance method of <code>[Client](#Client)</code>  
-**Returns**: <code>Promise</code> - Bluebird Promise object  
-**Access:** public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| workerId | <code>string</code> | Worker ID for the worker to be captured. |
-| options | <code>object</code> | Options for this request. |
-| options.url | <code>string</code> | New URL to navigate to. |
-| callback | <code>callback</code> | Optional callback. Use promise or callback. |
-
-<a name="Client+getStatus"></a>
-### apiClient.getStatus(callback) ⇒ <code>Promise</code>
-Gets the current status of API, including no. of workers currently runnning and usage limits.
-
-**Kind**: instance method of <code>[Client](#Client)</code>  
-**Returns**: <code>Promise</code> - Bluebird Promise object  
-**Access:** public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>callback</code> | Optional callback. Use promise or callback. |
-
-
+ERROR, Cannot find class.
 
 <a name="AutomateClient"></a>
 ## AutomateClient
@@ -243,17 +94,17 @@ Access and manage information about your BrowserStack Automate tests.
 **Version**: v1  
 
 * [AutomateClient](#AutomateClient)
-  * [new AutomateClient(options)](#new_AutomateClient_new)
-  * [.getBrowsers(callback)](#AutomateClient+getBrowsers) ⇒ <code>Promise</code>
-  * [.getStatus(callback)](#AutomateClient+getStatus) ⇒ <code>Promise</code>
-  * [.getProjects(callback)](#AutomateClient+getProjects) ⇒ <code>Promise</code>
-  * [.getProject(projectId, callback)](#AutomateClient+getProject) ⇒ <code>Promise</code>
-  * [.getBuilds(options, callback)](#AutomateClient+getBuilds) ⇒ <code>Promise</code>
-  * [.getBuildSessions(buildId, options, callback)](#AutomateClient+getBuildSessions) ⇒ <code>Promise</code>
-  * [.getSession(sessionId, callback)](#AutomateClient+getSession) ⇒ <code>Promise</code>
-  * [.setStatus(buildId, sessionId, data, callback)](#AutomateClient+setStatus) ⇒ <code>Promise</code>
-  * [.getSessionLogs(sessionId, callback)](#AutomateClient+getSessionLogs) ⇒ <code>Promise</code>
-  * [.recycleKey(callback)](#AutomateClient+recycleKey) ⇒ <code>Promise</code>
+    * [new AutomateClient(options)](#new_AutomateClient_new)
+    * [.getBrowsers(callback)](#AutomateClient+getBrowsers) ⇒ <code>Promise</code>
+    * [.getStatus(callback)](#AutomateClient+getStatus) ⇒ <code>Promise</code>
+    * [.getProjects(callback)](#AutomateClient+getProjects) ⇒ <code>Promise</code>
+    * [.getProject(projectId, callback)](#AutomateClient+getProject) ⇒ <code>Promise</code>
+    * [.getBuilds(options, callback)](#AutomateClient+getBuilds) ⇒ <code>Promise</code>
+    * [.getBuildSessions(buildId, options, callback)](#AutomateClient+getBuildSessions) ⇒ <code>Promise</code>
+    * [.getSession(sessionId, callback)](#AutomateClient+getSession) ⇒ <code>Promise</code>
+    * [.setStatus(sessionId, data, callback)](#AutomateClient+setStatus) ⇒ <code>Promise</code>
+    * [.getSessionLogs(sessionId, callback)](#AutomateClient+getSessionLogs) ⇒ <code>Promise</code>
+    * [.recycleKey(callback)](#AutomateClient+recycleKey) ⇒ <code>Promise</code>
 
 <a name="new_AutomateClient_new"></a>
 ### new AutomateClient(options)
@@ -370,7 +221,7 @@ Gets the properties of an Automate session by its session ID.
 | callback | <code>callback</code> | Optional callback. Use promise or callback. |
 
 <a name="AutomateClient+setStatus"></a>
-### automateClient.setStatus(buildId, sessionId, data, callback) ⇒ <code>Promise</code>
+### automateClient.setStatus(sessionId, data, callback) ⇒ <code>Promise</code>
 Sets the status for an Automate session.
 
 **Kind**: instance method of <code>[AutomateClient](#AutomateClient)</code>  
@@ -379,7 +230,6 @@ Sets the status for an Automate session.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| buildId | <code>string</code> | Build ID for the build. |
 | sessionId | <code>string</code> | Session ID for the session to be queried. |
 | data | <code>object</code> | Properties to be set. |
 | data.status | <code>string</code> | Set the status. Values: completed, error. |
@@ -423,10 +273,10 @@ Create and manage Screenshot jobs running under the BrowserStack Screenshots API
 **Version**: v1  
 
 * [ScreenshotsClient](#ScreenshotsClient)
-  * [new ScreenshotsClient(options)](#new_ScreenshotsClient_new)
-  * [.getBrowsers(callback)](#ScreenshotsClient+getBrowsers) ⇒ <code>Promise</code>
-  * [.createJob(options, callback)](#ScreenshotsClient+createJob) ⇒ <code>Promise</code>
-  * [.getJob(jobId, callback)](#ScreenshotsClient+getJob) ⇒ <code>Promise</code>
+    * [new ScreenshotsClient(options)](#new_ScreenshotsClient_new)
+    * [.getBrowsers(callback)](#ScreenshotsClient+getBrowsers) ⇒ <code>Promise</code>
+    * [.createJob(options, callback)](#ScreenshotsClient+createJob) ⇒ <code>Promise</code>
+    * [.getJob(jobId, callback)](#ScreenshotsClient+getJob) ⇒ <code>Promise</code>
 
 <a name="new_ScreenshotsClient_new"></a>
 ### new ScreenshotsClient(options)
