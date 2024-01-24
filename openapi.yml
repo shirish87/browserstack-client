@@ -1,0 +1,2179 @@
+openapi: 3.0.2
+info:
+  title: BrowserStack API
+  version: 5.0.0
+  description: "BrowserStack is a cloud web and mobile testing platform that provides developers with the ability to test their websites and mobile applications across on-demand browsers, operating systems and real mobile devices. This document is an (unofficial) OpenAPI reference for BrowserStack products: Automate, App Automate, JavaScript Testing, Screenshots, and others. For more information, visit https://www.browserstack.com/docs/"
+  license:
+    name: MIT License
+    url: https://opensource.org/license/mit/
+
+externalDocs:
+  description: Find out more about BrowserStack
+  url: https://www.browserstack.com/docs/
+
+servers:
+  - url: "{scheme}://{host}{basePath}"
+    variables:
+      scheme:
+        default: https
+      host:
+        default: api.browserstack.com
+      basePath:
+        default: "/5"
+
+security:
+  - BasicAuth: []
+
+paths:
+  # JS APIs
+  /browsers:
+    get:
+      parameters:
+        - name: flat
+          in: query
+          description: "If true, returns a flat list of all available browsers. If false, returns a nested list of browsers grouped by OS and OS version."
+          required: false
+          schema:
+            type: boolean
+            default: true
+      summary: Fetches all available browsers.
+      description: Fetches all available browsers.
+      operationId: getBrowsers
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BrowserList'
+                  - $ref: '#/components/schemas/BrowserMap'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /status:
+    get:
+      summary: Fetches status.
+      description: Fetches status.
+      operationId: getStatus
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /worker:
+    post:
+      summary: Create a browser worker.
+      description: Create a browser worker. A browser worker is simply a new browser instance. A user can start multiple browser worker at a time. All browser workers when created are pushed in a queue and they run when their turn comes. We make sure that your browser worker starts running as soon as possible. Your testing time is calculated from the time when browser worker starts running.
+      operationId: createWorker
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewWorker'
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: "ID of the worker"
+                    example: "b5e2c7e0e4c2a0f1e1f2e3d4c5b6a7d8e9f0a1b2"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /workers:
+    get:
+      summary: Fetches all workers.
+      description: Fetches all workers.
+      operationId: getWorkers
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Worker'
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /worker/{id}:
+    get:
+      summary: Fetch details of a worker.
+      description: Fetch details a worker.
+      operationId: getWorker
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "ID of the worker"
+          schema:
+            type: string
+            example: "b5e2c7e0e4c2a0f1e1f2e3d4c5b6a7d8e9f0a1b2"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Worker'
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "403":
+          $ref: '#/components/schemas/403.Forbidden'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    delete:
+      summary: Terminate a worker.
+      description: Terminate a worker.
+      operationId: deleteWorker
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "ID of the worker"
+          schema:
+            type: string
+            example: "b5e2c7e0e4c2a0f1e1f2e3d4c5b6a7d8e9f0a1b2"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Worker'
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+
+  # Automate APIs
+  /automate/plan.json:
+    get:
+      summary: Get Automate plan details
+      description: Fetches Automate plan details
+      operationId: getAutomatePlan
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomatePlan'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/recycle_key.json:
+    put:
+      summary: Reset Automate access key
+      description: Reset Automate access key
+      operationId: recycleAutomateKey
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  old_key:
+                    type: string
+                    example: "mkALWJIMwtzJOqyqONyq"
+                  new_key:
+                    type: string
+                    example: "OQMCfsukIHWoNSOWAqkv"
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/browsers.json:
+    get:
+      summary: Fetches all automate browsers.
+      description: Fetches all automate browsers.
+      operationId: getAutomateBrowsers
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrowserList'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/projects.json:
+    get:
+      summary: Fetches list of projects
+      description: Fetches list of projects associated with your username and access key. You will need the id of the project for invoking any other Project API that follows in this document
+      operationId: getAutomateProjects
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AutomateProject'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/projects/{projectId}.json:
+    get:
+      summary: Fetches a project
+      description: Specific information about a particular project can be queried using the project ID by invoking this API
+      operationId: getAutomateProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "ID of your project"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/AutomateProject'
+                  - type: object
+                    properties:
+                      builds:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AutomateBuild'
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    put:
+      summary: Update the name of your project
+      description: Update the name of your project after the project is complete
+      operationId: updateAutomateProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "ID of your project"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                -  name
+              properties:
+                name:
+                  type: string
+                  description: "Name of your project"
+                  example: "pricing_project"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/AutomateProject'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    delete:
+      summary: Delete your project
+      description: Delete a project on the server using the DELETE method. Please note that to delete a project, it needs to be empty of builds and sessions, and projects once deleted cannot be recovered
+      operationId: deleteAutomateProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "ID of your project"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "Status of the operation"
+                    example: "ok"
+                  message:
+                    type: string
+                    description: "Message indicating the status of the operation"
+                    example: "Project 966019 was deleted successfully."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/projects/{projectId}/badge_key:
+    get:
+      summary: Fetches the badge key for the project
+      description: Fetches the badge key for sharing a public link for the Automate dashboard to view the latest build and sessions for that project
+      operationId: getAutomateProjectBadgeKey
+      parameters:
+        - name: projectId
+          in: path
+          description: "ID of your project"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                badge_key:
+                  value: "VnZ6dGxkRGxGc1RIY01iZGZBVjJBNTA2R0s4ZUhiZkg2cnB..."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/builds.json:
+    get:
+      summary: Fetches list of builds
+      description: Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number of builds and paginate through your data
+      operationId: getAutomateBuilds
+      parameters:
+        - name: projectId
+          in: query
+          description: "ID of your project"
+          required: false
+          schema:
+            type: number
+            example: 966019
+        - name: limit
+          in: query
+          description: "Specify the number of results to be displayed. The default value is 10, and the maximum value is 100"
+          required: false
+          schema:
+            type: number
+            example: 10
+        - name: offset
+          in: query
+          description: "Retrieve builds from a specific point using the offset parameter"
+          required: false
+          schema:
+            type: number
+            example: 0
+        - name: status
+          in: query
+          description: "Status of the build"
+          required: false
+          schema:
+            type: string
+            enum: ["running", "timeout", "failed", "done"]
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    automation_build:
+                      $ref: '#/components/schemas/AutomateBuild'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/builds/{buildId}.json:
+    put:
+      summary: Update the name or tag of your build
+      description: Update the name or tag of your build after the build is complete. To delete a build tag, simply pass an empty string as value for build_tag.
+      operationId: updateAutomateBuild
+      parameters:
+        - name: buildId
+          in: path
+          description: "ID of your build"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              anyOf:
+                - required: [name]
+                - required: [build_tag]
+              properties:
+                name:
+                  type: string
+                  description: "The new build name that you want to set. Accepted characters are A-Z, a-z, 0-9, ., :, -, [], /, @, &, ', _. Character limit is 255."
+                  example: "Selenium test"
+                build_tag:
+                  type: string
+                  description: "The new build tag that you want to set"
+                  example: "registration"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomateBuild'
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    delete:
+      summary: Delete a build on the server
+      description: Delete a build on the server. Please note that deleting a build will delete all the sessions contained within it. Builds once deleted cannot be recovered
+      operationId: deleteAutomateBuild
+      parameters:
+        - name: buildId
+          in: path
+          description: "ID of your build"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "Status of deletion"
+                    example: "ok"
+                  message:
+                    type: string
+                    description: "Message indicating the deletion of the build"
+                    example: "Build a4fb480a55efd6b3c558afb1ee051a7c337b8ef0 was deleted successfully."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/builds:
+    delete:
+      summary: Delete multiple builds on the server
+      description: Delete multiple builds on the server. You can delete a maximum of 5 builds at a time. Builds once deleted cannot be recovered.
+      operationId: deleteAutomateBuilds
+      parameters:
+        - name: buildId[]
+          in: query
+          description: "IDs of your builds"
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              example: "83078c39baf5c12cbbfcbd26a788d05ddfad626c"
+            maxItems: 5
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "Message indicating the deletion of the builds"
+                    example: "The following build(s) were deleted successfully: 83078c39baf5c12cbbfcbd26a788d05ddfad626c,55e9782d749f601d09571023f56a8f0101929428."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/builds/{buildId}/terminallogs:
+    post:
+      summary: Upload terminal logs for your build.
+      description: Upload terminal logs for your build.
+      operationId: uploadAutomateTerminalLogs
+      parameters:
+        - name: buildId
+          in: path
+          description: "ID of your build"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Path to the terminal log file on your machine. The max allowed file size is 2MB"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "Status of terminal log upload."
+                    example: "success"
+                  message:
+                    type: string
+                    description: "Message indicating the deletion of the builds"
+                    example: "The following build(s) were deleted successfully: 83078c39baf5c12cbbfcbd26a788d05ddfad626c,55e9782d749f601d09571023f56a8f0101929428."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/builds/{buildId}/sessions.json:
+    get:
+      summary: Fetches list of sessions
+      description: Fetches list of sessions for a particular build
+      operationId: getAutomateSessions
+      parameters:
+        - name: buildId
+          in: path
+          description: "ID of your build"
+          required: true
+          schema:
+            type: number
+            example: 966019
+        - name: limit
+          in: query
+          description: "Specify the number of results to be displayed. The default value is 10, and the maximum value is 100"
+          required: false
+          schema:
+            type: number
+            example: 10
+        - name: offset
+          in: query
+          description: "Retrieve sessions from a specific point using the offset parameter"
+          required: false
+          schema:
+            type: number
+            example: 0
+        - name: status
+          in: query
+          description: "Status of the session"
+          required: false
+          schema:
+            type: string
+            enum: ["running", "timeout", "failed", "done"]
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    automation_session:
+                      $ref: '#/components/schemas/AutomateSession'
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/sessions/{sessionId}.json:
+    get:
+      summary: Fetches a session
+      description: Fetches a session for a particular build
+      operationId: getAutomateSession
+      parameters:
+        - name: sessionId
+          in: path
+          description: "ID of your session"
+          required: true
+          schema:
+            type: string
+            example: "4207442b2b0567368956dba064c22a3235a76214"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  automation_session:
+                    $ref: '#/components/schemas/AutomateSession'
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    put:
+      summary: Update session status or name
+      description: Set the status for a session or update the name of the session. You can mark test status as passed or failed along with a reason.
+      operationId: updateSession
+      parameters:
+        - name: sessionId
+          in: path
+          description: "ID of your session"
+          required: true
+          schema:
+            type: string
+            example: "4207442b2b0567368956dba064c22a3235a76214"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required:
+                    - status
+                    - reason
+                  properties:
+                    status:
+                      type: string
+                      description: "Status of the session"
+                      enum: ["passed", "failed"]
+                      example: "passed"
+                    reason:
+                      type: string
+                      description: "Reason for marking the session as failed"
+                      example: "Test failed because of assertion error"
+                - type: object
+                  required:
+                    - name
+                  properties:
+                    name:
+                      type: string
+                      description: "Name of the session"
+                      example: "Pricing Demo"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  automation_session:
+                    $ref: '#/components/schemas/AutomateSession'
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    delete:
+      summary: Delete a session on the server
+      description: Delete a session on the server. Sessions once deleted cannot be recovered
+      operationId: deleteAutomateSession
+      parameters:
+        - name: sessionId
+          in: path
+          description: "ID of your session"
+          required: true
+          schema:
+            type: string
+            example: "4207442b2b0567368956dba064c22a3235a76214"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "Status of deletion"
+                    example: "ok"
+                  message:
+                    type: string
+                    description: "Message indicating the deletion of the session"
+                    example: "Session 4207442b2b0567368956dba064c22a3235a76214 was deleted successfully."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/sessions:
+    delete:
+      summary: Delete multiple sessions on the server
+      description: Delete multiple sessions on the server. Sessions once deleted cannot be recovered.
+      operationId: deleteAutomateSessions
+      parameters:
+        - name: sessionId[]
+          in: query
+          description: "IDs of your sessions"
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              example: "83078c39baf5c12cbbfcbd26a788d05ddfad626c"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "Message indicating the deletion of the sessions"
+                    example: "The following session(s) were deleted successfully: 83078c39baf5c12cbbfcbd26a788d05ddfad626c,55e9782d749f601d09571023f56a8f0101929428."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/sessions/{sessionId}/logs:
+    get:
+      summary: Fetches session logs
+      description: Fetches session logs. Whenever you execute a session on BrowserStack, a session log is generated. These logs are available to you in text format.
+      operationId: getAutomateSessionLogs
+      parameters:
+        - name: sessionId
+          in: path
+          description: "ID of your session"
+          required: true
+          schema:
+            type: string
+            example: "4207442b2b0567368956dba064c22a3235a76214"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/sessions/{sessionId}/networklogs:
+    get:
+      summary: Fetches network logs for a session
+      description: Fetches network logs for a session. Network Logs for each session are available to you in HAR (HTTP Archive) format.
+      operationId: getAutomateSessionNetworkLogs
+      parameters:
+        - name: sessionId
+          in: path
+          description: "ID of your session"
+          required: true
+          schema:
+            type: string
+            example: "4207442b2b0567368956dba064c22a3235a76214"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/sessions/{sessionId}/consolelogs:
+    get:
+      summary: Fetches console logs for a session
+      description: Fetches console logs for a session. Console logs are enabled by default and are set to errors. You can disable them or change verbosity options by using the browserstack.console capability to disabled, errors, warnings, info, verbose. Raw Console Logs for each session are available to you in text format.
+      operationId: getAutomateSessionConsoleLogs
+      parameters:
+        - name: sessionId
+          in: path
+          description: "ID of your session"
+          required: true
+          schema:
+            type: string
+            example: "4207442b2b0567368956dba064c22a3235a76214"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: "Console Logs capture the browser’s JS console output at various steps of the test to troubleshoot JavaScript issues."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/sessions/{sessionId}/seleniumlogs:
+    get:
+      summary: Fetches Selenium logs for a session
+      description: Fetches Selenium logs for a session. Raw Selenium logs for each session are available to you in text format.
+      operationId: getAutomateSessionSeleniumLogs
+      parameters:
+        - name: sessionId
+          in: path
+          description: "ID of your session"
+          required: true
+          schema:
+            type: string
+            example: "4207442b2b0567368956dba064c22a3235a76214"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: "Selenium logs capture the raw logs of Selenium JAR for your test execution. With Selenium logs you can debug the test in case of any exceptions."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/sessions/{sessionId}/appiumlogs:
+    get:
+      summary: Fetches Appium logs for a session
+      description: Fetches Appium logs for a session. Raw Appium Logs for each session are available to you in text format.
+      operationId: getAutomateSessionAppiumLogs
+      parameters:
+        - name: sessionId
+          in: path
+          description: "ID of your session"
+          required: true
+          schema:
+            type: string
+            example: "4207442b2b0567368956dba064c22a3235a76214"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: "Appium Logs captures the raw Appium Logs for your test execution."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/sessions/{sessionId}/telemetrylogs:
+    get:
+      summary: Fetches telemetry logs for a session
+      description: Fetches telemetry logs for a session. Telemetry logs for a session are available for tests run using Selenium 4. Telemetry logs are by default disabled for a session.
+      operationId: getAutomateSessionTelemetryLogs
+      parameters:
+        - name: sessionId
+          in: path
+          description: "ID of your session"
+          required: true
+          schema:
+            type: string
+            example: "4207442b2b0567368956dba064c22a3235a76214"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/gzip:
+              schema:
+                type: string
+                format: binary
+                description: "Telemetry Logs captures the Selenium Telemetry Logs for your test session and downloads it in a compressed file."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    post:
+      summary: Upload telemetry logs for your build.
+      description: Upload telemetry logs for your build.
+      operationId: uploadAutomateTelemetryLogs
+      parameters:
+        - name: sessionId
+          in: path
+          description: "ID of your session"
+          required: true
+          schema:
+            type: string
+            example: 26bb15875fc2847e08cab1eb25ac4f4ffc7b560e
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Path to the terminal log file on your machine. The max allowed file size is 2MB"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "Status of terminal log upload."
+                    example: "success"
+                  message:
+                    type: string
+                    description: "Message indicating the deletion of the builds"
+                    example: "The following build(s) were deleted successfully: 83078c39baf5c12cbbfcbd26a788d05ddfad626c,55e9782d749f601d09571023f56a8f0101929428."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/upload-media:
+    post:
+      summary: Upload media files
+      description: Upload media files you want to use in your tests
+      operationId: uploadMediaFiles
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Path to the media file on your machine. Note: You can upload up to 10 media files on the BrowserStack server. By default, we delete the uploaded files after 30 days from the date of upload."
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  media_url:
+                    type: string
+                    description: "Unique identifier returned upon successful upload of your media file on BrowserStack. This value is used to specify the media files to be used in your tests."
+                    example: "media://90c7a8h8dc82308108734e9a46c24d8f01de12881"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/recent_media_files:
+    get:
+      summary: Fetches list of uploaded media files
+      description: Fetches list of recently uploaded media files
+      operationId: getMediaFiles
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    media_file:
+                      type: object
+                      properties:
+                        media_name:
+                          type: string
+                          description: "Name of the uploaded media file."
+                          example: "profile.png"
+                        media_url:
+                          type: string
+                          description: "Unique identifier returned upon successful upload of your media file on BrowserStack. This value is used to specify the media files to be used in your tests."
+                          example: "media://90c7a8h8dc82308108734e9a46c24d8f01de12881"
+                        media_id:
+                          type: string
+                          description: "Unique ID returned on successful upload of your media file on BrowserStack."
+                          example: "90c7a8h8dc82308108734e9a46c24d8f01de12881"
+                        uploaded_at:
+                          type: string
+                          description: "Media upload timestamp."
+                          example: "2021-10-13T10:30:00.000Z"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /automate/custom_media/delete/{media_id}:
+    delete:
+      summary: Delete a media file earlier uploaded to BrowserStack
+      description: Delete a media file on the server. Media files once deleted cannot be recovered
+      operationId: deleteMediaFile
+      parameters:
+        - name: media_id
+          in: path
+          description: "ID of your media file"
+          required: true
+          schema:
+            type: string
+            example: "90c7a8h8dc82308108734e9a46c24d8f01de12881"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  success:
+                    type: boolean
+                    description: "Status of deletion"
+                    example: true
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+
+  # Screenshots API
+  /screenshots/browsers.json:
+    get:
+      summary: Fetches list of browsers
+      description: Fetches list of browsers supported by Screenshots API
+      operationId: getScreenshotsBrowsers
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrowserList"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /screenshots:
+    post:
+      summary: Take a screenshot
+      description: Take a screenshot of a website on a particular browser
+      operationId: createScreenshotsJob
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewScreenshot"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewScreenshotJob"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /screenshots/{jobId}.json:
+    get:
+      summary: Fetches a screenshot job
+      description: Fetches a screenshot job
+      operationId: getScreenshotsJob
+      parameters:
+        - name: jobId
+          in: path
+          description: "ID of your screenshot job"
+          required: true
+          schema:
+            type: string
+            example: "13b93a14db22872fcb5fd1c86b730a51197db319"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScreenshotJob"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+
+components:
+  schemas:
+    Browser:
+      type: object
+      required: [browser, browser_version]
+      properties:
+        browser:
+          type: string
+          example: Chrome
+        browser_version:
+          type: string
+          example: "80.0"
+
+    BrowserPlatform:
+      allOf:
+        - $ref: "#/components/schemas/Browser"
+        - type: object
+          required: [os, os_version, device, real_mobile]
+          properties:
+            os:
+              type: string
+              example: Windows
+            os_version:
+              type: string
+              example: "10"
+            device:
+              type: string
+              example: null
+            real_mobile:
+              type: boolean
+              example: null
+
+    BrowserDevice:
+      allOf:
+        - $ref: "#/components/schemas/Browser"
+        - type: object
+          required: [devices, real_devices]
+          properties:
+            browser:
+              type: string
+              example: Android Browser
+            devices:
+              type: array
+              items:
+                type: string
+                example: Google Nexus
+            real_devices:
+              type: array
+              items:
+                type: string
+              maxItems: 0
+
+    BrowserRealDevice:
+      allOf:
+        - $ref: "#/components/schemas/Browser"
+        - type: object
+          required: [devices, real_devices]
+          properties:
+            browser:
+              type: string
+              example: Android Browser
+            devices:
+              type: array
+              items:
+                type: string
+              maxItems: 0
+            real_devices:
+              type: array
+              items:
+                type: string
+                example: Google Pixel 6 Pro
+
+    BrowserMap:
+      type: object
+      properties:
+        Windows:
+          type: object
+          required: ["XP", "7", "8", "8.1", "10", "11"]
+          properties:
+            "XP":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            "7":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            "8":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            "8.1":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            "10":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            "11":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/BrowserPlatform'
+        OS X:
+          type: object
+          required: ["Snow Leopard", "Lion", "Mountain Lion", "Mavericks", "Yosemite", "El Capitan", "Sierra", "High Sierra", "Mojave", "Catalina", "Big Sur", "Monterey", "Ventura", "Sonoma"]
+          properties:
+            Snow Leopard:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Lion:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Mountain Lion:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Mavericks:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Yosemite:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            El Capitan:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Sierra:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            High Sierra:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Mojave:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Catalina:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Big Sur:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Monterey:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Ventura:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Sonoma:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            additionalProperties:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+        winphone:
+          type: object
+          required: ["8.1"]
+          properties:
+            "8.1":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+        android:
+          type: object
+          required: ["14.0", "13.0", "12.0", "11.0", "10.0", "9.0", "8.1", "8.0", "7.1", "7.0", "6.0", "5.0", "4.4", "4.3", "4.2", "4.1", "4.0", "2.3", "2.2"]
+          properties:
+            "14.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "13.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "12.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "11.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "10.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "9.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "8.1":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "8.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "7.1":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "7.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "6.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            "5.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            "4.4":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            "4.3":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            "4.2":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            "4.1":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            "4.0":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            "2.3":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            "2.2":
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            additionalProperties:
+              type: array
+              items:
+                oneOf:
+                  - $ref: '#/components/schemas/BrowserRealDevice'
+                  - $ref: '#/components/schemas/BrowserDevice'
+
+    BrowserList:
+      type: array
+      items:
+        $ref: '#/components/schemas/BrowserPlatform'
+
+    AutomatePlan:
+      type: object
+      required: [automate_plan, parallel_sessions_running, parallel_sessions_max_allowed, team_parallel_sessions_max_allowed, queued_sessions, queued_sessions_max_allowed]
+      properties:
+        automate_plan:
+          type: string
+          description: Specifies your Automate plan name
+          example: "Automate Mobile"
+        parallel_sessions_running:
+          type: number
+          description: Number of parallel sessions currently running
+          example: 0
+        parallel_sessions_max_allowed:
+          type: number
+          description: Maximum number of parallel sessions you can run
+          example: 0
+        team_parallel_sessions_max_allowed:
+          type: number
+          description: Maximum number of parallel sessions allowed in a team
+          example: 250
+        queued_sessions:
+          type: number
+          description: Number of sessions currently queued
+          example: 10
+        queued_sessions_max_allowed:
+          type: number
+          description: Maximum number of sessions that can be queued
+          example: 240
+
+    AutomateProject:
+      type: object
+      required: [id, name, user_id, group_id, sub_group_id, created_at, updated_at]
+      properties:
+        id:
+          type: number
+          description: ID of your project
+          example: 866256
+        name:
+          type: string
+          description: Name of your project
+          example: "pricing_project"
+        user_id:
+          type: number
+          description: Identifier for the user
+          example: 256454
+        group_id:
+          type: number
+          description: Identifier for your account or group
+          example: 2
+        sub_group_id:
+          type: number
+          description: Identifier for a team in a group
+          example: 0
+        created_at:
+          type: string
+          description: Time at which the project was created on BrowserStack servers
+          example: "2020-03-11T10:14:36.000Z"
+        updated_at:
+          type: string
+          description: Time at which the project was updated on BrowserStack servers
+          example: "2020-09-18T09:45:57.000Z"
+
+    AutomateBuild:
+      type: object
+      required: [id, name, duration, status, user_id, group_id, sub_group_id, automation_project_id, hashed_id, delta, framework, test_data, created_at, updated_at]
+      properties:
+        id:
+          type: number
+          description: ID of the build
+          example: 866256
+        name:
+          type: string
+          description: Name of your build
+          example: "pricing_project_build"
+        duration:
+          type: number
+          description: "Duration of build execution"
+          example: 10
+        status:
+          type: string
+          enum: ["running", "timeout", "failed", "done"]
+        user_id:
+          type: number
+          description: Identifier for the user
+          example: 256454
+        group_id:
+          type: number
+          description: Identifier for your account or group
+          example: 2
+        sub_group_id:
+          type: number
+          description: Identifier for a team in a group
+          example: 0
+        automation_project_id:
+          type: number
+          description: ID of your project
+          example: 866256
+        hashed_id:
+          type: string
+          description: Hashed ID of the build
+          example: "4207442b2b0567368956dba064c22a3235a76214"
+        delta:
+          type: boolean
+          description: Indicates whether the build is a delta build
+          example: false
+        framework:
+          type: string
+          description: Framework used for the build
+          example: "selenium"
+        test_data:
+          type: object
+          description: Test data used for the build
+        created_at:
+          type: string
+          description: Time at which the project was created on BrowserStack servers
+          example: "2020-03-11T10:14:36.000Z"
+        updated_at:
+          type: string
+          description: Time at which the project was updated on BrowserStack servers
+          example: "2020-09-18T09:45:57.000Z"
+
+    AutomateSession:
+      allOf:
+        - $ref: "#/components/schemas/BrowserPlatform"
+        - type: object
+          required: [hashed_id, name, duration, status, browserstack_status, reason, build_name, project_name, logs, browser_url, public_url, appium_logs_url, video_url, browser_console_logs_url, har_logs_url, selenium_logs_url]
+          properties:
+            hashed_id:
+              type: string
+              description: "Hashed ID of the session"
+              example: "4207442b2b0567368956dba064c22a3235a76214"
+            name:
+              type: string
+              description: "Name of your session"
+              example: "pricing_project_build"
+            duration:
+              type: number
+              description: "Duration of session execution"
+              example: 10
+            status:
+              type: string
+              description: "Status of the session"
+              enum: ["running", "timeout", "failed", "done"]
+            browserstack_status:
+              type: string
+              description: "Execution status of the session"
+            reason:
+              type: string
+              description: "Reason for test status"
+              example: "CLIENT_STOPPED_SESSION"
+            build_name:
+              type: string
+              description: "Name of the build"
+              example: "pricing_project_build"
+            project_name:
+              type: string
+              description: "Name of the project"
+              example: "pricing_project"
+            logs:
+              type: string
+              description: "Link to the session logs"
+              example: "https://automate.browserstack.com/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/logs"
+            browser_url:
+              type: string
+              description: "URL to view the session on Automate dashboard"
+              example: "https://automate.browserstack.com/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe"
+            public_url:
+              type: string
+              description: "URL to view the session publicly"
+              example: "https://automate.browserstack.com/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe?auth_token=01df4e51ba67eb743484a08b024a44601a2ae0399c5c011a68d9564147be1387"
+            appium_logs_url:
+              type: string
+              description: "URL to view the Appium logs"
+              example: "https://api.browserstack.com/automate/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/appiumlogs"
+            video_url:
+              type: string
+              description: "URL to view session video"
+              example: "https://automate.browserstack.com/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/video?token=V3pFcVdqdzJNTnNjMzJxeXNBU3FSMUtYU3lnUGsvSTMwbmhEWlRxWUNnRlJ1eHBzTUE0TXd5Z0o0R2lya25jendNaldoQldtbGJTaUtsTTRYQmdIYkE9PS0tNmVXSW91N25yNERzeWRLRnUya2xvQT09--77b9f745d91d9b99572a9e3c98dd001347f1b62c&source=rest_api&diff=860746.273516167"
+            browser_console_logs_url:
+              type: string
+              description: "URL to view browser console logs"
+              example: "https://automate.browserstack.com/s3-upload/bs-selenium-logs-aps/s3.ap-south-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-console-logs-v2.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&..."
+            har_logs_url:
+              type: string
+              description: "URL to view browser logs"
+              example: "https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-har-logs.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&..."
+            selenium_logs_url:
+              type: string
+              description: "URL to view selenium logs"
+              example: "https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-selenium-logs.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&..."
+            selenium_telemetry_logs_url:
+              type: string
+              description: "URL to view telemetry logs if it is enabled in your Selenium 4 session"
+              example: "https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-selenium-logs.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&..."
+            created_at:
+              type: string
+              description: "Timestamp at which the session started executing"
+              example: "2020-03-11T10:14:36.000Z"
+
+    Status:
+      type: object
+      required: [used_time, running_sessions, session_limit, total_available_time]
+      properties:
+        used_time:
+          type: number
+          example: 10
+        running_sessions:
+          type: number
+          example: 0
+        session_limit:
+          type: number
+          example: 0
+        total_available_time:
+          type: string
+          example: Unlimited Testing Time
+
+    NewWorker:
+      allOf:
+        - type: object
+          required:
+            - url
+            - os
+            - os_version
+          properties:
+            url:
+              type: string
+              description: "URL to be opened in the browser"
+              example: "https://www.google.com/ncr"
+            timeout:
+              type: number
+              description: "Time in seconds before the worker is terminated. The default value is 300 seconds and the minimum value is 60 seconds. IMPORTANT: Irrespective of the timeout parameter, a browser worker is alive for a maximum time of 1800 seconds."
+              example: 300
+            os:
+              type: string
+              description: "Operating system name."
+              example: "Windows"
+            os_version:
+              type: string
+              description: "Operating system version."
+              example: "10"
+            name:
+              type: string
+              description: "Name of the worker."
+              example: "qunit-test-pricing"
+            build:
+              type: string
+              description: "Name of the build the session is running under."
+              example: "staging-build"
+            project:
+              type: string
+              description: "Name of the project the build is organized under."
+              example: "pricing-project"
+            "browserstack.video":
+              type: boolean
+              description: "Enable video recording for the session. The default value is false."
+              example: true
+            resolution:
+              type: string
+              description: "Set the resolution of VM before the beginning of your test. Available for Desktop only. The default value is 1024x768."
+              example: "1024x768"
+        - oneOf:
+          # desktop
+          - type: object
+            required:
+              - browser
+              - browser_version
+            properties:
+              browser:
+                type: string
+                description: "Browser name."
+                example: "Chrome"
+              browser_version:
+                type: string
+                description: "Browser version."
+                example: "80.0"
+          # mobile
+          - type: object
+            properties:
+              device:
+                type: string
+                description: "Device name. If a device is not provided it defaults to the first device available for that os version."
+                example: "iPhone 11 Pro"
+              browser:
+                type: string
+                description: "Browser name."
+                example: "Chrome"
+              browser_version:
+                type: string
+                description: "Browser version."
+                example: "80.0"
+
+    Worker:
+      allOf:
+        - $ref: "#/components/schemas/BrowserPlatform"
+        - type: object
+          properties:
+            id:
+              type: string
+              description: "ID of the worker."
+              example: "4207442b2b0567368956dba064c22a3235a76214"
+            sessionId:
+              description: "ID of the session."
+              example: "550709149fe79e949363b581e774d5ebffa1b8fe"
+            status:
+              type: string
+              enum: ["queue", "running"]
+              description: "Current status of the worker."
+              example: "running"
+            browser_url:
+              type: string
+              description: "Dashboard URL of the session"
+              example: ""
+
+    NewScreenshot:
+      allOf:
+        - $ref: "#/components/schemas/Browser"
+        - type: object
+          required: [os, os_version, url]
+          properties:
+            os:
+              type: string
+              example: Windows
+            os_version:
+              type: string
+              example: "10"
+            device:
+              type: string
+              description: "Required if you want to test on a mobile device."
+              example: null
+            orientation:
+              type: string
+              enum: ["portrait", "landscape"]
+              description: "Screen orientation for a mobile device. Default: portrait"
+            url:
+              type: string
+              example: "https://nextjs-template.vercel.app/"
+            callback_url:
+              type: string
+              description: "Public URL to which the screenshot will be posted."
+            win_res:
+              type: string
+              description: "Sceen resolution of the Windows machine. Values: 1024x768, 1280x1024. Default: 1024x768"
+              example: "1024x768"
+            mac_res:
+              type: string
+              description: "Sceen resolution of the Mac machine. Values: 1024x768, 1280x960, 1280x1024, 1600x1200, 1920x1080. Default: 1024x768"
+              example: "1024x768"
+            quality:
+              type: string
+              enum: ["Compressed", "Original"]
+              description: "Quality of the screenshot. Default: Compressed"
+            local:
+              type: boolean
+              description: "Set to true if URL is local and a Local Testing connection has been set up. Default: false"
+            wait_time:
+              type: number
+              description: "Time in seconds to wait before taking the screenshot. Default: 5"
+              example: 5
+
+    ScreenshotJobBase:
+      type: object
+      properties:
+        job_id:
+          type: string
+          description: "Unique identifier for the screenshot job."
+          example: "4207442b2b0567368956dba064c22a3235a76214"
+        callback_url:
+          type: string
+          description: "Public URL to which the screenshot will be posted."
+          example: "https://callback.example.com"
+        win_res:
+          type: string
+          description: "Sceen resolution of the Windows machine. Values: 1024x768, 1280x1024. Default: 1024x768"
+          example: "1024x768"
+        mac_res:
+          type: string
+          description: "Sceen resolution of the Mac machine. Values: 1024x768, 1280x960, 1280x1024, 1600x1200, 1920x1080. Default: 1024x768"
+          example: "1024x768"
+        quality:
+          type: string
+          enum: ["Compressed", "Original"]
+          description: "Quality of the screenshot. Default: Compressed"
+        wait_time:
+          type: number
+          description: "Time in seconds to wait before taking the screenshot. Default: 5"
+          example: 5
+        orientation:
+          type: string
+          enum: ["portrait", "landscape"]
+          description: "Screen orientation for a mobile device. Default: portrait"
+        screenshots:
+          type: array
+          items:
+            $ref: "#/components/schemas/Screenshot"
+
+    NewScreenshotJob:
+      allOf:
+        - $ref: "#/components/schemas/ScreenshotJobBase"
+        - type: object
+          required: [job_id]
+          properties:
+            job_id:
+              type: string
+              description: "Unique identifier for the screenshot job."
+              example: "4207442b2b0567368956dba064c22a3235a76214"
+
+    ScreenshotJob:
+      allOf:
+        - $ref: "#/components/schemas/ScreenshotJobBase"
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: string
+              description: "Unique identifier for the screenshot job."
+              example: "4207442b2b0567368956dba064c22a3235a76214"
+
+    ScreenshotBase:
+      type: object
+      required: [id, state, url, os, os_version]
+      properties:
+        id:
+          type: string
+          description: "ID for the screenshot"
+          example: "be9989892cbba9b9edc2c95f403050aa4996ac6a"
+        state:
+          type: string
+          enum: ["pending", "done", "failed"]
+        url:
+          type: string
+          example: "https://nextjs-template.vercel.app/"
+        os:
+          type: string
+          example: Windows
+        os_version:
+          type: string
+          example: "10"
+
+    Screenshot:
+      allOf:
+        - $ref: "#/components/schemas/ScreenshotBase"
+        - oneOf:
+          - type: object
+            required: [device]
+            properties:
+              device:
+                type: string
+                example: "iPhone 4S (6.0)"
+              browser:
+                type: string
+                example: "Chrome"
+              browser_version:
+                type: string
+                example: "80.0"
+          - type: object
+            required: [browser, browser_version]
+            properties:
+              browser:
+                type: string
+                example: "Chrome"
+              browser_version:
+                type: string
+                example: "80.0"
+        - type: object
+          properties:
+            image_url:
+              type: string
+              description: "URL to view the screenshot"
+              example: "https://www.browserstack.com/screenshots/13b93a14db22872fcb5fd1c86b730a51197db319/winxp_ie_7.0.png"
+            thumb_url:
+              type: string
+              description: "URL to view the thumbnail of the screenshot"
+              example: "https://www.browserstack.com/screenshots/13b93a14db22872fcb5fd1c86b730a51197db319/thumb_winxp_ie_7.0.jpg"
+            created_at:
+              type: string
+              description: "Timestamp at which the screenshot was taken"
+              example: "2013-03-14 16:25:45 UTC"
+
+    400.BadRequest:
+      description: Bad request.
+
+    401.Unauthorized:
+      description: Your BrowserStack access credentials are invalid.
+
+    403.Forbidden:
+      description: Authorized user is not the owner of the resource.
+
+    404.NotFound:
+      description: The requested resource could not be found.
+
+    422.UnprocessableEntity:
+      description: Request is well-formed but has semantic errors. The response will provide more details about error.
+
+    5xx.InternalServerError:
+      description: Indicates an error with BrowserStack servers.
+
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
