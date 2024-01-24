@@ -2,7 +2,11 @@ openapi: 3.0.2
 info:
   title: BrowserStack API
   version: 5.0.0
-  description: "BrowserStack is a cloud web and mobile testing platform that provides developers with the ability to test their websites and mobile applications across on-demand browsers, operating systems and real mobile devices. This document is an (unofficial) OpenAPI reference for BrowserStack products: Automate, App Automate, JavaScript Testing, Screenshots, and others. For more information, visit https://www.browserstack.com/docs/"
+  description: >-
+    BrowserStack is a cloud web and mobile testing platform that provides developers with the ability to test
+    their websites and mobile applications across on-demand browsers, operating systems and real mobile devices.
+    This document is an (unofficial) OpenAPI reference for BrowserStack products: Automate, App Automate,
+    JavaScript Testing, Screenshots, and others. For more information, visit https://www.browserstack.com/docs/
   license:
     name: MIT License
     url: https://opensource.org/license/mit/
@@ -31,7 +35,9 @@ paths:
       parameters:
         - name: flat
           in: query
-          description: "If true, returns a flat list of all available browsers. If false, returns a nested list of browsers grouped by OS and OS version."
+          description: >-
+            If true, returns a flat list of all available browsers. If false, returns a nested
+            list of browsers grouped by OS and OS version.
           required: false
           schema:
             type: boolean
@@ -85,7 +91,11 @@ paths:
   /worker:
     post:
       summary: Create a browser worker.
-      description: Create a browser worker. A browser worker is simply a new browser instance. A user can start multiple browser worker at a time. All browser workers when created are pushed in a queue and they run when their turn comes. We make sure that your browser worker starts running as soon as possible. Your testing time is calculated from the time when browser worker starts running.
+      description: >-
+        Create a browser worker. A browser worker is simply a new browser instance. A user can start multiple
+        browser workers at a time. All browser workers when created are pushed in a queue and they run when
+        their turn comes. We make sure that your browser worker starts running as soon as possible.
+        Your testing time is calculated from the time when browser worker starts running.
       operationId: createWorker
       requestBody:
         content:
@@ -297,7 +307,9 @@ paths:
   /automate/projects.json:
     get:
       summary: Fetches list of projects
-      description: Fetches list of projects associated with your username and access key. You will need the id of the project for invoking any other Project API that follows in this document
+      description: >-
+        Fetches list of projects associated with your username and access key. You will need
+        the id of the project for invoking any other Project API that follows in this document
       operationId: getAutomateProjects
       responses:
         "200":
@@ -322,7 +334,7 @@ paths:
   /automate/projects/{projectId}.json:
     get:
       summary: Fetches a project
-      description: Specific information about a particular project can be queried using the project ID by invoking this API
+      description: Specific information about a particular project can be queried using the project ID
       operationId: getAutomateProject
       parameters:
         - name: projectId
@@ -404,7 +416,9 @@ paths:
 
     delete:
       summary: Delete your project
-      description: Delete a project on the server using the DELETE method. Please note that to delete a project, it needs to be empty of builds and sessions, and projects once deleted cannot be recovered
+      description: >-
+        Delete a project on the server using the DELETE method. Please note that to delete a project,
+        it needs to be empty of builds and sessions, and projects once deleted cannot be recovered
       operationId: deleteAutomateProject
       parameters:
         - name: projectId
@@ -445,7 +459,9 @@ paths:
   /automate/projects/{projectId}/badge_key:
     get:
       summary: Fetches the badge key for the project
-      description: Fetches the badge key for sharing a public link for the Automate dashboard to view the latest build and sessions for that project
+      description: >-
+        Fetches the badge key for sharing a public link for the Automate dashboard to view
+        the latest build and sessions for that project
       operationId: getAutomateProjectBadgeKey
       parameters:
         - name: projectId
@@ -480,7 +496,9 @@ paths:
   /automate/builds.json:
     get:
       summary: Fetches list of builds
-      description: Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number of builds and paginate through your data
+      description: >-
+        Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number
+        of builds and paginate through your data
       operationId: getAutomateBuilds
       parameters:
         - name: projectId
@@ -537,7 +555,9 @@ paths:
   /automate/builds/{buildId}.json:
     put:
       summary: Update the name or tag of your build
-      description: Update the name or tag of your build after the build is complete. To delete a build tag, simply pass an empty string as value for build_tag.
+      description: >-
+        Update the name or tag of your build after the build is complete. To delete a build tag,
+        simply pass an empty string as value for build_tag.
       operationId: updateAutomateBuild
       parameters:
         - name: buildId
@@ -586,7 +606,9 @@ paths:
 
     delete:
       summary: Delete a build on the server
-      description: Delete a build on the server. Please note that deleting a build will delete all the sessions contained within it. Builds once deleted cannot be recovered
+      description: >-
+        Delete a build on the server. Please note that deleting a build will delete all the sessions
+        contained within it. Builds once deleted cannot be recovered
       operationId: deleteAutomateBuild
       parameters:
         - name: buildId
@@ -627,7 +649,9 @@ paths:
   /automate/builds:
     delete:
       summary: Delete multiple builds on the server
-      description: Delete multiple builds on the server. You can delete a maximum of 5 builds at a time. Builds once deleted cannot be recovered.
+      description: >-
+        Delete multiple builds on the server. You can delete a maximum of 5 builds at a time.
+        Builds once deleted cannot be recovered.
       operationId: deleteAutomateBuilds
       parameters:
         - name: buildId[]
@@ -810,7 +834,9 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
     put:
       summary: Update session status or name
-      description: Set the status for a session or update the name of the session. You can mark test status as passed or failed along with a reason.
+      description: >-
+        Set the status for a session or update the name of the session. You can mark test status
+        as passed or failed along with a reason.
       operationId: updateSession
       parameters:
         - name: sessionId
@@ -950,7 +976,9 @@ paths:
   /automate/sessions/{sessionId}/logs:
     get:
       summary: Fetches session logs
-      description: Fetches session logs. Whenever you execute a session on BrowserStack, a session log is generated. These logs are available to you in text format.
+      description: >-
+        Fetches session logs. Whenever you execute a session on BrowserStack, a session log is generated.
+        These logs are available to you in text format.
       operationId: getAutomateSessionLogs
       parameters:
         - name: sessionId
@@ -982,7 +1010,9 @@ paths:
   /automate/sessions/{sessionId}/networklogs:
     get:
       summary: Fetches network logs for a session
-      description: Fetches network logs for a session. Network Logs for each session are available to you in HAR (HTTP Archive) format.
+      description: >-
+        Fetches network logs for a session. Network Logs for each session are available to you
+        in HAR (HTTP Archive) format.
       operationId: getAutomateSessionNetworkLogs
       parameters:
         - name: sessionId
@@ -1014,7 +1044,11 @@ paths:
   /automate/sessions/{sessionId}/consolelogs:
     get:
       summary: Fetches console logs for a session
-      description: Fetches console logs for a session. Console logs are enabled by default and are set to errors. You can disable them or change verbosity options by using the browserstack.console capability to disabled, errors, warnings, info, verbose. Raw Console Logs for each session are available to you in text format.
+      description: >-
+        Fetches console logs for a session. Console logs are enabled by default and are set to errors.
+        You can disable them or change verbosity options by using the browserstack.console capability
+        to disabled, errors, warnings, info, verbose. Raw Console Logs for each session are available
+        to you in text format.
       operationId: getAutomateSessionConsoleLogs
       parameters:
         - name: sessionId
@@ -1047,7 +1081,9 @@ paths:
   /automate/sessions/{sessionId}/seleniumlogs:
     get:
       summary: Fetches Selenium logs for a session
-      description: Fetches Selenium logs for a session. Raw Selenium logs for each session are available to you in text format.
+      description: >-
+        Fetches Selenium logs for a session. Raw Selenium logs for each session are
+        available to you in text format.
       operationId: getAutomateSessionSeleniumLogs
       parameters:
         - name: sessionId
@@ -1113,7 +1149,9 @@ paths:
   /automate/sessions/{sessionId}/telemetrylogs:
     get:
       summary: Fetches telemetry logs for a session
-      description: Fetches telemetry logs for a session. Telemetry logs for a session are available for tests run using Selenium 4. Telemetry logs are by default disabled for a session.
+      description: >-
+        Fetches telemetry logs for a session. Telemetry logs for a session are available for tests
+        run using Selenium 4. Telemetry logs are by default disabled for a session.
       operationId: getAutomateSessionTelemetryLogs
       parameters:
         - name: sessionId
