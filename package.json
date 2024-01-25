@@ -2,25 +2,44 @@
   "name": "browserstack-client",
   "version": "3.0.0-alpha.0",
   "description": "BrowserStack APIs client library for node.js",
-  "main": "index.js",
+  "type": "module",
+  "main": "./dist/browserstack-client.umd.cjs",
+  "module": "./dist/browserstack-client.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/browserstack-client.js",
+      "require": "./dist/browserstack-client.umd.cjs"
+    }
+  },
   "scripts": {
-    "lint": "jshint lib",
-    "docs": "jsdoc2md -t jsdoc2md/README.hbs \"lib/**/*.js\" > README.md",
-    "test": "mocha --reporter spec --timeout 4000"
+    "prebuild": "node build.cjs && openapi-typescript openapi.yml --output src/generated/openapi.ts",
+    "build": "tsc && vite build",
+    "test": "vitest run",
+    "test-watch": "vitest"
+  },
+  "author": "Shirish Kamath",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "@types/node": "^20.11.6",
+    "openapi-typescript": "^6.7.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8",
+    "vite-plugin-dts": "^3.7.2",
+    "vitest": "^1.2.1"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.8.2"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/shirish87/browserstack-client.git"
   },
-  "author": "Shirish Kamath",
-  "license": "MIT",
-  "dependencies": {
-    "bluebird": "~2.9.34",
-    "diagnostics": "~1.0.1",
-    "needle": "~0.11.0",
-    "unzip": "~0.1.11"
-  },
-  "devDependencies": {
-    "mocha": "^2.3.4"
+  "bugs": {
+    "url": "https://github.com/shirish87/browserstack-client/issues"
   }
 }

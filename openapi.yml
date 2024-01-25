@@ -350,14 +350,18 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/AutomateProject'
-                  - type: object
-                    properties:
-                      builds:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/AutomateBuild'
+                type: object
+                required: [project]
+                properties:
+                  project:
+                    allOf:
+                      - $ref: '#/components/schemas/AutomateProject'
+                      - type: object
+                        properties:
+                          builds:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/AutomateBuild'
 
         "400":
           $ref: '#/components/schemas/400.BadRequest'
@@ -538,6 +542,7 @@ paths:
                 type: array
                 items:
                   type: object
+                  required: [automation_build]
                   properties:
                     automation_build:
                       $ref: '#/components/schemas/AutomateBuild'
@@ -553,6 +558,54 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
   /automate/builds/{buildId}.json:
+    get:
+      summary: Fetches a build
+      description: Fetches a build
+      operationId: getAutomateBuild
+      parameters:
+        - name: buildId
+          in: path
+          description: "ID of your build"
+          required: true
+          schema:
+            type: string
+            example: "a4fb480a55efd6b3c558afb1ee051a7c337b8ef0"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [build]
+                properties:
+                  build:
+                    type: object
+                    required: [automation_build, sessions]
+                    properties:
+                      automation_build:
+                        $ref: '#/components/schemas/AutomateBuild'
+                      sessions:
+                        type: array
+                        items:
+                          type: object
+                          required: [automation_session]
+                          properties:
+                            automation_session:
+                              $ref: '#/components/schemas/AutomateSession'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "403":
+          $ref: '#/components/schemas/403.Forbidden'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
     put:
       summary: Update the name or tag of your build
       description: >-
@@ -565,8 +618,8 @@ paths:
           description: "ID of your build"
           required: true
           schema:
-            type: number
-            example: 966019
+            type: string
+            example: "a4fb480a55efd6b3c558afb1ee051a7c337b8ef0"
       requestBody:
         required: true
         content:
@@ -616,8 +669,8 @@ paths:
           description: "ID of your build"
           required: true
           schema:
-            type: number
-            example: 966019
+            type: string
+            example: "a4fb480a55efd6b3c558afb1ee051a7c337b8ef0"
       responses:
         "200":
           description: Successful operation
@@ -751,8 +804,8 @@ paths:
           description: "ID of your build"
           required: true
           schema:
-            type: number
-            example: 966019
+            type: string
+            example: "a4fb480a55efd6b3c558afb1ee051a7c337b8ef0"
         - name: limit
           in: query
           description: "Specify the number of results to be displayed. The default value is 10, and the maximum value is 100"
@@ -783,6 +836,7 @@ paths:
                 type: array
                 items:
                   type: object
+                  required: [automation_session]
                   properties:
                     automation_session:
                       $ref: '#/components/schemas/AutomateSession'
@@ -818,6 +872,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [automation_session]
                 properties:
                   automation_session:
                     $ref: '#/components/schemas/AutomateSession'
