@@ -1,13 +1,15 @@
-import { describe, expect, test } from "vitest";
+import { components } from "@/generated/openapi";
+import { describe, expect, expectTypeOf, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup";
 
 
 describe("AutomateClient", () => {
 
   test<BrowserStackTestContext>("getPlan", async ({ automate: { client } }) => {
-    const plan = await client.getPlan();
-    expect(plan).toBeDefined();
-    expect(plan.automate_plan).toBeDefined();
+    const data = await client.getPlan();
+    expect(data).toBeDefined();
+    expect(data.automate_plan).toBeDefined();
+    expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomatePlan"]>();
   });
 
   test<BrowserStackTestContext>("getBrowsers", async ({ automate: { client } }) => {
@@ -15,6 +17,7 @@ describe("AutomateClient", () => {
     expect(data).toBeDefined();
     expect(data).toBeInstanceOf(Array);
     expect(data.length).toBeGreaterThan(0);
+    expectTypeOf(data).toMatchTypeOf<components["schemas"]["BrowserList"]>();
   });
 
   test<BrowserStackTestContext>("getProjects", async ({ automate: { client } }) => {
@@ -22,6 +25,7 @@ describe("AutomateClient", () => {
     expect(data).toBeDefined();
     expect(data).toBeInstanceOf(Array);
     expect(data.length).toBeGreaterThan(0);
+    expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateProject"][]>();
   });
 
   test<BrowserStackTestContext>("getProject", async ({ automate: { client, randomProjectId } }) => {
@@ -29,6 +33,7 @@ describe("AutomateClient", () => {
     const data = await client.getProject(projectId);
     expect(data).toBeDefined();
     expect(data.id).toBeDefined();
+    expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateProject"] & { builds: components["schemas"]["AutomateBuild"][] }>();
   });
 
   test<BrowserStackTestContext>("getBuilds", async ({ automate: { client } }) => {
@@ -36,6 +41,7 @@ describe("AutomateClient", () => {
     expect(data).toBeDefined();
     expect(data).toBeInstanceOf(Array);
     expect(data.length).toBeGreaterThan(0);
+    expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"][]>();
   });
 
   test<BrowserStackTestContext>("getBuild", async ({ automate: { client, randomBuildId } }) => {
@@ -46,6 +52,7 @@ describe("AutomateClient", () => {
     expect(data.sessions).toBeDefined();
     expect(data.sessions).toBeInstanceOf(Array);
     expect(data.sessions.length).toBeGreaterThan(0);
+    expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"] & { sessions: components["schemas"]["AutomateSession"][] }>();
   });
 
   test<BrowserStackTestContext>("getSessions", async ({ automate: { client, randomBuildId } }) => {
@@ -54,6 +61,7 @@ describe("AutomateClient", () => {
     expect(data).toBeDefined();
     expect(data).toBeInstanceOf(Array);
     expect(data.length).toBeGreaterThan(0);
+    expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateSession"][]>();
   });
 
   test<BrowserStackTestContext>("getSession", async ({ automate: { client, randomSessionId } }) => {
@@ -61,6 +69,7 @@ describe("AutomateClient", () => {
     const data = await client.getSession(sessionId);
     expect(data).toBeDefined();
     expect(data).haveOwnProperty("status");
+    expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateSession"]>();
   });
 
 });

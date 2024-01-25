@@ -15,8 +15,8 @@
   "scripts": {
     "prebuild": "node build.cjs && openapi-typescript openapi.yml --output src/generated/openapi.ts",
     "build": "tsc && vite build",
-    "test": "vitest run",
-    "test-watch": "vitest"
+    "test": "vitest run --typecheck",
+    "test-watch": "vitest --typecheck"
   },
   "author": "Shirish Kamath",
   "license": "MIT",

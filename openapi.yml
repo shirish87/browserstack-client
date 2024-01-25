@@ -357,6 +357,7 @@ paths:
                     allOf:
                       - $ref: '#/components/schemas/AutomateProject'
                       - type: object
+                        required: [builds]
                         properties:
                           builds:
                             type: array
@@ -1895,7 +1896,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/BrowserPlatform"
         - type: object
-          required: [hashed_id, name, duration, status, browserstack_status, reason, build_name, project_name, logs, browser_url, public_url, appium_logs_url, video_url, browser_console_logs_url, har_logs_url, selenium_logs_url]
+          required: [hashed_id, name, duration, status, browserstack_status, reason, build_name, project_name, logs, browser_url, public_url, appium_logs_url, video_url, browser_console_logs_url, har_logs_url, selenium_logs_url, selenium_telemetry_logs_url, created_at]
           properties:
             hashed_id:
               type: string
