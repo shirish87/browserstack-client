@@ -1,4 +1,6 @@
 import { APIClient, APIClientOptions } from "@/api";
+import type { FetchOptions } from "openapi-fetch";
+import type { operations } from "./generated/openapi";
 
 export default class ScreenshotsClient extends APIClient {
   constructor(options?: APIClientOptions) {
@@ -8,8 +10,8 @@ export default class ScreenshotsClient extends APIClient {
     });
   }
 
-  getBrowsers() {
-    return this.sdk.GET("/screenshots/browsers.json", {});
+  getBrowsers(options?: FetchOptions<operations["getScreenshotsBrowsers"]>) {
+    return this.makeGetRequest("/screenshots/browsers.json", options);
   }
 
 }

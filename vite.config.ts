@@ -20,5 +20,7 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
     },
   },
-  test: {},
+  test: {
+    setupFiles: ["./src/__tests__/setup.ts"],
+  },
 });
