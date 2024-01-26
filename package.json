@@ -17,7 +17,7 @@
     "build": "tsc && vite build",
     "test": "vitest run --typecheck",
     "test-watch": "vitest --typecheck",
-    "coverage": "vitest run --coverage.enabled --coverage.reportOnFailure --coverage.include=src --coverage.exclude=src/generated"
+    "coverage": "vitest run --coverage.enabled --coverage.include=src --coverage.exclude=src/generated"
   },
   "author": "Shirish Kamath",
   "license": "MIT",
