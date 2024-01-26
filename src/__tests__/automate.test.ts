@@ -134,9 +134,9 @@ describe("AutomateClient", () => {
       });
 
       expect(data).toBeDefined();
-      expect(data.status).toBeDefined();
-      expect(data.status).toEqual("success");
       expect(data.message).toBeDefined();
+      expect(data.message.length).toBeGreaterThan(0);
+      expectTypeOf(data.message).toMatchTypeOf<string>();
     });
   });
 

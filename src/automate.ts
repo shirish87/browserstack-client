@@ -221,7 +221,7 @@ export default class AutomateClient extends APIClient {
       "params" | "body"
     >
   ) {
-    return this.makePostRequest("/automate/builds/{buildId}/terminallogs", {
+    return this.makeCloudPostRequest("/automate/builds/{buildId}/terminallogs", {
       ...options,
       body,
       bodySerializer: () => {
@@ -234,11 +234,6 @@ export default class AutomateClient extends APIClient {
           buildId,
         },
       },
-      parseAs: "text",
-    }).then((data: unknown) => {
-      return this.fixInvalidJSONResponse<
-        operations["uploadAutomateBuildTerminalLogs"]["responses"]["200"]["content"]["application/json"]
-      >(data);
     });
   }
 

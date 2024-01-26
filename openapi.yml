@@ -793,12 +793,8 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [status, message]
+                required: [message]
                 properties:
-                  status:
-                    type: string
-                    description: "Status of terminal log upload."
-                    example: "success"
                   message:
                     type: string
                     description: "Message indicating upload result."
