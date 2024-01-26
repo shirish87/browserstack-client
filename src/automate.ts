@@ -2,7 +2,6 @@ import { APIClient, APIClientOptions } from "@/api";
 import { operations } from "@/generated/openapi";
 import { FetchOptions } from "openapi-fetch";
 
-
 export default class AutomateClient extends APIClient {
   constructor(options?: APIClientOptions) {
     super({
@@ -40,7 +39,10 @@ export default class AutomateClient extends APIClient {
   updateProject(
     id: number,
     body: operations["updateAutomateProject"]["requestBody"]["content"]["application/json"],
-    options?: Omit<FetchOptions<operations["updateAutomateProject"]>, "params" | "body">,
+    options?: Omit<
+      FetchOptions<operations["updateAutomateProject"]>,
+      "params" | "body"
+    >
   ) {
     return this.makePutRequest("/automate/projects/{projectId}.json", {
       ...options,
@@ -57,7 +59,7 @@ export default class AutomateClient extends APIClient {
     id: number,
     options?: Omit<FetchOptions<operations["deleteAutomateProject"]>, "params">
   ) {
-    return this.sdk.DELETE("/automate/projects/{projectId}.json", {
+    return this.makeDeleteRequest("/automate/projects/{projectId}.json", {
       ...options,
       params: {
         path: {
@@ -110,14 +112,19 @@ export default class AutomateClient extends APIClient {
       },
     }).then((data) => ({
       ...data.build.automation_build,
-      sessions: data.build.sessions.map((session) => session.automation_session),
+      sessions: data.build.sessions.map(
+        (session) => session.automation_session
+      ),
     }));
   }
 
   updateBuild(
     id: string,
     body: operations["updateAutomateBuild"]["requestBody"]["content"]["application/json"],
-    options?: Omit<FetchOptions<operations["updateAutomateBuild"]>, "params" | "body">
+    options?: Omit<
+      FetchOptions<operations["updateAutomateBuild"]>,
+      "params" | "body"
+    >
   ) {
     return this.makePutRequest("/automate/builds/{buildId}.json", {
       ...options,
@@ -127,7 +134,23 @@ export default class AutomateClient extends APIClient {
           buildId: id,
         },
       },
-    }).then((data) => data.automation_build ?? data);
+    }).then((data) =>
+      "automation_build" in data ? data.automation_build : data
+    );
+  }
+
+  deleteBuild(
+    id: string,
+    options?: Omit<FetchOptions<operations["deleteAutomateBuild"]>, "params">
+  ) {
+    return this.makeDeleteRequest("/automate/builds/{buildId}.json", {
+      ...options,
+      params: {
+        path: {
+          buildId: id,
+        },
+      },
+    });
   }
 
   getSessions(
@@ -158,5 +181,122 @@ export default class AutomateClient extends APIClient {
         },
       },
     }).then((data) => data.automation_session);
+  }
+
+  deleteSession(
+    sessionId: string,
+    options?: Omit<FetchOptions<operations["deleteAutomateSession"]>, "params">
+  ) {
+    return this.makeDeleteRequest("/automate/sessions/{sessionId}.json", {
+      ...options,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+    });
+  }
+
+  deleteSessions(
+    sessionIds: string[],
+    options?: Omit<FetchOptions<operations["deleteAutomateSessions"]>, "params">
+  ) {
+    return this.makeDeleteRequest("/automate/sessions", {
+      ...options,
+      params: {
+        query: {
+          "sessionId[]": sessionIds,
+        },
+      },
+    });
+  }
+
+  uploadBuildTerminalLogs(
+    buildId: string,
+    body: operations["uploadAutomateBuildTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: Omit<
+      FetchOptions<operations["uploadAutomateBuildTerminalLogs"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makePostRequest("/automate/builds/{buildId}/terminallogs", {
+      ...options,
+      body,
+      bodySerializer: () => {
+        const formData = new FormData();
+        formData.append("file", body.file, body.filename);
+        return formData;
+      },
+      params: {
+        path: {
+          buildId,
+        },
+      },
+      parseAs: "text",
+    }).then((data: unknown) => {
+      return this.fixInvalidJSONResponse<
+        operations["uploadAutomateBuildTerminalLogs"]["responses"]["200"]["content"]["application/json"]
+      >(data);
+    });
+  }
+
+  uploadSessionTerminalLogs(
+    sessionId: string,
+    body: operations["uploadAutomateSessionTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: Omit<
+      FetchOptions<operations["uploadAutomateSessionTerminalLogs"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makeCloudPostRequest("/automate/sessions/{sessionId}/terminallogs", {
+      ...options,
+      body,
+      bodySerializer: () => {
+        const formData = new FormData();
+        formData.append("file", body.file, body.filename);
+        return formData;
+      },
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+    });
+  }
+
+  getSessionLogs(
+    sessionId: string,
+    options?: Omit<FetchOptions<operations["getAutomateSessionLogs"]>, "params">
+  ) {
+    return this.makeGetRequest("/automate/sessions/{sessionId}/logs", {
+      ...options,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+      parseAs: "text",
+    });
+  }
+
+  getSessionNetworkLogs(
+    sessionId: string,
+    options?: Omit<
+      FetchOptions<operations["getAutomateSessionNetworkLogs"]>,
+      "params"
+    >
+  ) {
+    return this.makeGetRequest("/automate/sessions/{sessionId}/networklogs", {
+      ...options,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+    });
   }
 }

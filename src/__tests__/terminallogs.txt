@@ -1,0 +1,15 @@
+> browserstack-client@3.0.0-alpha.0 prebuild
+> node build.cjs && openapi-typescript openapi.yml --output src/generated/openapi.ts
+
+✨ openapi-typescript 6.7.4
+🚀 openapi.yml → file:///src/generated/openapi.ts [48ms]
+
+> browserstack-client@3.0.0-alpha.0 build
+> tsc && vite build
+
+vite v5.0.12 building for production...
+✓ 8 modules transformed.
+
+[vite:dts] Start generate declaration files...
+dist/browserstack-client.js  9.44 kB │ gzip: 2.48 kB
+[vite:dts] Declaration files built in 1316ms.
