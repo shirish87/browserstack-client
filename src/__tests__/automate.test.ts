@@ -3,11 +3,24 @@ import { describe, expect, expectTypeOf, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup";
 
 describe("AutomateClient", () => {
-  test<BrowserStackTestContext>("getPlan", async ({ automate: { client } }) => {
-    const data = await client.getPlan();
-    expect(data).toBeDefined();
-    expect(data.automate_plan).toBeDefined();
-    expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomatePlan"]>();
+
+  describe("Account", () => {
+
+    test.skip<BrowserStackTestContext>("recycleKey", async ({ automate: { client } }) => {
+      const data = await client.recycleKey();
+      expect(data).toBeDefined();
+      expect(data.old_key).toBeDefined();
+      expect(data.new_key).toBeDefined();
+      expect(data.new_key.length).toBeGreaterThan(0);
+      expectTypeOf(data.new_key).toMatchTypeOf<string>();
+    });
+
+    test<BrowserStackTestContext>("getPlan", async ({ automate: { client } }) => {
+      const data = await client.getPlan();
+      expect(data).toBeDefined();
+      expect(data.automate_plan).toBeDefined();
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomatePlan"]>();
+    });
   });
 
   test<BrowserStackTestContext>("getBrowsers", async ({
@@ -282,7 +295,7 @@ describe("AutomateClient", () => {
       expectTypeOf(data).toMatchTypeOf<string>();
     });
 
-    test.only<BrowserStackTestContext>("getSessionNetworkLogs", async ({
+    test<BrowserStackTestContext>("getSessionNetworkLogs", async ({
       automate: { client, randomSessionId },
     }) => {
       const sessionId = await randomSessionId();
@@ -317,5 +330,42 @@ describe("AutomateClient", () => {
       const data = await client.getSessionTelemetryLogs(sessionId);
       expect(data).toBeDefined();
     });
+  });
+
+  describe.only("Media Files", () => {
+
+    test<BrowserStackTestContext>("uploadMediaFile", async ({
+      automate: { client },
+    }) => {
+      const data = await client.uploadMediaFile({
+        file: new Blob(["Media Media Media"], { type: "image/jpeg" }),
+        filename: "media.jpg",
+      });
+
+      expect(data).toBeDefined();
+      expect(data.media_url).toBeDefined();
+      expectTypeOf(data.media_url).toMatchTypeOf<string>();
+    });
+
+    test<BrowserStackTestContext>("getMediaFiles", async ({
+      automate: { client },
+    }) => {
+      const data = await client.getMediaFiles();
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Array);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateMediaFile"][]>();
+    });
+
+    test<BrowserStackTestContext>("deleteMediaFile", async ({
+      automate: { client, randomMediaId },
+    }) => {
+      const mediaId = await randomMediaId();
+      const data = await client.deleteMediaFile(mediaId);
+      expect(data).toBeDefined();
+      expect(data.success).toBeDefined();
+      expect(data.success).toEqual(true);
+      expectTypeOf(data.success).toMatchTypeOf<boolean>();
+    });
+
   });
 });

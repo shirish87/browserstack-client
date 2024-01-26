@@ -269,6 +269,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [old_key, new_key]
                 properties:
                   old_key:
                     type: string
@@ -1311,14 +1312,16 @@ paths:
 
   /automate/upload-media:
     post:
-      summary: Upload media files
-      description: Upload media files you want to use in your tests
-      operationId: uploadMediaFiles
+      summary: Upload a media file
+      description: Upload a media file you want to use in your tests
+      operationId: uploadAutomateMediaFile
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required: [file]
               properties:
                 file:
                   type: string
@@ -1331,6 +1334,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [media_url]
                 properties:
                   media_url:
                     type: string
@@ -1352,7 +1356,7 @@ paths:
     get:
       summary: Fetches list of uploaded media files
       description: Fetches list of recently uploaded media files
-      operationId: getMediaFiles
+      operationId: getAutomateMediaFiles
       responses:
         "200":
           description: Successful operation
@@ -1362,26 +1366,7 @@ paths:
                 type: array
                 items:
                   type: object
-                  properties:
-                    media_file:
-                      type: object
-                      properties:
-                        media_name:
-                          type: string
-                          description: "Name of the uploaded media file."
-                          example: "profile.png"
-                        media_url:
-                          type: string
-                          description: "Unique identifier returned upon successful upload of your media file on BrowserStack. This value is used to specify the media files to be used in your tests."
-                          example: "media://90c7a8h8dc82308108734e9a46c24d8f01de12881"
-                        media_id:
-                          type: string
-                          description: "Unique ID returned on successful upload of your media file on BrowserStack."
-                          example: "90c7a8h8dc82308108734e9a46c24d8f01de12881"
-                        uploaded_at:
-                          type: string
-                          description: "Media upload timestamp."
-                          example: "2021-10-13T10:30:00.000Z"
+                  $ref: "#/components/schemas/AutomateMediaFile"
 
         "400":
           $ref: '#/components/schemas/400.BadRequest'
@@ -1394,13 +1379,13 @@ paths:
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
 
-  /automate/custom_media/delete/{media_id}:
+  /automate/custom_media/delete/{mediaId}:
     delete:
       summary: Delete a media file earlier uploaded to BrowserStack
       description: Delete a media file on the server. Media files once deleted cannot be recovered
-      operationId: deleteMediaFile
+      operationId: deleteAutomateMediaFile
       parameters:
-        - name: media_id
+        - name: mediaId
           in: path
           description: "ID of your media file"
           required: true
@@ -1414,7 +1399,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [status]
+                required: [success]
                 properties:
                   success:
                     type: boolean
@@ -2010,6 +1995,27 @@ components:
         total_available_time:
           type: string
           example: Unlimited Testing Time
+
+    AutomateMediaFile:
+      type: object
+      required: [media_name, media_url, media_id, uploaded_at]
+      properties:
+        media_name:
+          type: string
+          description: "Name of the uploaded media file."
+          example: "profile.png"
+        media_url:
+          type: string
+          description: "Unique identifier returned upon successful upload of your media file on BrowserStack. This value is used to specify the media files to be used in your tests."
+          example: "media://90c7a8h8dc82308108734e9a46c24d8f01de12881"
+        media_id:
+          type: string
+          description: "Unique ID returned on successful upload of your media file on BrowserStack."
+          example: "90c7a8h8dc82308108734e9a46c24d8f01de12881"
+        uploaded_at:
+          type: string
+          description: "Media upload timestamp."
+          example: "2021-10-13T10:30:00.000Z"
 
     NewWorker:
       allOf:

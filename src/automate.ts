@@ -10,6 +10,10 @@ export default class AutomateClient extends APIClient {
     });
   }
 
+  recycleKey(options?: FetchOptions<operations["recycleAutomateKey"]>) {
+    return this.makePutRequest("/automate/recycle_key.json", options);
+  }
+
   getPlan(options?: FetchOptions<operations["getAutomatePlan"]>) {
     return this.makeGetRequest("/automate/plan.json", options);
   }
@@ -388,4 +392,46 @@ export default class AutomateClient extends APIClient {
     });
   }
 
+  uploadMediaFile(
+    body: operations["uploadAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: Omit<
+      FetchOptions<operations["uploadAutomateMediaFile"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makePostRequest("/automate/upload-media", {
+      ...options,
+      body,
+      bodySerializer: () => {
+        const formData = new FormData();
+        formData.append("file", body.file, body.filename);
+        return formData;
+      },
+    });
+  }
+
+  getMediaFiles(
+    options?: FetchOptions<operations["getAutomateMediaFiles"]>
+  ) {
+    return this.makeGetRequest("/automate/recent_media_files", options);
+  }
+
+  deleteMediaFile(
+    mediaId: string,
+    options?: Omit<
+      FetchOptions<operations["deleteAutomateMediaFile"]>,
+      "params"
+    >
+  ) {
+    return this.makeDeleteRequest("/automate/custom_media/delete/{mediaId}", {
+      ...options,
+      params: {
+        path: {
+          mediaId,
+        },
+      },
+    });
+  }
 }

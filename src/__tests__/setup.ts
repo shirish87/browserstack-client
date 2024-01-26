@@ -8,6 +8,7 @@ export interface BrowserStackTestContext {
     randomProjectId(): Promise<number>;
     randomBuildId(): Promise<string>;
     randomSessionId(): Promise<string>;
+    randomMediaId(): Promise<string>;
   };
   screenshots: {
     client: BrowserStack.ScreenshotsClient;
@@ -48,12 +49,21 @@ beforeEach<BrowserStackTestContext>((context) => {
     return session.hashed_id;
   };
 
+  const randomMediaId = async () => {
+    const files = await automate.getMediaFiles();
+    assert(files.length > 0, "No media found");
+
+    const mediaItem = files[Math.floor(Math.random() * files.length)];
+    return mediaItem.media_id;
+  };
+
   Object.assign(context, {
     automate: {
       client: automate,
       randomProjectId,
       randomBuildId,
       randomSessionId,
+      randomMediaId,
     },
     screenshots: {
       client: screenshots,

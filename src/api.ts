@@ -116,7 +116,7 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "post">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "post">>]
   ) {
-    const res = await this.sdkCloud.POST(path, ...init);
+    const res = await this.sdkCloud.POST(path, ...init);console.log(res.data ?? res.error);
     if (res.error || !res.data) {
       throw new Error(`Error fetching ${path}: ${res.error}`);
     }
