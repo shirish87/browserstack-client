@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "prebuild": "node build.cjs && openapi-typescript openapi.yml --output src/generated/openapi.ts",
+    "prebuild": "node build.mjs",
     "build": "tsc && vite build",
     "test": "vitest run --typecheck",
     "test-watch": "vitest --typecheck",
@@ -28,7 +28,7 @@
     "@apidevtools/swagger-parser": "^10.1.0",
     "@types/node": "^20.11.6",
     "@vitest/coverage-v8": "^1.2.1",
-    "openapi-typescript": "^6.7.4",
+    "openapi-typescript": "^7.0.0-next.7",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "vite-plugin-dts": "^3.7.2",
