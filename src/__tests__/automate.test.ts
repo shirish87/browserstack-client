@@ -18,7 +18,7 @@ describe("AutomateClient", () => {
     expect(data).toBeInstanceOf(Array);
     expect(data.length).toBeGreaterThan(0);
     expectTypeOf(data).toMatchTypeOf<components["schemas"]["BrowserList"]>();
-  });
+  }, 10_000);
 
   test<BrowserStackTestContext>("getProjects", async ({ automate: { client } }) => {
     const data = await client.getProjects();
