@@ -61,6 +61,16 @@ describe("AutomateClient", () => {
       >();
     });
 
+    test<BrowserStackTestContext>("getBadgeKey", async ({
+      automate: { client, randomProjectId },
+    }) => {
+      const projectId = await randomProjectId();
+      const data = await client.getBadgeKey(projectId);
+      expect(data).toBeDefined();
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toBeString();
+    });
+
     test.skip<BrowserStackTestContext>("deleteProject", async ({
       automate: { client, randomProjectId },
     }) => {
@@ -72,16 +82,6 @@ describe("AutomateClient", () => {
       expect(data.status).toEqual("ok");
       expect(data).haveOwnProperty("message");
     });
-  });
-
-  test<BrowserStackTestContext>("getBadgeKey", async ({
-    automate: { client, randomProjectId },
-  }) => {
-    const projectId = await randomProjectId();
-    const data = await client.getBadgeKey(projectId);
-    expect(data).toBeDefined();
-    expect(data.length).toBeGreaterThan(0);
-    expectTypeOf(data).toBeString();
   });
 
   describe("Build", () => {
@@ -282,7 +282,7 @@ describe("AutomateClient", () => {
       expectTypeOf(data).toMatchTypeOf<string>();
     });
 
-    test<BrowserStackTestContext>("getSessionNetworkLogs", async ({
+    test.only<BrowserStackTestContext>("getSessionNetworkLogs", async ({
       automate: { client, randomSessionId },
     }) => {
       const sessionId = await randomSessionId();
