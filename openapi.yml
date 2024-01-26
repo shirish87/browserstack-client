@@ -645,7 +645,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AutomateBuild'
+                oneOf:
+                  - type: object
+                    required: [automation_build]
+                    properties:
+                      automation_build:
+                        $ref: '#/components/schemas/AutomateBuild'
+                  - type: object
+                    required: [error]
+                    properties:
+                      error:
+                        type: string
+                        description: "Error message"
+                        example: "A build with this name already exists."
 
         "400":
           $ref: '#/components/schemas/400.BadRequest'
@@ -1835,12 +1847,12 @@ components:
 
     AutomateBuild:
       type: object
-      required: [id, name, duration, status, user_id, group_id, sub_group_id, automation_project_id, hashed_id, delta, framework, test_data, created_at, updated_at]
+      required: [name, hashed_id, duration, status, build_tag, public_url]
       properties:
-        id:
-          type: number
-          description: ID of the build
-          example: 866256
+        # id:
+        #   type: number
+        #   description: ID of the build
+        #   example: 866256
         name:
           type: string
           description: Name of your build
@@ -1872,6 +1884,10 @@ components:
           type: string
           description: Hashed ID of the build
           example: "4207442b2b0567368956dba064c22a3235a76214"
+        build_tag:
+          type: string
+          description: Tag for the build
+          example: "pricing_project_build"
         delta:
           type: boolean
           description: Indicates whether the build is a delta build

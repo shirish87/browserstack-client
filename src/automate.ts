@@ -39,10 +39,12 @@ export default class AutomateClient extends APIClient {
 
   updateProject(
     id: number,
-    options: Omit<FetchOptions<operations["updateAutomateProject"]>, "params">
+    body: operations["updateAutomateProject"]["requestBody"]["content"]["application/json"],
+    options?: Omit<FetchOptions<operations["updateAutomateProject"]>, "params" | "body">,
   ) {
     return this.makePutRequest("/automate/projects/{projectId}.json", {
       ...options,
+      body,
       params: {
         path: {
           projectId: id,
@@ -66,7 +68,7 @@ export default class AutomateClient extends APIClient {
   }
 
   getBadgeKey(
-    id: number,
+    projectId: number,
     options?: Omit<
       FetchOptions<operations["getAutomateProjectBadgeKey"]>,
       "params"
@@ -76,9 +78,10 @@ export default class AutomateClient extends APIClient {
       ...options,
       params: {
         path: {
-          projectId: id,
+          projectId,
         },
       },
+      parseAs: "text",
     });
   }
 
@@ -113,16 +116,18 @@ export default class AutomateClient extends APIClient {
 
   updateBuild(
     id: string,
-    options: Omit<FetchOptions<operations["updateAutomateBuild"]>, "params">
+    body: operations["updateAutomateBuild"]["requestBody"]["content"]["application/json"],
+    options?: Omit<FetchOptions<operations["updateAutomateBuild"]>, "params" | "body">
   ) {
     return this.makePutRequest("/automate/builds/{buildId}.json", {
       ...options,
+      body,
       params: {
         path: {
           buildId: id,
         },
       },
-    });
+    }).then((data) => data.automation_build ?? data);
   }
 
   getSessions(
