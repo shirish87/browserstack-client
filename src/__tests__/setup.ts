@@ -13,6 +13,10 @@ export interface BrowserStackTestContext {
   screenshots: {
     client: BrowserStack.ScreenshotsClient;
   };
+  appAutomate: {
+    client: BrowserStack.AppAutomateClient;
+    randomMediaId(): Promise<string>;
+  };
 }
 
 beforeEach<BrowserStackTestContext>((context) => {
@@ -23,6 +27,7 @@ beforeEach<BrowserStackTestContext>((context) => {
 
   const automate = new BrowserStack.AutomateClient(options);
   const screenshots = new BrowserStack.ScreenshotsClient(options);
+  const appAutomate = new BrowserStack.AppAutomateClient(options);
 
   const randomProjectId = async () => {
     const projects = await automate.getProjects();
@@ -67,6 +72,16 @@ beforeEach<BrowserStackTestContext>((context) => {
     },
     screenshots: {
       client: screenshots,
+    },
+    appAutomate: {
+      client: appAutomate,
+      randomMediaId: async () => {
+        const files = await appAutomate.getMediaFiles();
+        assert(Array.isArray(files) && files.length > 0, "No media found");
+
+        const mediaItem = files[Math.floor(Math.random() * files.length)];
+        return mediaItem.media_id;
+      },
     },
   });
 });

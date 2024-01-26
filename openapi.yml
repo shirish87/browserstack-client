@@ -1504,6 +1504,162 @@ paths:
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
 
+  # App Automate API
+  /app-automate/upload-media:
+    post:
+      summary: Upload a media file
+      description: Upload a media file you want to use in your tests
+      operationId: uploadAppAutomateMediaFile
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Path to the media file on your machine. Note: You can upload up to 10 media files on the BrowserStack server. By default, we delete the uploaded files after 30 days from the date of upload."
+                custom_id:
+                  type: string
+                  description: "Custom ID for the media file. This ID is used to specify the media files to be used in your tests."
+                  example: "media_1"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppAutomateMediaFile"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/recent_media_files:
+    get:
+      summary: Fetches list of uploaded media files
+      description: Fetches list of recently uploaded media files
+      operationId: getAppAutomateMediaFiles
+      parameters:
+        - name: customID
+          in: query
+          description: "Filter recently uploaded media files by custom ID."
+          required: false
+          schema:
+            type: string
+            example: "media_1"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/AppAutomateMediaFile"
+                  - type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/recent_group_media:
+    get:
+      summary: Fetches list of uploaded media files for the entire group
+      description: Fetches list of recently uploaded media files for the entire group
+      operationId: getAppAutomateGroupMediaFiles
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/AppAutomateMediaFile"
+                  - type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/custom_media/delete/{mediaId}:
+    delete:
+      summary: Fetches list of uploaded media files for the entire group
+      description: Fetches list of recently uploaded media files for the entire group
+      operationId: deleteAppAutomateMediaFile
+      parameters:
+        - name: mediaId
+          in: path
+          description: "ID of your media file"
+          required: true
+          schema:
+            type: string
+            example: "90c7a8h8dc82308108734e9a46c24d8f01de12881"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success]
+                properties:
+                  success:
+                    type: boolean
+                    description: "Indicates whether deletion was success or a failure."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+
+
+
 
 components:
   schemas:
@@ -2016,6 +2172,35 @@ components:
           type: string
           description: "Media upload timestamp."
           example: "2021-10-13T10:30:00.000Z"
+
+    AppAutomateMediaFile:
+      type: object
+      required: [media_id, media_url]
+      properties:
+        media_id:
+          type: string
+          description: "Unique ID returned on successful upload of your media file on BrowserStack."
+          example: "90c7a8h8dc82308108734e9a46c24d8f01de12881"
+        media_url:
+          type: string
+          description: "Unique identifier returned upon successful upload of your media file on BrowserStack. This value is used to specify the media files to be used in your tests."
+          example: "media://90c7a8h8dc82308108734e9a46c24d8f01de12881"
+        media_name:
+          type: string
+          description: "Name of the media file uploaded."
+          example: "media.jpg"
+        uploaded_at:
+          type: string
+          description: "Timestamp of the media file upload."
+          example: "2021-09-30T10:00:00.000Z"
+        custom_id:
+          type: string
+          description: "Custom ID of the media file uploaded. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100."
+          example: "media_1"
+        shareable_id:
+          type: string
+          description: "Shareable ID allows members of other teams to use the media files in their tests."
+          example: "steve/SampleMedia"
 
     NewWorker:
       allOf:
