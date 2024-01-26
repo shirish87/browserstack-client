@@ -90,6 +90,22 @@ export class APIClient {
     return res.data;
   }
 
+  protected async makeCloudGetRequest<P extends PathsWithMethod<paths, "get">>(
+    path: P,
+    ...init: HasRequiredKeys<
+      FetchOptions<FilterKeys<paths[P], "get">>
+    > extends never
+      ? [(FetchOptions<FilterKeys<paths[P], "get">> | undefined)?]
+      : [FetchOptions<FilterKeys<paths[P], "get">>]
+  ) {
+    const res = await this.sdkCloud.GET(path, ...init);
+    if (res.error || !res.data) {
+      throw new Error(`Error fetching ${path}: ${res.error}`);
+    }
+
+    return res.data;
+  }
+
   protected async makeCloudPostRequest<
     P extends PathsWithMethod<paths, "post">
   >(

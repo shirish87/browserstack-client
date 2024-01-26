@@ -910,7 +910,7 @@ paths:
       description: >-
         Set the status for a session or update the name of the session. You can mark test status
         as passed or failed along with a reason.
-      operationId: updateSession
+      operationId: updateAutomateSession
       parameters:
         - name: sessionId
           in: path
@@ -920,6 +920,7 @@ paths:
             type: string
             example: "4207442b2b0567368956dba064c22a3235a76214"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -953,6 +954,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [automation_session]
                 properties:
                   automation_session:
                     $ref: '#/components/schemas/AutomateSession'
@@ -1289,62 +1291,12 @@ paths:
         "200":
           description: Successful operation
           content:
-            application/gzip:
-              schema:
-                type: string
-                format: binary
-                description: "Telemetry Logs captures the Selenium Telemetry Logs for your test session and downloads it in a compressed file."
-
-        "400":
-          $ref: '#/components/schemas/400.BadRequest'
-        "401":
-          $ref: '#/components/schemas/401.Unauthorized'
-        "404":
-          $ref: '#/components/schemas/404.NotFound'
-        "422":
-          $ref: '#/components/schemas/422.UnprocessableEntity'
-        "500":
-          $ref: '#/components/schemas/5xx.InternalServerError'
-
-    post:
-      summary: Upload telemetry logs for your build.
-      description: Upload telemetry logs for your build.
-      operationId: uploadAutomateTelemetryLogs
-      parameters:
-        - name: sessionId
-          in: path
-          description: "ID of your session"
-          required: true
-          schema:
-            type: string
-            example: 26bb15875fc2847e08cab1eb25ac4f4ffc7b560e
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-                  description: "Path to the terminal log file on your machine. The max allowed file size is 2MB"
-
-      responses:
-        "200":
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    description: "Status of terminal log upload."
-                    example: "success"
-                  message:
-                    type: string
-                    description: "Message indicating the deletion of the builds"
-                    example: "The following build(s) were deleted successfully: 83078c39baf5c12cbbfcbd26a788d05ddfad626c,55e9782d749f601d09571023f56a8f0101929428."
+            application/octet-stream: {}
+            # application/gzip:
+            #   schema:
+            #     type: string
+            #     format: binary
+            #     description: "Telemetry Logs captures the Selenium Telemetry Logs for your test session and downloads it in a compressed file."
 
         "400":
           $ref: '#/components/schemas/400.BadRequest'

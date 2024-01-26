@@ -183,6 +183,25 @@ export default class AutomateClient extends APIClient {
     }).then((data) => data.automation_session);
   }
 
+  updateSession(
+    sessionId: string,
+    body: operations["updateAutomateSession"]["requestBody"]["content"]["application/json"],
+    options?: Omit<
+      FetchOptions<operations["updateAutomateSession"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makePutRequest("/automate/sessions/{sessionId}.json", {
+      ...options,
+      body,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+    }).then((data) => data.automation_session);
+  }
+
   deleteSession(
     sessionId: string,
     options?: Omit<FetchOptions<operations["deleteAutomateSession"]>, "params">
@@ -221,6 +240,7 @@ export default class AutomateClient extends APIClient {
       "params" | "body"
     >
   ) {
+    // makePostRequest produces a non-JSON response
     return this.makeCloudPostRequest("/automate/builds/{buildId}/terminallogs", {
       ...options,
       body,
@@ -247,6 +267,7 @@ export default class AutomateClient extends APIClient {
       "params" | "body"
     >
   ) {
+    // makePostRequest produces a non-JSON response
     return this.makeCloudPostRequest("/automate/sessions/{sessionId}/terminallogs", {
       ...options,
       body,
@@ -294,4 +315,77 @@ export default class AutomateClient extends APIClient {
       },
     });
   }
+
+  getSessionConsoleLogs(
+    sessionId: string,
+    options?: Omit<
+      FetchOptions<operations["getAutomateSessionConsoleLogs"]>,
+      "params"
+    >
+  ) {
+    return this.makeGetRequest("/automate/sessions/{sessionId}/consolelogs", {
+      ...options,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+      parseAs: "text",
+    });
+  }
+
+  getSessionSeleniumLogs(
+    sessionId: string,
+    options?: Omit<
+      FetchOptions<operations["getAutomateSessionSeleniumLogs"]>,
+      "params"
+    >
+  ) {
+    // makeGetRequest produces a non-JSON response
+    return this.makeCloudGetRequest("/automate/sessions/{sessionId}/seleniumlogs", {
+      ...options,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+      parseAs: "text",
+    });
+  }
+
+  getSessionAppiumLogs(
+    sessionId: string,
+    options?: Omit<
+      FetchOptions<operations["getAutomateSessionAppiumLogs"]>,
+      "params"
+    >
+  ) {
+    return this.makeGetRequest("/automate/sessions/{sessionId}/appiumlogs", {
+      ...options,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+      parseAs: "text",
+    });
+  }
+
+  getSessionTelemetryLogs(
+    sessionId: string,
+    options?: Omit<
+      FetchOptions<operations["getAutomateSessionTelemetryLogs"]>,
+      "params"
+    >
+  ) {
+    return this.makeGetRequest("/automate/sessions/{sessionId}/telemetrylogs", {
+      ...options,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+    });
+  }
+
 }
