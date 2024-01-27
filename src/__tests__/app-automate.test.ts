@@ -25,15 +25,9 @@ describe("AppAutomateClient", () => {
     }) => {
       const data = await client.getMediaFiles();
       expect(data).toBeDefined();
-
-      if (Array.isArray(data)) {
-        expect(data).toBeInstanceOf(Array);
-        expect(data.length).toBeGreaterThan(0);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateMediaFile"][]>();
-      } else {
-        expect(data.message).toBeDefined();
-        expectTypeOf(data.message).toMatchTypeOf<string>();
-      }
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateMediaFile"][]>();
     });
 
     test<BrowserStackTestContext>("getMediaFilesByCustomId", async ({
@@ -41,16 +35,10 @@ describe("AppAutomateClient", () => {
     }) => {
       const data = await client.getMediaFilesByCustomId("terminal-logs");
       expect(data).toBeDefined();
-
-      if (Array.isArray(data)) {
-        expect(data).toBeInstanceOf(Array);
-        expect(data.length).toBeGreaterThan(0);
-        expect(data[0].custom_id).toEqual("terminal-logs");
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateMediaFile"][]>();
-      } else {
-        expect(data.message).toBeDefined();
-        expectTypeOf(data.message).toMatchTypeOf<string>();
-      }
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expect(data[0].custom_id).toEqual("terminal-logs");
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateMediaFile"][]>();
     });
 
     test<BrowserStackTestContext>("getGroupMediaFiles", async ({
@@ -58,15 +46,9 @@ describe("AppAutomateClient", () => {
     }) => {
       const data = await client.getGroupMediaFiles();
       expect(data).toBeDefined();
-
-      if (Array.isArray(data)) {
-        expect(data).toBeInstanceOf(Array);
-        expect(data.length).toBeGreaterThan(0);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateMediaFile"][]>();
-      } else {
-        expect(data.message).toBeDefined();
-        expectTypeOf(data.message).toMatchTypeOf<string>();
-      }
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateMediaFile"][]>();
     });
 
     test<BrowserStackTestContext>("deleteMediaFile", async ({
@@ -81,12 +63,12 @@ describe("AppAutomateClient", () => {
     });
   });
 
-  describe("Apps", () => {
+  describe("Appium Apps", () => {
 
     test<BrowserStackTestContext>("uploadApp", async ({
       appAutomate: { client },
     }) => {
-      const data = await client.uploadApp({
+      const data = await client.uploadAppiumApp({
         url: "https://github.com/markushi/android-ui/raw/master/example.apk",
         filename: "example.apk",
         custom_id: "example-app",
@@ -100,61 +82,188 @@ describe("AppAutomateClient", () => {
     test<BrowserStackTestContext>("getApps", async ({
       appAutomate: { client },
     }) => {
-      const data = await client.getApps();
+      const data = await client.getAppiumApps();
       expect(data).toBeDefined();
-
-      if (Array.isArray(data)) {
-        expect(data).toBeInstanceOf(Array);
-        expect(data.length).toBeGreaterThan(0);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
-      } else {
-        expect(data.message).toBeDefined();
-        expectTypeOf(data.message).toMatchTypeOf<string>();
-      }
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
     });
 
     test<BrowserStackTestContext>("getAppsByCustomId", async ({
       appAutomate: { client },
     }) => {
-      const data = await client.getAppsByCustomId("example-app");
+      const data = await client.getAppiumAppsByCustomId("example-app");
       expect(data).toBeDefined();
-
-      if (Array.isArray(data)) {
-        expect(data).toBeInstanceOf(Array);
-        expect(data.length).toBeGreaterThan(0);
-        expect(data[0].custom_id).toEqual("example-app");
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
-      } else {
-        expect(data.message).toBeDefined();
-        expectTypeOf(data.message).toMatchTypeOf<string>();
-      }
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expect(data[0].custom_id).toEqual("example-app");
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
     });
 
     test<BrowserStackTestContext>("getGroupApps", async ({
       appAutomate: { client },
     }) => {
-      const data = await client.getGroupApps();
+      const data = await client.getAppiumGroupApps();
       expect(data).toBeDefined();
-
-      if (Array.isArray(data)) {
-        expect(data).toBeInstanceOf(Array);
-        expect(data.length).toBeGreaterThan(0);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
-      } else {
-        expect(data.message).toBeDefined();
-        expectTypeOf(data.message).toMatchTypeOf<string>();
-      }
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
     });
 
     test<BrowserStackTestContext>("deleteApp", async ({
-      appAutomate: { client, randomAppId },
+      appAutomate: { client, randomAppiumAppId: randomAppId },
     }) => {
-      const mediaId = await randomAppId();
-      const data = await client.deleteApp(mediaId);
+      const appId = await randomAppId();
+      const data = await client.deleteAppiumApp(appId);
       expect(data).toBeDefined();
       expect(data.success).toBeDefined();
       expect(data.success).toBe(true);
       expectTypeOf(data.success).toMatchTypeOf<boolean>();
+    });
+  });
+
+  describe("Flutter Apps", () => {
+
+    test<BrowserStackTestContext>("uploadFlutterApp", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.uploadFlutterApp({
+        url: "https://github.com/TheAlphamerc/flutter_ecommerce_app/releases/download/v1.0.0/app-release.apk",
+        filename: "example.apk",
+        custom_id: "example-app",
+      });
+
+      expect(data).toBeDefined();
+      expect(data.app_url).toBeDefined();
+      expectTypeOf(data.app_url).toMatchTypeOf<string>();
+    });
+
+    test<BrowserStackTestContext>("getFlutterApps", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.getFlutterApps();
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
+    });
+
+    test<BrowserStackTestContext>("getAppsByCustomId", async ({
+      appAutomate: { client, randomFlutterAppId },
+    }) => {
+      const appId = await randomFlutterAppId();
+      const data = await client.getFlutterApp(appId);
+      expect(data).toBeDefined();
+      expect(data.custom_id).toEqual("example-app");
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
+    });
+
+    test<BrowserStackTestContext>("deleteApp", async ({
+      appAutomate: { client, randomFlutterAppId },
+    }) => {
+      const appId = await randomFlutterAppId();
+      const data = await client.deleteFlutterApp(appId);
+      expect(data).toBeDefined();
+      expect(data.success).toBeDefined();
+      expect(data.success.message).toBeDefined();
+      expectTypeOf(data.success.message).toMatchTypeOf<string>();
+    });
+  });
+
+  describe("Espresso Apps", () => {
+
+    test<BrowserStackTestContext>("uploadEspressoApp", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.uploadEspressoApp({
+        url: "https://github.com/TheAlphamerc/flutter_ecommerce_app/releases/download/v1.0.0/app-release.apk",
+        filename: "example.apk",
+        custom_id: "example-app",
+      });
+
+      expect(data).toBeDefined();
+      expect(data.app_url).toBeDefined();
+      expectTypeOf(data.app_url).toMatchTypeOf<string>();
+    });
+
+    test<BrowserStackTestContext>("getEspressoApps", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.getEspressoApps();
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
+    });
+
+    test<BrowserStackTestContext>("getAppsByCustomId", async ({
+      appAutomate: { client, randomEspressoAppId },
+    }) => {
+      const appId = await randomEspressoAppId();
+      const data = await client.getEspressoApp(appId);
+      expect(data).toBeDefined();
+      expect(data.custom_id).toEqual("example-app");
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
+    });
+
+    test<BrowserStackTestContext>("deleteApp", async ({
+      appAutomate: { client, randomEspressoAppId },
+    }) => {
+      const appId = await randomEspressoAppId();
+      const data = await client.deleteEspressoApp(appId);
+      expect(data).toBeDefined();
+      expect(data.success).toBeDefined();
+      expect(data.success.message).toBeDefined();
+      expectTypeOf(data.success.message).toMatchTypeOf<string>();
+    });
+  });
+
+  describe.skip("XCUITest Apps", () => {
+
+    test<BrowserStackTestContext>("uploadXCUITestApp", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.uploadXCUITestApp({
+        // [BROWSERSTACK_INVALID_XCUI_APP] Invalid XCUI App: Please upload a valid IPA file for XCUI App.
+        url: "https://github.com/TheAlphamerc/flutter_ecommerce_app/releases/download/v1.0.0/app-release.apk",
+        filename: "example.apk",
+        custom_id: "example-app",
+      });
+
+      expect(data).toBeDefined();
+      expect(data.app_url).toBeDefined();
+      expectTypeOf(data.app_url).toMatchTypeOf<string>();
+    });
+
+    test<BrowserStackTestContext>("getXCUITestApps", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.getXCUITestApps();
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
+    });
+
+    test<BrowserStackTestContext>("getAppsByCustomId", async ({
+      appAutomate: { client, randomXCUITestAppId },
+    }) => {
+      const appId = await randomXCUITestAppId();
+      const data = await client.getXCUITestApp(appId);
+      expect(data).toBeDefined();
+      expect(data.custom_id).toEqual("example-app");
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
+    });
+
+    test<BrowserStackTestContext>("deleteApp", async ({
+      appAutomate: { client, randomXCUITestAppId },
+    }) => {
+      const appId = await randomXCUITestAppId();
+      const data = await client.deleteXCUITestApp(appId);
+      expect(data).toBeDefined();
+      expect(data.success).toBeDefined();
+      expect(data.success.message).toBeDefined();
+      expectTypeOf(data.success.message).toMatchTypeOf<string>();
     });
   });
 });

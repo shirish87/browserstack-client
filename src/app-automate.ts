@@ -38,7 +38,10 @@ export default class AppAutomateClient extends APIClient {
   getMediaFiles(
     options?: FetchOptions<operations["getAppAutomateMediaFiles"]>
   ) {
-    return this.makeGetRequest("/app-automate/recent_media_files", options);
+    return this.makeGetRequest(
+      "/app-automate/recent_media_files",
+      options
+    ).then((data) => ("message" in data ? [] : data));
   }
 
   getMediaFilesByCustomId(
@@ -52,13 +55,16 @@ export default class AppAutomateClient extends APIClient {
           customId,
         },
       },
-    });
+    }).then((data) => ("message" in data ? [] : data));
   }
 
   getGroupMediaFiles(
     options?: FetchOptions<operations["getAppAutomateGroupMediaFiles"]>
   ) {
-    return this.makeGetRequest("/app-automate/recent_group_media", options);
+    return this.makeGetRequest(
+      "/app-automate/recent_group_media",
+      options
+    ).then((data) => ("message" in data ? [] : data));
   }
 
   deleteMediaFile(
@@ -78,7 +84,7 @@ export default class AppAutomateClient extends APIClient {
     );
   }
 
-  uploadApp(
+  uploadAppiumApp(
     body: operations["uploadAppAutomateApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
@@ -92,7 +98,7 @@ export default class AppAutomateClient extends APIClient {
       body,
       bodySerializer: () => {
         const formData = new FormData();
-        if ('file' in body) {
+        if ("file" in body) {
           formData.append("file", body.file, body.filename);
         } else {
           formData.append("url", body.url);
@@ -107,13 +113,13 @@ export default class AppAutomateClient extends APIClient {
     });
   }
 
-  getApps(
-    options?: FetchOptions<operations["getAppAutomateApps"]>
-  ) {
-    return this.makeGetRequest("/app-automate/recent_apps", options);
+  getAppiumApps(options?: FetchOptions<operations["getAppAutomateApps"]>) {
+    return this.makeGetRequest("/app-automate/recent_apps", options).then(
+      (data) => ("message" in data ? [] : data)
+    );
   }
 
-  getAppsByCustomId(
+  getAppiumAppsByCustomId(
     customId: string,
     options?: FetchOptions<operations["getAppAutomateAppsByCustomId"]>
   ) {
@@ -124,21 +130,245 @@ export default class AppAutomateClient extends APIClient {
           customId,
         },
       },
-    });
+    }).then((data) => ("message" in data ? [] : data));
   }
 
-  getGroupApps(
+  getAppiumGroupApps(
     options?: FetchOptions<operations["getAppAutomateGroupApps"]>
   ) {
-    return this.makeGetRequest("/app-automate/recent_group_apps", options);
+    return this.makeGetRequest("/app-automate/recent_group_apps", options).then(
+      (data) => ("message" in data ? [] : data)
+    );
   }
 
-  deleteApp(
+  deleteAppiumApp(
     appId: string,
     options?: FetchOptions<operations["deleteAppAutomateApp"]>
   ) {
+    return this.makeDeleteRequest("/app-automate/app/delete/{appId}", {
+      ...options,
+      params: {
+        path: {
+          appId,
+        },
+      },
+    });
+  }
+
+  uploadFlutterApp(
+    body: operations["uploadAppAutomateFlutterApp"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: Omit<
+      FetchOptions<operations["uploadAppAutomateFlutterApp"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makePostRequest(
+      "/app-automate/flutter-integration-tests/v2/android/app",
+      {
+        ...options,
+        body,
+        bodySerializer: () => {
+          const formData = new FormData();
+          if ("file" in body) {
+            formData.append("file", body.file, body.filename);
+          } else {
+            formData.append("url", body.url);
+          }
+
+          if (body.custom_id) {
+            formData.append("custom_id", body.custom_id);
+          }
+
+          return formData;
+        },
+      }
+    );
+  }
+
+  getFlutterApps(
+    options?: FetchOptions<operations["getAppAutomateFlutterApps"]>
+  ) {
+    return this.makeGetRequest(
+      "/app-automate/flutter-integration-tests/v2/android/apps",
+      options
+    ).then((data) => ("apps" in data ? data.apps : []));
+  }
+
+  getFlutterApp(
+    appId: string,
+    options?: FetchOptions<operations["getAppAutomateFlutterApp"]>
+  ) {
+    return this.makeGetRequest(
+      "/app-automate/flutter-integration-tests/v2/android/apps/{appId}",
+      {
+        ...options,
+        params: {
+          path: {
+            appId,
+          },
+        },
+      }
+    ).then((data) => data.app);
+  }
+
+  deleteFlutterApp(
+    appId: string,
+    options?: FetchOptions<operations["deleteAppAutomateFlutterApp"]>
+  ) {
     return this.makeDeleteRequest(
-      "/app-automate/app/delete/{appId}",
+      "/app-automate/flutter-integration-tests/v2/android/apps/{appId}",
+      {
+        ...options,
+        params: {
+          path: {
+            appId,
+          },
+        },
+      }
+    );
+  }
+
+  uploadEspressoApp(
+    body: operations["uploadAppAutomateEspressoApp"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: Omit<
+      FetchOptions<operations["uploadAppAutomateEspressoApp"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makePostRequest(
+      "/app-automate/espresso/v2/app",
+      {
+        ...options,
+        body,
+        bodySerializer: () => {
+          const formData = new FormData();
+          if ("file" in body) {
+            formData.append("file", body.file, body.filename);
+          } else {
+            formData.append("url", body.url);
+          }
+
+          if (body.custom_id) {
+            formData.append("custom_id", body.custom_id);
+          }
+
+          return formData;
+        },
+      }
+    );
+  }
+
+  getEspressoApps(
+    options?: FetchOptions<operations["getAppAutomateEspressoApps"]>
+  ) {
+    return this.makeGetRequest(
+      "/app-automate/espresso/v2/apps",
+      options
+    ).then((data) => ("apps" in data ? data.apps : []));
+  }
+
+  getEspressoApp(
+    appId: string,
+    options?: FetchOptions<operations["getAppAutomateEspressoApp"]>
+  ) {
+    return this.makeGetRequest(
+      "/app-automate/espresso/v2/apps/{appId}",
+      {
+        ...options,
+        params: {
+          path: {
+            appId,
+          },
+        },
+      }
+    ).then((data) => data.app);
+  }
+
+  deleteEspressoApp(
+    appId: string,
+    options?: FetchOptions<operations["deleteAppAutomateEspressoApp"]>
+  ) {
+    return this.makeDeleteRequest(
+      "/app-automate/espresso/v2/apps/{appId}",
+      {
+        ...options,
+        params: {
+          path: {
+            appId,
+          },
+        },
+      }
+    );
+  }
+
+  uploadXCUITestApp(
+    body: operations["uploadAppAutomateXCUITestApp"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: Omit<
+      FetchOptions<operations["uploadAppAutomateXCUITestApp"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makePostRequest(
+      "/app-automate/xcuitest/v2/app",
+      {
+        ...options,
+        body,
+        bodySerializer: () => {
+          const formData = new FormData();
+          if ("file" in body) {
+            formData.append("file", body.file, body.filename);
+          } else {
+            formData.append("url", body.url);
+          }
+
+          if (body.custom_id) {
+            formData.append("custom_id", body.custom_id);
+          }
+
+          return formData;
+        },
+      }
+    );
+  }
+
+  getXCUITestApps(
+    options?: FetchOptions<operations["getAppAutomateXCUITestApps"]>
+  ) {
+    return this.makeGetRequest(
+      "/app-automate/xcuitest/v2/apps",
+      options
+    ).then((data) => ("apps" in data ? data.apps : []));
+  }
+
+  getXCUITestApp(
+    appId: string,
+    options?: FetchOptions<operations["getAppAutomateXCUITestApp"]>
+  ) {
+    return this.makeGetRequest(
+      "/app-automate/xcuitest/v2/apps/{appId}",
+      {
+        ...options,
+        params: {
+          path: {
+            appId,
+          },
+        },
+      }
+    ).then((data) => data.app);
+  }
+
+  deleteXCUITestApp(
+    appId: string,
+    options?: FetchOptions<operations["deleteAppAutomateXCUITestApp"]>
+  ) {
+    return this.makeDeleteRequest(
+      "/app-automate/xcuitest/v2/apps/{appId}",
       {
         ...options,
         params: {

@@ -16,7 +16,10 @@ export interface BrowserStackTestContext {
   appAutomate: {
     client: BrowserStack.AppAutomateClient;
     randomMediaId(): Promise<string>;
-    randomAppId(): Promise<string>;
+    randomAppiumAppId(): Promise<string>;
+    randomFlutterAppId(): Promise<string>;
+    randomEspressoAppId(): Promise<string>;
+    randomXCUITestAppId(): Promise<string>;
   };
 }
 
@@ -83,8 +86,29 @@ beforeEach<BrowserStackTestContext>((context) => {
         const mediaItem = files[Math.floor(Math.random() * files.length)];
         return mediaItem.media_id;
       },
-      randomAppId: async () => {
-        const apps = await appAutomate.getApps();
+      randomAppiumAppId: async () => {
+        const apps = await appAutomate.getAppiumApps();
+        assert(Array.isArray(apps) && apps.length > 0, "No apps found");
+
+        const app = apps[Math.floor(Math.random() * apps.length)];
+        return app.app_id;
+      },
+      randomFlutterAppId: async () => {
+        const apps = await appAutomate.getFlutterApps();
+        assert(Array.isArray(apps) && apps.length > 0, "No apps found");
+
+        const app = apps[Math.floor(Math.random() * apps.length)];
+        return app.app_id;
+      },
+      randomEspressoAppId: async () => {
+        const apps = await appAutomate.getEspressoApps();
+        assert(Array.isArray(apps) && apps.length > 0, "No apps found");
+
+        const app = apps[Math.floor(Math.random() * apps.length)];
+        return app.app_id;
+      },
+      randomXCUITestAppId: async () => {
+        const apps = await appAutomate.getXCUITestApps();
         assert(Array.isArray(apps) && apps.length > 0, "No apps found");
 
         const app = apps[Math.floor(Math.random() * apps.length)];

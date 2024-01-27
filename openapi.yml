@@ -1504,7 +1504,7 @@ paths:
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
 
-  # App Automate API
+  # App Automate APIs
   /app-automate/upload-media:
     post:
       summary: Upload a media file
@@ -1896,6 +1896,605 @@ paths:
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
 
+  /app-automate/flutter-integration-tests/v2/android/app:
+    post:
+      summary: Upload an app
+      description: Upload the application under test (AUT) for Flutter testing.
+      operationId: uploadAppAutomateFlutterApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    custom_id:
+                      type: string
+                      description: >-
+                        Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _.
+                        All other characters are ignored. Character limit is 100.
+                      example: "app_1"
+                - oneOf:
+                    - type: object
+                      required: [file]
+                      properties:
+                        file:
+                          type: string
+                          format: binary
+                          description: >-
+                            Path to the app file on your machine. Supported file formats are .apk and .aab files
+                            for Android and .ipa file for iOS
+                    - type: object
+                      required: [url]
+                      properties:
+                        url:
+                          type: string
+                          description: >-
+                            URL of the app file. Ensure that its a publicly accessible URL as BrowserStack
+                            will attempt to download the app from this location. Supported file formats are
+                            .apk and .aab files for Android and .ipa file for iOS
+                          example: "https://example.com/app.ipa"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppAutomateApp"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/flutter-integration-tests/v2/android/apps:
+    get:
+      summary: Fetches list of uploaded Flutter apps
+      description: Fetches list of recently uploaded Flutter apps
+      operationId: getAppAutomateFlutterApps
+      parameters:
+        - name: scope
+          in: query
+          description: "Show recent apps at a group level or user level."
+          schema:
+            type: string
+            enum: [group, user]
+            default: group
+        - name: custom_id
+          in: query
+          description: >-
+            Filter recently uploaded apps by custom ID. Accepted characters are
+            A-Z, a-z, 0-9, ., -, _. All other characters are ignored.
+            Character limit is 100.
+          schema:
+            type: string
+            example: "app_1"
+        - name: limit
+          in: query
+          description: "Number of recent apps to be fetched. Default is 10."
+          schema:
+            type: number
+            default: 10
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required: [apps]
+                    properties:
+                      apps:
+                        type: array
+                        items:
+                          type: object
+                          $ref: "#/components/schemas/AppAutomateApp"
+                  - type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/flutter-integration-tests/v2/android/apps/{appId}:
+    get:
+      summary: Get details of an uploaded Flutter app
+      description: Get details of an uploaded Flutter app
+      operationId: getAppAutomateFlutterApp
+      parameters:
+        - name: appId
+          in: path
+          description: "App ID of your app"
+          required: true
+          schema:
+            type: string
+            example: "e5b3d27df5d02c367b1469709525dc20da41e65b"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [app]
+                properties:
+                  app:
+                    type: object
+                    $ref: "#/components/schemas/AppAutomateApp"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    delete:
+      summary: Delete a Flutter app that was previously uploaded to BrowserStack
+      description: >-
+        Delete an app that was previously uploaded to BrowserStack.
+        Note that apps once deleted cannot be recovered.
+      operationId: deleteAppAutomateFlutterApp
+      parameters:
+        - name: appId
+          in: path
+          description: "ID of your uploaded app"
+          required: true
+          schema:
+            type: string
+            example: "c8ddcb5649a8280ca800075bfd8f151115bba6b3"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success]
+                properties:
+                  success:
+                    type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+                        description: "Indicates whether deletion was success or a failure."
+                        example: "App with url bs://231e820c35ee15b8438ec31df1fb689c03abd8e5 was deleted."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/espresso/v2/app:
+    post:
+      summary: Upload an app
+      description: Upload the application under test (AUT) for Espresso testing.
+      operationId: uploadAppAutomateEspressoApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    custom_id:
+                      type: string
+                      description: >-
+                        Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _.
+                        All other characters are ignored. Character limit is 100.
+                      example: "app_1"
+                - oneOf:
+                    - type: object
+                      required: [file]
+                      properties:
+                        file:
+                          type: string
+                          format: binary
+                          description: >-
+                            Path to the app file on your machine. Supported file formats are .apk and .aab files
+                            for Android and .ipa file for iOS
+                    - type: object
+                      required: [url]
+                      properties:
+                        url:
+                          type: string
+                          description: >-
+                            URL of the app file. Ensure that its a publicly accessible URL as BrowserStack
+                            will attempt to download the app from this location. Supported file formats are
+                            .apk and .aab files for Android and .ipa file for iOS
+                          example: "https://example.com/app.ipa"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppAutomateApp"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/espresso/v2/apps:
+    get:
+      summary: Fetches list of uploaded Espresso apps
+      description: Fetches list of recently uploaded Espresso apps
+      operationId: getAppAutomateEspressoApps
+      parameters:
+        - name: scope
+          in: query
+          description: "Show recent apps at a group level or user level."
+          schema:
+            type: string
+            enum: [group, user]
+            default: group
+        - name: custom_id
+          in: query
+          description: >-
+            Filter recently uploaded apps by custom ID. Accepted characters are
+            A-Z, a-z, 0-9, ., -, _. All other characters are ignored.
+            Character limit is 100.
+          schema:
+            type: string
+            example: "app_1"
+        - name: limit
+          in: query
+          description: "Number of recent apps to be fetched. Default is 10."
+          schema:
+            type: number
+            default: 10
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required: [apps]
+                    properties:
+                      apps:
+                        type: array
+                        items:
+                          type: object
+                          $ref: "#/components/schemas/AppAutomateApp"
+                  - type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/espresso/v2/apps/{appId}:
+    get:
+      summary: Get details of an uploaded Espresso app
+      description: Get details of an uploaded Espresso app
+      operationId: getAppAutomateEspressoApp
+      parameters:
+        - name: appId
+          in: path
+          description: "App ID of your app"
+          required: true
+          schema:
+            type: string
+            example: "e5b3d27df5d02c367b1469709525dc20da41e65b"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [app]
+                properties:
+                  app:
+                    type: object
+                    $ref: "#/components/schemas/AppAutomateApp"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    delete:
+      summary: Delete a Espresso app that was previously uploaded to BrowserStack
+      description: >-
+        Delete an app that was previously uploaded to BrowserStack.
+        Note that apps once deleted cannot be recovered.
+      operationId: deleteAppAutomateEspressoApp
+      parameters:
+        - name: appId
+          in: path
+          description: "ID of your uploaded app"
+          required: true
+          schema:
+            type: string
+            example: "c8ddcb5649a8280ca800075bfd8f151115bba6b3"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success]
+                properties:
+                  success:
+                    type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+                        description: "Indicates whether deletion was success or a failure."
+                        example: "App with url bs://231e820c35ee15b8438ec31df1fb689c03abd8e5 was deleted."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/xcuitest/v2/app:
+    post:
+      summary: Upload an app
+      description: Upload the application under test (AUT) for XCUITest testing.
+      operationId: uploadAppAutomateXCUITestApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    custom_id:
+                      type: string
+                      description: >-
+                        Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _.
+                        All other characters are ignored. Character limit is 100.
+                      example: "app_1"
+                - oneOf:
+                    - type: object
+                      required: [file]
+                      properties:
+                        file:
+                          type: string
+                          format: binary
+                          description: >-
+                            Path to the app file on your machine. Supported file formats are .apk and .aab files
+                            for Android and .ipa file for iOS
+                    - type: object
+                      required: [url]
+                      properties:
+                        url:
+                          type: string
+                          description: >-
+                            URL of the app file. Ensure that its a publicly accessible URL as BrowserStack
+                            will attempt to download the app from this location. Supported file formats are
+                            .apk and .aab files for Android and .ipa file for iOS
+                          example: "https://example.com/app.ipa"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppAutomateApp"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/xcuitest/v2/apps:
+    get:
+      summary: Fetches list of uploaded XCUITest apps
+      description: Fetches list of recently uploaded XCUITest apps
+      operationId: getAppAutomateXCUITestApps
+      parameters:
+        - name: scope
+          in: query
+          description: "Show recent apps at a group level or user level."
+          schema:
+            type: string
+            enum: [group, user]
+            default: group
+        - name: custom_id
+          in: query
+          description: >-
+            Filter recently uploaded apps by custom ID. Accepted characters are
+            A-Z, a-z, 0-9, ., -, _. All other characters are ignored.
+            Character limit is 100.
+          schema:
+            type: string
+            example: "app_1"
+        - name: limit
+          in: query
+          description: "Number of recent apps to be fetched. Default is 10."
+          schema:
+            type: number
+            default: 10
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required: [apps]
+                    properties:
+                      apps:
+                        type: array
+                        items:
+                          type: object
+                          $ref: "#/components/schemas/AppAutomateApp"
+                  - type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/xcuitest/v2/apps/{appId}:
+    get:
+      summary: Get details of an uploaded XCUITest app
+      description: Get details of an uploaded XCUITest app
+      operationId: getAppAutomateXCUITestApp
+      parameters:
+        - name: appId
+          in: path
+          description: "App ID of your app"
+          required: true
+          schema:
+            type: string
+            example: "e5b3d27df5d02c367b1469709525dc20da41e65b"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [app]
+                properties:
+                  app:
+                    type: object
+                    $ref: "#/components/schemas/AppAutomateApp"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    delete:
+      summary: Delete a XCUITest app that was previously uploaded to BrowserStack
+      description: >-
+        Delete an app that was previously uploaded to BrowserStack.
+        Note that apps once deleted cannot be recovered.
+      operationId: deleteAppAutomateXCUITestApp
+      parameters:
+        - name: appId
+          in: path
+          description: "ID of your uploaded app"
+          required: true
+          schema:
+            type: string
+            example: "c8ddcb5649a8280ca800075bfd8f151115bba6b3"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success]
+                properties:
+                  success:
+                    type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+                        description: "Indicates whether deletion was success or a failure."
+                        example: "App with url bs://231e820c35ee15b8438ec31df1fb689c03abd8e5 was deleted."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
 
 
 
