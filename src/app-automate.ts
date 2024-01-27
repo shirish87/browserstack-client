@@ -25,6 +25,11 @@ export default class AppAutomateClient extends APIClient {
       bodySerializer: () => {
         const formData = new FormData();
         formData.append("file", body.file, body.filename);
+
+        if (body.custom_id) {
+          formData.append("custom_id", body.custom_id);
+        }
+
         return formData;
       },
     });
@@ -34,6 +39,20 @@ export default class AppAutomateClient extends APIClient {
     options?: FetchOptions<operations["getAppAutomateMediaFiles"]>
   ) {
     return this.makeGetRequest("/app-automate/recent_media_files", options);
+  }
+
+  getMediaFilesByCustomId(
+    customId: string,
+    options?: FetchOptions<operations["getAppAutomateMediaFilesByCustomId"]>
+  ) {
+    return this.makeGetRequest("/app-automate/recent_media_files/{customId}", {
+      ...options,
+      params: {
+        path: {
+          customId,
+        },
+      },
+    });
   }
 
   getGroupMediaFiles(
@@ -53,6 +72,78 @@ export default class AppAutomateClient extends APIClient {
         params: {
           path: {
             mediaId,
+          },
+        },
+      }
+    );
+  }
+
+  uploadApp(
+    body: operations["uploadAppAutomateApp"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: Omit<
+      FetchOptions<operations["uploadAppAutomateApp"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makePostRequest("/app-automate/upload", {
+      ...options,
+      body,
+      bodySerializer: () => {
+        const formData = new FormData();
+        if ('file' in body) {
+          formData.append("file", body.file, body.filename);
+        } else {
+          formData.append("url", body.url);
+        }
+
+        if (body.custom_id) {
+          formData.append("custom_id", body.custom_id);
+        }
+
+        return formData;
+      },
+    });
+  }
+
+  getApps(
+    options?: FetchOptions<operations["getAppAutomateApps"]>
+  ) {
+    return this.makeGetRequest("/app-automate/recent_apps", options);
+  }
+
+  getAppsByCustomId(
+    customId: string,
+    options?: FetchOptions<operations["getAppAutomateAppsByCustomId"]>
+  ) {
+    return this.makeGetRequest("/app-automate/recent_apps/{customId}", {
+      ...options,
+      params: {
+        path: {
+          customId,
+        },
+      },
+    });
+  }
+
+  getGroupApps(
+    options?: FetchOptions<operations["getAppAutomateGroupApps"]>
+  ) {
+    return this.makeGetRequest("/app-automate/recent_group_apps", options);
+  }
+
+  deleteApp(
+    appId: string,
+    options?: FetchOptions<operations["deleteAppAutomateApp"]>
+  ) {
+    return this.makeDeleteRequest(
+      "/app-automate/app/delete/{appId}",
+      {
+        ...options,
+        params: {
+          path: {
+            appId,
           },
         },
       }

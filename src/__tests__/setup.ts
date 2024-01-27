@@ -16,6 +16,7 @@ export interface BrowserStackTestContext {
   appAutomate: {
     client: BrowserStack.AppAutomateClient;
     randomMediaId(): Promise<string>;
+    randomAppId(): Promise<string>;
   };
 }
 
@@ -81,6 +82,13 @@ beforeEach<BrowserStackTestContext>((context) => {
 
         const mediaItem = files[Math.floor(Math.random() * files.length)];
         return mediaItem.media_id;
+      },
+      randomAppId: async () => {
+        const apps = await appAutomate.getApps();
+        assert(Array.isArray(apps) && apps.length > 0, "No apps found");
+
+        const app = apps[Math.floor(Math.random() * apps.length)];
+        return app.app_id;
       },
     },
   });

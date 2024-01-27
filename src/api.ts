@@ -68,7 +68,7 @@ export class APIClient {
   ) {
     const res = await this.sdk.GET(path, ...init);
     if (res.error || !res.data) {
-      throw new Error(`Error fetching ${path}: ${res.error}`);
+      throw new Error(`Error: ${JSON.stringify(res.error)}`);
     }
 
     return res.data;
@@ -84,7 +84,7 @@ export class APIClient {
   ) {
     const res = await this.sdk.POST(path, ...init);
     if (res.error || !res.data) {
-      throw new Error(`Error fetching ${path}: ${res.error}`);
+      throw new Error(`Error: ${JSON.stringify(res.error)}`);
     }
 
     return res.data;
@@ -100,7 +100,7 @@ export class APIClient {
   ) {
     const res = await this.sdkCloud.GET(path, ...init);
     if (res.error || !res.data) {
-      throw new Error(`Error fetching ${path}: ${res.error}`);
+      throw new Error(`Error: ${JSON.stringify(res.error)}`);
     }
 
     return res.data;
@@ -116,9 +116,9 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "post">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "post">>]
   ) {
-    const res = await this.sdkCloud.POST(path, ...init);console.log(res.data ?? res.error);
+    const res = await this.sdkCloud.POST(path, ...init);
     if (res.error || !res.data) {
-      throw new Error(`Error fetching ${path}: ${res.error}`);
+      throw new Error(`Error: ${JSON.stringify(res.error)}`);
     }
 
     return res.data;
@@ -134,7 +134,7 @@ export class APIClient {
   ) {
     const res = await this.sdk.PUT(path, ...init);
     if (res.error || !res.data) {
-      throw new Error(`Error fetching ${path}: ${res.error}`);
+      throw new Error(`Error: ${JSON.stringify(res.error)}`);
     }
 
     return res.data;
@@ -150,7 +150,7 @@ export class APIClient {
   ) {
     const res = await this.sdk.PATCH(path, ...init);
     if (res.error || !res.data) {
-      throw new Error(`Error fetching ${path}: ${res.error}`);
+      throw new Error(`Error: ${JSON.stringify(res.error)}`);
     }
 
     return res.data;
@@ -166,7 +166,7 @@ export class APIClient {
   ) {
     const res = await this.sdk.DELETE(path, ...init);
     if (res.error || !res.data) {
-      throw new Error(`Error fetching ${path}: ${res.error}`);
+      throw new Error(`Error: ${JSON.stringify(res.error)}`);
     }
 
     return res.data;

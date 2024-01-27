@@ -1550,11 +1550,44 @@ paths:
       summary: Fetches list of uploaded media files
       description: Fetches list of recently uploaded media files
       operationId: getAppAutomateMediaFiles
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/AppAutomateMediaFile"
+                  - type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/recent_media_files/{customId}:
+    get:
+      summary: Fetches list of uploaded media files by custom ID
+      description: Fetches list of recently uploaded media files by custom ID
+      operationId: getAppAutomateMediaFilesByCustomId
       parameters:
-        - name: customID
-          in: query
+        - name: customId
+          in: path
           description: "Filter recently uploaded media files by custom ID."
-          required: false
+          required: true
           schema:
             type: string
             example: "media_1"
@@ -1657,6 +1690,211 @@ paths:
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
 
+  /app-automate/upload:
+    post:
+      summary: Upload an app
+      description: Upload the application under test (AUT) for Appium testing.
+      operationId: uploadAppAutomateApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    custom_id:
+                      type: string
+                      description: >-
+                        Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _.
+                        All other characters are ignored. Character limit is 100.
+                      example: "app_1"
+                - oneOf:
+                    - type: object
+                      required: [file]
+                      properties:
+                        file:
+                          type: string
+                          format: binary
+                          description: >-
+                            Path to the app file on your machine. Supported file formats are .apk and .aab files
+                            for Android and .ipa file for iOS
+                    - type: object
+                      required: [url]
+                      properties:
+                        url:
+                          type: string
+                          description: >-
+                            URL of the app file. Ensure that its a publicly accessible URL as BrowserStack
+                            will attempt to download the app from this location. Supported file formats are
+                            .apk and .aab files for Android and .ipa file for iOS
+                          example: "https://example.com/app.ipa"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppAutomateApp"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/recent_apps:
+    get:
+      summary: Fetches list of uploaded apps
+      description: Fetches list of recently uploaded apps
+      operationId: getAppAutomateApps
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/AppAutomateApp"
+                  - type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/recent_apps/{customId}:
+    get:
+      summary: Fetches list of uploaded apps by custom ID
+      description: Fetches list of uploaded apps by custom ID
+      operationId: getAppAutomateAppsByCustomId
+      parameters:
+        - name: customId
+          in: path
+          description: "Custom ID of your app"
+          required: true
+          schema:
+            type: string
+            example: "app_1"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/AppAutomateApp"
+                  - type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/recent_group_apps:
+    get:
+      summary: Fetches list of uploaded apps for the entire group
+      description: Fetches list of recently uploaded apps for the entire group
+      operationId: getAppAutomateGroupApps
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/AppAutomateApp"
+                  - type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/app/delete/{appId}:
+    delete:
+      summary: Delete an app that was previously uploaded to BrowserStack
+      description: >-
+        Delete an app that was previously uploaded to BrowserStack.
+        Note that apps once deleted cannot be recovered.
+      operationId: deleteAppAutomateApp
+      parameters:
+        - name: appId
+          in: path
+          description: "ID of your uploaded app"
+          required: true
+          schema:
+            type: string
+            example: "c8ddcb5649a8280ca800075bfd8f151115bba6b3"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success]
+                properties:
+                  success:
+                    type: boolean
+                    description: "Indicates whether deletion was success or a failure."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
 
 
 
@@ -2201,6 +2439,35 @@ components:
           type: string
           description: "Shareable ID allows members of other teams to use the media files in their tests."
           example: "steve/SampleMedia"
+
+    AppAutomateApp:
+      type: object
+      required: [app_url]
+      properties:
+        app_id:
+          type: string
+          description: "Unique ID returned on successful upload of your app on BrowserStack."
+          example: "90c7a8h8dc82308108734e9a46c24d8f01de12881"
+        app_url:
+          type: string
+          description: "Unique identifier returned upon successful upload of your app on BrowserStack. This value can be used later to specify the application under test in your Appium test scripts."
+          example: "media://90c7a8h8dc82308108734e9a46c24d8f01de12881"
+        app_name:
+          type: string
+          description: "Name of the media file uploaded."
+          example: "media.jpg"
+        uploaded_at:
+          type: string
+          description: "Timestamp of the media file upload."
+          example: "2021-09-30T10:00:00.000Z"
+        custom_id:
+          type: string
+          description: "Custom ID defined for the uploaded app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100."
+          example: "media_1"
+        shareable_id:
+          type: string
+          description: "Shareable ID allows other users in your organization to test an app you uploaded."
+          example: "steve/SampleApp"
 
     NewWorker:
       allOf:
