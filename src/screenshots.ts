@@ -14,4 +14,27 @@ export default class ScreenshotsClient extends APIClient {
     return this.makeGetRequest("/screenshots/browsers.json", options);
   }
 
+  createJob(
+    body: operations["createScreenshotsJob"]["requestBody"]["content"]["application/json"],
+    options?: FetchOptions<operations["createScreenshotsJob"]>
+  ) {
+    return this.makePostRequest("/screenshots", {
+      ...options,
+      body,
+    });
+  }
+
+  getJob(
+    jobId: string,
+    options?: FetchOptions<operations["getScreenshotsJob"]>
+  ) {
+    return this.makeGetRequest(`/screenshots/{jobId}.json`, {
+      ...options,
+      params: {
+        path: {
+          jobId,
+        },
+      },
+    });
+  }
 }

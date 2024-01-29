@@ -332,7 +332,7 @@ describe("AutomateClient", () => {
     });
   });
 
-  describe.only("Media Files", () => {
+  describe("Media Files", () => {
 
     test<BrowserStackTestContext>("uploadMediaFile", async ({
       automate: { client },

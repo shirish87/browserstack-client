@@ -1418,7 +1418,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
 
-  # Screenshots API
+  # Screenshots APIs
   /screenshots/browsers.json:
     get:
       summary: Fetches list of browsers
@@ -1449,6 +1449,7 @@ paths:
       description: Take a screenshot of a website on a particular browser
       operationId: createScreenshotsJob
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -1459,7 +1460,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NewScreenshotJob"
+                $ref: "#/components/schemas/NewScreenshotsJob"
 
         "400":
           $ref: '#/components/schemas/400.BadRequest'
@@ -1491,7 +1492,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ScreenshotJob"
+                $ref: "#/components/schemas/ScreenshotsJob"
 
         "400":
           $ref: '#/components/schemas/400.BadRequest'
@@ -3166,52 +3167,62 @@ components:
               example: ""
 
     NewScreenshot:
-      allOf:
-        - $ref: "#/components/schemas/Browser"
-        - type: object
-          required: [os, os_version, url]
-          properties:
-            os:
-              type: string
-              example: Windows
-            os_version:
-              type: string
-              example: "10"
-            device:
-              type: string
-              description: "Required if you want to test on a mobile device."
-              example: null
-            orientation:
-              type: string
-              enum: ["portrait", "landscape"]
-              description: "Screen orientation for a mobile device. Default: portrait"
-            url:
-              type: string
-              example: "https://nextjs-template.vercel.app/"
-            callback_url:
-              type: string
-              description: "Public URL to which the screenshot will be posted."
-            win_res:
-              type: string
-              description: "Sceen resolution of the Windows machine. Values: 1024x768, 1280x1024. Default: 1024x768"
-              example: "1024x768"
-            mac_res:
-              type: string
-              description: "Sceen resolution of the Mac machine. Values: 1024x768, 1280x960, 1280x1024, 1600x1200, 1920x1080. Default: 1024x768"
-              example: "1024x768"
-            quality:
-              type: string
-              enum: ["Compressed", "Original"]
-              description: "Quality of the screenshot. Default: Compressed"
-            local:
-              type: boolean
-              description: "Set to true if URL is local and a Local Testing connection has been set up. Default: false"
-            wait_time:
-              type: number
-              description: "Time in seconds to wait before taking the screenshot. Default: 5"
-              example: 5
+      type: object
+      required: [browsers, url]
+      properties:
+        browsers:
+          type: array
+          items:
+            type: object
+            required: [os, os_version]
+            properties:
+              browser:
+                type: string
+                example: Chrome
+              browser_version:
+                type: string
+                example: "80.0"
+              os:
+                type: string
+                example: Windows
+              os_version:
+                type: string
+                example: "10"
+              device:
+                type: string
+                description: "Required if you want to test on a mobile device."
+                example: null
+        orientation:
+          type: string
+          enum: ["portrait", "landscape"]
+          description: "Screen orientation for a mobile device. Default: portrait"
+        url:
+          type: string
+          example: "https://nextjs-template.vercel.app/"
+        callback_url:
+          type: string
+          description: "Public URL to which the screenshot will be posted."
+        win_res:
+          type: string
+          description: "Sceen resolution of the Windows machine. Values: 1024x768, 1280x1024. Default: 1024x768"
+          example: "1024x768"
+        mac_res:
+          type: string
+          description: "Sceen resolution of the Mac machine. Values: 1024x768, 1280x960, 1280x1024, 1600x1200, 1920x1080. Default: 1024x768"
+          example: "1024x768"
+        quality:
+          type: string
+          enum: ["Compressed", "Original"]
+          description: "Quality of the screenshot. Default: Compressed"
+        local:
+          type: boolean
+          description: "Set to true if URL is local and a Local Testing connection has been set up. Default: false"
+        wait_time:
+          type: number
+          description: "Time in seconds to wait before taking the screenshot. Default: 5"
+          example: 5
 
-    ScreenshotJobBase:
+    ScreenshotsJobBase:
       type: object
       properties:
         job_id:
@@ -3247,9 +3258,9 @@ components:
           items:
             $ref: "#/components/schemas/Screenshot"
 
-    NewScreenshotJob:
+    NewScreenshotsJob:
       allOf:
-        - $ref: "#/components/schemas/ScreenshotJobBase"
+        - $ref: "#/components/schemas/ScreenshotsJobBase"
         - type: object
           required: [job_id]
           properties:
@@ -3258,9 +3269,9 @@ components:
               description: "Unique identifier for the screenshot job."
               example: "4207442b2b0567368956dba064c22a3235a76214"
 
-    ScreenshotJob:
+    ScreenshotsJob:
       allOf:
-        - $ref: "#/components/schemas/ScreenshotJobBase"
+        - $ref: "#/components/schemas/ScreenshotsJobBase"
         - type: object
           required: [id]
           properties:
