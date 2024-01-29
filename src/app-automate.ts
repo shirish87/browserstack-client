@@ -3,7 +3,16 @@ import { BrowserStackError } from "@/error";
 import { operations } from "@/generated/openapi";
 import { FetchOptions } from "openapi-fetch";
 
+/**
+ * AppAutomateClient represents a client for interacting with the BrowserStack App Automate API.
+ * @see https://www.browserstack.com/app-automate/rest-api
+ * @public
+ */
 export class AppAutomateClient extends APIClient {
+  /**
+   * Constructs a new instance of the AppAutomateClient class.
+   * @param options - Optional configuration options for the client.
+   */
   constructor(options?: APIClientOptions) {
     super({
       ...options,
@@ -11,18 +20,39 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the plan information for App Automate.
+   * @param options - The fetch options for the request.
+   * @returns A promise that resolves with the plan information.
+   */
   getPlan(options?: FetchOptions<operations["getAppAutomatePlan"]>) {
     return this.makeGetRequest("/app-automate/plan.json", options);
   }
 
+  /**
+   * Retrieves the list of devices available for App Automate.
+   * @param options - The fetch options for the request.
+   * @returns A promise that resolves with the list of devices.
+   */
   getDevices(options?: FetchOptions<operations["getAppAutomateDevices"]>) {
     return this.makeGetRequest("/app-automate/devices.json", options);
   }
 
+  /**
+   * Retrieves the projects from the App Automate API.
+   * @param options - The fetch options for the API request.
+   * @returns A promise that resolves with the projects.
+   */
   getProjects(options?: FetchOptions<operations["getAppAutomateProjects"]>) {
     return this.makeGetRequest("/app-automate/projects.json", options);
   }
 
+  /**
+   * Retrieves a project by its ID.
+   * @param projectId The ID of the project to retrieve.
+   * @param options Additional options for the fetch request.
+   * @returns A promise that resolves to the retrieved project.
+   */
   getProject(projectId: number, options?: FetchOptions<operations["getAppAutomateProject"]>) {
     return this.makeGetRequest("/app-automate/projects/{projectId}.json", {
       ...options,
@@ -34,6 +64,14 @@ export class AppAutomateClient extends APIClient {
     }).then((data) => data.project);
   }
 
+  /**
+   * Updates a project in the App Automate API.
+   *
+   * @param projectId - The ID of the project to update.
+   * @param body - The request body containing the updated project data.
+   * @param options - Additional options for the request.
+   * @returns A promise that resolves with the updated project data.
+   */
   updateProject(
     projectId: number,
     body: operations["updateAppAutomateProject"]["requestBody"]["content"]["application/json"],
@@ -53,6 +91,12 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Deletes a project.
+   * @param projectId The ID of the project to delete.
+   * @param options The fetch options for the delete request.
+   * @returns A promise that resolves when the project is successfully deleted.
+   */
   deleteProject(
     projectId: number,
     options?: FetchOptions<operations["deleteAppAutomateProject"]>
@@ -67,6 +111,12 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the badge key for a specific project.
+   * @param projectId The ID of the project.
+   * @param options Additional options for the fetch request.
+   * @returns A promise that resolves to the badge key.
+   */
   getBadgeKey(
     projectId: number,
     options?: Omit<
@@ -85,6 +135,13 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves a list of builds from the App Automate API.
+   *
+   * @param query - Optional query parameters for filtering the builds.
+   * @param options - Optional fetch options for the API request.
+   * @returns A promise that resolves to an array of automation builds.
+   */
   getBuilds(
     query?: operations["getAppAutomateBuilds"]["parameters"]["query"],
     options?: FetchOptions<operations["getAppAutomateBuilds"]>
@@ -97,6 +154,12 @@ export class AppAutomateClient extends APIClient {
     }).then((data) => data.map((build) => build.automation_build));
   }
 
+  /**
+   * Retrieves information about a specific build.
+   * @param id - The ID of the build to retrieve.
+   * @param options - Additional options for the fetch request.
+   * @returns A promise that resolves to the build information, including the build details and associated sessions.
+   */
   getBuild(
     id: string,
     options?: Omit<FetchOptions<operations["getAppAutomateBuild"]>, "params">
@@ -116,6 +179,15 @@ export class AppAutomateClient extends APIClient {
     }));
   }
 
+  /**
+   * Updates a build in the App Automate API.
+   *
+   * @param id - The ID of the build to update.
+   * @param body - The request body containing the updated build information.
+   * @param options - Additional options for the request.
+   * @returns A Promise that resolves to the updated build.
+   * @throws {BrowserStackError} If an error occurs during the update.
+   */
   updateBuild(
     id: string,
     body: operations["updateAppAutomateBuild"]["requestBody"]["content"]["application/json"],
@@ -141,6 +213,12 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Deletes a build with the specified ID.
+   * @param id The ID of the build to delete.
+   * @param options Additional options for the delete request.
+   * @returns A promise that resolves when the build is successfully deleted.
+   */
   deleteBuild(
     id: string,
     options?: Omit<FetchOptions<operations["deleteAppAutomateBuild"]>, "params">
@@ -155,6 +233,13 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Uploads terminal logs for a specific build.
+   * @param buildId - The ID of the build.
+   * @param body - The request body containing the logs file and its filename.
+   * @param options - Additional options for the request.
+   * @returns A promise that resolves to the response of the request.
+   */
   uploadBuildTerminalLogs(
     buildId: string,
     body: operations["uploadAppAutomateBuildTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
@@ -182,6 +267,13 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Uploads terminal logs for a session.
+   * @param sessionId - The ID of the session.
+   * @param body - The request body containing the logs file and filename.
+   * @param options - Additional options for the request.
+   * @returns A promise that resolves to the response of the request.
+   */
   uploadSessionTerminalLogs(
     sessionId: string,
     body: operations["uploadAppAutomateSessionTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
@@ -209,6 +301,12 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the session details for a given session ID.
+   * @param sessionId - The ID of the session to retrieve.
+   * @param options - Additional options for the fetch request.
+   * @returns A promise that resolves to the automation session data.
+   */
   getSession(
     sessionId: string,
     options?: Omit<FetchOptions<operations["getAppAutomateSession"]>, "params">
@@ -223,6 +321,14 @@ export class AppAutomateClient extends APIClient {
     }).then((data) => data.automation_session);
   }
 
+  /**
+   * Updates the status of a session in the App Automate API.
+   *
+   * @param sessionId - The ID of the session to update.
+   * @param body - The request body containing the updated session status.
+   * @param options - Additional options for the API request.
+   * @returns A Promise that resolves to the updated automation session.
+   */
   updateSessionStatus(
     sessionId: string,
     body: operations["updateAppAutomateSession"]["requestBody"]["content"]["application/json"],
@@ -242,6 +348,12 @@ export class AppAutomateClient extends APIClient {
     }).then((data) => data.automation_session);
   }
 
+  /**
+   * Deletes a session in the App Automate API.
+   * @param sessionId - The ID of the session to delete.
+   * @param options - Additional options for the delete request.
+   * @returns A promise that resolves when the session is successfully deleted.
+   */
   deleteSession(
     sessionId: string,
     options?: Omit<FetchOptions<operations["deleteAppAutomateSession"]>, "params">
@@ -256,6 +368,14 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the session logs for a specific build and session.
+   *
+   * @param buildId - The ID of the build.
+   * @param sessionId - The ID of the session.
+   * @param options - Additional options for the request.
+   * @returns A Promise that resolves to the session logs.
+   */
   getSessionLogs(
     buildId: string,
     sessionId: string,
@@ -273,6 +393,14 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the device logs for a specific session.
+   *
+   * @param buildId - The ID of the build.
+   * @param sessionId - The ID of the session.
+   * @param options - Additional options for the request.
+   * @returns A Promise that resolves with the device logs.
+   */
   getSessionDeviceLogs(
     buildId: string,
     sessionId: string,
@@ -290,6 +418,14 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the Appium logs for a specific session.
+   *
+   * @param buildId - The ID of the build.
+   * @param sessionId - The ID of the session.
+   * @param options - Additional options for the request.
+   * @returns A Promise that resolves to the Appium logs.
+   */
   getSessionAppiumLogs(
     buildId: string,
     sessionId: string,
@@ -307,6 +443,13 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the network logs for a specific session in a build.
+   * @param buildId The ID of the build.
+   * @param sessionId The ID of the session.
+   * @param options Additional options for the network logs request.
+   * @returns A Promise that resolves to the network logs response.
+   */
   getSessionNetworkLogs(
     buildId: string,
     sessionId: string,
@@ -323,6 +466,13 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the app profiling data for a specific session in a build.
+   * @param buildId The ID of the build.
+   * @param sessionId The ID of the session.
+   * @param options Additional options for the request.
+   * @returns A promise that resolves to the app profiling data.
+   */
   getSessionAppProfilingDataV1(
     buildId: string,
     sessionId: string,
@@ -339,6 +489,13 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the app profiling data for a specific session in a build.
+   * @param buildId The ID of the build.
+   * @param sessionId The ID of the session.
+   * @param options Additional options for the API request.
+   * @returns A promise that resolves with the app profiling data.
+   */
   getSessionAppProfilingDataV2(
     buildId: string,
     sessionId: string,
@@ -355,6 +512,13 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Uploads a media file to the App Automate API.
+   *
+   * @param body - The request body containing the media file to upload.
+   * @param options - Optional fetch options for the request.
+   * @returns A promise that resolves to the response of the API request.
+   */
   uploadMediaFile(
     body: operations["uploadAppAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
@@ -380,6 +544,12 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the media files associated with the App Automate session.
+   *
+   * @param options - Optional fetch options for the request.
+   * @returns A promise that resolves to an array of media files, or an empty array if no media files are found.
+   */
   getMediaFiles(
     options?: FetchOptions<operations["getAppAutomateMediaFiles"]>
   ) {
@@ -389,6 +559,12 @@ export class AppAutomateClient extends APIClient {
     ).then((data) => ("message" in data ? [] : data));
   }
 
+  /**
+   * Retrieves media files by custom ID.
+   * @param customId - The custom ID to filter media files.
+   * @param options - Optional fetch options.
+   * @returns A promise that resolves to an array of media files or an empty array if no media files are found.
+   */
   getMediaFilesByCustomId(
     customId: string,
     options?: FetchOptions<operations["getAppAutomateMediaFilesByCustomId"]>
@@ -403,6 +579,12 @@ export class AppAutomateClient extends APIClient {
     }).then((data) => ("message" in data ? [] : data));
   }
 
+  /**
+   * Retrieves the group's media files from the App Automate API.
+   *
+   * @param options - Optional fetch options for the API request.
+   * @returns A promise that resolves to an array of group media files, or an empty array if the response contains a "message" property.
+   */
   getGroupMediaFiles(
     options?: FetchOptions<operations["getAppAutomateGroupMediaFiles"]>
   ) {
@@ -412,6 +594,12 @@ export class AppAutomateClient extends APIClient {
     ).then((data) => ("message" in data ? [] : data));
   }
 
+  /**
+   * Deletes a media file from the app automate custom media.
+   * @param mediaId The ID of the media file to delete.
+   * @param options The fetch options for the delete request.
+   * @returns A promise that resolves when the media file is successfully deleted.
+   */
   deleteMediaFile(
     mediaId: string,
     options?: FetchOptions<operations["deleteAppAutomateMediaFile"]>
@@ -429,6 +617,13 @@ export class AppAutomateClient extends APIClient {
     );
   }
 
+  /**
+   * Uploads an Appium app to BrowserStack App Automate.
+   *
+   * @param body - The request body containing the app file or URL to be uploaded.
+   * @param options - Additional options for the request.
+   * @returns A Promise that resolves to the response of the upload request.
+   */
   uploadAppiumApp(
     body: operations["uploadAppAutomateApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
@@ -458,12 +653,24 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the list of Appium apps from the App Automate API.
+   *
+   * @param options - Optional fetch options for customizing the request.
+   * @returns A promise that resolves to an array of Appium apps, or an empty array if no apps are found.
+   */
   getAppiumApps(options?: FetchOptions<operations["getAppAutomateApps"]>) {
     return this.makeGetRequest("/app-automate/recent_apps", options).then(
       (data) => ("message" in data ? [] : data)
     );
   }
 
+  /**
+   * Retrieves the Appium apps by custom ID.
+   * @param customId The custom ID of the app.
+   * @param options The fetch options for the request.
+   * @returns A promise that resolves to the retrieved Appium apps.
+   */
   getAppiumAppsByCustomId(
     customId: string,
     options?: FetchOptions<operations["getAppAutomateAppsByCustomId"]>
@@ -478,6 +685,11 @@ export class AppAutomateClient extends APIClient {
     }).then((data) => ("message" in data ? [] : data));
   }
 
+  /**
+   * Retrieves the list of App Automate apps for the group using the specified fetch options.
+   * @param options The fetch options for the request.
+   * @returns A promise that resolves to the list of group apps, or an empty array if there is a "message" property in the response data.
+   */
   getAppiumGroupApps(
     options?: FetchOptions<operations["getAppAutomateGroupApps"]>
   ) {
@@ -486,6 +698,13 @@ export class AppAutomateClient extends APIClient {
     );
   }
 
+  /**
+   * Deletes an Appium app.
+   *
+   * @param appId - The ID of the app to delete.
+   * @param options - Optional fetch options for the delete request.
+   * @returns A promise that resolves when the app is successfully deleted.
+   */
   deleteAppiumApp(
     appId: string,
     options?: FetchOptions<operations["deleteAppAutomateApp"]>
@@ -500,6 +719,13 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Uploads a Flutter app for App Automate.
+   *
+   * @param body - The request body containing the app file or URL and other optional parameters.
+   * @param options - Additional options for the request.
+   * @returns A promise that resolves to the response of the request.
+   */
   uploadFlutterApp(
     body: operations["uploadAppAutomateFlutterApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
@@ -532,6 +758,12 @@ export class AppAutomateClient extends APIClient {
     );
   }
 
+  /**
+   * Retrieves the list of Flutter apps for Android.
+   *
+   * @param options - The fetch options for the request.
+   * @returns A promise that resolves to an array of Flutter apps, or an empty array if no apps are found.
+   */
   getFlutterApps(
     options?: FetchOptions<operations["getAppAutomateFlutterApps"]>
   ) {
@@ -541,6 +773,12 @@ export class AppAutomateClient extends APIClient {
     ).then((data) => ("apps" in data ? data.apps : []));
   }
 
+  /**
+   * Retrieves the Flutter app with the specified appId.
+   * @param appId The ID of the Flutter app to retrieve.
+   * @param options The fetch options for the request.
+   * @returns A promise that resolves to the retrieved Flutter app.
+   */
   getFlutterApp(
     appId: string,
     options?: FetchOptions<operations["getAppAutomateFlutterApp"]>
@@ -558,6 +796,12 @@ export class AppAutomateClient extends APIClient {
     ).then((data) => data.app);
   }
 
+  /**
+   * Deletes a Flutter app from the BrowserStack App Automate service.
+   * @param appId The ID of the app to delete.
+   * @param options The fetch options for the delete request.
+   * @returns A promise that resolves when the app is successfully deleted.
+   */
   deleteFlutterApp(
     appId: string,
     options?: FetchOptions<operations["deleteAppAutomateFlutterApp"]>
@@ -575,6 +819,13 @@ export class AppAutomateClient extends APIClient {
     );
   }
 
+  /**
+   * Uploads an Espresso app to BrowserStack.
+   *
+   * @param body - The request body containing the app file or URL.
+   * @param options - Additional options for the request.
+   * @returns A promise that resolves to the response from the server.
+   */
   uploadEspressoApp(
     body: operations["uploadAppAutomateEspressoApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
@@ -604,6 +855,11 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the Espresso apps from the App Automate API.
+   * @param options - The fetch options for the API request.
+   * @returns A promise that resolves to an array of Espresso apps.
+   */
   getEspressoApps(
     options?: FetchOptions<operations["getAppAutomateEspressoApps"]>
   ) {
@@ -612,6 +868,12 @@ export class AppAutomateClient extends APIClient {
     );
   }
 
+  /**
+   * Retrieves the Espresso app with the specified appId.
+   * @param appId The ID of the Espresso app to retrieve.
+   * @param options The fetch options for the request.
+   * @returns A promise that resolves to the retrieved Espresso app.
+   */
   getEspressoApp(
     appId: string,
     options?: FetchOptions<operations["getAppAutomateEspressoApp"]>
@@ -626,6 +888,12 @@ export class AppAutomateClient extends APIClient {
     }).then((data) => data.app);
   }
 
+  /**
+   * Deletes an Espresso app.
+   * @param appId The ID of the app to delete.
+   * @param options The fetch options for the delete request.
+   * @returns A promise that resolves when the app is deleted.
+   */
   deleteEspressoApp(
     appId: string,
     options?: FetchOptions<operations["deleteAppAutomateEspressoApp"]>
@@ -640,6 +908,13 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Uploads an XCUITest app to BrowserStack App Automate.
+   *
+   * @param body - The request body containing the XCUITest app file or URL.
+   * @param options - Additional options for the request.
+   * @returns A Promise that resolves to the response of the request.
+   */
   uploadXCUITestApp(
     body: operations["uploadAppAutomateXCUITestApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
@@ -669,6 +944,11 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Retrieves the XCUITest apps available in the BrowserStack App Automate.
+   * @param options - The fetch options for the request.
+   * @returns A promise that resolves to an array of XCUITest apps.
+   */
   getXCUITestApps(
     options?: FetchOptions<operations["getAppAutomateXCUITestApps"]>
   ) {
@@ -677,6 +957,12 @@ export class AppAutomateClient extends APIClient {
     );
   }
 
+  /**
+   * Retrieves the XCUITest app with the specified appId.
+   * @param appId The ID of the XCUITest app to retrieve.
+   * @param options The fetch options for the request.
+   * @returns A promise that resolves to the XCUITest app.
+   */
   getXCUITestApp(
     appId: string,
     options?: FetchOptions<operations["getAppAutomateXCUITestApp"]>
@@ -691,6 +977,12 @@ export class AppAutomateClient extends APIClient {
     }).then((data) => data.app);
   }
 
+  /**
+   * Deletes an XCUITest app.
+   * @param appId The ID of the app to delete.
+   * @param options The fetch options for the delete request.
+   * @returns A promise that resolves when the app is successfully deleted.
+   */
   deleteXCUITestApp(
     appId: string,
     options?: FetchOptions<operations["deleteAppAutomateXCUITestApp"]>

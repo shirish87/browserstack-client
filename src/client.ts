@@ -2,7 +2,11 @@ import { FetchOptions, FetchResponse } from "openapi-fetch";
 import { APIClient } from "@/api";
 import { components, operations } from "@/generated/openapi";
 
+/**
+ * BrowserStackClient represents a client for interacting with the BrowserStack API.
+ */
 export class BrowserStackClient extends APIClient {
+
   async getBrowsers<T extends true>(
     options?: FetchOptionsFlat<T>
   ): Promise<FetchResponse<BrowserList>>;
@@ -11,6 +15,12 @@ export class BrowserStackClient extends APIClient {
     options?: FetchOptionsFlat<T>
   ): Promise<FetchResponse<BrowserMap>>;
 
+  /**
+   * Retrieves a list of browsers from the server.
+   *
+   * @param options - The fetch options for the request.
+   * @returns A promise that resolves to a fetch response containing the list of browsers.
+   */
   async getBrowsers(
     options?: FetchOptions<operations["getBrowsers"]>
   ): Promise<FetchResponse<BrowserList | BrowserMap>> {
