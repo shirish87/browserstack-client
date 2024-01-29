@@ -1,3 +1,4 @@
+import { BrowserStackError } from "@/error";
 import { paths } from "@/generated/openapi";
 import { servers } from "@/generated/openapi.json";
 import pkginfo from "@/pkginfo";
@@ -33,10 +34,14 @@ export class APIClient {
 
   constructor(options: APIClientOptions) {
     const username = options.username ?? process.env.BROWSERSTACK_USERNAME;
-    // assert(username, "username is required");
+    if (typeof username !== "string" || !username.trim().length) {
+      throw new BrowserStackError("Missing options.username");
+    }
 
     const key = options.key ?? process.env.BROWSERSTACK_KEY;
-    // assert(key, "key is required");
+    if (typeof key !== "string" || !key.trim().length) {
+      throw new BrowserStackError("Missing options.key");
+    }
 
     const clientOptions: ClientOptions = {
       ...options,
@@ -66,12 +71,16 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "get">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "get">>]
   ) {
-    const res = await this.sdk.GET(path, ...init);
-    if (res.error || !res.data) {
-      throw new Error(`Error: ${JSON.stringify(res.error)}`);
+    const response = await this.sdk.GET(path, ...init);
+    if (response.error || !response.data) {
+      throw new BrowserStackError(`Request failed`, {
+        path,
+        response,
+        ...init,
+      });
     }
 
-    return res.data;
+    return response.data;
   }
 
   protected async makePostRequest<P extends PathsWithMethod<paths, "post">>(
@@ -82,12 +91,16 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "post">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "post">>]
   ) {
-    const res = await this.sdk.POST(path, ...init);
-    if (res.error || !res.data) {
-      throw new Error(`Error: ${JSON.stringify(res.error)}`);
+    const response = await this.sdk.POST(path, ...init);
+    if (response.error || !response.data) {
+      throw new BrowserStackError(`Request failed`, {
+        path,
+        response,
+        ...init,
+      });
     }
 
-    return res.data;
+    return response.data;
   }
 
   protected async makeCloudGetRequest<P extends PathsWithMethod<paths, "get">>(
@@ -98,12 +111,16 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "get">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "get">>]
   ) {
-    const res = await this.sdkCloud.GET(path, ...init);
-    if (res.error || !res.data) {
-      throw new Error(`Error: ${JSON.stringify(res.error)}`);
+    const response = await this.sdkCloud.GET(path, ...init);
+    if (response.error || !response.data) {
+      throw new BrowserStackError(`Request failed`, {
+        path,
+        response,
+        ...init,
+      });
     }
 
-    return res.data;
+    return response.data;
   }
 
   protected async makeCloudPostRequest<
@@ -116,12 +133,16 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "post">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "post">>]
   ) {
-    const res = await this.sdkCloud.POST(path, ...init);
-    if (res.error || !res.data) {
-      throw new Error(`Error: ${JSON.stringify(res.error)}`);
+    const response = await this.sdkCloud.POST(path, ...init);
+    if (response.error || !response.data) {
+      throw new BrowserStackError(`Request failed`, {
+        path,
+        response,
+        ...init,
+      });
     }
 
-    return res.data;
+    return response.data;
   }
 
   protected async makePutRequest<P extends PathsWithMethod<paths, "put">>(
@@ -132,12 +153,16 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "put">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "put">>]
   ) {
-    const res = await this.sdk.PUT(path, ...init);
-    if (res.error || !res.data) {
-      throw new Error(`Error: ${JSON.stringify(res.error)}`);
+    const response = await this.sdk.PUT(path, ...init);
+    if (response.error || !response.data) {
+      throw new BrowserStackError(`Request failed`, {
+        path,
+        response,
+        ...init,
+      });
     }
 
-    return res.data;
+    return response.data;
   }
 
   protected async makePatchRequest<P extends PathsWithMethod<paths, "patch">>(
@@ -148,12 +173,16 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "patch">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "patch">>]
   ) {
-    const res = await this.sdk.PATCH(path, ...init);
-    if (res.error || !res.data) {
-      throw new Error(`Error: ${JSON.stringify(res.error)}`);
+    const response = await this.sdk.PATCH(path, ...init);
+    if (response.error || !response.data) {
+      throw new BrowserStackError(`Request failed`, {
+        path,
+        response,
+        ...init,
+      });
     }
 
-    return res.data;
+    return response.data;
   }
 
   protected async makeDeleteRequest<P extends PathsWithMethod<paths, "delete">>(
@@ -164,12 +193,16 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "delete">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "delete">>]
   ) {
-    const res = await this.sdk.DELETE(path, ...init);
-    if (res.error || !res.data) {
-      throw new Error(`Error: ${JSON.stringify(res.error)}`);
+    const response = await this.sdk.DELETE(path, ...init);
+    if (response.error || !response.data) {
+      throw new BrowserStackError(`Request failed`, {
+        path,
+        response,
+        ...init,
+      });
     }
 
-    return res.data;
+    return response.data;
   }
 
   getAccountStatus(options?: FetchOptions<paths["/status"]["get"]>) {

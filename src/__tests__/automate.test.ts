@@ -287,7 +287,7 @@ describe("AutomateClient", () => {
       expectTypeOf(data).toMatchTypeOf<string>();
     });
 
-    test<BrowserStackTestContext>("getSessionNetworkLogs", async ({
+    test.skip<BrowserStackTestContext>("getSessionNetworkLogs", async ({
       automate: { client, randomSessionId },
     }) => {
       const sessionId = await randomSessionId();

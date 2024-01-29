@@ -1,4 +1,5 @@
 import { APIClient, APIClientOptions } from "@/api";
+import { BrowserStackError } from "@/error";
 import { operations } from "@/generated/openapi";
 import { FetchOptions } from "openapi-fetch";
 
@@ -140,7 +141,7 @@ export default class AutomateClient extends APIClient {
       },
     }).then((data) => {
       if ('error' in data) {
-        throw new Error(JSON.stringify(data.error));
+        throw new BrowserStackError(data.error, { response: data });
       }
 
       return data.automation_build;
