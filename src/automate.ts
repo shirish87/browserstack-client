@@ -3,7 +3,7 @@ import { BrowserStackError } from "@/error";
 import { operations } from "@/generated/openapi";
 import { FetchOptions } from "openapi-fetch";
 
-export default class AutomateClient extends APIClient {
+export class AutomateClient extends APIClient {
   constructor(options?: APIClientOptions) {
     super({
       ...options,

@@ -1,8 +1,8 @@
 import { APIClient, APIClientOptions } from "@/api";
+import type { operations } from "@/generated/openapi";
 import type { FetchOptions } from "openapi-fetch";
-import type { operations } from "./generated/openapi";
 
-export default class ScreenshotsClient extends APIClient {
+export class ScreenshotsClient extends APIClient {
   constructor(options?: APIClientOptions) {
     super({
       ...options,

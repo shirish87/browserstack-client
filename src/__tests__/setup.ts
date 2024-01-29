@@ -1,20 +1,25 @@
-import * as BrowserStack from "@/index";
+import {
+  BrowserStackOptions,
+  AppAutomateClient,
+  AutomateClient,
+  BrowserStack,
+  ScreenshotsClient,
+} from "@/index";
 import { assert, beforeEach } from "vitest";
-
 
 export interface BrowserStackTestContext {
   automate: {
-    client: BrowserStack.AutomateClient;
+    client: AutomateClient;
     randomProjectId(): Promise<number>;
     randomBuildId(): Promise<string>;
     randomSessionId(): Promise<string>;
     randomMediaId(): Promise<string>;
   };
   screenshots: {
-    client: BrowserStack.ScreenshotsClient;
+    client: ScreenshotsClient;
   };
   appAutomate: {
-    client: BrowserStack.AppAutomateClient;
+    client: AppAutomateClient;
     randomProjectId(): Promise<number>;
     randomBuildId(): Promise<string>;
     randomSessionId(): Promise<string>;
@@ -27,7 +32,7 @@ export interface BrowserStackTestContext {
 }
 
 beforeEach<BrowserStackTestContext>((context) => {
-  const options: BrowserStack.APIClientOptions = {
+  const options: BrowserStackOptions = {
     username: process.env.VITE_BROWSERSTACK_USERNAME,
     key: process.env.VITE_BROWSERSTACK_KEY,
   };
