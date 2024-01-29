@@ -1,6 +1,11 @@
 name: npm test
 on:
   - push
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   test:
     name: "node.js ${{ matrix.node-version }}"
@@ -11,7 +16,6 @@ jobs:
         node-version:
           - 20
           - 18
-          - 16
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@v3
