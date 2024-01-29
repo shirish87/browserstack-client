@@ -17,6 +17,7 @@ export interface BrowserStackTestContext {
     client: BrowserStack.AppAutomateClient;
     randomProjectId(): Promise<number>;
     randomBuildId(): Promise<string>;
+    randomSessionId(): Promise<string>;
     randomMediaId(): Promise<string>;
     randomAppiumAppId(): Promise<string>;
     randomFlutterAppId(): Promise<string>;
@@ -90,6 +91,14 @@ beforeEach<BrowserStackTestContext>((context) => {
 
         const project = projects[Math.floor(Math.random() * projects.length)];
         return project.id;
+      },
+      randomSessionId: async () => {
+        const buildId = await randomAppAutomateBuildId();
+        const { sessions } = await appAutomate.getBuild(buildId);
+        assert(sessions.length > 0, "No sessions found");
+
+        const session = sessions[Math.floor(Math.random() * sessions.length)];
+        return session.hashed_id;
       },
       randomMediaId: async () => {
         const files = await appAutomate.getMediaFiles();

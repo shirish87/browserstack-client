@@ -181,6 +181,80 @@ export default class AppAutomateClient extends APIClient {
     });
   }
 
+  uploadSessionTerminalLogs(
+    sessionId: string,
+    body: operations["uploadAppAutomateSessionTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: Omit<
+      FetchOptions<operations["uploadAppAutomateSessionTerminalLogs"]>,
+      "params" | "body"
+    >
+  ) {
+    // makePostRequest produces a non-JSON response
+    return this.makeCloudPostRequest("/app-automate/sessions/{sessionId}/terminallogs", {
+      ...options,
+      body,
+      bodySerializer: () => {
+        const formData = new FormData();
+        formData.append("file", body.file, body.filename);
+        return formData;
+      },
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+    });
+  }
+
+  getSession(
+    sessionId: string,
+    options?: Omit<FetchOptions<operations["getAppAutomateSession"]>, "params">
+  ) {
+    return this.makeGetRequest("/app-automate/sessions/{sessionId}.json", {
+      ...options,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+    }).then((data) => data.automation_session);
+  }
+
+  updateSessionStatus(
+    sessionId: string,
+    body: operations["updateAppAutomateSession"]["requestBody"]["content"]["application/json"],
+    options?: Omit<
+      FetchOptions<operations["updateAppAutomateSession"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makePutRequest("/app-automate/sessions/{sessionId}.json", {
+      ...options,
+      body,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+    }).then((data) => data.automation_session);
+  }
+
+  deleteSession(
+    sessionId: string,
+    options?: Omit<FetchOptions<operations["deleteAppAutomateSession"]>, "params">
+  ) {
+    return this.makeDeleteRequest("/app-automate/sessions/{sessionId}.json", {
+      ...options,
+      params: {
+        path: {
+          sessionId,
+        },
+      },
+    });
+  }
+
   uploadMediaFile(
     body: operations["uploadAppAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;

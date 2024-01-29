@@ -154,6 +154,63 @@ describe("AppAutomateClient", () => {
     });
   });
 
+  describe("Sessions", () => {
+
+    test<BrowserStackTestContext>("getSession", async ({
+      appAutomate: { client, randomSessionId },
+    }) => {
+      const sessionId = await randomSessionId();
+      const data = await client.getSession(sessionId);
+      expect(data).toBeDefined();
+      expect(data).haveOwnProperty("status");
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateSession"]>();
+    });
+
+    test<BrowserStackTestContext>("updateSessionStatus", async ({
+      appAutomate: { client, randomSessionId },
+    }) => {
+      const sessionId = await randomSessionId();
+      const data = await client.updateSessionStatus(sessionId, {
+        status: "passed",
+        reason: "pricing-error",
+      });
+
+      expect(data).toBeDefined();
+      expect(data.status).toBeDefined();
+      expect(data.status).toEqual("passed");
+      expect(data.reason).toBeDefined();
+      expect(data.reason).toEqual("pricing-error");
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateSession"]>();
+    });
+
+    test<BrowserStackTestContext>("uploadSessionTerminalLogs", async ({
+      appAutomate: { client, randomSessionId },
+    }) => {
+      const sessionId = await randomSessionId();
+      const data = await client.uploadSessionTerminalLogs(sessionId, {
+        file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
+        filename: "terminal.txt",
+      });
+
+      expect(data).toBeDefined();
+      expect(data.message).toBeDefined();
+      expect(data.message.length).toBeGreaterThan(0);
+      expectTypeOf(data.message).toMatchTypeOf<string>();
+    });
+
+    test.skip<BrowserStackTestContext>("deleteSession", async ({
+      appAutomate: { client, randomSessionId },
+    }) => {
+      const sessionId = await randomSessionId();
+      const data = await client.deleteSession(sessionId);
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Object);
+      expect(data).haveOwnProperty("status");
+      expect(data.status).toEqual("ok");
+      expect(data).haveOwnProperty("message");
+    });
+  });
+
   describe("Media Files", () => {
 
     test<BrowserStackTestContext>("uploadMediaFile", async ({
