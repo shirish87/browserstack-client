@@ -12,6 +12,7 @@ jobs:
           - 20
           - 18
           - 16
+    environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -21,7 +22,5 @@ jobs:
       - run: npm run build
       - run: npm test
         env:
-          VITE_BROWSERSTACK_USERNAME: ${{ secrets.VITE_BROWSERSTACK_USERNAME }}
-          VITE_BROWSERSTACK_KEY: ${{ secrets.VITE_BROWSERSTACK_KEY }}
-          BROWSERSTACK_USERNAME: ${{ secrets.VITE_BROWSERSTACK_USERNAME }}
-          BROWSERSTACK_KEY: ${{ secrets.VITE_BROWSERSTACK_KEY }}
+          VITE_BROWSERSTACK_USERNAME: "${{ secrets.VITE_BROWSERSTACK_USERNAME }}"
+          VITE_BROWSERSTACK_KEY: "${{ secrets.VITE_BROWSERSTACK_KEY }}"
