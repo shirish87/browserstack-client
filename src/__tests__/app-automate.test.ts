@@ -198,6 +198,76 @@ describe("AppAutomateClient", () => {
       expectTypeOf(data.message).toMatchTypeOf<string>();
     });
 
+    test<BrowserStackTestContext>("getSessionLogs", async ({
+      appAutomate: { client, randomBuildId },
+    }) => {
+      const buildId = await randomBuildId();
+      const { sessions } = await client.getBuild(buildId);
+      const data = await client.getSessionLogs(buildId, sessions[0].hashed_id);
+      expect(data).toBeDefined();
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<string>();
+    });
+
+    test<BrowserStackTestContext>("getSessionDeviceLogs", async ({
+      appAutomate: { client, randomBuildId },
+    }) => {
+      const buildId = await randomBuildId();
+      const { sessions } = await client.getBuild(buildId);
+      const data = await client.getSessionDeviceLogs(buildId, sessions[0].hashed_id);
+      expect(data).toBeDefined();
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<string>();
+    });
+
+    test<BrowserStackTestContext>("getSessionAppiumLogs", async ({
+      appAutomate: { client, randomBuildId },
+    }) => {
+      const buildId = await randomBuildId();
+      const { sessions } = await client.getBuild(buildId);
+      const data = await client.getSessionAppiumLogs(buildId, sessions[0].hashed_id);
+      expect(data).toBeDefined();
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<string>();
+    });
+
+    test<BrowserStackTestContext>("getSessionNetworkLogs", async ({
+      appAutomate: { client, randomBuildId },
+    }) => {
+      const buildId = await randomBuildId();
+      const { sessions } = await client.getBuild(buildId);
+      const data = await client.getSessionNetworkLogs(buildId, sessions[0].hashed_id);
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Object);
+      expect(data.logs).toBeDefined();
+      expect(data.logs).toBeInstanceOf(Object);
+    });
+
+    test<BrowserStackTestContext>("getSessionAppProfilingDataV1", async ({
+      appAutomate: { client, randomBuildId },
+    }) => {
+      const buildId = await randomBuildId();
+      const { sessions } = await client.getBuild(buildId);
+      const data = await client.getSessionAppProfilingDataV1(buildId, sessions[0].hashed_id);
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateAppProfilingV1"][]>();
+    }, 10_000);
+
+    test.skip<BrowserStackTestContext>("getSessionAppProfilingDataV2", async ({
+      appAutomate: { client, randomBuildId },
+    }) => {
+      const buildId = await randomBuildId();
+      const { sessions } = await client.getBuild(buildId);
+      const data = await client.getSessionAppProfilingDataV2(buildId, sessions[0].hashed_id);
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Object);
+      expect(data.metadata).toBeInstanceOf(Object);
+      expect(data.data).toBeInstanceOf(Object);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateAppProfilingV2"]>();
+    }, 10_000);
+
     test.skip<BrowserStackTestContext>("deleteSession", async ({
       appAutomate: { client, randomSessionId },
     }) => {

@@ -255,6 +255,105 @@ export default class AppAutomateClient extends APIClient {
     });
   }
 
+  getSessionLogs(
+    buildId: string,
+    sessionId: string,
+    options?: Omit<FetchOptions<operations["getAppAutomateSessionLogs"]>, "params">
+  ) {
+    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/logs", {
+      ...options,
+      params: {
+        path: {
+          buildId,
+          sessionId,
+        },
+      },
+      parseAs: "text",
+    });
+  }
+
+  getSessionDeviceLogs(
+    buildId: string,
+    sessionId: string,
+    options?: Omit<FetchOptions<operations["getAppAutomateDeviceLogs"]>, "params">
+  ) {
+    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/devicelogs", {
+      ...options,
+      params: {
+        path: {
+          buildId,
+          sessionId,
+        },
+      },
+      parseAs: "text",
+    });
+  }
+
+  getSessionAppiumLogs(
+    buildId: string,
+    sessionId: string,
+    options?: Omit<FetchOptions<operations["getAppAutomateAppiumLogs"]>, "params">
+  ) {
+    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/appiumlogs", {
+      ...options,
+      params: {
+        path: {
+          buildId,
+          sessionId,
+        },
+      },
+      parseAs: "text",
+    });
+  }
+
+  getSessionNetworkLogs(
+    buildId: string,
+    sessionId: string,
+    options?: Omit<FetchOptions<operations["getAppAutomateNetworkLogs"]>, "params">
+  ) {
+    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/networklogs", {
+      ...options,
+      params: {
+        path: {
+          buildId,
+          sessionId,
+        },
+      },
+    });
+  }
+
+  getSessionAppProfilingDataV1(
+    buildId: string,
+    sessionId: string,
+    options?: Omit<FetchOptions<operations["getAppAutomateAppProfilingDataV1"]>, "params">
+  ) {
+    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling", {
+      ...options,
+      params: {
+        path: {
+          buildId,
+          sessionId,
+        },
+      },
+    });
+  }
+
+  getSessionAppProfilingDataV2(
+    buildId: string,
+    sessionId: string,
+    options?: Omit<FetchOptions<operations["getAppAutomateAppProfilingDataV2"]>, "params">
+  ) {
+    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling/v2", {
+      ...options,
+      params: {
+        path: {
+          buildId,
+          sessionId,
+        },
+      },
+    });
+  }
+
   uploadMediaFile(
     body: operations["uploadAppAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
