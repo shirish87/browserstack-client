@@ -12,7 +12,11 @@ export default defineConfig({
   },
   plugins: [
     dts({
-      exclude: ["**/__tests__/**"],
+      entryRoot: "src",
+      exclude: [
+        "**/__tests__/**",
+        "**/**/openapi.json",
+      ],
     }),
   ],
   resolve: {
