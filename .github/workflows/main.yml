@@ -2,29 +2,35 @@ name: npm test
 on:
   - push
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+env:
+  VITE_BROWSERSTACK_USERNAME: "${{ secrets.VITE_BROWSERSTACK_USERNAME }}"
+  VITE_BROWSERSTACK_KEY: "${{ secrets.VITE_BROWSERSTACK_KEY }}"
 
 jobs:
-  test:
-    name: "node.js ${{ matrix.node-version }}"
+  test-node-v20:
+    name: "node.js v20"
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version:
-          - 20
-          - 18
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: "${{ matrix.node-version }}"
+          node-version: "20"
       - run: npm install
       - run: npm run build
       - run: npm test
-        env:
-          VITE_BROWSERSTACK_USERNAME: "${{ secrets.VITE_BROWSERSTACK_USERNAME }}"
-          VITE_BROWSERSTACK_KEY: "${{ secrets.VITE_BROWSERSTACK_KEY }}"
+
+  test-node-v18:
+    name: "node.js v18"
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs: [test-node-v20]
+    environment: BrowserStackEnv
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - run: npm install
+      - run: npm run build
+      - run: npm test
