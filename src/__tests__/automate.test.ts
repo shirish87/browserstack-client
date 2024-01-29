@@ -176,7 +176,7 @@ describe("AutomateClient", () => {
       expect(data.message).toBeDefined();
       expect(data.message.length).toBeGreaterThan(0);
       expectTypeOf(data.message).toMatchTypeOf<string>();
-    });
+    }, 10_000);
   });
 
   describe("Session", () => {
@@ -285,7 +285,7 @@ describe("AutomateClient", () => {
       expect(data).toBeDefined();
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<string>();
-    });
+    }, 10_000);
 
     test.skip<BrowserStackTestContext>("getSessionNetworkLogs", async ({
       automate: { client, randomSessionId },
@@ -293,7 +293,7 @@ describe("AutomateClient", () => {
       const sessionId = await randomSessionId();
       const data = await client.getSessionNetworkLogs(sessionId);
       expect(data).toBeDefined();
-    });
+    }, 10_000);
 
     test<BrowserStackTestContext>("getSessionConsoleLogs", async ({
       automate: { client, randomSessionId },
@@ -303,7 +303,7 @@ describe("AutomateClient", () => {
       expect(data).toBeDefined();
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<string>();
-    });
+    }, 10_000);
 
     test.skip<BrowserStackTestContext>("getSessionAppiumLogs", async ({
       automate: { client, randomSessionId },

@@ -139,7 +139,7 @@ describe("AppAutomateClient", () => {
       expect(data.message).toBeDefined();
       expect(data.message.length).toBeGreaterThan(0);
       expectTypeOf(data.message).toMatchTypeOf<string>();
-    });
+    }, 10_000);
 
     test.skip<BrowserStackTestContext>("deleteBuild", async ({
       appAutomate: { client, randomBuildId },
@@ -196,7 +196,7 @@ describe("AppAutomateClient", () => {
       expect(data.message).toBeDefined();
       expect(data.message.length).toBeGreaterThan(0);
       expectTypeOf(data.message).toMatchTypeOf<string>();
-    });
+    }, 10_000);
 
     test<BrowserStackTestContext>("getSessionLogs", async ({
       appAutomate: { client, randomBuildId },
@@ -207,7 +207,7 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<string>();
-    });
+    }, 10_000);
 
     test<BrowserStackTestContext>("getSessionDeviceLogs", async ({
       appAutomate: { client, randomBuildId },
@@ -218,7 +218,7 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<string>();
-    });
+    }, 10_000);
 
     test<BrowserStackTestContext>("getSessionAppiumLogs", async ({
       appAutomate: { client, randomBuildId },
@@ -229,7 +229,7 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<string>();
-    });
+    }, 10_000);
 
     test.skip<BrowserStackTestContext>("getSessionNetworkLogs", async ({
       appAutomate: { client, randomBuildId },
@@ -241,7 +241,7 @@ describe("AppAutomateClient", () => {
       expect(data).toBeInstanceOf(Object);
       expect(data.logs).toBeDefined();
       expect(data.logs).toBeInstanceOf(Object);
-    });
+    }, 10_000);
 
     test<BrowserStackTestContext>("getSessionAppProfilingDataV1", async ({
       appAutomate: { client, randomBuildId },
