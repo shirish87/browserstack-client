@@ -22,4 +22,6 @@ jobs:
       - run: npm test
         env:
           VITE_BROWSERSTACK_USERNAME: ${{ secrets.VITE_BROWSERSTACK_USERNAME }}
-          VITE_BROWSERSTACK_ACCESS_KEY: ${{ secrets.VITE_BROWSERSTACK_KEY }}
+          VITE_BROWSERSTACK_KEY: ${{ secrets.VITE_BROWSERSTACK_KEY }}
+          BROWSERSTACK_USERNAME: ${{ secrets.VITE_BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_KEY: ${{ secrets.VITE_BROWSERSTACK_KEY }}
