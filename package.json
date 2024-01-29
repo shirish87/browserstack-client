@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "prebuild": "node build.mjs",
+    "prebuild": "node build.mjs && npm run lint",
     "build": "tsc && vite build",
     "test": "vitest run --typecheck",
     "test-watch": "vitest --typecheck",
