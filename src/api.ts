@@ -172,29 +172,6 @@ export class APIClient {
     return res.data;
   }
 
-  protected fixInvalidJSONResponse<O>(data: any) {
-    let response: O | undefined = data;
-
-    if (typeof data === "string" && data.match(/^http\//i)) {
-      // HTTP/1.1 0 Unknown Reason-Phrase
-      // Status: 0 Unknown Reason-Phrase
-      try {
-        const r = data.split("\n").at(-1);
-        if (r) {
-          response = JSON.parse(r);
-        }
-      } catch (err) {
-        /* ignore */
-      }
-    }
-
-    if (!response) {
-      throw new Error(`Invalid response: ${data}`);
-    }
-
-    return response;
-  }
-
   getAccountStatus(options?: FetchOptions<paths["/status"]["get"]>) {
     return this.sdk.GET("/status", options);
   }

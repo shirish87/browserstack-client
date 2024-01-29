@@ -17,7 +17,8 @@
     "build": "tsc && vite build",
     "test": "vitest run --typecheck",
     "test-watch": "vitest --typecheck",
-    "coverage": "vitest run --coverage.enabled --coverage.include=src --coverage.exclude=src/generated"
+    "coverage": "vitest run --coverage.enabled --coverage.include=src --coverage.exclude=src/generated",
+    "lint": "eslint . --ext .ts"
   },
   "author": "Shirish Kamath",
   "license": "MIT",
@@ -27,7 +28,10 @@
   "devDependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
     "@types/node": "^20.11.6",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
     "@vitest/coverage-v8": "^1.2.1",
+    "eslint": "^8.56.0",
     "openapi-typescript": "^7.0.0-next.7",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
