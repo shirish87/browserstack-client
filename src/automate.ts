@@ -138,9 +138,13 @@ export default class AutomateClient extends APIClient {
           buildId: id,
         },
       },
-    }).then((data) =>
-      "automation_build" in data ? data.automation_build : data
-    );
+    }).then((data) => {
+      if ('error' in data) {
+        throw new Error(JSON.stringify(data.error));
+      }
+
+      return data.automation_build;
+    });
   }
 
   deleteBuild(
@@ -152,6 +156,20 @@ export default class AutomateClient extends APIClient {
       params: {
         path: {
           buildId: id,
+        },
+      },
+    });
+  }
+
+  deleteBuilds(
+    buildIds: string[],
+    options?: Omit<FetchOptions<operations["deleteAutomateBuilds"]>, "params">
+  ) {
+    return this.makeDeleteRequest("/automate/builds", {
+      ...options,
+      params: {
+        query: {
+          "buildId[]": buildIds,
         },
       },
     });

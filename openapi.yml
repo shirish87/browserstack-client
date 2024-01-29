@@ -1556,6 +1556,483 @@ paths:
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
 
+  /app-automate/projects.json:
+    get:
+      summary: Retrieve a list of recent projects for your BrowserStack group
+      description: >-
+        Fetch the last 10 projects or your BrowserStack group. You can also limit the number
+        of projects and paginate through your data
+      operationId: getAppAutomateProjects
+      parameters:
+        - name: limit
+          in: query
+          description: "Specify the number of results to be displayed. The default value is 10, and the maximum value is 100"
+          required: false
+          schema:
+            type: number
+            example: 10
+        - name: offset
+          in: query
+          description: "Retrieve projects from a specific point using the offset parameter"
+          required: false
+          schema:
+            type: number
+            example: 0
+        - name: status
+          in: query
+          description: "Status of the build"
+          required: false
+          schema:
+            type: string
+            enum: ["running", "timeout", "failed", "done"]
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/components/schemas/AutomateProject'
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/projects/{projectId}.json:
+    get:
+      summary: Fetches a project
+      description: Specific information about a particular project can be queried using the project ID
+      operationId: getAppAutomateProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "ID of your project"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [project]
+                properties:
+                  project:
+                    allOf:
+                      - $ref: '#/components/schemas/AutomateProject'
+                      - type: object
+                        required: [builds]
+                        properties:
+                          builds:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/AutomateBuild'
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    put:
+      summary: Update the name of your project
+      description: Update the name of your project after the project is complete
+      operationId: updateAppAutomateProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "ID of your project"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                -  name
+              properties:
+                name:
+                  type: string
+                  description: "Name of your project"
+                  example: "pricing_project"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/AutomateProject'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    delete:
+      summary: Delete your project
+      description: >-
+        Delete a project on the server using the DELETE method. Please note that to delete a project,
+        it needs to be empty of builds and sessions, and projects once deleted cannot be recovered
+      operationId: deleteAppAutomateProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "ID of your project"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "Status of the operation"
+                    example: "ok"
+                  message:
+                    type: string
+                    description: "Message indicating the status of the operation"
+                    example: "Project 966019 was deleted successfully."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/projects/{projectId}/badge_key:
+    get:
+      summary: Fetches the badge key for the project
+      description: >-
+        Fetches the badge key for sharing a public link for the Automate dashboard to view
+        the latest build and sessions for that project
+      operationId: getAppAutomateProjectBadgeKey
+      parameters:
+        - name: projectId
+          in: path
+          description: "ID of your project"
+          required: true
+          schema:
+            type: number
+            example: 966019
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                badge_key:
+                  value: "VnZ6dGxkRGxGc1RIY01iZGZBVjJBNTA2R0s4ZUhiZkg2cnB..."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/builds.json:
+    get:
+      summary: Fetches list of builds
+      description: >-
+        Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number
+        of builds and paginate through your data
+      operationId: getAppAutomateBuilds
+      parameters:
+        - name: projectId
+          in: query
+          description: "ID of your project"
+          required: false
+          schema:
+            type: number
+            example: 966019
+        - name: limit
+          in: query
+          description: "Specify the number of results to be displayed. The default value is 10, and the maximum value is 100"
+          required: false
+          schema:
+            type: number
+            example: 10
+        - name: offset
+          in: query
+          description: "Retrieve builds from a specific point using the offset parameter"
+          required: false
+          schema:
+            type: number
+            example: 0
+        - name: status
+          in: query
+          description: "Status of the build"
+          required: false
+          schema:
+            type: string
+            enum: ["running", "timeout", "failed", "done"]
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [automation_build]
+                  properties:
+                    automation_build:
+                      $ref: '#/components/schemas/AutomateBuild'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/builds/{buildId}.json:
+    get:
+      summary: Fetches a build
+      description: Fetches a build
+      operationId: getAppAutomateBuild
+      parameters:
+        - name: buildId
+          in: path
+          description: "ID of your build"
+          required: true
+          schema:
+            type: string
+            example: "a4fb480a55efd6b3c558afb1ee051a7c337b8ef0"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [build]
+                properties:
+                  build:
+                    type: object
+                    required: [automation_build, sessions]
+                    properties:
+                      automation_build:
+                        $ref: '#/components/schemas/AutomateBuild'
+                      sessions:
+                        type: array
+                        items:
+                          type: object
+                          required: [automation_session]
+                          properties:
+                            automation_session:
+                              $ref: '#/components/schemas/AutomateSession'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "403":
+          $ref: '#/components/schemas/403.Forbidden'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    put:
+      summary: Update the tag of your build
+      description: >-
+        Update the tag of your build after the build is complete. To delete a build tag,
+        simply pass an empty string as value for build_tag.
+      operationId: updateAppAutomateBuild
+      parameters:
+        - name: buildId
+          in: path
+          description: "ID of your build"
+          required: true
+          schema:
+            type: string
+            example: "a4fb480a55efd6b3c558afb1ee051a7c337b8ef0"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [build_tag]
+              properties:
+                build_tag:
+                  type: string
+                  description: "The new build tag that you want to set"
+                  example: "registration"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required: [automation_build]
+                    properties:
+                      automation_build:
+                        $ref: '#/components/schemas/AutomateBuild'
+                  - type: object
+                    required: [error]
+                    properties:
+                      error:
+                        type: string
+                        description: "Error message"
+                        example: "A build with this name already exists."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    delete:
+      summary: Delete a build on the server
+      description: >-
+        Delete a build on the server. Please note that deleting a build will delete all the sessions
+        contained within it. Builds once deleted cannot be recovered
+      operationId: deleteAppAutomateBuild
+      parameters:
+        - name: buildId
+          in: path
+          description: "ID of your build"
+          required: true
+          schema:
+            type: string
+            example: "a4fb480a55efd6b3c558afb1ee051a7c337b8ef0"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "Status of deletion"
+                    example: "ok"
+                  message:
+                    type: string
+                    description: "Message indicating the deletion of the build"
+                    example: "Build a4fb480a55efd6b3c558afb1ee051a7c337b8ef0 was deleted successfully."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/builds/{buildId}/terminallogs:
+    post:
+      summary: Upload terminal logs for your build.
+      description: Upload terminal logs for your build.
+      operationId: uploadAppAutomateBuildTerminalLogs
+      parameters:
+        - name: buildId
+          in: path
+          description: "ID of your build"
+          required: true
+          schema:
+            type: string
+            example: "a4fb480a55efd6b3c558afb1ee051a7c337b8ef0"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Path to the terminal log file on your machine. The max allowed file size is 2MB"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message]
+                properties:
+                  message:
+                    type: string
+                    description: "Message indicating upload result."
+                    example: "File has been uploaded successfully!"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
   /app-automate/upload-media:
     post:
       summary: Upload a media file

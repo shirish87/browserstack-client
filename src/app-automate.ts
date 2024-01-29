@@ -18,6 +18,169 @@ export default class AppAutomateClient extends APIClient {
     return this.makeGetRequest("/app-automate/devices.json", options);
   }
 
+  getProjects(options?: FetchOptions<operations["getAppAutomateProjects"]>) {
+    return this.makeGetRequest("/app-automate/projects.json", options);
+  }
+
+  getProject(projectId: number, options?: FetchOptions<operations["getAppAutomateProject"]>) {
+    return this.makeGetRequest("/app-automate/projects/{projectId}.json", {
+      ...options,
+      params: {
+        path: {
+          projectId,
+        },
+      },
+    }).then((data) => data.project);
+  }
+
+  updateProject(
+    projectId: number,
+    body: operations["updateAppAutomateProject"]["requestBody"]["content"]["application/json"],
+    options?: Omit<
+      FetchOptions<operations["updateAppAutomateProject"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makePutRequest("/app-automate/projects/{projectId}.json", {
+      ...options,
+      params: {
+        path: {
+          projectId,
+        },
+      },
+      body,
+    });
+  }
+
+  deleteProject(
+    projectId: number,
+    options?: FetchOptions<operations["deleteAppAutomateProject"]>
+  ) {
+    return this.makeDeleteRequest("/app-automate/projects/{projectId}.json", {
+      ...options,
+      params: {
+        path: {
+          projectId,
+        },
+      },
+    });
+  }
+
+  getBadgeKey(
+    projectId: number,
+    options?: Omit<
+      FetchOptions<operations["getAppAutomateProjectBadgeKey"]>,
+      "params"
+    >
+  ) {
+    return this.makeGetRequest("/app-automate/projects/{projectId}/badge_key", {
+      ...options,
+      params: {
+        path: {
+          projectId,
+        },
+      },
+      parseAs: "text",
+    });
+  }
+
+  getBuilds(
+    query?: operations["getAppAutomateBuilds"]["parameters"]["query"],
+    options?: FetchOptions<operations["getAppAutomateBuilds"]>
+  ) {
+    return this.makeGetRequest("/app-automate/builds.json", {
+      ...options,
+      params: {
+        query,
+      },
+    }).then((data) => data.map((build) => build.automation_build));
+  }
+
+  getBuild(
+    id: string,
+    options?: Omit<FetchOptions<operations["getAppAutomateBuild"]>, "params">
+  ) {
+    return this.makeGetRequest("/app-automate/builds/{buildId}.json", {
+      ...options,
+      params: {
+        path: {
+          buildId: id,
+        },
+      },
+    }).then((data) => ({
+      ...data.build.automation_build,
+      sessions: data.build.sessions.map(
+        (session) => session.automation_session
+      ),
+    }));
+  }
+
+  updateBuild(
+    id: string,
+    body: operations["updateAppAutomateBuild"]["requestBody"]["content"]["application/json"],
+    options?: Omit<
+      FetchOptions<operations["updateAppAutomateBuild"]>,
+      "params" | "body"
+    >
+  ) {
+    return this.makePutRequest("/app-automate/builds/{buildId}.json", {
+      ...options,
+      body,
+      params: {
+        path: {
+          buildId: id,
+        },
+      },
+    }).then((data) => {
+      if ('error' in data) {
+        throw new Error(JSON.stringify(data.error));
+      }
+
+      return data.automation_build;
+    });
+  }
+
+  deleteBuild(
+    id: string,
+    options?: Omit<FetchOptions<operations["deleteAppAutomateBuild"]>, "params">
+  ) {
+    return this.makeDeleteRequest("/app-automate/builds/{buildId}.json", {
+      ...options,
+      params: {
+        path: {
+          buildId: id,
+        },
+      },
+    });
+  }
+
+  uploadBuildTerminalLogs(
+    buildId: string,
+    body: operations["uploadAppAutomateBuildTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: Omit<
+      FetchOptions<operations["uploadAppAutomateBuildTerminalLogs"]>,
+      "params" | "body"
+    >
+  ) {
+    // makePostRequest produces a non-JSON response
+    return this.makeCloudPostRequest("/app-automate/builds/{buildId}/terminallogs", {
+      ...options,
+      body,
+      bodySerializer: () => {
+        const formData = new FormData();
+        formData.append("file", body.file, body.filename);
+        return formData;
+      },
+      params: {
+        path: {
+          buildId,
+        },
+      },
+    });
+  }
+
   uploadMediaFile(
     body: operations["uploadAppAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;

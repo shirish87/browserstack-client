@@ -135,12 +135,8 @@ describe("AutomateClient", () => {
         const name = `pricing-build-${Date.now()}`;
         const data = await client.updateBuild(buildId, { name });
         expect(data).toBeDefined();
-
-        if ("name" in data) {
-          expect(data.name).toEqual(name);
-        } else {
-          expect(data.error).toBeUndefined();
-        }
+        expect(data.name).toEqual(name);
+        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"]>();
       });
 
       test<BrowserStackTestContext>("build_tag", async ({
@@ -150,12 +146,8 @@ describe("AutomateClient", () => {
         const tag = `pricing-build-${Date.now()}`;
         const data = await client.updateBuild(buildId, { build_tag: tag });
         expect(data).toBeDefined();
-
-        if ("build_tag" in data) {
-          expect(data.build_tag).toEqual(tag);
-        } else {
-          expect(data.error).toBeUndefined();
-        }
+        expect(data.build_tag).toEqual(tag);
+        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"]>();
       });
     });
 

@@ -15,6 +15,8 @@ export interface BrowserStackTestContext {
   };
   appAutomate: {
     client: BrowserStack.AppAutomateClient;
+    randomProjectId(): Promise<number>;
+    randomBuildId(): Promise<string>;
     randomMediaId(): Promise<string>;
     randomAppiumAppId(): Promise<string>;
     randomFlutterAppId(): Promise<string>;
@@ -33,15 +35,7 @@ beforeEach<BrowserStackTestContext>((context) => {
   const screenshots = new BrowserStack.ScreenshotsClient(options);
   const appAutomate = new BrowserStack.AppAutomateClient(options);
 
-  const randomProjectId = async () => {
-    const projects = await automate.getProjects();
-    assert(projects.length > 0, "No projects found");
-
-    const project = projects[Math.floor(Math.random() * projects.length)];
-    return project.id;
-  };
-
-  const randomBuildId = async () => {
+  const randomAutomateBuildId = async () => {
     const builds = await automate.getBuilds();
     assert(builds.length > 0, "No builds found");
 
@@ -49,36 +43,54 @@ beforeEach<BrowserStackTestContext>((context) => {
     return build.hashed_id;
   };
 
-  const randomSessionId = async () => {
-    const buildId = await randomBuildId();
-    const sessions = await automate.getSessions(buildId);
-    assert(sessions.length > 0, "No sessions found");
+  const randomAppAutomateBuildId = async () => {
+    const builds = await appAutomate.getBuilds();
+    assert(builds.length > 0, "No builds found");
 
-    const session = sessions[Math.floor(Math.random() * sessions.length)];
-    return session.hashed_id;
-  };
-
-  const randomMediaId = async () => {
-    const files = await automate.getMediaFiles();
-    assert(files.length > 0, "No media found");
-
-    const mediaItem = files[Math.floor(Math.random() * files.length)];
-    return mediaItem.media_id;
+    const build = builds[Math.floor(Math.random() * builds.length)];
+    return build.hashed_id;
   };
 
   Object.assign(context, {
     automate: {
       client: automate,
-      randomProjectId,
-      randomBuildId,
-      randomSessionId,
-      randomMediaId,
+      randomBuildId: randomAutomateBuildId,
+      randomProjectId: async () => {
+        const projects = await automate.getProjects();
+        assert(projects.length > 0, "No projects found");
+
+        const project = projects[Math.floor(Math.random() * projects.length)];
+        return project.id;
+      },
+      randomSessionId: async () => {
+        const buildId = await randomAutomateBuildId();
+        const sessions = await automate.getSessions(buildId);
+        assert(sessions.length > 0, "No sessions found");
+
+        const session = sessions[Math.floor(Math.random() * sessions.length)];
+        return session.hashed_id;
+      },
+      randomMediaId: async () => {
+        const files = await automate.getMediaFiles();
+        assert(files.length > 0, "No media found");
+
+        const mediaItem = files[Math.floor(Math.random() * files.length)];
+        return mediaItem.media_id;
+      },
     },
     screenshots: {
       client: screenshots,
     },
     appAutomate: {
       client: appAutomate,
+      randomBuildId: randomAppAutomateBuildId,
+      randomProjectId: async () => {
+        const projects = await appAutomate.getProjects();
+        assert(projects.length > 0, "No projects found");
+
+        const project = projects[Math.floor(Math.random() * projects.length)];
+        return project.id;
+      },
       randomMediaId: async () => {
         const files = await appAutomate.getMediaFiles();
         assert(Array.isArray(files) && files.length > 0, "No media found");

@@ -30,6 +30,130 @@ describe("AppAutomateClient", () => {
     });
   });
 
+  describe("Projects", () => {
+
+    test<BrowserStackTestContext>("getProjects", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.getProjects();
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateProject"][]>();
+    });
+
+    test<BrowserStackTestContext>("getProject", async ({
+      appAutomate: { client, randomProjectId },
+    }) => {
+      const projectId = await randomProjectId();
+      const data = await client.getProject(projectId);
+      expect(data).toBeDefined();
+      expect(data.builds).toBeInstanceOf(Array);
+      expect(data.builds.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateProject"]>();
+    });
+
+    test<BrowserStackTestContext>("updateProject", async ({
+      appAutomate: { client, randomProjectId },
+    }) => {
+      const projectId = await randomProjectId();
+      const data = await client.updateProject(projectId, {
+        name: "pricing-project",
+      });
+
+      expect(data).toBeDefined();
+      expect(data.name).toBeDefined();
+      expect(data.name).toEqual("pricing-project");
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateProject"]>();
+    });
+
+    test<BrowserStackTestContext>("getBadgeKey", async ({
+      appAutomate: { client, randomProjectId },
+    }) => {
+      const projectId = await randomProjectId();
+      const data = await client.getBadgeKey(projectId);
+      expect(data).toBeDefined();
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toBeString();
+    });
+
+    test.skip<BrowserStackTestContext>("deleteProject", async ({
+      appAutomate: { client, randomProjectId },
+    }) => {
+      const projectId = await randomProjectId();
+      const data = await client.deleteProject(projectId);
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Object);
+      expect(data).haveOwnProperty("status");
+      expect(data.status).toEqual("ok");
+      expect(data).haveOwnProperty("message");
+    });
+  });
+
+  describe("Builds", () => {
+
+    test<BrowserStackTestContext>("getBuilds", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.getBuilds();
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"][]>();
+    });
+
+    test<BrowserStackTestContext>("getBuild", async ({
+      appAutomate: { client, randomBuildId },
+    }) => {
+      const buildId = await randomBuildId();
+      const data = await client.getBuild(buildId);
+      expect(data).toBeDefined();
+      expect(data.sessions).toBeInstanceOf(Array);
+      expect(data.sessions.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"]>();
+    });
+
+    test<BrowserStackTestContext>("updateBuild", async ({
+      appAutomate: { client, randomBuildId },
+    }) => {
+      const buildId = await randomBuildId();
+      const data = await client.updateBuild(buildId, {
+        build_tag: "pricing-build",
+      });
+
+      expect(data.build_tag).toBeDefined();
+      expect(data.build_tag).toEqual("pricing-build");
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"]>();
+    });
+
+    test<BrowserStackTestContext>("uploadBuildTerminalLogs", async ({
+      appAutomate: { client, randomBuildId },
+    }) => {
+      const buildId = await randomBuildId();
+      const data = await client.uploadBuildTerminalLogs(buildId, {
+        file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
+        filename: "terminal.txt",
+      });
+
+      expect(data).toBeDefined();
+      expect(data.message).toBeDefined();
+      expect(data.message.length).toBeGreaterThan(0);
+      expectTypeOf(data.message).toMatchTypeOf<string>();
+    });
+
+    test.skip<BrowserStackTestContext>("deleteBuild", async ({
+      appAutomate: { client, randomBuildId },
+    }) => {
+      const buildId = await randomBuildId();
+      const data = await client.deleteBuild(buildId);
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Object);
+      expect(data).haveOwnProperty("status");
+      expect(data.status).toEqual("ok");
+      expect(data).haveOwnProperty("message");
+    });
+  });
+
   describe("Media Files", () => {
 
     test<BrowserStackTestContext>("uploadMediaFile", async ({
