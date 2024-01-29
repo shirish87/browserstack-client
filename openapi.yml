@@ -1506,6 +1506,56 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
   # App Automate APIs
+  /app-automate/plan.json:
+    get:
+      summary: Get App Automate plan details
+      description: Fetches App Automate plan details
+      operationId: getAppAutomatePlan
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomatePlan'
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/devices.json:
+    get:
+      summary: Get a list of supported Android and iOS devices
+      description: Fetches list of devices supported by App Automate
+      operationId: getAppAutomateDevices
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: "#/components/schemas/AppAutomateDevice"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
   /app-automate/upload-media:
     post:
       summary: Upload a media file
@@ -3068,6 +3118,23 @@ components:
           type: string
           description: "Shareable ID allows other users in your organization to test an app you uploaded."
           example: "steve/SampleApp"
+
+    AppAutomateDevice:
+      type: object
+      required: [os, os_version, device, real_mobile]
+      properties:
+        os:
+          type: string
+          example: ios
+        os_version:
+          type: string
+          example: "14"
+        device:
+          type: string
+          example: "iPad Pro 12.9 2021"
+        real_mobile:
+          type: boolean
+          example: true
 
     NewWorker:
       allOf:

@@ -4,6 +4,32 @@ import type { BrowserStackTestContext } from "./setup";
 
 describe("AppAutomateClient", () => {
 
+  describe("Devices", () => {
+
+      test<BrowserStackTestContext>("getDevices", async ({
+        appAutomate: { client },
+      }) => {
+        const data = await client.getDevices();
+        expect(data).toBeDefined();
+        expect(data).toBeInstanceOf(Array);
+        expect(data.length).toBeGreaterThan(0);
+        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateDevice"][]>();
+      });
+  });
+
+  describe("Plan", () => {
+
+    test<BrowserStackTestContext>("getPlan", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.getPlan();
+      expect(data).toBeDefined();
+      expect(data.automate_plan).toBeDefined();
+      expect(data.automate_plan.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomatePlan"]>();
+    });
+  });
+
   describe("Media Files", () => {
 
     test<BrowserStackTestContext>("uploadMediaFile", async ({

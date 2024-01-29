@@ -10,6 +10,14 @@ export default class AppAutomateClient extends APIClient {
     });
   }
 
+  getPlan(options?: FetchOptions<operations["getAppAutomatePlan"]>) {
+    return this.makeGetRequest("/app-automate/plan.json", options);
+  }
+
+  getDevices(options?: FetchOptions<operations["getAppAutomateDevices"]>) {
+    return this.makeGetRequest("/app-automate/devices.json", options);
+  }
+
   uploadMediaFile(
     body: operations["uploadAppAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
@@ -239,70 +247,60 @@ export default class AppAutomateClient extends APIClient {
       "params" | "body"
     >
   ) {
-    return this.makePostRequest(
-      "/app-automate/espresso/v2/app",
-      {
-        ...options,
-        body,
-        bodySerializer: () => {
-          const formData = new FormData();
-          if ("file" in body) {
-            formData.append("file", body.file, body.filename);
-          } else {
-            formData.append("url", body.url);
-          }
+    return this.makePostRequest("/app-automate/espresso/v2/app", {
+      ...options,
+      body,
+      bodySerializer: () => {
+        const formData = new FormData();
+        if ("file" in body) {
+          formData.append("file", body.file, body.filename);
+        } else {
+          formData.append("url", body.url);
+        }
 
-          if (body.custom_id) {
-            formData.append("custom_id", body.custom_id);
-          }
+        if (body.custom_id) {
+          formData.append("custom_id", body.custom_id);
+        }
 
-          return formData;
-        },
-      }
-    );
+        return formData;
+      },
+    });
   }
 
   getEspressoApps(
     options?: FetchOptions<operations["getAppAutomateEspressoApps"]>
   ) {
-    return this.makeGetRequest(
-      "/app-automate/espresso/v2/apps",
-      options
-    ).then((data) => ("apps" in data ? data.apps : []));
+    return this.makeGetRequest("/app-automate/espresso/v2/apps", options).then(
+      (data) => ("apps" in data ? data.apps : [])
+    );
   }
 
   getEspressoApp(
     appId: string,
     options?: FetchOptions<operations["getAppAutomateEspressoApp"]>
   ) {
-    return this.makeGetRequest(
-      "/app-automate/espresso/v2/apps/{appId}",
-      {
-        ...options,
-        params: {
-          path: {
-            appId,
-          },
+    return this.makeGetRequest("/app-automate/espresso/v2/apps/{appId}", {
+      ...options,
+      params: {
+        path: {
+          appId,
         },
-      }
-    ).then((data) => data.app);
+      },
+    }).then((data) => data.app);
   }
 
   deleteEspressoApp(
     appId: string,
     options?: FetchOptions<operations["deleteAppAutomateEspressoApp"]>
   ) {
-    return this.makeDeleteRequest(
-      "/app-automate/espresso/v2/apps/{appId}",
-      {
-        ...options,
-        params: {
-          path: {
-            appId,
-          },
+    return this.makeDeleteRequest("/app-automate/espresso/v2/apps/{appId}", {
+      ...options,
+      params: {
+        path: {
+          appId,
         },
-      }
-    );
+      },
+    });
   }
 
   uploadXCUITestApp(
@@ -314,69 +312,59 @@ export default class AppAutomateClient extends APIClient {
       "params" | "body"
     >
   ) {
-    return this.makePostRequest(
-      "/app-automate/xcuitest/v2/app",
-      {
-        ...options,
-        body,
-        bodySerializer: () => {
-          const formData = new FormData();
-          if ("file" in body) {
-            formData.append("file", body.file, body.filename);
-          } else {
-            formData.append("url", body.url);
-          }
+    return this.makePostRequest("/app-automate/xcuitest/v2/app", {
+      ...options,
+      body,
+      bodySerializer: () => {
+        const formData = new FormData();
+        if ("file" in body) {
+          formData.append("file", body.file, body.filename);
+        } else {
+          formData.append("url", body.url);
+        }
 
-          if (body.custom_id) {
-            formData.append("custom_id", body.custom_id);
-          }
+        if (body.custom_id) {
+          formData.append("custom_id", body.custom_id);
+        }
 
-          return formData;
-        },
-      }
-    );
+        return formData;
+      },
+    });
   }
 
   getXCUITestApps(
     options?: FetchOptions<operations["getAppAutomateXCUITestApps"]>
   ) {
-    return this.makeGetRequest(
-      "/app-automate/xcuitest/v2/apps",
-      options
-    ).then((data) => ("apps" in data ? data.apps : []));
+    return this.makeGetRequest("/app-automate/xcuitest/v2/apps", options).then(
+      (data) => ("apps" in data ? data.apps : [])
+    );
   }
 
   getXCUITestApp(
     appId: string,
     options?: FetchOptions<operations["getAppAutomateXCUITestApp"]>
   ) {
-    return this.makeGetRequest(
-      "/app-automate/xcuitest/v2/apps/{appId}",
-      {
-        ...options,
-        params: {
-          path: {
-            appId,
-          },
+    return this.makeGetRequest("/app-automate/xcuitest/v2/apps/{appId}", {
+      ...options,
+      params: {
+        path: {
+          appId,
         },
-      }
-    ).then((data) => data.app);
+      },
+    }).then((data) => data.app);
   }
 
   deleteXCUITestApp(
     appId: string,
     options?: FetchOptions<operations["deleteAppAutomateXCUITestApp"]>
   ) {
-    return this.makeDeleteRequest(
-      "/app-automate/xcuitest/v2/apps/{appId}",
-      {
-        ...options,
-        params: {
-          path: {
-            appId,
-          },
+    return this.makeDeleteRequest("/app-automate/xcuitest/v2/apps/{appId}", {
+      ...options,
+      params: {
+        path: {
+          appId,
         },
-      }
-    );
+      },
+    });
   }
 }
