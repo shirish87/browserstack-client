@@ -26,7 +26,7 @@ describe("ScreenshotsClient", () => {
     expectTypeOf(data.job_id).toMatchTypeOf<string>();
   });
 
-  test.only<BrowserStackTestContext>("getJob", async ({
+  test<BrowserStackTestContext>("getJob", async ({
     screenshots: { client },
   }) => {
     const browsers = await client.getBrowsers();
