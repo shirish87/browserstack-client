@@ -6,6 +6,11 @@ on:
     #   - '*'
   workflow_dispatch:
 
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build-docs:
@@ -22,6 +27,7 @@ jobs:
           node-version: "lts/*"
           cache: "npm"
       - run: |
+          cp README.md docs/index.md
           npm install
           npm run prebuild
           npm run docs:build
