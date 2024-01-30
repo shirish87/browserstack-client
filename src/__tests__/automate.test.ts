@@ -64,7 +64,7 @@ describe("AutomateClient", () => {
       automate: { client, randomProjectId },
     }) => {
       const projectId = await randomProjectId();
-      const name = "pricing-project";
+      const name = `pricing-project-${Date.now()}`;
       const data = await client.updateProject(projectId, { name });
       expect(data).toBeDefined();
       expect(data.id).toBeDefined();
