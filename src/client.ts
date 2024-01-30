@@ -1,19 +1,22 @@
-import { FetchOptions, FetchResponse } from "openapi-fetch";
-import { APIClient } from "@/api";
+import { APIClient, APIFetchOptions } from "@/api-client";
 import { components, operations } from "@/generated/openapi";
 
 /**
- * BrowserStackClient represents a client for interacting with the BrowserStack API.
+ * Represents a client for interacting with the BrowserStack JavaScript Testing API.
+ * @see https://www.browserstack.com/docs/automate/javascript-testing/api
+ * @public
  */
-export class BrowserStackClient extends APIClient {
+export class Client extends APIClient {
 
-  async getBrowsers<T extends true>(
-    options?: FetchOptionsFlat<T>
-  ): Promise<FetchResponse<BrowserList>>;
+  getBrowsers<T extends true>(
+    query?: operations["getBrowsers"]["parameters"]["query"] & { flat?: T },
+    options?: APIFetchOptions<operations["getBrowsers"]>
+  ): Promise<components["schemas"]["BrowserList"]>;
 
-  async getBrowsers<T extends false>(
-    options?: FetchOptionsFlat<T>
-  ): Promise<FetchResponse<BrowserMap>>;
+  getBrowsers<T extends false>(
+    query?: operations["getBrowsers"]["parameters"]["query"] & { flat?: T },
+    options?: APIFetchOptions<operations["getBrowsers"]>
+  ): Promise<components["schemas"]["BrowserMap"]>;
 
   /**
    * Retrieves a list of browsers from the server.
@@ -21,53 +24,66 @@ export class BrowserStackClient extends APIClient {
    * @param options - The fetch options for the request.
    * @returns A promise that resolves to a fetch response containing the list of browsers.
    */
-  async getBrowsers(
-    options?: FetchOptions<operations["getBrowsers"]>
-  ): Promise<FetchResponse<BrowserList | BrowserMap>> {
-    return this.sdk.GET("/browsers", {
+  getBrowsers(
+    query?: operations["getBrowsers"]["parameters"]["query"],
+    options?: APIFetchOptions<operations["getBrowsers"]>
+  ): Promise<components["schemas"]["BrowserList"] | components["schemas"]["BrowserMap"]> {
+
+    return this.makeGetRequest("/browsers", {
       ...options,
       params: {
-        ...options?.params,
         query: {
-          ...options?.params?.query,
+          ...query,
           flat:
-            typeof options?.params?.query?.flat === "boolean"
-              ? options.params.query.flat
+            typeof query?.flat === "boolean"
+              ? query.flat
               : true,
         },
       },
     });
   }
-}
 
-export type FetchOptionsFlat<T extends boolean> = FetchOptions<
-  Omit<operations["getBrowsers"], "parameters"> & {
-    parameters: Omit<operations["getBrowsers"]["parameters"], "query"> & {
-      query?: Omit<operations["getBrowsers"]["parameters"]["query"], "flat"> & {
-        flat?: T;
-      };
-    };
+  createWorker(
+    body: operations["createWorker"]["requestBody"]["content"]["application/json"],
+    options?: APIFetchOptions<operations["createWorker"]>
+  ) {
+    return this.makePostRequest("/worker", {
+      ...options,
+      body,
+    });
   }
->;
 
-export type BrowserMap = Omit<operations["getBrowsers"], "responses"> & {
-  responses: Omit<operations["getBrowsers"]["responses"], 200> & {
-    /** @description Successful operation */
-    200: {
-      content: {
-        "application/json": components["schemas"]["BrowserMap"];
-      };
-    };
-  };
-};
+  getWorkers(
+    options?: APIFetchOptions<operations["getWorkers"]>
+  ): Promise<components["schemas"]["Worker"][]> {
+    return this.makeGetRequest("/workers", options);
+  }
 
-export type BrowserList = Omit<operations["getBrowsers"], "responses"> & {
-  responses: Omit<operations["getBrowsers"]["responses"], 200> & {
-    /** @description Successful operation */
-    200: {
-      content: {
-        "application/json": components["schemas"]["BrowserList"];
-      };
-    };
-  };
-};
+  getWorker(
+    workedId: number,
+    options?: APIFetchOptions<operations["getWorker"]>
+  ): Promise<components["schemas"]["Worker"]> {
+    return this.makeGetRequest("/worker/{workedId}", {
+      ...options,
+      params: {
+        path: {
+          workedId,
+        },
+      },
+    });
+  }
+
+  deleteWorker(
+    workedId: number,
+    options?: APIFetchOptions<operations["deleteWorker"]>
+  ) {
+    return this.makeDeleteRequest("/worker/{workedId}", {
+      ...options,
+      params: {
+        path: {
+          workedId,
+        },
+      },
+    });
+  }
+}

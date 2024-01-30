@@ -1,19 +1,23 @@
-import { AppAutomateClient as AAS } from "@/app-automate";
-import { AutomateClient as AS } from "@/automate";
+import { AppAutomateClient } from "@/app-automate";
+import { AutomateClient } from "@/automate";
+import { Client } from "@/client";
 import { BrowserStackError } from "@/error";
-import { ScreenshotsClient as SC } from "@/screenshots";
+import { ScreenshotsClient } from "@/screenshots";
 
-export type { APIClientOptions as BrowserStackOptions } from "@/api";
+export type { AppAutomateClient } from "@/app-automate";
+export type { AutomateClient } from "@/automate";
+export type { Client } from "@/client";
+export type { ScreenshotsClient } from "@/screenshots";
+export type { BrowserStackOptions, APIFetchOptions } from "@/api-client";
+export type { BrowserStackError, ErrorContext } from "@/error";
+import type { components } from "@/generated/openapi";
 
-export type AutomateClient = AS;
-
-export type ScreenshotsClient = SC;
-
-export type AppAutomateClient = AAS;
+export type schemas = components["schemas"];
 
 export const BrowserStack = {
-  AutomateClient: AS,
-  ScreenshotsClient: SC,
-  AppAutomateClient: AAS,
+  AutomateClient: AutomateClient,
+  ScreenshotsClient: ScreenshotsClient,
+  AppAutomateClient: AppAutomateClient,
+  Client: Client,
   BrowserStackError,
 };

@@ -4,6 +4,7 @@ import {
   AutomateClient,
   BrowserStack,
   ScreenshotsClient,
+  Client,
 } from "@/index";
 import { assert, beforeEach } from "vitest";
 
@@ -29,6 +30,10 @@ export interface BrowserStackTestContext {
     randomEspressoAppId(): Promise<string>;
     randomXCUITestAppId(): Promise<string>;
   };
+  jsTesting: {
+    client: Client;
+    randomWorkerId(): Promise<number>;
+  };
 }
 
 beforeEach<BrowserStackTestContext>((context) => {
@@ -40,6 +45,7 @@ beforeEach<BrowserStackTestContext>((context) => {
   const automate = new BrowserStack.AutomateClient(options);
   const screenshots = new BrowserStack.ScreenshotsClient(options);
   const appAutomate = new BrowserStack.AppAutomateClient(options);
+  const jsTesting = new BrowserStack.Client(options);
 
   const randomAutomateBuildId = async () => {
     const builds = await automate.getBuilds();
@@ -139,6 +145,17 @@ beforeEach<BrowserStackTestContext>((context) => {
 
         const app = apps[Math.floor(Math.random() * apps.length)];
         return app.app_id;
+      },
+    },
+    jsTesting: {
+      client: jsTesting,
+      randomWorkerId: async () => {
+        const workers = await jsTesting.getWorkers();
+        assert(workers.length > 0, "No workers found");
+
+        const worker = workers[Math.floor(Math.random() * workers.length)];
+        assert(worker.id > 0, "Invalid worker");
+        return worker.id;
       },
     },
   });

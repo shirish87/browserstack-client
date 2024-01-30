@@ -1,5 +1,5 @@
 import { BrowserStackError } from "@/error";
-import { paths } from "@/generated/openapi";
+import { components, paths } from "@/generated/openapi";
 import { servers } from "@/generated/openapi.json";
 import pkginfo from "@/pkginfo";
 import createClient, { ClientOptions, FetchOptions } from "openapi-fetch";
@@ -18,21 +18,29 @@ const apiCloudBaseUrl = `${cloudVars.scheme.default}://${
   cloudVars.host.default
 }${cloudVars.basePath ? cloudVars.basePath.default : ""}`;
 
-export interface APIClientOptions extends ClientOptions {
+export interface BrowserStackOptions extends ClientOptions {
   username?: string;
   key?: string;
 }
 
+/**
+ * @internal
+ */
 export type ExtraRequestOptions =
   | { useSdkCloud?: boolean | undefined }
   | undefined;
 
+export type APIFetchOptions<T> = Omit<FetchOptions<T>, "params" | "body">;
+
+/**
+ * @internal
+ */
 export class APIClient {
   protected readonly sdk: ReturnType<typeof createClient<paths>>;
 
   protected readonly sdkCloud: ReturnType<typeof createClient<paths>>;
 
-  constructor(options: APIClientOptions) {
+  constructor(options: BrowserStackOptions) {
     const username = options.username ?? process.env.BROWSERSTACK_USERNAME;
     if (typeof username !== "string" || !username.trim().length) {
       throw new BrowserStackError("Missing options.username");
@@ -63,6 +71,9 @@ export class APIClient {
     });
   }
 
+  /**
+   * @internal
+   */
   protected async makeGetRequest<P extends PathsWithMethod<paths, "get">>(
     path: P,
     ...init: HasRequiredKeys<
@@ -83,6 +94,9 @@ export class APIClient {
     return response.data;
   }
 
+  /**
+   * @internal
+   */
   protected async makePostRequest<P extends PathsWithMethod<paths, "post">>(
     path: P,
     ...init: HasRequiredKeys<
@@ -103,6 +117,9 @@ export class APIClient {
     return response.data;
   }
 
+  /**
+   * @internal
+   */
   protected async makeCloudGetRequest<P extends PathsWithMethod<paths, "get">>(
     path: P,
     ...init: HasRequiredKeys<
@@ -123,6 +140,9 @@ export class APIClient {
     return response.data;
   }
 
+  /**
+   * @internal
+   */
   protected async makeCloudPostRequest<
     P extends PathsWithMethod<paths, "post">
   >(
@@ -145,6 +165,9 @@ export class APIClient {
     return response.data;
   }
 
+  /**
+   * @internal
+   */
   protected async makePutRequest<P extends PathsWithMethod<paths, "put">>(
     path: P,
     ...init: HasRequiredKeys<
@@ -165,6 +188,9 @@ export class APIClient {
     return response.data;
   }
 
+  /**
+   * @internal
+   */
   protected async makePatchRequest<P extends PathsWithMethod<paths, "patch">>(
     path: P,
     ...init: HasRequiredKeys<
@@ -185,6 +211,9 @@ export class APIClient {
     return response.data;
   }
 
+  /**
+   * @internal
+   */
   protected async makeDeleteRequest<P extends PathsWithMethod<paths, "delete">>(
     path: P,
     ...init: HasRequiredKeys<
@@ -205,7 +234,9 @@ export class APIClient {
     return response.data;
   }
 
-  getAccountStatus(options?: FetchOptions<paths["/status"]["get"]>) {
-    return this.sdk.GET("/status", options);
+  getAccountStatus(
+    options?: FetchOptions<paths["/status"]["get"]>
+  ): Promise<components["schemas"]["Status"]> {
+    return this.makeGetRequest("/status", options);
   }
 }
