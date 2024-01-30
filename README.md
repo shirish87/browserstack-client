@@ -1,6 +1,3 @@
----
-home: true
----
 
 # BrowserStack Client
 
