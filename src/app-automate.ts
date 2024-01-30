@@ -1,7 +1,6 @@
-import { APIClient, APIClientOptions } from "@/api";
+import { APIClient, BrowserStackOptions, APIFetchOptions } from "@/api-client";
 import { BrowserStackError } from "@/error";
 import { operations } from "@/generated/openapi";
-import { FetchOptions } from "openapi-fetch";
 
 /**
  * AppAutomateClient represents a client for interacting with the BrowserStack App Automate API.
@@ -13,7 +12,7 @@ export class AppAutomateClient extends APIClient {
    * Constructs a new instance of the AppAutomateClient class.
    * @param options - Optional configuration options for the client.
    */
-  constructor(options?: APIClientOptions) {
+  constructor(options?: BrowserStackOptions) {
     super({
       ...options,
       baseUrl: options?.baseUrl ?? "https://api.browserstack.com",
@@ -25,7 +24,7 @@ export class AppAutomateClient extends APIClient {
    * @param options - The fetch options for the request.
    * @returns A promise that resolves with the plan information.
    */
-  getPlan(options?: FetchOptions<operations["getAppAutomatePlan"]>) {
+  getPlan(options?: APIFetchOptions<operations["getAppAutomatePlan"]>) {
     return this.makeGetRequest("/app-automate/plan.json", options);
   }
 
@@ -34,7 +33,7 @@ export class AppAutomateClient extends APIClient {
    * @param options - The fetch options for the request.
    * @returns A promise that resolves with the list of devices.
    */
-  getDevices(options?: FetchOptions<operations["getAppAutomateDevices"]>) {
+  getDevices(options?: APIFetchOptions<operations["getAppAutomateDevices"]>) {
     return this.makeGetRequest("/app-automate/devices.json", options);
   }
 
@@ -43,7 +42,7 @@ export class AppAutomateClient extends APIClient {
    * @param options - The fetch options for the API request.
    * @returns A promise that resolves with the projects.
    */
-  getProjects(options?: FetchOptions<operations["getAppAutomateProjects"]>) {
+  getProjects(options?: APIFetchOptions<operations["getAppAutomateProjects"]>) {
     return this.makeGetRequest("/app-automate/projects.json", options);
   }
 
@@ -53,7 +52,7 @@ export class AppAutomateClient extends APIClient {
    * @param options Additional options for the fetch request.
    * @returns A promise that resolves to the retrieved project.
    */
-  getProject(projectId: number, options?: FetchOptions<operations["getAppAutomateProject"]>) {
+  getProject(projectId: number, options?: APIFetchOptions<operations["getAppAutomateProject"]>) {
     return this.makeGetRequest("/app-automate/projects/{projectId}.json", {
       ...options,
       params: {
@@ -75,10 +74,7 @@ export class AppAutomateClient extends APIClient {
   updateProject(
     projectId: number,
     body: operations["updateAppAutomateProject"]["requestBody"]["content"]["application/json"],
-    options?: Omit<
-      FetchOptions<operations["updateAppAutomateProject"]>,
-      "params" | "body"
-    >
+    options?: APIFetchOptions<operations["updateAppAutomateProject"]>
   ) {
     return this.makePutRequest("/app-automate/projects/{projectId}.json", {
       ...options,
@@ -99,7 +95,7 @@ export class AppAutomateClient extends APIClient {
    */
   deleteProject(
     projectId: number,
-    options?: FetchOptions<operations["deleteAppAutomateProject"]>
+    options?: APIFetchOptions<operations["deleteAppAutomateProject"]>
   ) {
     return this.makeDeleteRequest("/app-automate/projects/{projectId}.json", {
       ...options,
@@ -119,10 +115,7 @@ export class AppAutomateClient extends APIClient {
    */
   getBadgeKey(
     projectId: number,
-    options?: Omit<
-      FetchOptions<operations["getAppAutomateProjectBadgeKey"]>,
-      "params"
-    >
+    options?: APIFetchOptions<operations["getAppAutomateProjectBadgeKey"]>
   ) {
     return this.makeGetRequest("/app-automate/projects/{projectId}/badge_key", {
       ...options,
@@ -144,7 +137,7 @@ export class AppAutomateClient extends APIClient {
    */
   getBuilds(
     query?: operations["getAppAutomateBuilds"]["parameters"]["query"],
-    options?: FetchOptions<operations["getAppAutomateBuilds"]>
+    options?: APIFetchOptions<operations["getAppAutomateBuilds"]>
   ) {
     return this.makeGetRequest("/app-automate/builds.json", {
       ...options,
@@ -156,19 +149,19 @@ export class AppAutomateClient extends APIClient {
 
   /**
    * Retrieves information about a specific build.
-   * @param id - The ID of the build to retrieve.
+   * @param buildId - The ID of the build to retrieve.
    * @param options - Additional options for the fetch request.
    * @returns A promise that resolves to the build information, including the build details and associated sessions.
    */
   getBuild(
-    id: string,
-    options?: Omit<FetchOptions<operations["getAppAutomateBuild"]>, "params">
+    buildId: string,
+    options?: APIFetchOptions<operations["getAppAutomateBuild"]>
   ) {
     return this.makeGetRequest("/app-automate/builds/{buildId}.json", {
       ...options,
       params: {
         path: {
-          buildId: id,
+          buildId,
         },
       },
     }).then((data) => ({
@@ -182,26 +175,23 @@ export class AppAutomateClient extends APIClient {
   /**
    * Updates a build in the App Automate API.
    *
-   * @param id - The ID of the build to update.
+   * @param buildId - The ID of the build to update.
    * @param body - The request body containing the updated build information.
    * @param options - Additional options for the request.
    * @returns A Promise that resolves to the updated build.
    * @throws {BrowserStackError} If an error occurs during the update.
    */
   updateBuild(
-    id: string,
+    buildId: string,
     body: operations["updateAppAutomateBuild"]["requestBody"]["content"]["application/json"],
-    options?: Omit<
-      FetchOptions<operations["updateAppAutomateBuild"]>,
-      "params" | "body"
-    >
+    options?: APIFetchOptions<operations["updateAppAutomateBuild"]>
   ) {
     return this.makePutRequest("/app-automate/builds/{buildId}.json", {
       ...options,
       body,
       params: {
         path: {
-          buildId: id,
+          buildId,
         },
       },
     }).then((data) => {
@@ -215,19 +205,19 @@ export class AppAutomateClient extends APIClient {
 
   /**
    * Deletes a build with the specified ID.
-   * @param id The ID of the build to delete.
+   * @param buildId The ID of the build to delete.
    * @param options Additional options for the delete request.
    * @returns A promise that resolves when the build is successfully deleted.
    */
   deleteBuild(
-    id: string,
-    options?: Omit<FetchOptions<operations["deleteAppAutomateBuild"]>, "params">
+    buildId: string,
+    options?: APIFetchOptions<operations["deleteAppAutomateBuild"]>
   ) {
     return this.makeDeleteRequest("/app-automate/builds/{buildId}.json", {
       ...options,
       params: {
         path: {
-          buildId: id,
+          buildId,
         },
       },
     });
@@ -245,10 +235,7 @@ export class AppAutomateClient extends APIClient {
     body: operations["uploadAppAutomateBuildTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
-    options?: Omit<
-      FetchOptions<operations["uploadAppAutomateBuildTerminalLogs"]>,
-      "params" | "body"
-    >
+    options?: APIFetchOptions<operations["uploadAppAutomateBuildTerminalLogs"]>
   ) {
     // makePostRequest produces a non-JSON response
     return this.makeCloudPostRequest("/app-automate/builds/{buildId}/terminallogs", {
@@ -279,10 +266,7 @@ export class AppAutomateClient extends APIClient {
     body: operations["uploadAppAutomateSessionTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
-    options?: Omit<
-      FetchOptions<operations["uploadAppAutomateSessionTerminalLogs"]>,
-      "params" | "body"
-    >
+    options?: APIFetchOptions<operations["uploadAppAutomateSessionTerminalLogs"]>
   ) {
     // makePostRequest produces a non-JSON response
     return this.makeCloudPostRequest("/app-automate/sessions/{sessionId}/terminallogs", {
@@ -309,7 +293,7 @@ export class AppAutomateClient extends APIClient {
    */
   getSession(
     sessionId: string,
-    options?: Omit<FetchOptions<operations["getAppAutomateSession"]>, "params">
+    options?: APIFetchOptions<operations["getAppAutomateSession"]>
   ) {
     return this.makeGetRequest("/app-automate/sessions/{sessionId}.json", {
       ...options,
@@ -332,10 +316,7 @@ export class AppAutomateClient extends APIClient {
   updateSessionStatus(
     sessionId: string,
     body: operations["updateAppAutomateSession"]["requestBody"]["content"]["application/json"],
-    options?: Omit<
-      FetchOptions<operations["updateAppAutomateSession"]>,
-      "params" | "body"
-    >
+    options?: APIFetchOptions<operations["updateAppAutomateSession"]>
   ) {
     return this.makePutRequest("/app-automate/sessions/{sessionId}.json", {
       ...options,
@@ -356,7 +337,7 @@ export class AppAutomateClient extends APIClient {
    */
   deleteSession(
     sessionId: string,
-    options?: Omit<FetchOptions<operations["deleteAppAutomateSession"]>, "params">
+    options?: APIFetchOptions<operations["deleteAppAutomateSession"]>
   ) {
     return this.makeDeleteRequest("/app-automate/sessions/{sessionId}.json", {
       ...options,
@@ -379,7 +360,7 @@ export class AppAutomateClient extends APIClient {
   getSessionLogs(
     buildId: string,
     sessionId: string,
-    options?: Omit<FetchOptions<operations["getAppAutomateSessionLogs"]>, "params">
+    options?: APIFetchOptions<operations["getAppAutomateSessionLogs"]>
   ) {
     return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/logs", {
       ...options,
@@ -404,7 +385,7 @@ export class AppAutomateClient extends APIClient {
   getSessionDeviceLogs(
     buildId: string,
     sessionId: string,
-    options?: Omit<FetchOptions<operations["getAppAutomateDeviceLogs"]>, "params">
+    options?: APIFetchOptions<operations["getAppAutomateDeviceLogs"]>
   ) {
     return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/devicelogs", {
       ...options,
@@ -429,7 +410,7 @@ export class AppAutomateClient extends APIClient {
   getSessionAppiumLogs(
     buildId: string,
     sessionId: string,
-    options?: Omit<FetchOptions<operations["getAppAutomateAppiumLogs"]>, "params">
+    options?: APIFetchOptions<operations["getAppAutomateAppiumLogs"]>
   ) {
     return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/appiumlogs", {
       ...options,
@@ -453,7 +434,7 @@ export class AppAutomateClient extends APIClient {
   getSessionNetworkLogs(
     buildId: string,
     sessionId: string,
-    options?: Omit<FetchOptions<operations["getAppAutomateNetworkLogs"]>, "params">
+    options?: APIFetchOptions<operations["getAppAutomateNetworkLogs"]>
   ) {
     return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/networklogs", {
       ...options,
@@ -476,7 +457,7 @@ export class AppAutomateClient extends APIClient {
   getSessionAppProfilingDataV1(
     buildId: string,
     sessionId: string,
-    options?: Omit<FetchOptions<operations["getAppAutomateAppProfilingDataV1"]>, "params">
+    options?: APIFetchOptions<operations["getAppAutomateAppProfilingDataV1"]>
   ) {
     return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling", {
       ...options,
@@ -499,7 +480,7 @@ export class AppAutomateClient extends APIClient {
   getSessionAppProfilingDataV2(
     buildId: string,
     sessionId: string,
-    options?: Omit<FetchOptions<operations["getAppAutomateAppProfilingDataV2"]>, "params">
+    options?: APIFetchOptions<operations["getAppAutomateAppProfilingDataV2"]>
   ) {
     return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling/v2", {
       ...options,
@@ -523,10 +504,7 @@ export class AppAutomateClient extends APIClient {
     body: operations["uploadAppAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
-    options?: Omit<
-      FetchOptions<operations["uploadAppAutomateMediaFile"]>,
-      "params" | "body"
-    >
+    options?: APIFetchOptions<operations["uploadAppAutomateMediaFile"]>
   ) {
     return this.makePostRequest("/app-automate/upload-media", {
       ...options,
@@ -551,7 +529,7 @@ export class AppAutomateClient extends APIClient {
    * @returns A promise that resolves to an array of media files, or an empty array if no media files are found.
    */
   getMediaFiles(
-    options?: FetchOptions<operations["getAppAutomateMediaFiles"]>
+    options?: APIFetchOptions<operations["getAppAutomateMediaFiles"]>
   ) {
     return this.makeGetRequest(
       "/app-automate/recent_media_files",
@@ -567,7 +545,7 @@ export class AppAutomateClient extends APIClient {
    */
   getMediaFilesByCustomId(
     customId: string,
-    options?: FetchOptions<operations["getAppAutomateMediaFilesByCustomId"]>
+    options?: APIFetchOptions<operations["getAppAutomateMediaFilesByCustomId"]>
   ) {
     return this.makeGetRequest("/app-automate/recent_media_files/{customId}", {
       ...options,
@@ -586,7 +564,7 @@ export class AppAutomateClient extends APIClient {
    * @returns A promise that resolves to an array of group media files, or an empty array if the response contains a "message" property.
    */
   getGroupMediaFiles(
-    options?: FetchOptions<operations["getAppAutomateGroupMediaFiles"]>
+    options?: APIFetchOptions<operations["getAppAutomateGroupMediaFiles"]>
   ) {
     return this.makeGetRequest(
       "/app-automate/recent_group_media",
@@ -602,7 +580,7 @@ export class AppAutomateClient extends APIClient {
    */
   deleteMediaFile(
     mediaId: string,
-    options?: FetchOptions<operations["deleteAppAutomateMediaFile"]>
+    options?: APIFetchOptions<operations["deleteAppAutomateMediaFile"]>
   ) {
     return this.makeDeleteRequest(
       "/app-automate/custom_media/delete/{mediaId}",
@@ -628,10 +606,7 @@ export class AppAutomateClient extends APIClient {
     body: operations["uploadAppAutomateApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
-    options?: Omit<
-      FetchOptions<operations["uploadAppAutomateApp"]>,
-      "params" | "body"
-    >
+    options?: APIFetchOptions<operations["uploadAppAutomateApp"]>
   ) {
     return this.makePostRequest("/app-automate/upload", {
       ...options,
@@ -659,7 +634,7 @@ export class AppAutomateClient extends APIClient {
    * @param options - Optional fetch options for customizing the request.
    * @returns A promise that resolves to an array of Appium apps, or an empty array if no apps are found.
    */
-  getAppiumApps(options?: FetchOptions<operations["getAppAutomateApps"]>) {
+  getAppiumApps(options?: APIFetchOptions<operations["getAppAutomateApps"]>) {
     return this.makeGetRequest("/app-automate/recent_apps", options).then(
       (data) => ("message" in data ? [] : data)
     );
@@ -673,7 +648,7 @@ export class AppAutomateClient extends APIClient {
    */
   getAppiumAppsByCustomId(
     customId: string,
-    options?: FetchOptions<operations["getAppAutomateAppsByCustomId"]>
+    options?: APIFetchOptions<operations["getAppAutomateAppsByCustomId"]>
   ) {
     return this.makeGetRequest("/app-automate/recent_apps/{customId}", {
       ...options,
@@ -691,7 +666,7 @@ export class AppAutomateClient extends APIClient {
    * @returns A promise that resolves to the list of group apps, or an empty array if there is a "message" property in the response data.
    */
   getAppiumGroupApps(
-    options?: FetchOptions<operations["getAppAutomateGroupApps"]>
+    options?: APIFetchOptions<operations["getAppAutomateGroupApps"]>
   ) {
     return this.makeGetRequest("/app-automate/recent_group_apps", options).then(
       (data) => ("message" in data ? [] : data)
@@ -707,7 +682,7 @@ export class AppAutomateClient extends APIClient {
    */
   deleteAppiumApp(
     appId: string,
-    options?: FetchOptions<operations["deleteAppAutomateApp"]>
+    options?: APIFetchOptions<operations["deleteAppAutomateApp"]>
   ) {
     return this.makeDeleteRequest("/app-automate/app/delete/{appId}", {
       ...options,
@@ -730,10 +705,7 @@ export class AppAutomateClient extends APIClient {
     body: operations["uploadAppAutomateFlutterApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
-    options?: Omit<
-      FetchOptions<operations["uploadAppAutomateFlutterApp"]>,
-      "params" | "body"
-    >
+    options?: APIFetchOptions<operations["uploadAppAutomateFlutterApp"]>
   ) {
     return this.makePostRequest(
       "/app-automate/flutter-integration-tests/v2/android/app",
@@ -765,7 +737,7 @@ export class AppAutomateClient extends APIClient {
    * @returns A promise that resolves to an array of Flutter apps, or an empty array if no apps are found.
    */
   getFlutterApps(
-    options?: FetchOptions<operations["getAppAutomateFlutterApps"]>
+    options?: APIFetchOptions<operations["getAppAutomateFlutterApps"]>
   ) {
     return this.makeGetRequest(
       "/app-automate/flutter-integration-tests/v2/android/apps",
@@ -781,7 +753,7 @@ export class AppAutomateClient extends APIClient {
    */
   getFlutterApp(
     appId: string,
-    options?: FetchOptions<operations["getAppAutomateFlutterApp"]>
+    options?: APIFetchOptions<operations["getAppAutomateFlutterApp"]>
   ) {
     return this.makeGetRequest(
       "/app-automate/flutter-integration-tests/v2/android/apps/{appId}",
@@ -804,7 +776,7 @@ export class AppAutomateClient extends APIClient {
    */
   deleteFlutterApp(
     appId: string,
-    options?: FetchOptions<operations["deleteAppAutomateFlutterApp"]>
+    options?: APIFetchOptions<operations["deleteAppAutomateFlutterApp"]>
   ) {
     return this.makeDeleteRequest(
       "/app-automate/flutter-integration-tests/v2/android/apps/{appId}",
@@ -830,10 +802,7 @@ export class AppAutomateClient extends APIClient {
     body: operations["uploadAppAutomateEspressoApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
-    options?: Omit<
-      FetchOptions<operations["uploadAppAutomateEspressoApp"]>,
-      "params" | "body"
-    >
+    options?: APIFetchOptions<operations["uploadAppAutomateEspressoApp"]>
   ) {
     return this.makePostRequest("/app-automate/espresso/v2/app", {
       ...options,
@@ -861,7 +830,7 @@ export class AppAutomateClient extends APIClient {
    * @returns A promise that resolves to an array of Espresso apps.
    */
   getEspressoApps(
-    options?: FetchOptions<operations["getAppAutomateEspressoApps"]>
+    options?: APIFetchOptions<operations["getAppAutomateEspressoApps"]>
   ) {
     return this.makeGetRequest("/app-automate/espresso/v2/apps", options).then(
       (data) => ("apps" in data ? data.apps : [])
@@ -876,7 +845,7 @@ export class AppAutomateClient extends APIClient {
    */
   getEspressoApp(
     appId: string,
-    options?: FetchOptions<operations["getAppAutomateEspressoApp"]>
+    options?: APIFetchOptions<operations["getAppAutomateEspressoApp"]>
   ) {
     return this.makeGetRequest("/app-automate/espresso/v2/apps/{appId}", {
       ...options,
@@ -896,7 +865,7 @@ export class AppAutomateClient extends APIClient {
    */
   deleteEspressoApp(
     appId: string,
-    options?: FetchOptions<operations["deleteAppAutomateEspressoApp"]>
+    options?: APIFetchOptions<operations["deleteAppAutomateEspressoApp"]>
   ) {
     return this.makeDeleteRequest("/app-automate/espresso/v2/apps/{appId}", {
       ...options,
@@ -919,10 +888,7 @@ export class AppAutomateClient extends APIClient {
     body: operations["uploadAppAutomateXCUITestApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
-    options?: Omit<
-      FetchOptions<operations["uploadAppAutomateXCUITestApp"]>,
-      "params" | "body"
-    >
+    options?: APIFetchOptions<operations["uploadAppAutomateXCUITestApp"]>
   ) {
     return this.makePostRequest("/app-automate/xcuitest/v2/app", {
       ...options,
@@ -950,7 +916,7 @@ export class AppAutomateClient extends APIClient {
    * @returns A promise that resolves to an array of XCUITest apps.
    */
   getXCUITestApps(
-    options?: FetchOptions<operations["getAppAutomateXCUITestApps"]>
+    options?: APIFetchOptions<operations["getAppAutomateXCUITestApps"]>
   ) {
     return this.makeGetRequest("/app-automate/xcuitest/v2/apps", options).then(
       (data) => ("apps" in data ? data.apps : [])
@@ -965,7 +931,7 @@ export class AppAutomateClient extends APIClient {
    */
   getXCUITestApp(
     appId: string,
-    options?: FetchOptions<operations["getAppAutomateXCUITestApp"]>
+    options?: APIFetchOptions<operations["getAppAutomateXCUITestApp"]>
   ) {
     return this.makeGetRequest("/app-automate/xcuitest/v2/apps/{appId}", {
       ...options,
@@ -985,7 +951,7 @@ export class AppAutomateClient extends APIClient {
    */
   deleteXCUITestApp(
     appId: string,
-    options?: FetchOptions<operations["deleteAppAutomateXCUITestApp"]>
+    options?: APIFetchOptions<operations["deleteAppAutomateXCUITestApp"]>
   ) {
     return this.makeDeleteRequest("/app-automate/xcuitest/v2/apps/{appId}", {
       ...options,

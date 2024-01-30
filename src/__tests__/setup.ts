@@ -4,7 +4,7 @@ import {
   AutomateClient,
   BrowserStack,
   ScreenshotsClient,
-  Client,
+  JSTestingClient,
 } from "@/index";
 import { assert, beforeEach } from "vitest";
 
@@ -31,7 +31,7 @@ export interface BrowserStackTestContext {
     randomXCUITestAppId(): Promise<string>;
   };
   jsTesting: {
-    client: Client;
+    client: JSTestingClient;
     randomWorkerId(): Promise<number>;
   };
 }

@@ -1,4 +1,4 @@
-import { APIClient, APIClientOptions } from "@/api";
+import { APIClient, BrowserStackOptions, APIFetchOptions } from "@/api-client";
 import type { operations } from "@/generated/openapi";
 import type { FetchOptions } from "openapi-fetch";
 
@@ -12,7 +12,7 @@ export class ScreenshotsClient extends APIClient {
    * Constructs a new instance of the ScreenshotsClient class.
    * @param options - Optional configuration options for the client.
    */
-  constructor(options?: APIClientOptions) {
+  constructor(options?: BrowserStackOptions) {
     super({
       ...options,
       baseUrl: options?.baseUrl ?? "https://www.browserstack.com",
@@ -36,7 +36,7 @@ export class ScreenshotsClient extends APIClient {
    */
   createJob(
     body: operations["createScreenshotsJob"]["requestBody"]["content"]["application/json"],
-    options?: FetchOptions<operations["createScreenshotsJob"]>
+    options?: APIFetchOptions<operations["createScreenshotsJob"]>
   ) {
     return this.makePostRequest("/screenshots", {
       ...options,
@@ -52,7 +52,7 @@ export class ScreenshotsClient extends APIClient {
    */
   getJob(
     jobId: string,
-    options?: FetchOptions<operations["getScreenshotsJob"]>
+    options?: APIFetchOptions<operations["getScreenshotsJob"]>
   ) {
     return this.makeGetRequest(`/screenshots/{jobId}.json`, {
       ...options,

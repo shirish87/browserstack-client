@@ -8,6 +8,7 @@ export type ErrorContext<P extends keyof paths, T> = (FetchOptions<unknown> & {
 
 /**
  * BrowserStackError represents an error returned from a BrowserStack Client.
+ * @internal
  */
 export class BrowserStackError<
   P extends keyof paths,

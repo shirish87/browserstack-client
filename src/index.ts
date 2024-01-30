@@ -1,23 +1,32 @@
 import { AppAutomateClient } from "@/app-automate";
 import { AutomateClient } from "@/automate";
-import { Client } from "@/client";
 import { BrowserStackError } from "@/error";
+import type { components } from "@/generated/openapi";
+import { JSTestingClient } from "@/js-testing";
 import { ScreenshotsClient } from "@/screenshots";
 
+export type { APIFetchOptions, BrowserStackOptions } from "@/api-client";
 export type { AppAutomateClient } from "@/app-automate";
 export type { AutomateClient } from "@/automate";
-export type { Client } from "@/client";
-export type { ScreenshotsClient } from "@/screenshots";
-export type { BrowserStackOptions, APIFetchOptions } from "@/api-client";
 export type { BrowserStackError, ErrorContext } from "@/error";
-import type { components } from "@/generated/openapi";
+export type { JSTestingClient } from "@/js-testing";
+export type { ScreenshotsClient } from "@/screenshots";
 
 export type schemas = components["schemas"];
 
+/**
+ * Represents the BrowserStack API module.
+ * @module
+ * @public
+ */
 export const BrowserStack = {
   AutomateClient: AutomateClient,
   ScreenshotsClient: ScreenshotsClient,
   AppAutomateClient: AppAutomateClient,
-  Client: Client,
+  JSTestingClient: JSTestingClient,
+  /**
+   * Backwards compatibility alias for {@link JSTestingClient}.
+   */
+  Client: JSTestingClient,
   BrowserStackError,
 };

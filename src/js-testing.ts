@@ -6,7 +6,7 @@ import { components, operations } from "@/generated/openapi";
  * @see https://www.browserstack.com/docs/automate/javascript-testing/api
  * @public
  */
-export class Client extends APIClient {
+export class JSTestingClient extends APIClient {
 
   getBrowsers<T extends true>(
     query?: operations["getBrowsers"]["parameters"]["query"] & { flat?: T },

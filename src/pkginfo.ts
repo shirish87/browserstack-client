@@ -12,4 +12,7 @@ const pkginfo = {
   userAgent,
 };
 
+/**
+ * @internal
+ */
 export default pkginfo;

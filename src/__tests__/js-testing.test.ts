@@ -2,7 +2,7 @@ import { components } from "@/generated/openapi";
 import { describe, expect, expectTypeOf, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup";
 
-describe("Client", () => {
+describe("JSTestingClient", () => {
 
   describe("Browsers", () => {
 
