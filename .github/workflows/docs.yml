@@ -25,6 +25,8 @@ jobs:
           npm install
           npm run prebuild
           npm run docs:build
+        env:
+          CI: "true"
 
       - name: Fix permissions
         run: |
