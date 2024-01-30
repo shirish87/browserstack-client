@@ -34,9 +34,6 @@ jobs:
           npm run prebuild
           npm run docs:build
 
-      - name: Copy vitepress output to _site
-        run: cp -r docs/.vitepress/dist/ _site/
-
       - name: Fix permissions
         run: |
           chmod -c -R +rX "docs/.vitepress/dist/" | while read line; do
