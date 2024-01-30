@@ -104,6 +104,7 @@ paths:
         Your testing time is calculated from the time when browser worker starts running.
       operationId: createWorker
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -116,11 +117,16 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [id]
                 properties:
                   id:
-                    type: string
+                    type: number
                     description: "ID of the worker"
-                    example: "b5e2c7e0e4c2a0f1e1f2e3d4c5b6a7d8e9f0a1b2"
+                    example: 122326697
+                  url:
+                    type: string
+                    description: "URL of the worker"
+                    example: "https://www.google.com/ncr"
 
         "400":
           $ref: '#/components/schemas/400.BadRequest'
@@ -159,19 +165,19 @@ paths:
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
 
-  /worker/{id}:
+  /worker/{workedId}:
     get:
       summary: Fetch details of a worker.
       description: Fetch details a worker.
       operationId: getWorker
       parameters:
-        - name: id
+        - name: workedId
           in: path
           required: true
           description: "ID of the worker"
           schema:
-            type: string
-            example: "b5e2c7e0e4c2a0f1e1f2e3d4c5b6a7d8e9f0a1b2"
+            type: number
+            example: 122326697
       responses:
         "200":
           description: Successful operation
@@ -199,22 +205,26 @@ paths:
       description: Terminate a worker.
       operationId: deleteWorker
       parameters:
-        - name: id
+        - name: workedId
           in: path
           required: true
           description: "ID of the worker"
           schema:
-            type: string
-            example: "b5e2c7e0e4c2a0f1e1f2e3d4c5b6a7d8e9f0a1b2"
+            type: number
+            example: 122326697
       responses:
         "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Worker'
+                type: object
+                required: [time]
+                properties:
+                  time:
+                    type: number
+                    description: "Duration of the worker"
+                    example: 45.786373558
 
         "400":
           $ref: '#/components/schemas/400.BadRequest'
@@ -4222,11 +4232,12 @@ components:
       allOf:
         - $ref: "#/components/schemas/BrowserPlatform"
         - type: object
+          required: [id]
           properties:
             id:
-              type: string
+              type: number
               description: "ID of the worker."
-              example: "4207442b2b0567368956dba064c22a3235a76214"
+              example: 122326697
             sessionId:
               description: "ID of the session."
               example: "550709149fe79e949363b581e774d5ebffa1b8fe"
