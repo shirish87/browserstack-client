@@ -1,36 +1,46 @@
 name: npm test
 on:
-  - push
+  push:
+    branches: [main]
 
 env:
   VITE_BROWSERSTACK_USERNAME: "${{ secrets.VITE_BROWSERSTACK_USERNAME }}"
   VITE_BROWSERSTACK_KEY: "${{ secrets.VITE_BROWSERSTACK_KEY }}"
 
 jobs:
-  test-node-v20:
-    name: "node.js v20"
+  test-node-lts:
+    name: "node.js lts"
     runs-on: ubuntu-latest
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: "20"
-      - run: npm install
-      - run: npm run build
-      - run: npm test
+          node-version: "lts"
+          cache: "npm"
+
+      - name: Build
+        run: |
+          npm install
+          npm run build
+          npm test
+
 
   test-node-v18:
     name: "node.js v18"
     runs-on: ubuntu-latest
     if: ${{ always() }}
-    needs: [test-node-v20]
+    needs: [test-node-lts]
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - run: npm install
-      - run: npm run build
-      - run: npm test
+          cache: "npm"
+
+      - name: Build
+        run: |
+          npm install
+          npm run build
+          npm test

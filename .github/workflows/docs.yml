@@ -1,0 +1,52 @@
+name: Publish docs
+
+on:
+  push:
+    branches: [main]
+    # tags:
+    #   - '*'
+  workflow_dispatch:
+
+
+jobs:
+  deploy-docs:
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      contents: read    # to read the Pages artifact
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    runs-on: ubuntu-latest
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "lts"
+          cache: "npm"
+      - run: |
+          npm install
+          npm run prebuild
+          npm run docs:build
+
+      - name: Copy vitepress output to _site
+        run: cp -r docs/.vitepress/dist/ _site/
+
+      - name: Fix permissions
+        run: |
+          chmod -c -R +rX "docs/.vitepress/dist/" | while read line; do
+            echo "::warning title=Invalid file permissions automatically fixed::$line"
+          done
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "docs/.vitepress/dist/"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
