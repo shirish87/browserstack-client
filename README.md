@@ -30,7 +30,7 @@ BROWSERSTACK_KEY=<your-access-key>
 import { BrowserStack } from 'browserstack-client';
 
 // BrowserStack JavaScript Testing API
-const apiClient = new BrowserStack.Client();
+const jsTestingClient = new BrowserStack.Client();
 
 // BrowserStack Automate API
 const automateClient = new BrowserStack.AutomateClient();
@@ -40,6 +40,9 @@ const appAutomateClient = new BrowserStack.AppAutomateClient();
 
 // BrowserStack Screenshots API
 const screenshotsClient = new BrowserStack.ScreenshotsClient();
+
+// BrowserStack Local Testing API
+const localTestingClient = new BrowserStack.LocalTestingClient();
 ```
 
 

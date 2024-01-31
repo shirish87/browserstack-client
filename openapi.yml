@@ -3484,6 +3484,229 @@ paths:
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
 
+  # Local Testing APIs
+  /local/v1/list:
+    get:
+      summary: Fetches list of recent binary instances
+      description: >-
+        Fetches list of recent binary instances for local testing.
+        Note that the binary should have been started with the --enable-logging-for-api parameter.
+      operationId: getLocalBinaryInstances
+      parameters:
+        - name: auth_token
+          in: query
+          required: true
+          schema:
+            type: string
+            description: "Your BrowserStack access token"
+            example: "ACCESS_TOKEN"
+        - name: last
+          in: query
+          schema:
+            type: number
+            description: "The number of recent binary instances to be listed. Maximum value: 100. Default value: 20."
+            default: 20
+        - name: state
+          in: query
+          schema:
+            type: string
+            description: "Filter binary instances by state. Accepted values: running, all. Default value: running."
+            enum: [running, all]
+            default: running
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [api_version, meta_data, instances]
+                properties:
+                  api_version:
+                    type: string
+                    description: "API version"
+                    example: "v1"
+                  meta_data:
+                    type: object
+                    description: "Metadata"
+                    properties:
+                      params:
+                        type: object
+                        description: "Parameters"
+                        additionalProperties: true
+                    additionalProperties: true
+                  instances:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/LocalBinaryInstance"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /local/v1/{localInstanceId}:
+    get:
+      summary: Fetches details of a Local binary instance
+      description: >-
+        Fetches details of a Local binary instance used for local testing.
+        Note that the binary should have been started with the --enable-logging-for-api parameter.
+      operationId: getLocalBinaryInstance
+      parameters:
+        - name: localInstanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: "The local instance ID"
+            example: "QUERTY1"
+        - name: auth_token
+          in: query
+          required: true
+          schema:
+            type: string
+            description: "Your BrowserStack access token"
+            example: "ACCESS_TOKEN"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [api_version, meta_data, instances]
+                properties:
+                  api_version:
+                    type: string
+                    description: "API version"
+                    example: "v1"
+                  meta_data:
+                    type: object
+                    description: "Metadata"
+                    properties:
+                      params:
+                        type: object
+                        description: "Parameters"
+                        additionalProperties: true
+                    additionalProperties: true
+                  instances:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/LocalBinaryInstance"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    delete:
+      summary: Disconnect a Local binary instance
+      description: Disconnect a Local binary instance
+      operationId: disconnectLocalBinaryInstance
+      parameters:
+        - name: localInstanceId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: "The local instance ID"
+            example: "QUERTY1"
+        - name: auth_token
+          in: query
+          required: true
+          schema:
+            type: string
+            description: "Your BrowserStack access token"
+            example: "ACCESS_TOKEN"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [api_version, meta_data, message]
+                properties:
+                  api_version:
+                    type: string
+                    description: "API version"
+                    example: "v1"
+                  meta_data:
+                    type: object
+                    description: "Metadata"
+                    properties:
+                      params:
+                        type: object
+                        description: "Parameters"
+                        additionalProperties: true
+                    additionalProperties: true
+                  message:
+                    type: string
+                    description: "QUERTY1 successfully disconnected"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /browserstack-local/BrowserStackLocal-{osArch}.zip:
+    get:
+      summary: Download the BrowserStackLocal binary zip file
+      description: Download the BrowserStackLocal binary zip file
+      operationId: downloadLocalBinary
+      parameters:
+        - name: osArch
+          in: path
+          required: true
+          schema:
+            type: string
+            description: "OS and architecture"
+            enum:
+              - "darwin-x64"
+              - "linux-x64"
+              - "linux-ia32"
+              - "win32"
+              - "alpine"
+            example: "darwin-x64"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
 
 
 components:
@@ -4425,6 +4648,58 @@ components:
               type: string
               description: "Timestamp at which the screenshot was taken"
               example: "2013-03-14 16:25:45 UTC"
+
+    LocalBinaryInstance:
+      type: object
+      required: [id, email, lastActiveOn, startTime, localIdentifier]
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the Local instance."
+          example: "QUERTY1"
+        email:
+          type: string
+          description: "User account that started the Local instance."
+          example: "john@browserstack.com"
+        hostname:
+          type: string
+          description: "Hostname for the machine running the Local instance."
+          example: "my-local-box"
+        lastActiveOn:
+          type: string
+          description: "Timestamp at which the Local instance was last active."
+          example: "2013-03-14 16:25:45 UTC"
+        startTime:
+          type: string
+          description: "Timestamp at which the Local instance was started."
+          example: "2013-03-14 16:25:45 UTC"
+        endTime:
+          type: string
+          description: "Timestamp at which the Local instance was terminated."
+          example: "2013-03-14 16:25:45 UTC"
+        disconnectReason:
+          type: string
+          description: "Reason for termination of the Local instance."
+          example: "User terminated the instance."
+        commandLineParams:
+          type: string
+          description: "Command line parameters used to start the Local instance."
+          example: "--key <access_key> --enable-logging-for-api --local-identifier <local_identifier>"
+        localIdentifier:
+          type: string
+          description: "Identifier for the Local instance."
+          example: "4207442b2b0567368956dba064c22a3235a76214"
+        public-IP:
+          type: string
+          description: "Public IP address of the machine running the Local instance."
+          example: "8.8.4.4"
+        privateIP:
+          type: array
+          items:
+            type: string
+            description: "Private IP address of the machine running the Local instance."
+          example: ["127.0.0.1", "10.100.100.1"]
+
 
     400.BadRequest:
       description: Bad request.

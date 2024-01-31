@@ -5,6 +5,7 @@ import {
   BrowserStack,
   ScreenshotsClient,
   JSTestingClient,
+  LocalTestingClient,
 } from "@/index";
 import { assert, beforeEach } from "vitest";
 
@@ -34,6 +35,10 @@ export interface BrowserStackTestContext {
     client: JSTestingClient;
     randomWorkerId(): Promise<number>;
   };
+  localTesting: {
+    client: LocalTestingClient;
+    randomBinaryInstanceId(): Promise<string>;
+  },
 }
 
 beforeEach<BrowserStackTestContext>((context) => {
@@ -46,6 +51,7 @@ beforeEach<BrowserStackTestContext>((context) => {
   const screenshots = new BrowserStack.ScreenshotsClient(options);
   const appAutomate = new BrowserStack.AppAutomateClient(options);
   const jsTesting = new BrowserStack.Client(options);
+  const localTesting = new BrowserStack.LocalTestingClient(options);
 
   const randomAutomateBuildId = async () => {
     const builds = await automate.getBuilds();
@@ -156,6 +162,17 @@ beforeEach<BrowserStackTestContext>((context) => {
         const worker = workers[Math.floor(Math.random() * workers.length)];
         assert(worker.id > 0, "Invalid worker");
         return worker.id;
+      },
+    },
+    localTesting: {
+      client: localTesting,
+      randomBinaryInstanceId: async () => {
+        const instances = await localTesting.getBinaryInstances();
+        assert(instances.length > 0, "No local binary instances found");
+
+        const instance = instances[Math.floor(Math.random() * instances.length)];
+        assert(instance.id, "Invalid local binary instance");
+        return instance.id;
       },
     },
   });

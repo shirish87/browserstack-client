@@ -20,6 +20,7 @@ const apiCloudBaseUrl = `${cloudVars.scheme.default}://${
 
 export interface BrowserStackOptions extends ClientOptions {
   username?: string;
+  usernameOptional?: boolean;
   key?: string;
 }
 
@@ -42,7 +43,10 @@ export class APIClient {
 
   constructor(options: BrowserStackOptions) {
     const username = options.username ?? process.env.BROWSERSTACK_USERNAME;
-    if (typeof username !== "string" || !username.trim().length) {
+    if (
+      options.usernameOptional !== true &&
+      (typeof username !== "string" || !username.trim().length)
+    ) {
       throw new BrowserStackError("Missing options.username");
     }
 
@@ -56,9 +60,9 @@ export class APIClient {
       baseUrl: options.baseUrl ?? defaultBaseUrl,
       headers: {
         ...options.headers,
-        Authorization: `Basic ${Buffer.from(`${username}:${key}`).toString(
-          "base64"
-        )}`,
+        Authorization: username
+          ? `Basic ${Buffer.from(`${username}:${key}`).toString("base64")}`
+          : undefined,
         "User-Agent": pkginfo.userAgent,
       },
     };

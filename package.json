@@ -51,6 +51,7 @@
     "vitest": "1.2.1"
   },
   "dependencies": {
+    "fflate": "^0.8.1",
     "openapi-fetch": "^0.8.2"
   },
   "repository": {
