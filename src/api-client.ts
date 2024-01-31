@@ -1,5 +1,5 @@
 import { BrowserStackError } from "@/error";
-import { components, paths } from "@/generated/openapi";
+import { paths } from "@/generated/openapi";
 import { servers } from "@/generated/openapi.json";
 import pkginfo from "@/pkginfo";
 import createClient, { ClientOptions, FetchOptions } from "openapi-fetch";
@@ -20,8 +20,11 @@ const apiCloudBaseUrl = `${cloudVars.scheme.default}://${
 
 export interface BrowserStackOptions extends ClientOptions {
   username?: string;
-  usernameOptional?: boolean;
   key?: string;
+  /**
+   * @internal
+   */
+  usernameOptional?: boolean;
 }
 
 /**
@@ -236,11 +239,5 @@ export class APIClient {
     }
 
     return response.data;
-  }
-
-  getAccountStatus(
-    options?: FetchOptions<paths["/status"]["get"]>
-  ): Promise<components["schemas"]["Status"]> {
-    return this.makeGetRequest("/status", options);
   }
 }

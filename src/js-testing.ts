@@ -7,6 +7,11 @@ import { components, operations } from "@/generated/openapi";
  * @public
  */
 export class JSTestingClient extends APIClient {
+  getAccountStatus(
+    options?: APIFetchOptions<operations["getStatus"]["parameters"]["query"]>
+  ): Promise<components["schemas"]["Status"]> {
+    return this.makeGetRequest("/status", options);
+  }
 
   getBrowsers<T extends true>(
     query?: operations["getBrowsers"]["parameters"]["query"] & { flat?: T },
@@ -27,17 +32,15 @@ export class JSTestingClient extends APIClient {
   getBrowsers(
     query?: operations["getBrowsers"]["parameters"]["query"],
     options?: APIFetchOptions<operations["getBrowsers"]>
-  ): Promise<components["schemas"]["BrowserList"] | components["schemas"]["BrowserMap"]> {
-
+  ): Promise<
+    components["schemas"]["BrowserList"] | components["schemas"]["BrowserMap"]
+  > {
     return this.makeGetRequest("/browsers", {
       ...options,
       params: {
         query: {
           ...query,
-          flat:
-            typeof query?.flat === "boolean"
-              ? query.flat
-              : true,
+          flat: typeof query?.flat === "boolean" ? query.flat : true,
         },
       },
     });

@@ -31,13 +31,6 @@ export class LocalTestingClient extends APIClient {
   }
 
   /**
-   * @internal
-   */
-  getAccountStatus() {
-    return super.getAccountStatus();
-  }
-
-  /**
    * Retrieves a list of recent Local binary instances from the server.
    *
    * @param options - The fetch options for the request.

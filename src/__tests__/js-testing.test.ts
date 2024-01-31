@@ -4,6 +4,12 @@ import type { BrowserStackTestContext } from "./setup";
 
 describe("JSTestingClient", () => {
 
+  test<BrowserStackTestContext>("getAccountStatus", async ({ jsTesting: { client } }) => {
+    const data = await client.getAccountStatus();
+    expect(data).toBeDefined();
+    expectTypeOf(data).toMatchTypeOf<components["schemas"]["Status"]>();
+  });
+
   describe("Browsers", () => {
 
     test<BrowserStackTestContext>("getBrowsersFlat", async ({ jsTesting: { client } }) => {
