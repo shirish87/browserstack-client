@@ -2,6 +2,10 @@ name: npm test
 on:
   push:
     branches: [main]
+    tags-ignore: [v*-alpha, v*-next]
+    paths-ignore:
+      - ".github/**"
+  workflow_dispatch:
 
 env:
   VITE_BROWSERSTACK_USERNAME: "${{ secrets.VITE_BROWSERSTACK_USERNAME }}"
