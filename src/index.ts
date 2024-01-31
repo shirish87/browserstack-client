@@ -1,18 +1,17 @@
 import { AppAutomateClient } from "@/app-automate";
 import { AutomateClient } from "@/automate";
-import { BrowserStackError } from "@/error";
 import type { components } from "@/generated/openapi";
 import { JSTestingClient } from "@/js-testing";
-import { ScreenshotsClient } from "@/screenshots";
 import { LocalTestingClient } from "@/local-testing";
+import { ScreenshotsClient } from "@/screenshots";
 
 export type { APIFetchOptions, BrowserStackOptions } from "@/api-client";
 export type { AppAutomateClient } from "@/app-automate";
 export type { AutomateClient } from "@/automate";
 export type { BrowserStackError, ErrorContext } from "@/error";
 export type { JSTestingClient } from "@/js-testing";
-export type { ScreenshotsClient } from "@/screenshots";
 export type { LocalTestingClient } from "@/local-testing";
+export type { ScreenshotsClient } from "@/screenshots";
 
 export type schemas = components["schemas"];
 
@@ -31,5 +30,4 @@ export const BrowserStack = {
    */
   Client: JSTestingClient,
   LocalTestingClient: LocalTestingClient,
-  BrowserStackError,
 };
