@@ -5,22 +5,21 @@ import { describe, expect, expectTypeOf, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup";
 
 describe("AppAutomateClient", () => {
-
   describe("Devices", () => {
-
-      test<BrowserStackTestContext>("getDevices", async ({
-        appAutomate: { client },
-      }) => {
-        const data = await client.getDevices();
-        expect(data).toBeDefined();
-        expect(data).toBeInstanceOf(Array);
-        expect(data.length).toBeGreaterThan(0);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateDevice"][]>();
-      });
+    test<BrowserStackTestContext>("getDevices", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.getDevices();
+      expect(data).toBeDefined();
+      expect(data).toBeInstanceOf(Array);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateDevice"][]
+      >();
+    });
   });
 
   describe("Plan", () => {
-
     test<BrowserStackTestContext>("getPlan", async ({
       appAutomate: { client },
     }) => {
@@ -33,7 +32,6 @@ describe("AppAutomateClient", () => {
   });
 
   describe("Projects", () => {
-
     test<BrowserStackTestContext>("getProjects", async ({
       appAutomate: { client },
     }) => {
@@ -41,7 +39,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateProject"][]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AutomateProject"][]
+      >();
     });
 
     test<BrowserStackTestContext>("getProject", async ({
@@ -52,7 +52,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data.builds).toBeInstanceOf(Array);
       expect(data.builds.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateProject"]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AutomateProject"]
+      >();
     });
 
     test<BrowserStackTestContext>("updateProject", async ({
@@ -66,7 +68,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data.name).toBeDefined();
       expect(data.name).toEqual("pricing-project");
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateProject"]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AutomateProject"]
+      >();
     });
 
     test<BrowserStackTestContext>("getBadgeKey", async ({
@@ -93,7 +97,6 @@ describe("AppAutomateClient", () => {
   });
 
   describe("Builds", () => {
-
     test<BrowserStackTestContext>("getBuilds", async ({
       appAutomate: { client },
     }) => {
@@ -101,7 +104,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"][]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AutomateBuild"][]
+      >();
     });
 
     test<BrowserStackTestContext>("getBuild", async ({
@@ -112,7 +117,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data.sessions).toBeInstanceOf(Array);
       expect(data.sessions.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AutomateBuild"]
+      >();
     });
 
     test<BrowserStackTestContext>("updateBuild", async ({
@@ -125,7 +132,9 @@ describe("AppAutomateClient", () => {
 
       expect(data.build_tag).toBeDefined();
       expect(data.build_tag).toEqual("pricing-build");
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AutomateBuild"]
+      >();
     });
 
     test<BrowserStackTestContext>("uploadBuildTerminalLogs", async ({
@@ -157,7 +166,6 @@ describe("AppAutomateClient", () => {
   });
 
   describe("Sessions", () => {
-
     test<BrowserStackTestContext>("getSession", async ({
       appAutomate: { client, randomSessionId },
     }) => {
@@ -165,7 +173,9 @@ describe("AppAutomateClient", () => {
       const data = await client.getSession(sessionId);
       expect(data).toBeDefined();
       expect(data).haveOwnProperty("status");
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateSession"]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateSession"]
+      >();
     });
 
     test<BrowserStackTestContext>("updateSessionStatus", async ({
@@ -182,7 +192,9 @@ describe("AppAutomateClient", () => {
       expect(data.status).toEqual("passed");
       expect(data.reason).toBeDefined();
       expect(data.reason).toEqual("pricing-error");
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateSession"]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateSession"]
+      >();
     });
 
     test<BrowserStackTestContext>("uploadSessionTerminalLogs", async ({
@@ -201,13 +213,15 @@ describe("AppAutomateClient", () => {
     }, 10_000);
 
     describe("Logs", () => {
-
       test<BrowserStackTestContext>("getSessionLogs", async ({
         appAutomate: { client, randomBuildId },
       }) => {
         const buildId = await randomBuildId();
         const { sessions } = await client.getBuild(buildId);
-        const data = await client.getSessionLogs(buildId, sessions[0].hashed_id);
+        const data = await client.getSessionLogs(
+          buildId,
+          sessions[0].hashed_id
+        );
         expect(data).toBeDefined();
         expect(data.length).toBeGreaterThan(0);
         expectTypeOf(data).toMatchTypeOf<string>();
@@ -218,7 +232,10 @@ describe("AppAutomateClient", () => {
       }) => {
         const buildId = await randomBuildId();
         const { sessions } = await client.getBuild(buildId);
-        const data = await client.getSessionDeviceLogs(buildId, sessions[0].hashed_id);
+        const data = await client.getSessionDeviceLogs(
+          buildId,
+          sessions[0].hashed_id
+        );
         expect(data).toBeDefined();
         expect(data.length).toBeGreaterThan(0);
         expectTypeOf(data).toMatchTypeOf<string>();
@@ -229,7 +246,10 @@ describe("AppAutomateClient", () => {
       }) => {
         const buildId = await randomBuildId();
         const { sessions } = await client.getBuild(buildId);
-        const data = await client.getSessionAppiumLogs(buildId, sessions[0].hashed_id);
+        const data = await client.getSessionAppiumLogs(
+          buildId,
+          sessions[0].hashed_id
+        );
         expect(data).toBeDefined();
         expect(data.length).toBeGreaterThan(0);
         expectTypeOf(data).toMatchTypeOf<string>();
@@ -240,7 +260,10 @@ describe("AppAutomateClient", () => {
       }) => {
         const buildId = await randomBuildId();
         const { sessions } = await client.getBuild(buildId);
-        const data = await client.getSessionNetworkLogs(buildId, sessions[0].hashed_id);
+        const data = await client.getSessionNetworkLogs(
+          buildId,
+          sessions[0].hashed_id
+        );
         expect(data).toBeDefined();
         expect(data).toBeInstanceOf(Object);
         expect(data.logs).toBeDefined();
@@ -252,11 +275,16 @@ describe("AppAutomateClient", () => {
       }) => {
         const buildId = await randomBuildId();
         const { sessions } = await client.getBuild(buildId);
-        const data = await client.getSessionAppProfilingDataV1(buildId, sessions[0].hashed_id);
+        const data = await client.getSessionAppProfilingDataV1(
+          buildId,
+          sessions[0].hashed_id
+        );
         expect(data).toBeDefined();
         expect(data).toBeInstanceOf(Array);
         expect(data.length).toBeGreaterThan(0);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateAppProfilingV1"][]>();
+        expectTypeOf(data).toMatchTypeOf<
+          components["schemas"]["AppAutomateAppProfilingV1"][]
+        >();
       });
 
       test.skip<BrowserStackTestContext>("getSessionAppProfilingDataV2", async ({
@@ -264,12 +292,17 @@ describe("AppAutomateClient", () => {
       }) => {
         const buildId = await randomBuildId();
         const { sessions } = await client.getBuild(buildId);
-        const data = await client.getSessionAppProfilingDataV2(buildId, sessions[0].hashed_id);
+        const data = await client.getSessionAppProfilingDataV2(
+          buildId,
+          sessions[0].hashed_id
+        );
         expect(data).toBeDefined();
         expect(data).toBeInstanceOf(Object);
         expect(data.metadata).toBeInstanceOf(Object);
         expect(data.data).toBeInstanceOf(Object);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateAppProfilingV2"]>();
+        expectTypeOf(data).toMatchTypeOf<
+          components["schemas"]["AppAutomateAppProfilingV2"]
+        >();
       });
 
       test.skip<BrowserStackTestContext>("deleteSession", async ({
@@ -287,7 +320,6 @@ describe("AppAutomateClient", () => {
   });
 
   describe("Media Files", () => {
-
     test<BrowserStackTestContext>("uploadMediaFile", async ({
       appAutomate: { client },
     }) => {
@@ -309,7 +341,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateMediaFile"][]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateMediaFile"][]
+      >();
     });
 
     test<BrowserStackTestContext>("getMediaFilesByCustomId", async ({
@@ -320,7 +354,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
       expect(data[0].custom_id).toEqual("terminal-logs");
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateMediaFile"][]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateMediaFile"][]
+      >();
     });
 
     test<BrowserStackTestContext>("getGroupMediaFiles", async ({
@@ -330,7 +366,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateMediaFile"][]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateMediaFile"][]
+      >();
     });
 
     test<BrowserStackTestContext>("deleteMediaFile", async ({
@@ -346,12 +384,11 @@ describe("AppAutomateClient", () => {
   });
 
   describe("Appium Apps", () => {
-
     test<BrowserStackTestContext>("uploadApp", async ({
       appAutomate: { client },
     }) => {
       const data = await client.uploadAppiumApp({
-        url: "https://github.com/markushi/android-ui/raw/master/example.apk",
+        url: "https://github.com/markushi/android-ui/raw/a589fad7b74ace063c2b0e90741d43225b200a18/example.apk",
         filename: "example.apk",
         custom_id: "example-app",
       });
@@ -368,7 +405,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateApp"][]
+      >();
     });
 
     test<BrowserStackTestContext>("getAppsByCustomId", async ({
@@ -379,7 +418,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
       expect(data[0].custom_id).toEqual("example-app");
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateApp"][]
+      >();
     });
 
     test<BrowserStackTestContext>("getGroupApps", async ({
@@ -389,7 +430,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateApp"][]
+      >();
     });
 
     test<BrowserStackTestContext>("deleteApp", async ({
@@ -405,13 +448,10 @@ describe("AppAutomateClient", () => {
   });
 
   describe("Flutter Apps", () => {
-
     describe<BrowserStackTestContext>("Flutter Android Apps", (test) => {
       const platform = FlutterPlatform.android;
 
-      test("uploadFlutterApp", async ({
-        appAutomate: { client },
-      }) => {
+      test("uploadFlutterApp", async ({ appAutomate: { client } }) => {
         const data = await client.uploadFlutterApp(platform, {
           url: "https://github.com/TheAlphamerc/flutter_ecommerce_app/releases/download/v1.0.0/app-release.apk",
           filename: "example.apk",
@@ -423,14 +463,14 @@ describe("AppAutomateClient", () => {
         expectTypeOf(data.app_url).toMatchTypeOf<string>();
       });
 
-      test("getFlutterApps", async ({
-        appAutomate: { client },
-      }) => {
+      test("getFlutterApps", async ({ appAutomate: { client } }) => {
         const data = await client.getFlutterApps(platform);
         expect(data).toBeDefined();
         expect(data).toBeInstanceOf(Array);
         expect(data.length).toBeGreaterThan(0);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
+        expectTypeOf(data).toMatchTypeOf<
+          components["schemas"]["AppAutomateApp"][]
+        >();
       });
 
       test("getAppById", async ({
@@ -440,7 +480,9 @@ describe("AppAutomateClient", () => {
         const data = await client.getFlutterApp(platform, appId);
         expect(data).toBeDefined();
         expect(data.custom_id).toEqual("example-app");
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
+        expectTypeOf(data).toMatchTypeOf<
+          components["schemas"]["AppAutomateApp"]
+        >();
       });
 
       test("deleteApp", async ({
@@ -458,10 +500,7 @@ describe("AppAutomateClient", () => {
     describe.skip<BrowserStackTestContext>("Flutter iOS Apps", (test) => {
       const platform = FlutterPlatform.ios;
 
-      test("uploadFlutterApp", async ({
-        appAutomate: { client },
-      }) => {
-
+      test("uploadFlutterApp", async ({ appAutomate: { client } }) => {
         const zipped = zipSync({
           "example.app": new Uint8Array([1, 2, 3, 4, 5]),
         });
@@ -478,14 +517,14 @@ describe("AppAutomateClient", () => {
         expectTypeOf(data.test_package_url).toMatchTypeOf<string>();
       });
 
-      test("getFlutterApps", async ({
-        appAutomate: { client },
-      }) => {
+      test("getFlutterApps", async ({ appAutomate: { client } }) => {
         const data = await client.getFlutterApps(platform);
         expect(data).toBeDefined();
         expect(data).toBeInstanceOf(Array);
         expect(data.length).toBeGreaterThan(0);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateTestPackage"][]>();
+        expectTypeOf(data).toMatchTypeOf<
+          components["schemas"]["AppAutomateTestPackage"][]
+        >();
       });
 
       test("getAppById", async ({
@@ -495,7 +534,9 @@ describe("AppAutomateClient", () => {
         const data = await client.getFlutterApp(platform, appId);
         expect(data).toBeDefined();
         expect(data.custom_id).toEqual("example-app");
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateTestPackage"]>();
+        expectTypeOf(data).toMatchTypeOf<
+          components["schemas"]["AppAutomateTestPackage"]
+        >();
       });
 
       test("deleteApp", async ({
@@ -512,12 +553,11 @@ describe("AppAutomateClient", () => {
   });
 
   describe("Espresso Apps", () => {
-
     test<BrowserStackTestContext>("uploadEspressoApp", async ({
       appAutomate: { client },
     }) => {
       const data = await client.uploadEspressoApp({
-        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/master/prebuilt/app-debug-androidTest.apk",
+        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/f3025888cec435e547e85abc965e040f5da85910/prebuilt/app-debug.apk",
         filename: "example.apk",
         custom_id: "example-app",
       });
@@ -534,7 +574,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateApp"][]
+      >();
     });
 
     test<BrowserStackTestContext>("getAppsByCustomId", async ({
@@ -544,7 +586,9 @@ describe("AppAutomateClient", () => {
       const data = await client.getEspressoApp(appId);
       expect(data).toBeDefined();
       expect(data.custom_id).toEqual("example-app");
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateApp"]
+      >();
     });
 
     test<BrowserStackTestContext>("deleteApp", async ({
@@ -560,13 +604,12 @@ describe("AppAutomateClient", () => {
   });
 
   describe("XCUITest Apps", () => {
-
     test<BrowserStackTestContext>("uploadXCUITestApp", async ({
       appAutomate: { client },
     }) => {
       const data = await client.uploadXCUITestApp({
         // [BROWSERSTACK_INVALID_XCUI_APP] Invalid XCUI App: Please upload a valid IPA file for XCUI App.
-        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-ios/blob/58e48234db510bd4fbf643643e8808c5d6a13845/prebuilt/prebuiltXCUITests.ipa",
+        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-ios/raw/58e48234db510bd4fbf643643e8808c5d6a13845/prebuilt/prebuiltXCUITests.ipa",
         filename: "prebuiltXCUITests.ipa",
         custom_id: "example-app",
       });
@@ -583,7 +626,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateApp"][]
+      >();
     });
 
     test<BrowserStackTestContext>("getAppsByCustomId", async ({
@@ -593,7 +638,9 @@ describe("AppAutomateClient", () => {
       const data = await client.getXCUITestApp(appId);
       expect(data).toBeDefined();
       expect(data.custom_id).toEqual("example-app");
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateApp"]
+      >();
     });
 
     test<BrowserStackTestContext>("deleteApp", async ({
@@ -606,15 +653,12 @@ describe("AppAutomateClient", () => {
       expect(data.success.message).toBeDefined();
       expectTypeOf(data.success.message).toMatchTypeOf<string>();
     });
-  });
+  }, 15_000);
 
   describe.skip<BrowserStackTestContext>("Detox Android Apps", (test) => {
-
-    test("uploadDetoxApp", async ({
-      appAutomate: { client },
-    }) => {
+    test("uploadDetoxApp", async ({ appAutomate: { client } }) => {
       const data = await client.uploadDetoxAndroidApp("app", {
-        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/master/prebuilt/app-debug-androidTest.apk",
+        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/f3025888cec435e547e85abc965e040f5da85910/prebuilt/app-debug.apk",
         filename: "example.apk",
         custom_id: "example-app",
       });
@@ -622,14 +666,14 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data.app_url).toBeDefined();
       expectTypeOf(data.app_url).toMatchTypeOf<string>();
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateApp"]
+      >();
     });
 
-    test("uploadDetoxAppClient", async ({
-      appAutomate: { client },
-    }) => {
+    test("uploadDetoxAppClient", async ({ appAutomate: { client } }) => {
       const data = await client.uploadDetoxAndroidApp("app-client", {
-        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/master/prebuilt/app-debug-androidTest.apk",
+        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/f3025888cec435e547e85abc965e040f5da85910/prebuilt/app-debug.apk",
         filename: "example.apk",
         custom_id: "example-app",
       });
@@ -637,7 +681,9 @@ describe("AppAutomateClient", () => {
       expect(data).toBeDefined();
       expect(data.app_url).toBeDefined();
       expectTypeOf(data.app_url).toMatchTypeOf<string>();
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
+      expectTypeOf(data).toMatchTypeOf<
+        components["schemas"]["AppAutomateApp"]
+      >();
     });
   });
 });
