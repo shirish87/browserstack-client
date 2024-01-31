@@ -1,14 +1,20 @@
-name: npm test
+name: Publish npm package
 on:
-  push:
-    branches: [main]
+  release:
+    types: [created]
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: publish-npm-package
+  cancel-in-progress: false
 
 env:
   VITE_BROWSERSTACK_USERNAME: "${{ secrets.VITE_BROWSERSTACK_USERNAME }}"
   VITE_BROWSERSTACK_KEY: "${{ secrets.VITE_BROWSERSTACK_KEY }}"
 
 jobs:
-  test-node-lts:
+  publish-node-lts:
     name: "node.js lts"
     runs-on: ubuntu-latest
     environment: BrowserStackEnv
@@ -25,22 +31,8 @@ jobs:
           npm run build
           npm test
 
-
-  test-node-v18:
-    name: "node.js v18"
-    runs-on: ubuntu-latest
-    if: ${{ always() }}
-    needs: [test-node-lts]
-    environment: BrowserStackEnv
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-          cache: "npm"
-
-      - name: Build
+      - name: npm publish
         run: |
-          npm install
-          npm run build
-          npm test
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: "${{ secrets.NPM_PUBLISH_TOKEN }}"
