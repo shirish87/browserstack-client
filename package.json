@@ -60,5 +60,14 @@
   },
   "bugs": {
     "url": "https://github.com/shirish87/browserstack-client/issues"
-  }
+  },
+  "keywords": [
+    "browserstack",
+    "api",
+    "client",
+    "node",
+    "javascript",
+    "typescript",
+    "esm"
+  ]
 }
