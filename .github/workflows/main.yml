@@ -2,10 +2,15 @@ name: npm test
 on:
   push:
     branches: [main]
-    tags-ignore: [v*-alpha, v*-next]
     paths-ignore:
       - ".github/**"
   workflow_dispatch:
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: npm-test
+  cancel-in-progress: false
 
 env:
   VITE_BROWSERSTACK_USERNAME: "${{ secrets.VITE_BROWSERSTACK_USERNAME }}"
