@@ -1,6 +1,6 @@
 {
   "name": "browserstack-client",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0-next.0",
   "description": "BrowserStack APIs client library for node.js",
   "type": "module",
   "main": "./dist/browserstack-client.umd.cjs",
