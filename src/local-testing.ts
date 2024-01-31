@@ -44,7 +44,7 @@ export class LocalTestingClient extends APIClient {
    * @returns A promise that resolves to a fetch response containing the list of active Local instances.
    */
   getBinaryInstances(
-    query?: operations["getLocalBinaryInstances"]["parameters"]["query"],
+    query?: Omit<operations["getLocalBinaryInstances"]["parameters"]["query"], "auth_token">,
     options?: APIFetchOptions<operations["getLocalBinaryInstances"]>
   ): Promise<components["schemas"]["LocalBinaryInstance"][]> {
     return this.makeGetRequest("/local/v1/list", {
@@ -69,7 +69,7 @@ export class LocalTestingClient extends APIClient {
    */
   getBinaryInstance(
     localInstanceId: string,
-    query?: operations["getLocalBinaryInstances"]["parameters"]["query"],
+    query?: Omit<operations["getLocalBinaryInstances"]["parameters"]["query"], "auth_token">,
     options?: APIFetchOptions<operations["getLocalBinaryInstance"]>
   ): Promise<components["schemas"]["LocalBinaryInstance"]> {
     return this.makeGetRequest(`/local/v1/{localInstanceId}`, {
@@ -104,7 +104,7 @@ export class LocalTestingClient extends APIClient {
    */
   disconnectBinaryInstance(
     localInstanceId: string,
-    query?: operations["getLocalBinaryInstances"]["parameters"]["query"],
+    query?: Omit<operations["disconnectLocalBinaryInstance"]["parameters"]["query"], "auth_token">,
     options?: APIFetchOptions<operations["disconnectLocalBinaryInstance"]>
   ): Promise<string> {
     return this.makeDeleteRequest(`/local/v1/{localInstanceId}`, {
