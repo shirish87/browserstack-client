@@ -1,6 +1,6 @@
-import { APIClient, BrowserStackOptions, APIFetchOptions } from "@/api-client";
+import { APIClient, APIFetchOptions, BrowserStackOptions } from "@/api-client";
 import { BrowserStackError } from "@/error";
-import { operations } from "@/generated/openapi";
+import { components, operations } from "@/generated/openapi";
 
 /**
  * AppAutomateClient represents a client for interacting with the BrowserStack App Automate API.
@@ -52,7 +52,10 @@ export class AppAutomateClient extends APIClient {
    * @param options Additional options for the fetch request.
    * @returns A promise that resolves to the retrieved project.
    */
-  getProject(projectId: number, options?: APIFetchOptions<operations["getAppAutomateProject"]>) {
+  getProject(
+    projectId: number,
+    options?: APIFetchOptions<operations["getAppAutomateProject"]>
+  ) {
     return this.makeGetRequest("/app-automate/projects/{projectId}.json", {
       ...options,
       params: {
@@ -195,7 +198,7 @@ export class AppAutomateClient extends APIClient {
         },
       },
     }).then((data) => {
-      if ('error' in data) {
+      if ("error" in data) {
         throw new BrowserStackError(data.error, { response: data });
       }
 
@@ -238,20 +241,23 @@ export class AppAutomateClient extends APIClient {
     options?: APIFetchOptions<operations["uploadAppAutomateBuildTerminalLogs"]>
   ) {
     // makePostRequest produces a non-JSON response
-    return this.makeCloudPostRequest("/app-automate/builds/{buildId}/terminallogs", {
-      ...options,
-      body,
-      bodySerializer: () => {
-        const formData = new FormData();
-        formData.append("file", body.file, body.filename);
-        return formData;
-      },
-      params: {
-        path: {
-          buildId,
+    return this.makeCloudPostRequest(
+      "/app-automate/builds/{buildId}/terminallogs",
+      {
+        ...options,
+        body,
+        bodySerializer: () => {
+          const formData = new FormData();
+          formData.append("file", body.file, body.filename);
+          return formData;
         },
-      },
-    });
+        params: {
+          path: {
+            buildId,
+          },
+        },
+      }
+    );
   }
 
   /**
@@ -266,23 +272,28 @@ export class AppAutomateClient extends APIClient {
     body: operations["uploadAppAutomateSessionTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
-    options?: APIFetchOptions<operations["uploadAppAutomateSessionTerminalLogs"]>
+    options?: APIFetchOptions<
+      operations["uploadAppAutomateSessionTerminalLogs"]
+    >
   ) {
     // makePostRequest produces a non-JSON response
-    return this.makeCloudPostRequest("/app-automate/sessions/{sessionId}/terminallogs", {
-      ...options,
-      body,
-      bodySerializer: () => {
-        const formData = new FormData();
-        formData.append("file", body.file, body.filename);
-        return formData;
-      },
-      params: {
-        path: {
-          sessionId,
+    return this.makeCloudPostRequest(
+      "/app-automate/sessions/{sessionId}/terminallogs",
+      {
+        ...options,
+        body,
+        bodySerializer: () => {
+          const formData = new FormData();
+          formData.append("file", body.file, body.filename);
+          return formData;
         },
-      },
-    });
+        params: {
+          path: {
+            sessionId,
+          },
+        },
+      }
+    );
   }
 
   /**
@@ -362,16 +373,19 @@ export class AppAutomateClient extends APIClient {
     sessionId: string,
     options?: APIFetchOptions<operations["getAppAutomateSessionLogs"]>
   ) {
-    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/logs", {
-      ...options,
-      params: {
-        path: {
-          buildId,
-          sessionId,
+    return this.makeGetRequest(
+      "/app-automate/builds/{buildId}/sessions/{sessionId}/logs",
+      {
+        ...options,
+        params: {
+          path: {
+            buildId,
+            sessionId,
+          },
         },
-      },
-      parseAs: "text",
-    });
+        parseAs: "text",
+      }
+    );
   }
 
   /**
@@ -387,16 +401,19 @@ export class AppAutomateClient extends APIClient {
     sessionId: string,
     options?: APIFetchOptions<operations["getAppAutomateDeviceLogs"]>
   ) {
-    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/devicelogs", {
-      ...options,
-      params: {
-        path: {
-          buildId,
-          sessionId,
+    return this.makeGetRequest(
+      "/app-automate/builds/{buildId}/sessions/{sessionId}/devicelogs",
+      {
+        ...options,
+        params: {
+          path: {
+            buildId,
+            sessionId,
+          },
         },
-      },
-      parseAs: "text",
-    });
+        parseAs: "text",
+      }
+    );
   }
 
   /**
@@ -412,16 +429,19 @@ export class AppAutomateClient extends APIClient {
     sessionId: string,
     options?: APIFetchOptions<operations["getAppAutomateAppiumLogs"]>
   ) {
-    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/appiumlogs", {
-      ...options,
-      params: {
-        path: {
-          buildId,
-          sessionId,
+    return this.makeGetRequest(
+      "/app-automate/builds/{buildId}/sessions/{sessionId}/appiumlogs",
+      {
+        ...options,
+        params: {
+          path: {
+            buildId,
+            sessionId,
+          },
         },
-      },
-      parseAs: "text",
-    });
+        parseAs: "text",
+      }
+    );
   }
 
   /**
@@ -436,15 +456,18 @@ export class AppAutomateClient extends APIClient {
     sessionId: string,
     options?: APIFetchOptions<operations["getAppAutomateNetworkLogs"]>
   ) {
-    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/networklogs", {
-      ...options,
-      params: {
-        path: {
-          buildId,
-          sessionId,
+    return this.makeGetRequest(
+      "/app-automate/builds/{buildId}/sessions/{sessionId}/networklogs",
+      {
+        ...options,
+        params: {
+          path: {
+            buildId,
+            sessionId,
+          },
         },
-      },
-    });
+      }
+    );
   }
 
   /**
@@ -459,15 +482,18 @@ export class AppAutomateClient extends APIClient {
     sessionId: string,
     options?: APIFetchOptions<operations["getAppAutomateAppProfilingDataV1"]>
   ) {
-    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling", {
-      ...options,
-      params: {
-        path: {
-          buildId,
-          sessionId,
+    return this.makeGetRequest(
+      "/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling",
+      {
+        ...options,
+        params: {
+          path: {
+            buildId,
+            sessionId,
+          },
         },
-      },
-    });
+      }
+    );
   }
 
   /**
@@ -482,15 +508,18 @@ export class AppAutomateClient extends APIClient {
     sessionId: string,
     options?: APIFetchOptions<operations["getAppAutomateAppProfilingDataV2"]>
   ) {
-    return this.makeGetRequest("/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling/v2", {
-      ...options,
-      params: {
-        path: {
-          buildId,
-          sessionId,
+    return this.makeGetRequest(
+      "/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling/v2",
+      {
+        ...options,
+        params: {
+          path: {
+            buildId,
+            sessionId,
+          },
         },
-      },
-    });
+      }
+    );
   }
 
   /**
@@ -694,6 +723,22 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  uploadFlutterApp<P extends FlutterPlatform.ios>(
+    platform: P,
+    body: operations["uploadAppAutomateFlutteriOSApp"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: APIFetchOptions<operations["uploadAppAutomateFlutteriOSApp"]>
+  ): Promise<components["schemas"]["AppAutomateTestPackage"]>;
+
+  uploadFlutterApp<P extends FlutterPlatform.android>(
+    platform: P,
+    body: operations["uploadAppAutomateFlutterAndroidApp"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: APIFetchOptions<operations["uploadAppAutomateFlutterAndroidApp"]>
+  ): Promise<components["schemas"]["AppAutomateApp"]>;
+
   /**
    * Uploads a Flutter app for App Automate.
    *
@@ -701,14 +746,23 @@ export class AppAutomateClient extends APIClient {
    * @param options - Additional options for the request.
    * @returns A promise that resolves to the response of the request.
    */
-  uploadFlutterApp(
-    body: operations["uploadAppAutomateFlutterApp"]["requestBody"]["content"]["multipart/form-data"] & {
+  uploadFlutterApp<P extends FlutterPlatform>(
+    platform: P,
+    body: operations[P extends FlutterPlatform.android
+      ? "uploadAppAutomateFlutterAndroidApp"
+      : "uploadAppAutomateFlutteriOSApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
-    options?: APIFetchOptions<operations["uploadAppAutomateFlutterApp"]>
+    options?: APIFetchOptions<
+      operations[P extends FlutterPlatform.android
+        ? "uploadAppAutomateFlutterAndroidApp"
+        : "uploadAppAutomateFlutteriOSApp"]
+    >
   ) {
     return this.makePostRequest(
-      "/app-automate/flutter-integration-tests/v2/android/app",
+      platform === "android"
+        ? "/app-automate/flutter-integration-tests/v2/android/app"
+        : "/app-automate/flutter-integration-tests/v2/ios/test-package",
       {
         ...options,
         body,
@@ -730,20 +784,55 @@ export class AppAutomateClient extends APIClient {
     );
   }
 
+  getFlutterApps<P extends FlutterPlatform.android>(
+    platform: P,
+    options?: APIFetchOptions<operations["getAppAutomateFlutterAndroidApps"]>
+  ): Promise<components["schemas"]["AppAutomateApp"][]>;
+
+  getFlutterApps<P extends FlutterPlatform.ios>(
+    platform: P,
+    options?: APIFetchOptions<operations["getAppAutomateFlutteriOSApps"]>
+  ): Promise<components["schemas"]["AppAutomateTestPackage"][]>;
+
   /**
    * Retrieves the list of Flutter apps for Android.
    *
    * @param options - The fetch options for the request.
    * @returns A promise that resolves to an array of Flutter apps, or an empty array if no apps are found.
    */
-  getFlutterApps(
-    options?: APIFetchOptions<operations["getAppAutomateFlutterApps"]>
+  getFlutterApps<P extends FlutterPlatform>(
+    platform: P,
+    options?: APIFetchOptions<
+      operations[P extends FlutterPlatform.android
+        ? "getAppAutomateFlutterAndroidApps"
+        : "getAppAutomateFlutteriOSApps"]
+    >
   ) {
     return this.makeGetRequest(
-      "/app-automate/flutter-integration-tests/v2/android/apps",
+      platform === "android"
+        ? "/app-automate/flutter-integration-tests/v2/android/apps"
+        : "/app-automate/flutter-integration-tests/v2/ios/test-packages",
       options
-    ).then((data) => ("apps" in data ? data.apps : []));
+    ).then((data) =>
+      "apps" in data
+        ? data.apps
+        : "test_packages" in data
+        ? data.test_packages
+        : []
+    );
   }
+
+  getFlutterApp<P extends FlutterPlatform.android>(
+    platform: P,
+    appId: string,
+    options?: APIFetchOptions<operations["getAppAutomateFlutterAndroidApp"]>
+  ): Promise<components["schemas"]["AppAutomateApp"]>;
+
+  getFlutterApp<P extends FlutterPlatform.ios>(
+    platform: P,
+    appId: string,
+    options?: APIFetchOptions<operations["getAppAutomateFlutteriOSApp"]>
+  ): Promise<components["schemas"]["AppAutomateTestPackage"]>;
 
   /**
    * Retrieves the Flutter app with the specified appId.
@@ -751,12 +840,19 @@ export class AppAutomateClient extends APIClient {
    * @param options The fetch options for the request.
    * @returns A promise that resolves to the retrieved Flutter app.
    */
-  getFlutterApp(
+  getFlutterApp<P extends FlutterPlatform>(
+    platform: P,
     appId: string,
-    options?: APIFetchOptions<operations["getAppAutomateFlutterApp"]>
+    options?: APIFetchOptions<
+      operations[P extends FlutterPlatform.android
+        ? "getAppAutomateFlutterAndroidApp"
+        : "getAppAutomateFlutteriOSApp"]
+    >
   ) {
     return this.makeGetRequest(
-      "/app-automate/flutter-integration-tests/v2/android/apps/{appId}",
+      platform === "android"
+        ? "/app-automate/flutter-integration-tests/v2/android/apps/{appId}"
+        : "/app-automate/flutter-integration-tests/v2/ios/test-package/{appId}",
       {
         ...options,
         params: {
@@ -765,8 +861,20 @@ export class AppAutomateClient extends APIClient {
           },
         },
       }
-    ).then((data) => data.app);
+    ).then((data) => ("app" in data ? data.app : data.test_package));
   }
+
+  deleteFlutterApp<P extends FlutterPlatform.android>(
+    platform: P,
+    appId: string,
+    options?: APIFetchOptions<operations["deleteAppAutomateFlutterAndroidApp"]>
+  ): Promise<{ success: { message: string } }>;
+
+  deleteFlutterApp<P extends FlutterPlatform.ios>(
+    platform: P,
+    appId: string,
+    options?: APIFetchOptions<operations["deleteAppAutomateFlutteriOSApp"]>
+  ): Promise<{ success: { message: string } }>;
 
   /**
    * Deletes a Flutter app from the BrowserStack App Automate service.
@@ -774,12 +882,19 @@ export class AppAutomateClient extends APIClient {
    * @param options The fetch options for the delete request.
    * @returns A promise that resolves when the app is successfully deleted.
    */
-  deleteFlutterApp(
+  deleteFlutterApp<P extends FlutterPlatform>(
+    platform: P,
     appId: string,
-    options?: APIFetchOptions<operations["deleteAppAutomateFlutterApp"]>
+    options?: APIFetchOptions<
+      operations[P extends FlutterPlatform.android
+        ? "deleteAppAutomateFlutterAndroidApp"
+        : "deleteAppAutomateFlutteriOSApp"]
+    >
   ) {
     return this.makeDeleteRequest(
-      "/app-automate/flutter-integration-tests/v2/android/apps/{appId}",
+      platform === "android"
+        ? "/app-automate/flutter-integration-tests/v2/android/apps/{appId}"
+        : "/app-automate/flutter-integration-tests/v2/ios/test-package/{appId}",
       {
         ...options,
         params: {
@@ -962,4 +1077,9 @@ export class AppAutomateClient extends APIClient {
       },
     });
   }
+}
+
+export enum FlutterPlatform {
+  android = "android",
+  ios = "ios",
 }

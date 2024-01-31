@@ -1,6 +1,8 @@
 import { components } from "@/generated/openapi";
 import { describe, expect, expectTypeOf, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup";
+import { FlutterPlatform } from "@/app-automate";
+import { zip, zipSync } from "fflate";
 
 describe("AppAutomateClient", () => {
 
@@ -404,49 +406,108 @@ describe("AppAutomateClient", () => {
 
   describe("Flutter Apps", () => {
 
-    test<BrowserStackTestContext>("uploadFlutterApp", async ({
-      appAutomate: { client },
-    }) => {
-      const data = await client.uploadFlutterApp({
-        url: "https://github.com/TheAlphamerc/flutter_ecommerce_app/releases/download/v1.0.0/app-release.apk",
-        filename: "example.apk",
-        custom_id: "example-app",
+    describe<BrowserStackTestContext>("Flutter Android Apps", (test) => {
+      const platform = FlutterPlatform.android;
+
+      test("uploadFlutterApp", async ({
+        appAutomate: { client },
+      }) => {
+        const data = await client.uploadFlutterApp(platform, {
+          url: "https://github.com/TheAlphamerc/flutter_ecommerce_app/releases/download/v1.0.0/app-release.apk",
+          filename: "example.apk",
+          custom_id: "example-app",
+        });
+
+        expect(data).toBeDefined();
+        expect(data.app_url).toBeDefined();
+        expectTypeOf(data.app_url).toMatchTypeOf<string>();
       });
 
-      expect(data).toBeDefined();
-      expect(data.app_url).toBeDefined();
-      expectTypeOf(data.app_url).toMatchTypeOf<string>();
+      test("getFlutterApps", async ({
+        appAutomate: { client },
+      }) => {
+        const data = await client.getFlutterApps(platform);
+        expect(data).toBeDefined();
+        expect(data).toBeInstanceOf(Array);
+        expect(data.length).toBeGreaterThan(0);
+        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
+      });
+
+      test("getAppById", async ({
+        appAutomate: { client, randomFlutterAndroidAppId },
+      }) => {
+        const appId = await randomFlutterAndroidAppId();
+        const data = await client.getFlutterApp(platform, appId);
+        expect(data).toBeDefined();
+        expect(data.custom_id).toEqual("example-app");
+        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
+      });
+
+      test("deleteApp", async ({
+        appAutomate: { client, randomFlutterAndroidAppId },
+      }) => {
+        const appId = await randomFlutterAndroidAppId();
+        const data = await client.deleteFlutterApp(platform, appId);
+        expect(data).toBeDefined();
+        expect(data.success).toBeDefined();
+        expect(data.success.message).toBeDefined();
+        expectTypeOf(data.success.message).toMatchTypeOf<string>();
+      });
     });
 
-    test<BrowserStackTestContext>("getFlutterApps", async ({
-      appAutomate: { client },
-    }) => {
-      const data = await client.getFlutterApps();
-      expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Array);
-      expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"][]>();
-    });
+    describe.skip<BrowserStackTestContext>("Flutter iOS Apps", (test) => {
+      const platform = FlutterPlatform.ios;
 
-    test<BrowserStackTestContext>("getAppsByCustomId", async ({
-      appAutomate: { client, randomFlutterAppId },
-    }) => {
-      const appId = await randomFlutterAppId();
-      const data = await client.getFlutterApp(appId);
-      expect(data).toBeDefined();
-      expect(data.custom_id).toEqual("example-app");
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
-    });
+      test("uploadFlutterApp", async ({
+        appAutomate: { client },
+      }) => {
 
-    test<BrowserStackTestContext>("deleteApp", async ({
-      appAutomate: { client, randomFlutterAppId },
-    }) => {
-      const appId = await randomFlutterAppId();
-      const data = await client.deleteFlutterApp(appId);
-      expect(data).toBeDefined();
-      expect(data.success).toBeDefined();
-      expect(data.success.message).toBeDefined();
-      expectTypeOf(data.success.message).toMatchTypeOf<string>();
+        const zipped = zipSync({
+          "example.app": new Uint8Array([1, 2, 3, 4, 5]),
+        });
+        // TODO: find valid zip for flutter example.app
+
+        const data = await client.uploadFlutterApp(platform, {
+          file: new Blob([zipped], { type: "application/zip" }),
+          filename: "example.zip",
+          custom_id: "example-app",
+        });
+
+        expect(data).toBeDefined();
+        expect(data.test_package_url).toBeDefined();
+        expectTypeOf(data.test_package_url).toMatchTypeOf<string>();
+      });
+
+      test("getFlutterApps", async ({
+        appAutomate: { client },
+      }) => {
+        const data = await client.getFlutterApps(platform);
+        expect(data).toBeDefined();
+        expect(data).toBeInstanceOf(Array);
+        expect(data.length).toBeGreaterThan(0);
+        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateTestPackage"][]>();
+      });
+
+      test("getAppById", async ({
+        appAutomate: { client, randomFlutteriOSTestPackageId },
+      }) => {
+        const appId = await randomFlutteriOSTestPackageId();
+        const data = await client.getFlutterApp(platform, appId);
+        expect(data).toBeDefined();
+        expect(data.custom_id).toEqual("example-app");
+        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateTestPackage"]>();
+      });
+
+      test("deleteApp", async ({
+        appAutomate: { client, randomFlutteriOSTestPackageId },
+      }) => {
+        const appId = await randomFlutteriOSTestPackageId();
+        const data = await client.deleteFlutterApp(platform, appId);
+        expect(data).toBeDefined();
+        expect(data.success).toBeDefined();
+        expect(data.success.message).toBeDefined();
+        expectTypeOf(data.success.message).toMatchTypeOf<string>();
+      });
     });
   });
 
@@ -456,7 +517,7 @@ describe("AppAutomateClient", () => {
       appAutomate: { client },
     }) => {
       const data = await client.uploadEspressoApp({
-        url: "https://github.com/TheAlphamerc/flutter_ecommerce_app/releases/download/v1.0.0/app-release.apk",
+        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/master/prebuilt/app-debug-androidTest.apk",
         filename: "example.apk",
         custom_id: "example-app",
       });
@@ -498,15 +559,15 @@ describe("AppAutomateClient", () => {
     });
   });
 
-  describe.skip("XCUITest Apps", () => {
+  describe("XCUITest Apps", () => {
 
     test<BrowserStackTestContext>("uploadXCUITestApp", async ({
       appAutomate: { client },
     }) => {
       const data = await client.uploadXCUITestApp({
         // [BROWSERSTACK_INVALID_XCUI_APP] Invalid XCUI App: Please upload a valid IPA file for XCUI App.
-        url: "https://github.com/TheAlphamerc/flutter_ecommerce_app/releases/download/v1.0.0/app-release.apk",
-        filename: "example.apk",
+        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-ios/blob/58e48234db510bd4fbf643643e8808c5d6a13845/prebuilt/prebuiltXCUITests.ipa",
+        filename: "prebuiltXCUITests.ipa",
         custom_id: "example-app",
       });
 

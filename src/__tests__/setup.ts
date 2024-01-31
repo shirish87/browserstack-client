@@ -1,3 +1,4 @@
+import { FlutterPlatform } from "@/app-automate";
 import {
   BrowserStackOptions,
   AppAutomateClient,
@@ -27,7 +28,8 @@ export interface BrowserStackTestContext {
     randomSessionId(): Promise<string>;
     randomMediaId(): Promise<string>;
     randomAppiumAppId(): Promise<string>;
-    randomFlutterAppId(): Promise<string>;
+    randomFlutterAndroidAppId(): Promise<string>;
+    randomFlutteriOSTestPackageId(): Promise<string>;
     randomEspressoAppId(): Promise<string>;
     randomXCUITestAppId(): Promise<string>;
   };
@@ -131,12 +133,19 @@ beforeEach<BrowserStackTestContext>((context) => {
         const app = apps[Math.floor(Math.random() * apps.length)];
         return app.app_id;
       },
-      randomFlutterAppId: async () => {
-        const apps = await appAutomate.getFlutterApps();
+      randomFlutterAndroidAppId: async () => {
+        const apps = await appAutomate.getFlutterApps(FlutterPlatform.android);
         assert(Array.isArray(apps) && apps.length > 0, "No apps found");
 
         const app = apps[Math.floor(Math.random() * apps.length)];
         return app.app_id;
+      },
+      randomFlutteriOSTestPackageId: async () => {
+        const apps = await appAutomate.getFlutterApps(FlutterPlatform.ios);
+        assert(Array.isArray(apps) && apps.length > 0, "No apps found");
+
+        const app = apps[Math.floor(Math.random() * apps.length)];
+        return app.test_package_id;
       },
       randomEspressoAppId: async () => {
         const apps = await appAutomate.getEspressoApps();

@@ -2888,7 +2888,7 @@ paths:
     post:
       summary: Upload an app
       description: Upload the application under test (AUT) for Flutter testing.
-      operationId: uploadAppAutomateFlutterApp
+      operationId: uploadAppAutomateFlutterAndroidApp
       requestBody:
         required: true
         content:
@@ -2947,7 +2947,7 @@ paths:
     get:
       summary: Fetches list of uploaded Flutter apps
       description: Fetches list of recently uploaded Flutter apps
-      operationId: getAppAutomateFlutterApps
+      operationId: getAppAutomateFlutterAndroidApps
       parameters:
         - name: scope
           in: query
@@ -3007,7 +3007,7 @@ paths:
     get:
       summary: Get details of an uploaded Flutter app
       description: Get details of an uploaded Flutter app
-      operationId: getAppAutomateFlutterApp
+      operationId: getAppAutomateFlutterAndroidApp
       parameters:
         - name: appId
           in: path
@@ -3045,7 +3045,7 @@ paths:
       description: >-
         Delete an app that was previously uploaded to BrowserStack.
         Note that apps once deleted cannot be recovered.
-      operationId: deleteAppAutomateFlutterApp
+      operationId: deleteAppAutomateFlutterAndroidApp
       parameters:
         - name: appId
           in: path
@@ -3083,6 +3083,207 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/flutter-integration-tests/v2/ios/test-package:
+    post:
+      summary: Upload a Flutter test package for iOS
+      description: Upload the application under test (AUT) for Flutter iOS testing in .zip format.
+      operationId: uploadAppAutomateFlutteriOSApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - type: object
+                  properties:
+                    custom_id:
+                      type: string
+                      description: >-
+                        Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _.
+                        All other characters are ignored. Character limit is 100.
+                      example: "app_1"
+                - oneOf:
+                    - type: object
+                      required: [file]
+                      properties:
+                        file:
+                          type: string
+                          format: binary
+                          description: >-
+                            Path to the app file on your machine. Supported file formats are .apk and .aab files
+                            for Android and .ipa file for iOS
+                    - type: object
+                      required: [url]
+                      properties:
+                        url:
+                          type: string
+                          description: >-
+                            URL of the app file. Ensure that its a publicly accessible URL as BrowserStack
+                            will attempt to download the app from this location. Supported file formats are
+                            .apk and .aab files for Android and .ipa file for iOS
+                          example: "https://example.com/app.ipa"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppAutomateTestPackage"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/flutter-integration-tests/v2/ios/test-packages:
+    get:
+      summary: Fetches list of uploaded Flutter iOS test packages
+      description: Fetches list of recently uploaded Flutter iOS test packages
+      operationId: getAppAutomateFlutteriOSApps
+      parameters:
+        - name: scope
+          in: query
+          description: "Show recent apps at a group level or user level."
+          schema:
+            type: string
+            enum: [group, user]
+            default: group
+        - name: custom_id
+          in: query
+          description: >-
+            Filter recently uploaded apps by custom ID. Accepted characters are
+            A-Z, a-z, 0-9, ., -, _. All other characters are ignored.
+            Character limit is 100.
+          schema:
+            type: string
+            example: "app_1"
+        - name: limit
+          in: query
+          description: "Number of recent apps to be fetched. Default is 10."
+          schema:
+            type: number
+            default: 10
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required: [test_packages]
+                    properties:
+                      test_packages:
+                        type: array
+                        items:
+                          type: object
+                          $ref: "#/components/schemas/AppAutomateTestPackage"
+                  - type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /app-automate/flutter-integration-tests/v2/ios/test-package/{appId}:
+    get:
+      summary: Get details of an uploaded Flutter iOS test package
+      description: Get details of an uploaded Flutter iOS test package
+      operationId: getAppAutomateFlutteriOSApp
+      parameters:
+        - name: appId
+          in: path
+          description: "Test package ID of your app"
+          required: true
+          schema:
+            type: string
+            example: "e5b3d27df5d02c367b1469709525dc20da41e65b"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [test_package]
+                properties:
+                  test_package:
+                    type: object
+                    $ref: "#/components/schemas/AppAutomateTestPackage"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+    delete:
+      summary: Delete a Flutter iOS test package that was previously uploaded to BrowserStack
+      description: >-
+        Delete a Flutter iOS test package that was previously uploaded to BrowserStack.
+        Note that apps once deleted cannot be recovered.
+      operationId: deleteAppAutomateFlutteriOSApp
+      parameters:
+        - name: appId
+          in: path
+          description: "Test package ID of your app"
+          required: true
+          schema:
+            type: string
+            example: "c8ddcb5649a8280ca800075bfd8f151115bba6b3"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success]
+                properties:
+                  success:
+                    type: object
+                    required: [message]
+                    properties:
+                      message:
+                        type: string
+                        description: "Indicates whether deletion was success or a failure."
+                        example: "App with url bs://231e820c35ee15b8438ec31df1fb689c03abd8e5 was deleted."
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
 
   /app-automate/espresso/v2/app:
     post:
@@ -4266,6 +4467,35 @@ components:
           type: string
           description: "Name of the media file uploaded."
           example: "media.jpg"
+        uploaded_at:
+          type: string
+          description: "Timestamp of the media file upload."
+          example: "2021-09-30T10:00:00.000Z"
+        custom_id:
+          type: string
+          description: "Custom ID defined for the uploaded app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100."
+          example: "media_1"
+        shareable_id:
+          type: string
+          description: "Shareable ID allows other users in your organization to test an app you uploaded."
+          example: "steve/SampleApp"
+
+    AppAutomateTestPackage:
+      type: object
+      required: [test_package_url]
+      properties:
+        test_package_id:
+          type: string
+          description: "Unique ID returned on successful upload of your app on BrowserStack."
+          example: "90c7a8h8dc82308108734e9a46c24d8f01de12881"
+        test_package_url:
+          type: string
+          description: "Unique identifier returned upon successful upload of your app on BrowserStack. This value can be used later to specify the application under test in your Appium test scripts."
+          example: "media://90c7a8h8dc82308108734e9a46c24d8f01de12881"
+        test_package_name:
+          type: string
+          description: "Name of the media file uploaded."
+          example: "media.zip"
         uploaded_at:
           type: string
           description: "Timestamp of the media file upload."
