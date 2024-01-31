@@ -58,6 +58,7 @@
     "type": "git",
     "url": "git://github.com/shirish87/browserstack-client.git"
   },
+  "homepage": "https://shirish87.github.io/browserstack-client/",
   "bugs": {
     "url": "https://github.com/shirish87/browserstack-client/issues"
   },
