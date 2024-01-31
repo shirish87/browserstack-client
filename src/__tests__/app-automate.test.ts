@@ -1,8 +1,8 @@
+import { FlutterPlatform } from "@/app-automate";
 import { components } from "@/generated/openapi";
+import { zipSync } from "fflate";
 import { describe, expect, expectTypeOf, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup";
-import { FlutterPlatform } from "@/app-automate";
-import { zip, zipSync } from "fflate";
 
 describe("AppAutomateClient", () => {
 
@@ -605,6 +605,39 @@ describe("AppAutomateClient", () => {
       expect(data.success).toBeDefined();
       expect(data.success.message).toBeDefined();
       expectTypeOf(data.success.message).toMatchTypeOf<string>();
+    });
+  });
+
+  describe.skip<BrowserStackTestContext>("Detox Android Apps", (test) => {
+
+    test("uploadDetoxApp", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.uploadDetoxAndroidApp("app", {
+        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/master/prebuilt/app-debug-androidTest.apk",
+        filename: "example.apk",
+        custom_id: "example-app",
+      });
+
+      expect(data).toBeDefined();
+      expect(data.app_url).toBeDefined();
+      expectTypeOf(data.app_url).toMatchTypeOf<string>();
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
+    });
+
+    test("uploadDetoxAppClient", async ({
+      appAutomate: { client },
+    }) => {
+      const data = await client.uploadDetoxAndroidApp("app-client", {
+        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/master/prebuilt/app-debug-androidTest.apk",
+        filename: "example.apk",
+        custom_id: "example-app",
+      });
+
+      expect(data).toBeDefined();
+      expect(data.app_url).toBeDefined();
+      expectTypeOf(data.app_url).toMatchTypeOf<string>();
+      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AppAutomateApp"]>();
     });
   });
 });

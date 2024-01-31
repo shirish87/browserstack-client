@@ -1077,6 +1077,44 @@ export class AppAutomateClient extends APIClient {
       },
     });
   }
+
+  uploadDetoxAndroidApp<T extends "app" | "app-client">(
+    type: T,
+    body: operations[T extends "app"
+      ? "uploadAppAutomateDetoxAndroidApp"
+      : "uploadAppAutomateDetoxAndroidAppClient"]["requestBody"]["content"]["multipart/form-data"] & {
+      filename: string;
+    },
+    options?: APIFetchOptions<
+      operations[T extends "app"
+        ? "uploadAppAutomateDetoxAndroidApp"
+        : "uploadAppAutomateDetoxAndroidAppClient"]
+    >
+  ) {
+    return this.makePostRequest(
+      type
+        ? "/app-automate/detox/v2/android/app"
+        : "/app-automate/detox/v2/android/app-client",
+      {
+        ...options,
+        body,
+        bodySerializer: () => {
+          const formData = new FormData();
+          if ("file" in body) {
+            formData.append("file", body.file, body.filename);
+          } else {
+            formData.append("url", body.url);
+          }
+
+          if (body.custom_id) {
+            formData.append("custom_id", body.custom_id);
+          }
+
+          return formData;
+        },
+      }
+    );
+  }
 }
 
 export enum FlutterPlatform {
