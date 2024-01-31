@@ -1,7 +1,7 @@
 name: Publish npm package
 on:
   release:
-    types: [created]
+    types: [published]
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -32,8 +32,16 @@ jobs:
           npm run build
           npm test
 
+      - name: npm publish @next
+        run: |
+          npm publish --tag next
+        if: 'github.event.release.prerelease'
+        env:
+          NODE_AUTH_TOKEN: "${{ secrets.NPM_PUBLISH_TOKEN }}"
+
       - name: npm publish
         run: |
           npm publish
+        if: '!github.event.release.prerelease'
         env:
           NODE_AUTH_TOKEN: "${{ secrets.NPM_PUBLISH_TOKEN }}"
