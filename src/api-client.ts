@@ -1,15 +1,17 @@
-import { BrowserStackError } from "@/error";
-import { paths } from "@/generated/openapi";
-import { servers } from "@/generated/openapi.json";
-import pkginfo from "@/pkginfo";
-import createClient, { ClientOptions, FetchOptions } from "openapi-fetch";
-import {
+import { env } from "@/env.ts";
+import { BrowserStackError } from "@/error.ts";
+import openapi from "@/generated/openapi.json" assert { type: "json" };
+import { paths } from "@/generated/openapi.ts";
+import pkginfo from "@/pkginfo.ts";
+import type { ClientOptions, FetchOptions } from "openapi-fetch";
+import createClient from "openapi-fetch";
+import type {
   FilterKeys,
   HasRequiredKeys,
   PathsWithMethod,
 } from "openapi-typescript-helpers";
 
-const [{ variables }, { variables: cloudVars }] = servers;
+const [{ variables }, { variables: cloudVars }] = openapi?.servers ?? [];
 
 const defaultBaseUrl = `${variables.scheme.default}://${
   variables.host.default
@@ -45,7 +47,7 @@ export class APIClient {
   protected readonly sdkCloud: ReturnType<typeof createClient<paths>>;
 
   constructor(options: BrowserStackOptions) {
-    const username = options.username ?? process.env.BROWSERSTACK_USERNAME;
+    const username = options.username ?? env.BROWSERSTACK_USERNAME;
     if (
       options.usernameOptional !== true &&
       (typeof username !== "string" || !username.trim().length)
@@ -53,7 +55,7 @@ export class APIClient {
       throw new BrowserStackError("Missing options.username");
     }
 
-    const key = options.key ?? process.env.BROWSERSTACK_KEY;
+    const key = options.key ?? env.BROWSERSTACK_KEY;
     if (typeof key !== "string" || !key.trim().length) {
       throw new BrowserStackError("Missing options.key");
     }
@@ -64,7 +66,7 @@ export class APIClient {
       headers: {
         ...options.headers,
         Authorization: username
-          ? `Basic ${Buffer.from(`${username}:${key}`).toString("base64")}`
+          ? `Basic ${btoa(`${username}:${key}`)}`
           : undefined,
         "User-Agent": pkginfo.userAgent,
       },
@@ -89,6 +91,8 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "get">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "get">>]
   ) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const response = await this.sdk.GET(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -112,6 +116,8 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "post">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "post">>]
   ) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const response = await this.sdk.POST(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -135,6 +141,8 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "get">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "get">>]
   ) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const response = await this.sdkCloud.GET(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -160,6 +168,8 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "post">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "post">>]
   ) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const response = await this.sdkCloud.POST(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -183,6 +193,8 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "put">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "put">>]
   ) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const response = await this.sdk.PUT(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -206,6 +218,8 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "patch">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "patch">>]
   ) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const response = await this.sdk.PATCH(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -229,6 +243,8 @@ export class APIClient {
       ? [(FetchOptions<FilterKeys<paths[P], "delete">> | undefined)?]
       : [FetchOptions<FilterKeys<paths[P], "delete">>]
   ) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const response = await this.sdk.DELETE(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {

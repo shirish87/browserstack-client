@@ -1,5 +1,5 @@
-import { APIClient, BrowserStackOptions, APIFetchOptions } from "@/api-client";
-import type { operations } from "@/generated/openapi";
+import { APIClient, BrowserStackOptions, APIFetchOptions } from "@/api-client.ts"
+import type { operations } from "@/generated/openapi.ts"
 import type { FetchOptions } from "openapi-fetch";
 
 /**

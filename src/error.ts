@@ -1,4 +1,4 @@
-import { paths } from "@/generated/openapi";
+import { paths } from "@/generated/openapi.ts"
 import { FetchOptions, FetchResponse } from "openapi-fetch";
 
 export type ErrorContext<P extends keyof paths, T> = (FetchOptions<unknown> & {

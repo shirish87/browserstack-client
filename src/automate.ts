@@ -1,6 +1,6 @@
-import { APIClient, BrowserStackOptions, APIFetchOptions } from "@/api-client";
-import { BrowserStackError } from "@/error";
-import { operations } from "@/generated/openapi";
+import { APIClient, BrowserStackOptions, APIFetchOptions } from "@/api-client.ts"
+import { BrowserStackError } from "@/error.ts"
+import { operations } from "@/generated/openapi.ts"
 
 /**
  * AutomateClient represents a client for interacting with the BrowserStack Automate API.

@@ -1,17 +1,17 @@
-import { AppAutomateClient } from "@/app-automate";
-import { AutomateClient } from "@/automate";
-import type { components } from "@/generated/openapi";
-import { JSTestingClient } from "@/js-testing";
-import { LocalTestingClient } from "@/local-testing";
-import { ScreenshotsClient } from "@/screenshots";
+import { AppAutomateClient } from "@/app-automate.ts"
+import { AutomateClient } from "@/automate.ts"
+import type { components } from "@/generated/openapi.ts"
+import { JSTestingClient } from "@/js-testing.ts"
+import { LocalTestingClient } from "@/local-testing.ts"
+import { ScreenshotsClient } from "@/screenshots.ts"
 
-export type { APIFetchOptions, BrowserStackOptions } from "@/api-client";
-export type { AppAutomateClient } from "@/app-automate";
-export type { AutomateClient } from "@/automate";
-export type { BrowserStackError, ErrorContext } from "@/error";
-export type { JSTestingClient } from "@/js-testing";
-export type { LocalTestingClient } from "@/local-testing";
-export type { ScreenshotsClient } from "@/screenshots";
+export type { APIFetchOptions, BrowserStackOptions } from "@/api-client.ts"
+export type { AppAutomateClient } from "@/app-automate.ts"
+export type { AutomateClient } from "@/automate.ts"
+export type { BrowserStackError, ErrorContext } from "@/error.ts"
+export type { JSTestingClient } from "@/js-testing.ts"
+export type { LocalTestingClient } from "@/local-testing.ts"
+export type { ScreenshotsClient } from "@/screenshots.ts"
 
 export type schemas = components["schemas"];
 

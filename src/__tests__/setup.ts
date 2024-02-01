@@ -1,4 +1,4 @@
-import { FlutterPlatform } from "@/app-automate";
+import { FlutterPlatform } from "@/app-automate.ts"
 import {
   BrowserStackOptions,
   AppAutomateClient,
@@ -7,7 +7,7 @@ import {
   ScreenshotsClient,
   JSTestingClient,
   LocalTestingClient,
-} from "@/index";
+} from "@/index.ts"
 import { assert, beforeEach } from "vitest";
 
 export interface BrowserStackTestContext {

@@ -1,6 +1,6 @@
-import { components } from "@/generated/openapi";
+import { components } from "@/generated/openapi.ts"
 import { describe, expect, expectTypeOf, test } from "vitest";
-import type { BrowserStackTestContext } from "./setup";
+import type { BrowserStackTestContext } from "./setup.ts";
 
 describe("ScreenshotsClient", () => {
   test<BrowserStackTestContext>("getBrowsers", async ({

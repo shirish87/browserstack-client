@@ -1,8 +1,8 @@
-import { components } from "@/generated/openapi";
-import { BrowserStack } from "@/index";
+import { components } from "@/generated/openapi.ts"
+import { BrowserStack } from "@/index.ts"
 import { stat } from "node:fs/promises";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
-import type { BrowserStackTestContext } from "./setup";
+import type { BrowserStackTestContext } from "./setup.ts";
 
 describe("LocalClient", () => {
   beforeAll(async () => {

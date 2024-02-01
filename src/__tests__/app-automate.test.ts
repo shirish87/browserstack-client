@@ -1,8 +1,8 @@
-import { FlutterPlatform } from "@/app-automate";
-import { components } from "@/generated/openapi";
+import { FlutterPlatform } from "@/app-automate.ts"
+import { components } from "@/generated/openapi.ts"
 import { zipSync } from "fflate";
 import { describe, expect, expectTypeOf, test } from "vitest";
-import type { BrowserStackTestContext } from "./setup";
+import type { BrowserStackTestContext } from "./setup.ts";
 
 describe("AppAutomateClient", () => {
   describe("Devices", () => {

@@ -1,7 +1,8 @@
-import { APIClient, APIFetchOptions, BrowserStackOptions } from "@/api-client";
-import { BrowserStackError } from "@/error";
-import { components, operations } from "@/generated/openapi";
-import { ChildProcess } from "node:child_process";
+import { APIClient, APIFetchOptions, BrowserStackOptions } from "@/api-client.ts"
+import { env } from "@/env.ts"
+import { BrowserStackError } from "@/error.ts"
+import { components, operations } from "@/generated/openapi.ts"
+import type { ChildProcess } from "node:child_process";
 
 export type LocalTestingOptions = Omit<BrowserStackOptions, "username">;
 
@@ -22,7 +23,7 @@ export class LocalTestingClient extends APIClient {
       usernameOptional: true,
     });
 
-    const authToken = options?.key ?? process.env.BROWSERSTACK_KEY;
+    const authToken = options?.key ?? env.BROWSERSTACK_KEY;
     if (typeof authToken !== "string" || !authToken.trim().length) {
       throw new BrowserStackError("Missing options.key");
     }
@@ -129,7 +130,7 @@ export class LocalTestingClient extends APIClient {
    */
   async downloadBinary(
     osArch: operations["downloadLocalBinary"]["parameters"]["path"]["osArch"],
-    dirPath: string | Buffer | URL,
+    dirPath: string,
     filenamePrefix: string = "BrowserStackLocal",
     fileMode: number = 0o755,
     options?: APIFetchOptions<operations["downloadLocalBinary"]>

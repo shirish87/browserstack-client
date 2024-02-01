@@ -1,5 +1,5 @@
-import { APIClient, APIFetchOptions, BrowserStackOptions } from "@/api-client";
-import { components, operations } from "@/generated/openapi";
+import { APIClient, APIFetchOptions, BrowserStackOptions } from "@/api-client.ts"
+import { components, operations } from "@/generated/openapi.ts"
 
 /**
  * Represents a client for interacting with the BrowserStack JavaScript Testing API.
