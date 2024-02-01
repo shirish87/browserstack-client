@@ -1,4 +1,4 @@
-import { APIClient, APIFetchOptions } from "@/api-client";
+import { APIClient, APIFetchOptions, BrowserStackOptions } from "@/api-client";
 import { components, operations } from "@/generated/openapi";
 
 /**
@@ -7,6 +7,17 @@ import { components, operations } from "@/generated/openapi";
  * @public
  */
 export class JSTestingClient extends APIClient {
+  /**
+   * Constructs a new instance of the JSTestingClient class.
+   * @param options - Optional configuration options for the client.
+   */
+  constructor(options?: BrowserStackOptions) {
+    super({
+      ...options,
+      baseUrl: options?.baseUrl ?? "https://api.browserstack.com/5",
+    });
+  }
+
   getAccountStatus(
     options?: APIFetchOptions<operations["getStatus"]["parameters"]["query"]>
   ): Promise<components["schemas"]["Status"]> {
