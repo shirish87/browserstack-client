@@ -8,6 +8,7 @@ import {
   JSTestingClient,
   LocalTestingClient,
 } from "@/index.ts"
+import { LocalTestingBinary, LocalTestingBinaryOptions } from "@/local-testing-binary";
 import { assert, beforeEach } from "vitest";
 
 export interface BrowserStackTestContext {
@@ -41,6 +42,10 @@ export interface BrowserStackTestContext {
     client: LocalTestingClient;
     randomBinaryInstanceId(): Promise<string>;
   },
+  localTestingBinary: {
+    client: LocalTestingBinary;
+    options: LocalTestingBinaryOptions;
+  },
 }
 
 beforeEach<BrowserStackTestContext>((context) => {
@@ -54,6 +59,12 @@ beforeEach<BrowserStackTestContext>((context) => {
   const appAutomate = new BrowserStack.AppAutomateClient(options);
   const jsTesting = new BrowserStack.Client(options);
   const localTesting = new BrowserStack.LocalTestingClient(options);
+
+  const localBinaryOptions: LocalTestingBinaryOptions = {
+    key: process.env.VITE_BROWSERSTACK_KEY,
+  };
+
+  const localTestingBinary = new BrowserStack.LocalTestingBinary(localBinaryOptions);
 
   const randomAutomateBuildId = async () => {
     const builds = await automate.getBuilds();
@@ -183,6 +194,10 @@ beforeEach<BrowserStackTestContext>((context) => {
         assert(instance.id, "Invalid local binary instance");
         return instance.id;
       },
+    },
+    localTestingBinary: {
+      client: localTestingBinary,
+      options: localBinaryOptions,
     },
   });
 });
