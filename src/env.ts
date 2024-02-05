@@ -16,3 +16,7 @@ export const versions: Dict<string> = {
   node: "unknown",
   ...proc?.versions,
 };
+
+export const currentPlatform = proc?.platform ?? "unknown";
+
+export const currentArch = proc?.arch ?? "unknown";
