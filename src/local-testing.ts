@@ -1,8 +1,15 @@
-import { APIClient, APIFetchOptions, BrowserStackOptions } from "@/api-client.ts"
-import { env } from "@/env.ts"
-import { BrowserStackError } from "@/error.ts"
-import { components, operations } from "@/generated/openapi.ts"
+import {
+  APIClient,
+  APIFetchOptions,
+  BrowserStackOptions,
+} from "@/api-client.ts";
+import { env } from "@/env.ts";
+import { BrowserStackError } from "@/error.ts";
+import { saveFile } from "@/fs-utils";
+import { components, operations } from "@/generated/openapi.ts";
+import { unzipSync } from "fflate";
 import type { ChildProcess } from "node:child_process";
+import { execFile } from "node:child_process";
 
 export type LocalTestingOptions = Omit<BrowserStackOptions, "username">;
 
@@ -10,7 +17,7 @@ export type LocalTestingOptions = Omit<BrowserStackOptions, "username">;
  * Represents a client for interacting with the BrowserStack Local API.
  */
 export class LocalTestingClient extends APIClient {
-  private readonly authToken: string;
+  protected readonly authToken: string;
 
   /**
    * Constructs a new instance of the ScreenshotsClient class.
@@ -38,7 +45,10 @@ export class LocalTestingClient extends APIClient {
    * @returns A promise that resolves to a fetch response containing the list of active Local instances.
    */
   getBinaryInstances(
-    query?: Omit<operations["getLocalBinaryInstances"]["parameters"]["query"], "auth_token">,
+    query?: Omit<
+      operations["getLocalBinaryInstances"]["parameters"]["query"],
+      "auth_token"
+    >,
     options?: APIFetchOptions<operations["getLocalBinaryInstances"]>
   ): Promise<components["schemas"]["LocalBinaryInstance"][]> {
     return this.makeGetRequest("/local/v1/list", {
@@ -63,7 +73,10 @@ export class LocalTestingClient extends APIClient {
    */
   getBinaryInstance(
     localInstanceId: string,
-    query?: Omit<operations["getLocalBinaryInstances"]["parameters"]["query"], "auth_token">,
+    query?: Omit<
+      operations["getLocalBinaryInstances"]["parameters"]["query"],
+      "auth_token"
+    >,
     options?: APIFetchOptions<operations["getLocalBinaryInstance"]>
   ): Promise<components["schemas"]["LocalBinaryInstance"]> {
     return this.makeGetRequest(`/local/v1/{localInstanceId}`, {
@@ -98,7 +111,10 @@ export class LocalTestingClient extends APIClient {
    */
   disconnectBinaryInstance(
     localInstanceId: string,
-    query?: Omit<operations["disconnectLocalBinaryInstance"]["parameters"]["query"], "auth_token">,
+    query?: Omit<
+      operations["disconnectLocalBinaryInstance"]["parameters"]["query"],
+      "auth_token"
+    >,
     options?: APIFetchOptions<operations["disconnectLocalBinaryInstance"]>
   ): Promise<string> {
     return this.makeDeleteRequest(`/local/v1/{localInstanceId}`, {
@@ -121,6 +137,7 @@ export class LocalTestingClient extends APIClient {
    * If the file is large, this method may fail with an out of memory error.
    * This method is intended for use in Node.js environments and will fail in the browser.
    *
+   * @internal
    * @param osArch - The operating system architecture for which to download the binary.
    * @param dirPath - The file path where the binary will be saved.
    * @param filenamePrefix - The prefix for the downloaded binary file name inside the ZIP file. Default is "BrowserStackLocal".
@@ -128,7 +145,7 @@ export class LocalTestingClient extends APIClient {
    * @param options - Additional options for the API fetch request.
    * @returns A Promise that resolves when the binary is successfully downloaded and saved.
    */
-  async downloadBinary(
+  downloadBinary(
     osArch: operations["downloadLocalBinary"]["parameters"]["path"]["osArch"],
     dirPath: string,
     filenamePrefix: string = "BrowserStackLocal",
@@ -136,7 +153,7 @@ export class LocalTestingClient extends APIClient {
     options?: APIFetchOptions<operations["downloadLocalBinary"]>
   ): Promise<string> {
     return this.sdk
-      .GET(`/browserstack-local/BrowserStackLocal-{osArch}.zip`, {
+      .GET("/browserstack-local/BrowserStackLocal-{osArch}.zip", {
         ...options,
         params: {
           path: {
@@ -146,12 +163,7 @@ export class LocalTestingClient extends APIClient {
         parseAs: "arrayBuffer",
       })
       .then((r) => r.response.arrayBuffer())
-      .then(async (buffer) => {
-        // local imports to avoid bundling in browser
-        const { writeFile, unlink, stat } = await import("node:fs/promises");
-        const { unzipSync } = await import("fflate");
-        const { join } = await import("node:path");
-
+      .then((buffer) => {
         const files = unzipSync(new Uint8Array(buffer), {
           filter: (file) => {
             return file.name.startsWith(filenamePrefix);
@@ -163,22 +175,8 @@ export class LocalTestingClient extends APIClient {
           throw new BrowserStackError("Local binary not found in zip");
         }
 
-        const filePath = join(dirPath.toString(), entries[0]);
-
-        try {
-          await writeFile(filePath, files[entries[0]], { mode: fileMode });
-          return filePath;
-        } catch (err) {
-          try {
-            if ((await stat(filePath)).isFile()) {
-              await unlink(filePath);
-            }
-          } catch {
-            /* ignore best-effort cleanup error */
-          }
-
-          throw err;
-        }
+        const content = files[entries[0]];
+        return saveFile(dirPath, entries[0], content, fileMode);
       })
       .catch((err) => {
         if (err instanceof BrowserStackError) {
@@ -194,6 +192,7 @@ export class LocalTestingClient extends APIClient {
   /**
    * Runs the downloaded Local binary file with the specified flags and options.
    *
+   * @internal
    * @param binFilePath - The path to the executable binary file.
    * @param flags - An array of flags to pass to the executable.
    * @param onData - A callback function to handle stdout data received from the executable.
@@ -205,31 +204,28 @@ export class LocalTestingClient extends APIClient {
    */
   async runBinary(
     binFilePath: string,
-    flags: LocalBinaryFlag[] = [],
+    flags: string[] = [],
     onData: (data: string) => void = () => {},
     onError: (data: string) => void = () => {},
     startTimeout: number = 10_000,
-    stdoutSuccessMessage: string = "[SUCCESS]",
+    stdoutSuccessMessage: string = "[SUCCESS]"
   ): Promise<ChildProcess> {
-    // local imports to avoid bundling in browser
-    const { execFile } = await import("node:child_process");
-
-    const child = execFile(
-      binFilePath,
-      ["--key", this.authToken, "--enable-logging-for-api", ...flags],
-      (err, stdout, stderr) => {
-        if (err) {
-          throw err;
-        }
-
-        onData?.(stdout);
-        onError?.(stderr);
-      }
-    );
-
     // watch for stdout '[SUCCESS] You can now access your local server(s) in our remote browser'
     // or fail if startTimeout has elapsed
     return new Promise((resolve, reject) => {
+      const child = execFile(
+        binFilePath,
+        ["--key", this.authToken, "--enable-logging-for-api", ...flags],
+        (err, stdout, stderr) => {
+          if (err) {
+            throw err;
+          }
+
+          onData?.(stdout);
+          onError?.(stderr);
+        }
+      );
+
       const timeout = setTimeout(reject, startTimeout);
 
       if (onError) {
@@ -247,6 +243,3 @@ export class LocalTestingClient extends APIClient {
     });
   }
 }
-
-// TODO: typesafe binary flags to serialize to string[]
-export type LocalBinaryFlag = string;
