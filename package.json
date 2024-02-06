@@ -5,16 +5,22 @@
   "type": "module",
   "main": "./dist/browserstack-client.umd.cjs",
   "module": "./dist/browserstack-client.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/browserstack-client.js",
-      "require": "./dist/browserstack-client.umd.cjs"
+      "require": "./dist/browserstack-client.umd.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./node": {
+      "import": "./dist/node/browserstack-client.js",
+      "require": "./dist/node/browserstack-client.umd.cjs",
+      "types": "./dist/node/types/index.d.ts"
     }
   },
   "scripts": {
     "prebuild": "node build.mjs && npm run lint",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && vite build --config vite.config.node.ts",
     "test": "vitest run --typecheck",
     "test-watch": "vitest --typecheck",
     "coverage": "vitest run --coverage.enabled --coverage.include=src --coverage.exclude=src/generated",

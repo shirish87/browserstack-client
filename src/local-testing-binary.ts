@@ -1,26 +1,34 @@
-import { BrowserStackOptions } from "@/api-client.ts";
 import { env } from "@/env.ts";
 import { BrowserStackError } from "@/error.ts";
 import {
   binaryPath,
+  currentOSArch,
   dirExists,
   ensureDirExists,
   fileExists,
+  saveFile,
 } from "@/fs-utils.ts";
+import {
+  LocalTestingBinaryOptions,
+  ProxyParams,
+} from "@/local-testing-binary-options.ts";
 import { LocalTestingClient } from "@/local-testing.ts";
-import { spawnSync } from "node:child_process";
+import cp from "node:child_process";
 import { randomBytes } from "node:crypto";
 
-export type LocalTestingBinaryOptions = Omit<BrowserStackOptions, "username"> &
-  LocalBinaryFlags & {
-    binHome?: string;
-    disableLogging?: boolean;
-    commandTimeoutMs?: number;
-  };
+export type {
+  LocalBinaryFlags,
+  LocalBinaryFolderTestingFlags,
+  LocalBinaryServerTestingFlags,
+  LocalTestingBinaryOptions,
+  ProxyParams,
+} from "@/local-testing-binary-options.ts";
 
 /**
  * Represents a client for interacting with the BrowserStack Local binary and APIs.
+ * Extends features of {@link LocalTestingClient} for the node.js runtime.
  * Download, spawn, and control the BrowserStack Local binary.
+ * @public
  *
  * @example
  * ```ts
@@ -43,13 +51,20 @@ export class LocalTestingBinary extends LocalTestingClient {
 
   readonly commandTimeoutMs: number;
 
+  /**
+   * The last state of the BrowserStackLocal daemon command.
+   * @public
+   */
   state: "stopped" | "starting" | "started" | "stopping" = "stopped";
 
   /**
    * Constructs a new instance of the ScreenshotsClient class.
    * @param options - Optional configuration options for the client.
    */
-  constructor(private readonly options?: LocalTestingBinaryOptions) {
+  constructor(
+    /* @internal */
+    private readonly options?: LocalTestingBinaryOptions
+  ) {
     super(options);
 
     const localIdentifier =
@@ -65,15 +80,17 @@ export class LocalTestingBinary extends LocalTestingClient {
     this.commandTimeoutMs = options?.commandTimeoutMs ?? 10_000;
   }
 
-  async version(
-    commandTimeoutMs: number = this.commandTimeoutMs
-  ): Promise<string> {
-    const binHome = await ensureDirExists(this.getBinHome());
-    const binFilePath = await binaryPath(binHome);
+  /**
+   * Retrieves the version of the local testing binary.
+   * @returns A promise that resolves to the version string.
+   */
+  async version(): Promise<string> {
+    const binFilePath = await this.ensureBinaryExists();
+    const binHome = this.getBinHome();
 
     return new Promise((resolve, reject) => {
-      const child = spawnSync(binFilePath, ["--version"], {
-        timeout: commandTimeoutMs,
+      const child = cp.spawnSync(binFilePath, ["--version"], {
+        timeout: this.commandTimeoutMs,
         cwd: binHome,
         windowsHide: true,
       });
@@ -93,6 +110,11 @@ export class LocalTestingBinary extends LocalTestingClient {
     });
   }
 
+  /**
+   * Starts the BrowserStackLocal daemon.
+   *
+   * @returns A promise that resolves to a string if the binary starts successfully, or undefined if there is an error.
+   */
   async start(): Promise<string | undefined> {
     let result: string | undefined = undefined;
 
@@ -117,6 +139,11 @@ export class LocalTestingBinary extends LocalTestingClient {
     return result;
   }
 
+  /**
+   * Stops the BrowserStackLocal daemon.
+   *
+   * @returns A promise that resolves to a string if the daemon stops successfully, or undefined otherwise.
+   */
   async stop(): Promise<string | undefined> {
     let result: string | undefined;
 
@@ -146,6 +173,9 @@ export class LocalTestingBinary extends LocalTestingClient {
     return result;
   }
 
+  /**
+   * @internal
+   */
   private async runDaemonCommand(
     command: {
       action: "start" | "stop";
@@ -176,8 +206,9 @@ export class LocalTestingBinary extends LocalTestingClient {
       throw err;
     };
 
-    const binHome = await ensureDirExists(this.getBinHome()).catch(raiseError);
-    const binFilePath = await binaryPath(binHome).catch(raiseError);
+    const binFilePath = await this.ensureBinaryExists().catch(raiseError);
+    const binHome = this.getBinHome();
+
     const binArgs = await LocalTestingBinary.resolveArgs(
       this.authToken,
       this.localIdentifier,
@@ -188,7 +219,7 @@ export class LocalTestingBinary extends LocalTestingClient {
     return new Promise<void>((resolve, reject) => {
       this.state = command.initialState;
 
-      const child = spawnSync(binFilePath, binArgs, {
+      const child = cp.spawnSync(binFilePath, binArgs, {
         timeout: commandTimeoutMs,
         cwd: binHome,
         windowsHide: true,
@@ -245,6 +276,9 @@ export class LocalTestingBinary extends LocalTestingClient {
     }).catch(raiseError);
   }
 
+  /**
+   * @internal
+   */
   private static async resolveArgs(
     key: string,
     localIdentifier: string,
@@ -292,7 +326,7 @@ export class LocalTestingBinary extends LocalTestingClient {
     //   args.push("--force");
     // }
 
-    if (binaryFlags?.disableLogging !== true) {
+    if (binaryFlags?.disableAPILogging !== true) {
       args.push("--enable-logging-for-api");
     }
 
@@ -417,6 +451,9 @@ export class LocalTestingBinary extends LocalTestingClient {
     return this.child?.args ? Array.from(this.child?.args) : [];
   }
 
+  /**
+   * @internal
+   */
   private parseOutput(r: Record<string, unknown>) {
     let state: string | undefined;
     let pid: string | undefined;
@@ -450,6 +487,9 @@ export class LocalTestingBinary extends LocalTestingClient {
     return { state, pid, message };
   }
 
+  /**
+   * @internal
+   */
   private getBinHome(): string {
     const binHome = this.options?.binHome ?? env.BROWSERSTACK_LOCAL_BINARY_PATH;
     if (typeof binHome !== "string" || !binHome.trim().length) {
@@ -458,221 +498,40 @@ export class LocalTestingBinary extends LocalTestingClient {
 
     return binHome.trim();
   }
-}
-
-// export interface LocalIdentifierFlags {
-//   /**
-//    * Unique string for BrowserStack to uniquely identify each binary.
-//    * You will need to specify the same string in Automate tests as well.
-//    *
-//    * local-identifier
-//    */
-//   id: string;
-
-//   /**
-//    * Using this option kills all other instances of BrowserStack Local binary running
-//    * on this machine with the same --local-identifier options.
-//    *
-//    * NOTE: This option will NOT affect binaries running in remote servers and instances
-//    * running with different --local-identifier options.
-//    *
-//    * force
-//    */
-//   force?: boolean;
-// }
-
-export interface BaseLocalBinaryFlags {
-  /**
-   * If you are behind corporate proxy setup, please specify your proxy host using this option.
-   * proxy-* flags
-   *
-   * pac-file: Use a PAC file to configure the proxy if value is a string file path.
-   * Note that this path needs to be present on the local machine.
-   */
-  proxy?: (ProxyParams<3128> | string) & {
-    /**
-     * Routes all traffic via the proxy specified - otherwise,
-     * binary tries to connect directly as well for better performance.
-     *
-     * force-proxy
-     */
-    force?: boolean;
-  };
 
   /**
-   * Restrict BrowserStackLocal Binary access to few local servers and/or folders.
-   * This flag limits the set of domains that your Local tunnel will resolve for your tests.
-   * Regex is not supported, multiple entries are supported.
-   * This flag is used to restrict the scope of URLs which the Local Binary can connect to,
-   * typically for security and compliance purposes.
-   *
-   * Usage: host1,port1,ssl?,host2,port2,ssl?.
-   * Example: localhost,8000,0,abc.example.com,8080,1
-   *
-   * NOTE: This flag is rendered useless when paired with --force-local
-   * Please use --include-hosts or --exclude-hosts depending on your use-case.
+   * @internal
    */
-  only?: OnlyParam[];
-
-  /**
-   * This option restricts Binary usage to Automate product, and it cannot be used for Live/Screenshot testing.
-   */
-  onlyAutomate?: boolean;
-
-  /**
-   * Run multiple copies of the BrowserStackLocal binary (for better performance or other reasons)
-   */
-  localIdentifier?: string;
-
-  /**
-   * Starts or stop the binary as a daemon. Accepts only 2 commands: start, stop.
-   * Start will start binary in background. Primarily used in Continous Integration server scripts.
-   */
-  daemon?: boolean;
-
-  /**
-   * Number of (X) minutes in order to auto close the local binary connections (with BrowserStack servers)
-   * after X minutes of inactivity.
-   *
-   * NOTE: There should be no traffic flowing through binary during this period of X.
-   * This flag will only work with local binary as of now.
-   */
-  timeout?: number;
-
-  /**
-   * Include this option to make sure this binary is exposed to Local API for debugging.
-   * For more information refer to https://www.browserstack.com/local-testing#local-api-debugging
-   *
-   * Default: true
-   * enable-logging-for-api
-   */
-  // apiLogging?: boolean;
-
-  /**
-   * Specify the number of parallel runs.
-   */
-  parallelRuns?: number;
-
-  /**
-   * Route all traffic via machine where BrowserStackLocal Binary is running.
-   * Local tries to fetch public URLs directly, unless this option is specified.
-   */
-  forceLocal?: boolean;
-
-  /**
-   * Granular control over URLs accessible through tunnel.
-   */
-  hosts?: {
-    /**
-     * Granular control over the URLs that you want to tightly bind to your tunnel. Wildcards are supported.
-     * You can also include specific IPs or IP ranges (subnet)
-     * @example ["myinternalwebsite.*" ".*.browserstack.com"]
-     * @example ["127.0.0.1" "8.8.8.8"]
-     * @example ["255.255.255.252/30"]
-     * include-hosts
-     */
-    include?: string[];
-
-    /**
-     * Granular control over the URLs that you want to disallow from your tunnel. Wildcards are supported.
-     * This flag supersedes hosts.include
-     * You can also include specific IPs or IP ranges (subnet)
-     * @example [".*.google.com"]
-     * @example ["127.0.0.1" "8.8.8.8"]
-     * @example ["255.255.255.252/30"]
-     * exclude-hosts
-     */
-    exclude?: string[];
-  };
-
-  debug?: {
-    /**
-     * Sets the level of logging required.
-     * Set 1 to debug issues related to setting up connections.
-     * Set 2 for logs related to network information.
-     * Set 3 to dump all communication to local servers for each request and response.
-     * Default: 1
-     * verbose
-     */
-    level?: 1 | 2 | 3;
-
-    /**
-     * Logs all the output to the file specified.
-     * log-file
-     */
-    logFile?: string;
-  };
-
-  /**
-   * Addtionally, you can pass any other flags that are supported by the BrowserStackLocal binary.
-   */
-  more?: string[];
-}
-
-export interface LocalBinaryFolderTestingFlags {
-  /**
-   * Specify the absolute path to the Local folder to be used for testing.
-   * This option is to be used when testing a local folder.
-   *
-   * @example /home/ubuntu/mysite/
-   */
-  folder: string;
-}
-
-export interface LocalBinaryServerTestingFlags {
-  /**
-   * If your local server is behind a proxy or you are using a proxy to log all communication to your local servers
-   * local-proxy-* flags
-   */
-  localProxy?: ProxyParams<8081> & {
-    /**
-     * Test local HTTPS servers which are behind a proxy (in addition to port 443).
-     *
-     * NOTE: should not include port 443
-     */
-    httpsPorts?: number[];
-  };
-}
-
-export interface ProxyParams<DefaultProxyPort extends number> {
-  // proxy-* flags
-  host: string;
-  port?: number | DefaultProxyPort; // default: 3128
-
-  // As of now, only HTTP Basic authentication is supported.
-  auth?: {
-    username: string;
-    password: string;
-  };
-
-  rootCA?:
-    | {
-        /**
-         * You can pass your corporate SSL root certificates of the system proxy server
-         * to mark same as trusted in binary. To be used when running from Mac/Linux machines.
-         * This flag automatically retrieves certificates from the keychain and
-         * does not require a certificate file path.
-         *
-         * use-system-installed-ca
-         */
-        useSystem: boolean;
+  private async ensureBinaryExists(): Promise<string> {
+    try {
+      const binPath = await binaryPath(this.getBinHome());
+      if (await fileExists(binPath)) {
+        return binPath;
       }
-    | {
-        /**
-         * You can pass the path to your corporate SSL root certificates of the system proxy server
-         * to mark same as trusted in binary.
-         *
-         * use-ca-certificate
-         */
-        path: string;
-      };
-}
+    } catch (err) {
+      // expected err = ENOENT: no such file or directory, lstat <file>
+    }
 
-export interface OnlyParam {
-  host: string;
-  port: number;
-  ssl?: boolean; // => 0 or 1
-}
+    const osArch = await currentOSArch();
+    if (!osArch) {
+      throw new BrowserStackError(`Unsupported platform: ${osArch}`);
+    }
 
-export type LocalBinaryFlags = BaseLocalBinaryFlags &
-  (LocalBinaryFolderTestingFlags | LocalBinaryServerTestingFlags);
+    try {
+      const binHome = await ensureDirExists(this.getBinHome());
+      const { content, filename } = await this.downloadBinary(osArch);
+      return await saveFile(binHome, filename, content, 0o755);
+    } catch (err) {
+      if (err instanceof BrowserStackError) {
+        throw err;
+      } else if (err instanceof Error) {
+        throw new BrowserStackError(
+          `Failed to download binary: ${err.message}`,
+          err
+        );
+      }
+
+      throw new BrowserStackError(`Failed to download binary: ${err}`);
+    }
+  }
+}
