@@ -1,14 +1,17 @@
-import { FlutterPlatform } from "@/app-automate.ts"
+import { FlutterPlatform } from "@/app-automate.ts";
 import {
-  BrowserStackOptions,
   AppAutomateClient,
   AutomateClient,
   BrowserStack,
-  ScreenshotsClient,
+  BrowserStackOptions,
   JSTestingClient,
   LocalTestingClient,
-} from "@/index.ts"
-import { LocalTestingBinary, LocalTestingBinaryOptions } from "@/local-testing-binary";
+  ScreenshotsClient,
+} from "@/index.ts";
+import {
+  LocalTestingBinary,
+  LocalTestingBinaryOptions,
+} from "@/local-testing-binary.ts";
 import { assert, beforeEach } from "vitest";
 
 export interface BrowserStackTestContext {
@@ -41,11 +44,11 @@ export interface BrowserStackTestContext {
   localTesting: {
     client: LocalTestingClient;
     randomBinaryInstanceId(): Promise<string>;
-  },
+  };
   localTestingBinary: {
     client: LocalTestingBinary;
     options: LocalTestingBinaryOptions;
-  },
+  };
 }
 
 beforeEach<BrowserStackTestContext>((context) => {
@@ -64,7 +67,7 @@ beforeEach<BrowserStackTestContext>((context) => {
     key: process.env.VITE_BROWSERSTACK_KEY,
   };
 
-  const localTestingBinary = new BrowserStack.LocalTestingBinary(localBinaryOptions);
+  const localTestingBinary = new LocalTestingBinary(localBinaryOptions);
 
   const randomAutomateBuildId = async () => {
     const builds = await automate.getBuilds();
@@ -190,7 +193,8 @@ beforeEach<BrowserStackTestContext>((context) => {
         const instances = await localTesting.getBinaryInstances();
         assert(instances.length > 0, "No local binary instances found");
 
-        const instance = instances[Math.floor(Math.random() * instances.length)];
+        const instance =
+          instances[Math.floor(Math.random() * instances.length)];
         assert(instance.id, "Invalid local binary instance");
         return instance.id;
       },

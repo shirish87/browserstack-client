@@ -1,5 +1,5 @@
 import { env } from "@/env.ts";
-import { BrowserStack } from "@/index.ts";
+import { BrowserStack } from "@/index.node.ts";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup.ts";
 
