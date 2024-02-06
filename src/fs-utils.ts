@@ -76,13 +76,13 @@ export async function ensureDirExists(
     // const { lstat, mkdir, chmod, constants } = await import("node:fs/promises");
     dirFlags = dirFlags ?? constants.R_OK | constants.W_OK;
     const dirPath = resolve(binHome);
-    const dirStat = await lstat(dirPath);
+    const dirStat = await lstat(dirPath).catch(() => null);
 
-    if (!dirStat.isDirectory()) {
+    if (!dirStat || !dirStat.isDirectory()) {
       await mkdir(dirPath, { recursive: true, mode: dirMode });
     }
 
-    if ((dirStat.mode & dirFlags) !== dirFlags) {
+    if (dirStat && (dirStat.mode & dirFlags) !== dirFlags) {
       await chmod(dirPath, dirMode);
     }
 
