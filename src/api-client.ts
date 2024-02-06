@@ -1,6 +1,6 @@
 import { env } from "@/env.ts";
 import { BrowserStackError } from "@/error.ts";
-import openapi from "@/generated/openapi.json" assert { type: "json" };
+import { servers } from "@/generated/openapi.json" assert { type: "json" };
 import { paths } from "@/generated/openapi.ts";
 import pkginfo from "@/pkginfo.ts";
 import type { ClientOptions, FetchOptions } from "openapi-fetch";
@@ -11,7 +11,7 @@ import type {
   PathsWithMethod,
 } from "openapi-typescript-helpers";
 
-const [{ variables }, { variables: cloudVars }] = openapi?.servers ?? [];
+const [{ variables }, { variables: cloudVars }] = servers ?? [];
 
 const defaultBaseUrl = `${variables.scheme.default}://${
   variables.host.default
