@@ -11,9 +11,7 @@ export default defineConfig({
       fileName: "browserstack-client",
     },
     rollupOptions: {
-      external: [
-        /^node:/,
-      ],
+      external: [/^node:/],
       output: {
         globals: {
           "node:child_process": "node:child_process",

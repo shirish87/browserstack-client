@@ -8,15 +8,22 @@
   "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/browserstack-client.js",
-      "require": "./dist/browserstack-client.umd.cjs",
-      "types": "./dist/types/index.d.ts"
+      "require": "./dist/browserstack-client.umd.cjs"
+    },
+    "./browser": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/browserstack-client.js",
+      "require": "./dist/browserstack-client.umd.cjs"
     },
     "./node": {
+      "types": "./dist/node/types/index.node.d.ts",
       "import": "./dist/node/browserstack-client.js",
-      "require": "./dist/node/browserstack-client.umd.cjs",
-      "types": "./dist/node/types/index.d.ts"
-    }
+      "require": "./dist/node/browserstack-client.umd.cjs"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
   },
   "scripts": {
     "prebuild": "node build.mjs && npm run lint",
