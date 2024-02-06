@@ -5,11 +5,8 @@ import {
 } from "@/api-client.ts";
 import { env } from "@/env.ts";
 import { BrowserStackError } from "@/error.ts";
-import { saveFile } from "@/fs-utils";
 import { components, operations } from "@/generated/openapi.ts";
 import { unzipSync } from "fflate";
-import type { ChildProcess } from "node:child_process";
-import { execFile } from "node:child_process";
 
 export type LocalTestingOptions = Omit<BrowserStackOptions, "username">;
 
@@ -147,11 +144,12 @@ export class LocalTestingClient extends APIClient {
    */
   downloadBinary(
     osArch: operations["downloadLocalBinary"]["parameters"]["path"]["osArch"],
-    dirPath: string,
     filenamePrefix: string = "BrowserStackLocal",
-    fileMode: number = 0o755,
     options?: APIFetchOptions<operations["downloadLocalBinary"]>
-  ): Promise<string> {
+  ): Promise<{
+    content: Uint8Array;
+    filename: string;
+  }> {
     return this.sdk
       .GET("/browserstack-local/BrowserStackLocal-{osArch}.zip", {
         ...options,
@@ -172,11 +170,13 @@ export class LocalTestingClient extends APIClient {
 
         const entries = Object.keys(files);
         if (!entries.length) {
-          throw new BrowserStackError("Local binary not found in zip");
+          throw new BrowserStackError(
+            `Local binary not found in BrowserStackLocal-${osArch}.zip`
+          );
         }
 
         const content = files[entries[0]];
-        return saveFile(dirPath, entries[0], content, fileMode);
+        return { content, filename: entries[0] };
       })
       .catch((err) => {
         if (err instanceof BrowserStackError) {
@@ -187,59 +187,5 @@ export class LocalTestingClient extends APIClient {
           `Failed to write local binary to disk: ${err.message}: ${err.stack}`
         );
       });
-  }
-
-  /**
-   * Runs the downloaded Local binary file with the specified flags and options.
-   *
-   * @internal
-   * @param binFilePath - The path to the executable binary file.
-   * @param flags - An array of flags to pass to the executable.
-   * @param onData - A callback function to handle stdout data received from the executable.
-   * @param onError - A callback function to handle stderr data received from the executable.
-   * @param startTimeout - The timeout duration in milliseconds for the executable to start.
-   * @param stdoutSuccessMessage - The success message to look for in the stdout of the executable.
-   * @returns A promise that resolves with the child process when the executable starts successfully.
-   * @throws If an error occurs while executing the binary file.
-   */
-  async runBinary(
-    binFilePath: string,
-    flags: string[] = [],
-    onData: (data: string) => void = () => {},
-    onError: (data: string) => void = () => {},
-    startTimeout: number = 10_000,
-    stdoutSuccessMessage: string = "[SUCCESS]"
-  ): Promise<ChildProcess> {
-    // watch for stdout '[SUCCESS] You can now access your local server(s) in our remote browser'
-    // or fail if startTimeout has elapsed
-    return new Promise((resolve, reject) => {
-      const child = execFile(
-        binFilePath,
-        ["--key", this.authToken, "--enable-logging-for-api", ...flags],
-        (err, stdout, stderr) => {
-          if (err) {
-            throw err;
-          }
-
-          onData?.(stdout);
-          onError?.(stderr);
-        }
-      );
-
-      const timeout = setTimeout(reject, startTimeout);
-
-      if (onError) {
-        child.stderr?.on("data", onError);
-      }
-
-      child.stdout?.on("data", (data: string) => {
-        onData?.(data);
-
-        if (data.toUpperCase().includes(stdoutSuccessMessage)) {
-          clearTimeout(timeout);
-          resolve(child);
-        }
-      });
-    });
   }
 }
