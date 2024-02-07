@@ -12,11 +12,6 @@
       "import": "./dist/browserstack-client.js",
       "require": "./dist/browserstack-client.umd.cjs"
     },
-    "./browser": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/browserstack-client.js",
-      "require": "./dist/browserstack-client.umd.cjs"
-    },
     "./node": {
       "types": "./dist/node/types/index.node.d.ts",
       "import": "./dist/node/browserstack-client.js",
@@ -41,7 +36,8 @@
   "author": "Shirish Kamath",
   "license": "MIT",
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "*.d.ts"
   ],
   "engines": {
     "node": ">=18.0.0"

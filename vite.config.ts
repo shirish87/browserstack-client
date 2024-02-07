@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: [
     dts({
       entryRoot: "src",
-      exclude: ["**/__tests__/**", "**/*.node.*", "**/**/openapi.json"],
+      exclude: ["**/__tests__/**", "src/index.node.ts", "**/**/openapi.json"],
       outDir: "dist/types",
     }),
   ],
