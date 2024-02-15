@@ -65,7 +65,7 @@
     "vitest": "1.2.1"
   },
   "dependencies": {
-    "fflate": "^0.8.1",
+    "fflate": "^0.8.2",
     "openapi-fetch": "^0.8.2",
     "write-file-atomic": "^5.0.1"
   },
