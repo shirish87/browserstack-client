@@ -14,8 +14,8 @@ export class BrowserStackError<
   P extends keyof paths,
   T = FetchResponse<unknown>
 > extends Error {
-  code?: string;
-  stack?: string;
+  readonly code?: string;
+  readonly stack?: string;
 
   readonly context: ErrorContext<P, T> | undefined;
 
@@ -26,6 +26,10 @@ export class BrowserStackError<
     if (context instanceof Error) {
       this.name = context.name;
       this.stack = context.stack;
+
+      if ("code" in context && typeof context.code === "string") {
+        this.code = context.code;
+      }
     }
   }
 }
