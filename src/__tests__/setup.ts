@@ -12,6 +12,8 @@ import {
   LocalTestingBinary,
   LocalTestingBinaryOptions,
 } from "@/local-testing-binary.ts";
+import { homedir, tmpdir } from "node:os";
+import { join } from "node:path";
 import { assert, beforeEach } from "vitest";
 
 export interface BrowserStackTestContext {
@@ -65,6 +67,8 @@ beforeEach<BrowserStackTestContext>((context) => {
 
   const localBinaryOptions: LocalTestingBinaryOptions = {
     key: process.env.VITE_BROWSERSTACK_KEY,
+    binHome:
+      process.env.VITE_BROWSERSTACK_LOCAL_BINARY_PATH ?? defaultBinHome(),
   };
 
   const localTestingBinary = new LocalTestingBinary(localBinaryOptions);
@@ -205,3 +209,7 @@ beforeEach<BrowserStackTestContext>((context) => {
     },
   });
 });
+
+function defaultBinHome(): string {
+  return join(homedir() ?? tmpdir(), ".browserstack");
+}

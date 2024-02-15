@@ -6,18 +6,31 @@ export default defineConfig({
   build: {
     outDir: "dist/node",
     lib: {
-      entry: resolve(__dirname, "src/index.node.ts"),
-      name: "browserstack-client",
-      fileName: "browserstack-client",
+      entry: [
+        resolve(__dirname, "src/index.node.ts"),
+        resolve(__dirname, "src/cli/browserstack-local.ts"),
+      ],
+      fileName: (format, name) => {
+        const extn = (format === "es") ? "js" : "cjs";
+        if (name.match(/browserstack-local/)) {
+          return `browserstack-local.${extn}`;
+        }
+
+        return `browserstack-client.${extn}`;
+      },
     },
     rollupOptions: {
-      external: [/^node:/],
+      external: [/^node:/, "fs", "path", "util", "worker_threads"],
       output: {
         globals: {
           "node:child_process": "node:child_process",
           "node:fs/promises": "node:fs/promises",
           "node:path": "node:path",
           "node:crypto": "node:crypto",
+          "fs": "node:fs",
+          "path": "node:path",
+          "util": "node:util",
+          "worker_threads": "node:worker_threads"
         },
       },
     },

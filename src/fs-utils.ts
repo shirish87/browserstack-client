@@ -2,8 +2,9 @@ import { currentArch, currentPlatform } from "@/env.ts";
 import { BrowserStackError } from "@/error.ts";
 import { operations } from "@/generated/openapi.ts";
 import { spawnSync } from "node:child_process";
-import { chmod, constants, lstat, mkdir, unlink, writeFile } from "node:fs/promises";
+import { chmod, constants, lstat, mkdir, unlink } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import writeFileAtomic from "write-file-atomic";
 
 export async function binaryPath(
   binHome: string,
@@ -13,9 +14,6 @@ export async function binaryPath(
 
   const osArch = await currentOSArch();
   const binFilename = osArch === "win32" ? `${filename}.exe` : filename;
-
-  // const { constants } = await import("node:fs/promises");
-  // const { join } = await import("node:path");
 
   const binFilePath = join(binDirPath, binFilename);
   if (!(await fileExists(binFilePath, constants.R_OK | constants.X_OK))) {
@@ -30,17 +28,19 @@ export async function binaryPath(
 
 export async function fileExists(
   filePath: string,
-  fileFlags?: number
+  fileFlags: number = constants.R_OK
 ): Promise<boolean> {
   if (typeof filePath !== "string" || !filePath.trim().length) {
     return false;
   }
 
-  // const { lstat, constants } = await import("node:fs/promises");
-  fileFlags = fileFlags ?? constants.R_OK;
+  const fileStat = await lstat(filePath).catch((err) =>
+    err.code === "ENOENT" ? null : err
+  );
 
-  const fileStat = await lstat(filePath);
-  if (!fileStat.isFile() || (fileStat.mode & fileFlags) !== fileFlags) {
+  const flags = fileFlags & 0o700;
+
+  if (!fileStat || !fileStat.isFile() || (fileStat.mode & flags) !== 0) {
     return false;
   }
 
@@ -49,17 +49,19 @@ export async function fileExists(
 
 export async function dirExists(
   dirPath: string,
-  dirFlags?: number
+  dirFlags: number = constants.R_OK
 ): Promise<boolean> {
   if (typeof dirPath !== "string" || !dirPath.trim().length) {
     return false;
   }
 
-  // const { lstat, constants } = await import("node:fs/promises");
-  dirFlags = dirFlags ?? constants.R_OK;
+  const dirStat = await lstat(dirPath).catch((err) =>
+    err.code === "ENOENT" ? null : err
+  );
 
-  const dirStat = await lstat(dirPath);
-  if (!dirStat.isDirectory() || (dirStat.mode & dirFlags) !== dirFlags) {
+  const flags = dirFlags & 0o700;
+
+  if (!dirStat || !dirStat.isDirectory() || (dirStat.mode & flags) !== 0) {
     return false;
   }
 
@@ -72,17 +74,19 @@ export async function ensureDirExists(
   dirFlags?: number
 ): Promise<string> {
   try {
-    // const { resolve } = await import("node:path");
-    // const { lstat, mkdir, chmod, constants } = await import("node:fs/promises");
-    dirFlags = dirFlags ?? constants.R_OK | constants.W_OK;
     const dirPath = resolve(binHome);
-    const dirStat = await lstat(dirPath).catch(() => null);
+    const dirStat = await lstat(dirPath).catch(async (err) => {
+      if (err.code === "ENOENT") {
+        await mkdir(dirPath, { recursive: true, mode: dirMode });
+        return lstat(dirPath);
+      }
 
-    if (!dirStat || !dirStat.isDirectory()) {
-      await mkdir(dirPath, { recursive: true, mode: dirMode });
-    }
+      throw err;
+    });
 
-    if (dirStat && (dirStat.mode & dirFlags) !== dirFlags) {
+    const flags = (dirFlags ?? constants.R_OK | constants.W_OK) & 0o700;
+
+    if (dirStat && (dirStat.mode & flags) !== 0) {
       await chmod(dirPath, dirMode);
     }
 
@@ -147,12 +151,10 @@ export async function saveFile(
   content: Uint8Array,
   fileMode: number
 ): Promise<string> {
-  // const { join } = await import("node:path");
-  // const { writeFile, lstat, unlink } = await import("node:fs/promises");
   const filePath = join(resolve(dirPath), filename);
 
   try {
-    await writeFile(filePath, content, { mode: fileMode });
+    await writeFileAtomic(filePath, Buffer.from(content), { mode: fileMode });
     return filePath;
   } catch (err) {
     try {

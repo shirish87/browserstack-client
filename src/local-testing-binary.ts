@@ -4,7 +4,6 @@ import {
   binaryPath,
   currentOSArch,
   dirExists,
-  ensureDirExists,
   fileExists,
   saveFile,
 } from "@/fs-utils.ts";
@@ -21,7 +20,7 @@ export type {
   LocalBinaryFolderTestingFlags,
   LocalBinaryServerTestingFlags,
   LocalTestingBinaryOptions,
-  ProxyParams,
+  ProxyParams
 } from "@/local-testing-binary-options.ts";
 
 /**
@@ -44,12 +43,14 @@ export type {
 export class LocalTestingBinary extends LocalTestingClient {
   readonly localIdentifier: string;
 
-  readonly child: { pid?: number; args: string[] } = {
+  private readonly child: { pid?: number; args: string[] } = {
     pid: undefined,
     args: [],
   };
 
   readonly commandTimeoutMs: number;
+
+  readonly binHome: string;
 
   /**
    * The last state of the BrowserStackLocal daemon command.
@@ -78,6 +79,7 @@ export class LocalTestingBinary extends LocalTestingClient {
 
     this.localIdentifier = localIdentifier;
     this.commandTimeoutMs = options?.commandTimeoutMs ?? 10_000;
+    this.binHome = this.getBinHome();
   }
 
   /**
@@ -86,12 +88,11 @@ export class LocalTestingBinary extends LocalTestingClient {
    */
   async version(): Promise<string> {
     const binFilePath = await this.ensureBinaryExists();
-    const binHome = this.getBinHome();
 
     return new Promise((resolve, reject) => {
       const child = cp.spawnSync(binFilePath, ["--version"], {
         timeout: this.commandTimeoutMs,
-        cwd: binHome,
+        cwd: this.binHome,
         windowsHide: true,
       });
 
@@ -187,7 +188,8 @@ export class LocalTestingBinary extends LocalTestingClient {
         message?: string
       ) => boolean;
     },
-    commandTimeoutMs: number = this.commandTimeoutMs
+    commandTimeoutMs: number = this.commandTimeoutMs,
+    binHome: string = this.binHome
   ): Promise<void> {
     const previousState = {
       state: this.state,
@@ -207,7 +209,6 @@ export class LocalTestingBinary extends LocalTestingClient {
     };
 
     const binFilePath = await this.ensureBinaryExists().catch(raiseError);
-    const binHome = this.getBinHome();
 
     const binArgs = await LocalTestingBinary.resolveArgs(
       this.authToken,
@@ -504,7 +505,7 @@ export class LocalTestingBinary extends LocalTestingClient {
    */
   private async ensureBinaryExists(): Promise<string> {
     try {
-      const binPath = await binaryPath(this.getBinHome());
+      const binPath = await binaryPath(this.binHome);
       if (await fileExists(binPath)) {
         return binPath;
       }
@@ -518,9 +519,8 @@ export class LocalTestingBinary extends LocalTestingClient {
     }
 
     try {
-      const binHome = await ensureDirExists(this.getBinHome());
       const { content, filename } = await this.downloadBinary(osArch);
-      return await saveFile(binHome, filename, content, 0o755);
+      return await saveFile(this.binHome, filename, content, 0o755);
     } catch (err) {
       if (err instanceof BrowserStackError) {
         throw err;
