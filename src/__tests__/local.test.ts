@@ -2,12 +2,13 @@ import { binaryPath } from "@/fs-utils.ts";
 import { components } from "@/generated/openapi.ts";
 import { LocalTestingBinary } from "@/local-testing-binary.ts";
 import { unlink } from "node:fs/promises";
+import { join } from "node:path";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup.ts";
 
 describe("LocalClient", () => {
   beforeAll(async () => {
-    const binHome = process.env.RUNNER_TEMP ?? process.env.TMPDIR ?? "/tmp";
+    const binHome = join(process.env.RUNNER_TEMP ?? process.env.TMPDIR ?? "/tmp", ".browserstack");
     const key = process.env.VITE_BROWSERSTACK_KEY ?? "";
 
     const client = new LocalTestingBinary({ key, binHome });
@@ -53,6 +54,8 @@ describe("LocalClient", () => {
     const data = await client.disconnectBinaryInstance(localInstanceId);
     expect(data).toBeDefined();
     expect(data.length).toBeGreaterThan(0);
+    // server sometimes returns an HTML page
+    console.info(data);
     expect(data).toMatch(/successfully disconnected/i);
     expectTypeOf(data).toMatchTypeOf<string>();
   });
