@@ -4,6 +4,9 @@
   "description": "BrowserStack APIs client library for node.js",
   "type": "module",
   "main": "./dist/browserstack-client.umd.cjs",
+  "bin": {
+    "browserstack-local": "./dist/node/browserstack-local.cjs"
+  },
   "module": "./dist/browserstack-client.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
@@ -15,7 +18,7 @@
     "./node": {
       "types": "./dist/node/types/index.node.d.ts",
       "import": "./dist/node/browserstack-client.js",
-      "require": "./dist/node/browserstack-client.umd.cjs"
+      "require": "./dist/node/browserstack-client.cjs"
     },
     "./package.json": "./package.json",
     "./*": "./dist/*"
@@ -45,6 +48,7 @@
   "devDependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
     "@types/node": "^20.11.6",
+    "@types/write-file-atomic": "^4.0.3",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "@vitest/coverage-v8": "^1.2.1",
@@ -62,7 +66,8 @@
   },
   "dependencies": {
     "fflate": "^0.8.1",
-    "openapi-fetch": "^0.8.2"
+    "openapi-fetch": "^0.8.2",
+    "write-file-atomic": "^5.0.1"
   },
   "repository": {
     "type": "git",
