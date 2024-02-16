@@ -2,7 +2,14 @@ import { currentArch, currentPlatform } from "@/env.ts";
 import { BrowserStackError } from "@/error.ts";
 import { operations } from "@/generated/openapi.ts";
 import { spawnSync } from "node:child_process";
-import { chmod, constants, lstat, mkdir, unlink } from "node:fs/promises";
+import {
+  chmod,
+  constants,
+  lstat,
+  mkdir,
+  unlink,
+  readFile,
+} from "node:fs/promises";
 import { join, resolve } from "node:path";
 import writeFileAtomic from "write-file-atomic";
 
@@ -166,5 +173,43 @@ export async function saveFile(
     }
 
     throw err;
+  }
+}
+
+export async function findPackageId(
+  includeVersion = false,
+  maxDepth = 3
+): Promise<string | undefined> {
+
+  let dir = process.cwd();
+  let pkgPath: string | undefined;
+  let cnt = Math.max(1, maxDepth);
+
+  while (!dir.match(/^(\w:\\|\/)$/) && cnt > 0) {
+    pkgPath = join(dir, "package.json");
+    dir = resolve(dir, "..");
+    cnt--;
+
+    try {
+      const contents = await readFile(pkgPath, "utf-8");
+      const data =
+        contents.charCodeAt(0) === 0xfeff ? contents.slice(1) : contents;
+
+      const pkg = JSON.parse(data);
+
+      if (pkg && "name" in pkg) {
+        const name = pkg.name?.trim?.();
+        const version =
+          includeVersion && "version" in pkg
+            ? pkg?.version?.trim?.()
+            : undefined;
+
+        if (name && name.length) {
+          return `${name}${version ? `@${version}` : ""}`;
+        }
+      }
+    } catch {
+      pkgPath = undefined;
+    }
   }
 }
