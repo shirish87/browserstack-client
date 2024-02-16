@@ -176,11 +176,19 @@ export async function saveFile(
   }
 }
 
+/**
+ * Finds the package ID by searching for the nearest package.json file in the current working directory and its parent directories.
+ *
+ * @param includeVersion Whether to include the version in the package ID.
+ * @param maxDepth The maximum depth to search for the package.json file.
+ * @returns A Promise that resolves to the package ID (name with optional version) if found, or undefined if not found.
+ *
+ * @internal
+ */
 export async function findPackageId(
   includeVersion = false,
   maxDepth = 3
 ): Promise<string | undefined> {
-
   let dir = process.cwd();
   let pkgPath: string | undefined;
   let cnt = Math.max(1, maxDepth);

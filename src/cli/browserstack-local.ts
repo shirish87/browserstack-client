@@ -3,7 +3,7 @@
 import { env } from "@/env";
 import { BrowserStackError } from "@/error";
 import { ensureDirExists } from "@/fs-utils";
-import { BrowserStack } from "@/index.node";
+import { BrowserStack, LocalTestingBinaryOptions } from "@/index.node";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { homedir, tmpdir } from "node:os";
@@ -26,15 +26,14 @@ interface Logger {
 /**
  * Starts the BrowserStack local testing binary with the provided key and configuration.
  *
- * @param key - The BrowserStack access key.
- * @param binHome - The path to the BrowserStack local testing binary.
+ * @param options.key - The BrowserStack access key.
+ * @param options.binHome - The path to the BrowserStack local testing binary.
  * @param statusPath - The path to the status file.
  * @param logger - The logger object for logging messages (optional, defaults to global console).
  * @returns A Promise that resolves when the local testing binary has started successfully.
  */
 async function start(
-  key: string,
-  binHome: string,
+  options: LocalTestingBinaryOptions,
   statusPath: string,
   logger: Logger = globalThis.console
 ) {
@@ -43,8 +42,7 @@ async function start(
   );
 
   const localTestingBinary = new BrowserStack.LocalTestingBinary({
-    key,
-    binHome,
+    ...options,
   });
 
   const localIdentifier = localTestingBinary.localIdentifier;
@@ -71,18 +69,48 @@ async function start(
   }
 }
 
+async function stopInstance(
+  localIdentifier: string,
+  options: Omit<LocalTestingBinaryOptions, "localIdentifier">,
+  logger: Logger = globalThis.console
+) {
+  const localTestingBinary = new BrowserStack.LocalTestingBinary({
+    ...options,
+    localIdentifier,
+  });
+
+  let status: string | undefined;
+
+  try {
+    status = await localTestingBinary.stop();
+    logger.info(`${localIdentifier}: ${status}`);
+  } catch (err) {
+    if (err instanceof Error) {
+      if (err.message.match(/process instance not found/i)) {
+        // local instance is not running, update our status file
+        status = err.message;
+      }
+
+      logger.error(`${localIdentifier}: ${err.message}`);
+    } else {
+      logger.error(`${localIdentifier}: Failed to stop instance`);
+    }
+  }
+
+  return status;
+}
+
 /**
  * Stops all local testing instances tracked by this CLI.
  *
- * @param key - The key used to authenticate with BrowserStack.
- * @param binHome - The path to the BrowserStack binary home directory.
+ * @param options.key - The key used to authenticate with BrowserStack.
+ * @param options.binHome - The path to the BrowserStack binary home directory.
  * @param statusPath - The path to the status file.
  * @param logger - The logger object used for logging messages. Defaults to `console`.
  * @returns A promise that resolves when all local testing instances are stopped.
  */
 async function stop(
-  key: string,
-  binHome: string,
+  options: LocalTestingBinaryOptions,
   statusPath: string,
   logger: Logger = globalThis.console
 ) {
@@ -90,38 +118,31 @@ async function stop(
     statusPath
   );
 
-  while (localIdentifiers.length) {
-    const localIdentifier = localIdentifiers.shift();
-    if (!localIdentifier) {
-      break;
-    }
+  const inputLocalIdentifier = options.localIdentifier?.trim?.();
 
-    const localTestingBinary = new BrowserStack.LocalTestingBinary({
-      key,
-      binHome,
-      localIdentifier,
-    });
-
-    let status: string | undefined;
-
-    try {
-      status = await localTestingBinary.stop();
-      logger.info(`${localIdentifier}: ${status}`);
-    } catch (err) {
-      if (err instanceof Error) {
-        if (err.message.match(/process instance not found/i)) {
-          // local instance is not running, update our status file
-          status = err.message;
-        }
-
-        logger.error(`${localIdentifier}: ${err.message}`);
-      } else {
-        logger.error(`${localIdentifier}: Failed to stop instance`);
-      }
-    }
+  if (inputLocalIdentifier && localIdentifiers.includes(inputLocalIdentifier)) {
+    // user wishes to stop a specific tracked local instance
+    const status = await stopInstance(inputLocalIdentifier, options, logger);
 
     if (status) {
+      localIdentifiers.splice(
+        localIdentifiers.indexOf(inputLocalIdentifier),
+        1
+      );
       await writeStatusFile(statusPath, localIdentifiers, entries);
+    }
+  } else {
+    // stop all local instances
+    while (localIdentifiers.length) {
+      const localIdentifier = localIdentifiers.shift();
+      if (!localIdentifier) {
+        break;
+      }
+
+      const status = await stopInstance(localIdentifier, options, logger);
+      if (status) {
+        await writeStatusFile(statusPath, localIdentifiers, entries);
+      }
     }
   }
 }
@@ -155,7 +176,7 @@ function defaultBinHome(): string {
 
 /**
  * Ensures that the directory for saving files exists.
- * If the binPath is not provided, it falls back to the value of env.BROWSERSTACK_LOCAL_BINARY_PATH.
+ * If the binPath is not provided, it falls back to the value of env.BROWSERSTACK_LOCAL_BINARY_HOME.
  * If the binPath is still not provided, it uses the default bin home directory.
  * @param binPath The path to the bin home directory. Defaults to the default bin home directory.
  * @returns A Promise that resolves to the path of the bin home directory.
@@ -164,7 +185,8 @@ function defaultBinHome(): string {
  * @internal
  */
 async function ensureBinHomeExists(
-  binPath: string | undefined = env.BROWSERSTACK_LOCAL_BINARY_PATH
+  binPath: string | undefined = env.BROWSERSTACK_LOCAL_BINARY_HOME ??
+    env.BROWSERSTACK_LOCAL_BINARY_PATH
 ): Promise<string> {
   const binHome = binPath ?? defaultBinHome();
   if (typeof binHome !== "string" || !binHome.trim().length) {
@@ -213,6 +235,12 @@ function ensureValidAction(
   }
 
   throw new BrowserStackError(`Invalid action: ${action}`);
+}
+
+function resolveEnvLocalIdentifier(): string | undefined {
+  return (
+    env.BROWSERSTACK_LOCAL_ID ?? env.BROWSERSTACK_LOCAL_IDENTIFIER
+  )?.trim?.();
 }
 
 /**
@@ -298,7 +326,14 @@ async function writeStatusFile(
 ): Promise<void> {
   await writeFileAtomic(
     statusPath,
-    JSON.stringify({ ...attributes, localIdentifiers }, null, 2),
+    JSON.stringify(
+      {
+        ...attributes,
+        localIdentifiers: Array.from(new Set(localIdentifiers)),
+      },
+      null,
+      2
+    ),
     fileEncoding
   );
 }
@@ -307,27 +342,40 @@ export async function main(
   inputArgs: string[] = process.argv.slice(2),
   logger: Logger = globalThis.console
 ) {
-  const args = inputArgs.map((arg) => arg.trim());
-  const action = ensureValidAction(args[0]);
-  const key = ensureKeyExists(args[1]);
-  const binHome = await ensureBinHomeExists();
-  const statusPath = join(binHome, "status.json");
+  try {
+    const args = inputArgs.map((arg) => arg.trim());
+    const action = ensureValidAction(args[0]);
+    const localIdentifier = resolveEnvLocalIdentifier() ?? args[1];
+    const key = ensureKeyExists(args[2]);
+    const binHome = await ensureBinHomeExists();
+    const statusPath = join(binHome, "status.json");
 
-  switch (action) {
-    case BrowserStackLocalAction.start: {
-      await start(key, binHome, statusPath, logger);
-      break;
+    switch (action) {
+      case BrowserStackLocalAction.start: {
+        await start({ key, binHome, localIdentifier }, statusPath, logger);
+        break;
+      }
+      case BrowserStackLocalAction.stop: {
+        await stop({ key, binHome, localIdentifier }, statusPath, logger);
+        break;
+      }
+      case BrowserStackLocalAction.list: {
+        await list(statusPath, logger);
+        break;
+      }
+      default:
+        throw new BrowserStackError(
+          `Invalid action: ${action} (valid actions: start, stop, list)`
+        );
     }
-    case BrowserStackLocalAction.stop: {
-      await stop(key, binHome, statusPath, logger).catch(console.error);
-      break;
+  } catch (err) {
+    if (err instanceof Error) {
+      logger.error(err.message);
+    } else {
+      logger.error(`An unexpected error occurred: ${err}`);
     }
-    case BrowserStackLocalAction.list: {
-      await list(statusPath, logger);
-      break;
-    }
-    default:
-      process.exit(1);
+
+    process.exit(1);
   }
 }
 

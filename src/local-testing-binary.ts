@@ -20,7 +20,7 @@ export type {
   LocalBinaryFolderTestingFlags,
   LocalBinaryServerTestingFlags,
   LocalTestingBinaryOptions,
-  ProxyParams
+  ProxyParams,
 } from "@/local-testing-binary-options.ts";
 
 /**
@@ -70,7 +70,9 @@ export class LocalTestingBinary extends LocalTestingClient {
 
     const localIdentifier =
       options?.localIdentifier ??
-      env.BROWSERSTACK_LOCAL_ID?.trim?.() ??
+      (
+        env.BROWSERSTACK_LOCAL_ID ?? env.BROWSERSTACK_LOCAL_IDENTIFIER
+      )?.trim?.() ??
       randomBytes(16).toString("hex");
 
     if (typeof localIdentifier !== "string" || !localIdentifier.trim().length) {
@@ -492,7 +494,11 @@ export class LocalTestingBinary extends LocalTestingClient {
    * @internal
    */
   private getBinHome(): string {
-    const binHome = this.options?.binHome ?? env.BROWSERSTACK_LOCAL_BINARY_PATH;
+    const binHome =
+      this.options?.binHome ??
+      env.BROWSERSTACK_LOCAL_BINARY_HOME ??
+      env.BROWSERSTACK_LOCAL_BINARY_PATH;
+
     if (typeof binHome !== "string" || !binHome.trim().length) {
       throw new BrowserStackError("Missing options.binHome");
     }
