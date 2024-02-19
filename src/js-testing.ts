@@ -246,7 +246,6 @@ export class JSTestingClient extends APIClient {
         if (!worker) return;
 
         if (!worker.id) {
-          console.log("xxx", worker);
           // worker was terminated
           end(new BrowserStackError(`Worker ${workerId} is no longer running`));
         } else if (worker.status === "running") {

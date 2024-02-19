@@ -102,7 +102,6 @@ export class ScreenshotsClient extends APIClient {
       let abortController: AbortController | undefined;
 
       const end = (err?: Error) => {
-        console.error(err);
         clearInterval(interval);
         abortController?.abort?.();
 
