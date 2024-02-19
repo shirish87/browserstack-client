@@ -370,7 +370,7 @@ export class AutomateClient extends APIClient {
   /**
    * Uploads terminal logs for a specific build.
    * @param buildId - The ID of the build.
-   * @param body - The request body containing the logs file and its filename.
+   * @param data - The request body containing the logs file and its filename.
    * @param options - Additional options for the request.
    * @returns A promise that resolves to the response of the request.
    */
@@ -404,7 +404,7 @@ export class AutomateClient extends APIClient {
   /**
    * Uploads terminal logs for a session.
    * @param sessionId - The ID of the session.
-   * @param body - The request body containing the logs file and filename.
+   * @param data - The request body containing the logs file and filename.
    * @param options - Additional options for the request.
    * @returns A promise that resolves to the response of the request.
    */
@@ -568,7 +568,7 @@ export class AutomateClient extends APIClient {
   /**
    * Uploads a media file to the BrowserStack Automate API.
    *
-   * @param body - The content of the media file to be uploaded, along with its filename.
+   * @param data - The content of the media file to be uploaded, along with its filename.
    * @param options - Additional options for the API request.
    * @returns A Promise that resolves to the response of the API request.
    */

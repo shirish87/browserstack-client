@@ -233,7 +233,7 @@ export class AppAutomateClient extends APIClient {
   /**
    * Uploads terminal logs for a specific build.
    * @param buildId - The ID of the build.
-   * @param body - The request body containing the logs file and its filename.
+   * @param data - The request body containing the logs file and its filename.
    * @param options - Additional options for the request.
    * @returns A promise that resolves to the response of the request.
    */
@@ -267,7 +267,7 @@ export class AppAutomateClient extends APIClient {
   /**
    * Uploads terminal logs for a session.
    * @param sessionId - The ID of the session.
-   * @param body - The request body containing the logs file and filename.
+   * @param data - The request body containing the logs file and filename.
    * @param options - Additional options for the request.
    * @returns A promise that resolves to the response of the request.
    */
@@ -529,7 +529,7 @@ export class AppAutomateClient extends APIClient {
   /**
    * Uploads a media file to the App Automate API.
    *
-   * @param body - The request body containing the media file to upload.
+   * @param data - The request body containing the media file to upload.
    * @param options - Optional fetch options for the request.
    * @returns A promise that resolves to the response of the API request.
    */
@@ -631,7 +631,7 @@ export class AppAutomateClient extends APIClient {
   /**
    * Uploads an Appium app to BrowserStack App Automate.
    *
-   * @param body - The request body containing the app file or URL to be uploaded.
+   * @param data - The request body containing the app file or URL to be uploaded.
    * @param options - Additional options for the request.
    * @returns A Promise that resolves to the response of the upload request.
    */
@@ -746,7 +746,7 @@ export class AppAutomateClient extends APIClient {
   /**
    * Uploads a Flutter app for App Automate.
    *
-   * @param body - The request body containing the app file or URL and other optional parameters.
+   * @param data - The request body containing the app file or URL and other optional parameters.
    * @param options - Additional options for the request.
    * @returns A promise that resolves to the response of the request.
    */
@@ -913,7 +913,7 @@ export class AppAutomateClient extends APIClient {
   /**
    * Uploads an Espresso app to BrowserStack.
    *
-   * @param body - The request body containing the app file or URL.
+   * @param data - The request body containing the app file or URL.
    * @param options - Additional options for the request.
    * @returns A promise that resolves to the response from the server.
    */
@@ -999,7 +999,7 @@ export class AppAutomateClient extends APIClient {
   /**
    * Uploads an XCUITest app to BrowserStack App Automate.
    *
-   * @param body - The request body containing the XCUITest app file or URL.
+   * @param data - The request body containing the XCUITest app file or URL.
    * @param options - Additional options for the request.
    * @returns A Promise that resolves to the response of the request.
    */
