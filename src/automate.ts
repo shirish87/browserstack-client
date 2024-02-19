@@ -1,6 +1,10 @@
-import { APIClient, BrowserStackOptions, APIFetchOptions } from "@/api-client.ts"
-import { BrowserStackError } from "@/error.ts"
-import { operations } from "@/generated/openapi.ts"
+import {
+  APIClient,
+  APIFetchOptions,
+  BrowserStackOptions,
+} from "@/api-client.ts";
+import { BrowserStackError } from "@/error.ts";
+import { operations } from "@/generated/openapi.ts";
 
 /**
  * AutomateClient represents a client for interacting with the BrowserStack Automate API.
@@ -372,7 +376,7 @@ export class AutomateClient extends APIClient {
    */
   uploadBuildTerminalLogs(
     buildId: string,
-    body: operations["uploadAutomateBuildTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
+    data: operations["uploadAutomateBuildTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
     options?: APIFetchOptions<operations["uploadAutomateBuildTerminalLogs"]>
@@ -382,10 +386,10 @@ export class AutomateClient extends APIClient {
       "/automate/builds/{buildId}/terminallogs",
       {
         ...options,
-        body,
-        bodySerializer: () => {
+        body: data,
+        bodySerializer: (body) => {
           const formData = new FormData();
-          formData.append("file", body.file, body.filename);
+          formData.append("file", body.file, data.filename);
           return formData;
         },
         params: {
@@ -406,7 +410,7 @@ export class AutomateClient extends APIClient {
    */
   uploadSessionTerminalLogs(
     sessionId: string,
-    body: operations["uploadAutomateSessionTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
+    data: operations["uploadAutomateSessionTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
     options?: APIFetchOptions<operations["uploadAutomateSessionTerminalLogs"]>
@@ -416,10 +420,10 @@ export class AutomateClient extends APIClient {
       "/automate/sessions/{sessionId}/terminallogs",
       {
         ...options,
-        body,
-        bodySerializer: () => {
+        body: data,
+        bodySerializer: (body) => {
           const formData = new FormData();
-          formData.append("file", body.file, body.filename);
+          formData.append("file", body.file, data.filename);
           return formData;
         },
         params: {
@@ -569,17 +573,17 @@ export class AutomateClient extends APIClient {
    * @returns A Promise that resolves to the response of the API request.
    */
   uploadMediaFile(
-    body: operations["uploadAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
+    data: operations["uploadAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
     options?: APIFetchOptions<operations["uploadAutomateMediaFile"]>
   ) {
     return this.makePostRequest("/automate/upload-media", {
       ...options,
-      body,
-      bodySerializer: () => {
+      body: data,
+      bodySerializer: (body) => {
         const formData = new FormData();
-        formData.append("file", body.file, body.filename);
+        formData.append("file", body.file, data.filename);
         return formData;
       },
     });
@@ -590,7 +594,9 @@ export class AutomateClient extends APIClient {
    * @param options - Optional fetch options for the API request.
    * @returns A promise that resolves with the response from the API.
    */
-  getMediaFiles(options?: APIFetchOptions<operations["getAutomateMediaFiles"]>) {
+  getMediaFiles(
+    options?: APIFetchOptions<operations["getAutomateMediaFiles"]>
+  ) {
     return this.makeGetRequest("/automate/recent_media_files", options);
   }
 

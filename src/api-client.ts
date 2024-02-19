@@ -3,13 +3,14 @@ import { BrowserStackError } from "@/error.ts";
 import { servers } from "@/generated/openapi.json" assert { type: "json" };
 import { paths } from "@/generated/openapi.ts";
 import pkginfo from "@/pkginfo.ts";
-import type { ClientOptions, FetchOptions } from "openapi-fetch";
-import createClient from "openapi-fetch";
 import type {
-  FilterKeys,
-  HasRequiredKeys,
-  PathsWithMethod,
-} from "openapi-typescript-helpers";
+  ClientOptions,
+  FetchOptions,
+  FetchResponse,
+  MaybeOptionalInit,
+} from "openapi-fetch";
+import createClient from "openapi-fetch";
+import type { PathsWithMethod } from "openapi-typescript-helpers";
 
 const [{ variables }, { variables: cloudVars }] = servers ?? [];
 
@@ -83,16 +84,13 @@ export class APIClient {
   /**
    * @internal
    */
-  protected async makeGetRequest<P extends PathsWithMethod<paths, "get">>(
+  protected async makeGetRequest<
+    P extends PathsWithMethod<paths, "get">,
+    I extends MaybeOptionalInit<paths[P], "get">
+  >(
     path: P,
-    ...init: HasRequiredKeys<
-      FetchOptions<FilterKeys<paths[P], "get">>
-    > extends never
-      ? [(FetchOptions<FilterKeys<paths[P], "get">> | undefined)?]
-      : [FetchOptions<FilterKeys<paths[P], "get">>]
-  ) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    ...init: I
+  ): Promise<NonNullable<FetchResponse<paths[P]["get"], I[0]>["data"]>> {
     const response = await this.sdk.GET(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -108,16 +106,13 @@ export class APIClient {
   /**
    * @internal
    */
-  protected async makePostRequest<P extends PathsWithMethod<paths, "post">>(
+  protected async makePostRequest<
+    P extends PathsWithMethod<paths, "post">,
+    I extends MaybeOptionalInit<paths[P], "post">
+  >(
     path: P,
-    ...init: HasRequiredKeys<
-      FetchOptions<FilterKeys<paths[P], "post">>
-    > extends never
-      ? [(FetchOptions<FilterKeys<paths[P], "post">> | undefined)?]
-      : [FetchOptions<FilterKeys<paths[P], "post">>]
-  ) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    ...init: I
+  ): Promise<NonNullable<FetchResponse<paths[P]["post"], I[0]>["data"]>> {
     const response = await this.sdk.POST(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -133,16 +128,13 @@ export class APIClient {
   /**
    * @internal
    */
-  protected async makeCloudGetRequest<P extends PathsWithMethod<paths, "get">>(
+  protected async makeCloudGetRequest<
+    P extends PathsWithMethod<paths, "get">,
+    I extends MaybeOptionalInit<paths[P], "get">
+  >(
     path: P,
-    ...init: HasRequiredKeys<
-      FetchOptions<FilterKeys<paths[P], "get">>
-    > extends never
-      ? [(FetchOptions<FilterKeys<paths[P], "get">> | undefined)?]
-      : [FetchOptions<FilterKeys<paths[P], "get">>]
-  ) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    ...init: I
+  ): Promise<NonNullable<FetchResponse<paths[P]["get"], I[0]>["data"]>> {
     const response = await this.sdkCloud.GET(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -159,17 +151,12 @@ export class APIClient {
    * @internal
    */
   protected async makeCloudPostRequest<
-    P extends PathsWithMethod<paths, "post">
+    P extends PathsWithMethod<paths, "post">,
+    I extends MaybeOptionalInit<paths[P], "post">
   >(
     path: P,
-    ...init: HasRequiredKeys<
-      FetchOptions<FilterKeys<paths[P], "post">>
-    > extends never
-      ? [(FetchOptions<FilterKeys<paths[P], "post">> | undefined)?]
-      : [FetchOptions<FilterKeys<paths[P], "post">>]
-  ) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    ...init: I
+  ): Promise<NonNullable<FetchResponse<paths[P]["post"], I[0]>["data"]>> {
     const response = await this.sdkCloud.POST(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -185,16 +172,13 @@ export class APIClient {
   /**
    * @internal
    */
-  protected async makePutRequest<P extends PathsWithMethod<paths, "put">>(
+  protected async makePutRequest<
+    P extends PathsWithMethod<paths, "put">,
+    I extends MaybeOptionalInit<paths[P], "put">
+  >(
     path: P,
-    ...init: HasRequiredKeys<
-      FetchOptions<FilterKeys<paths[P], "put">>
-    > extends never
-      ? [(FetchOptions<FilterKeys<paths[P], "put">> | undefined)?]
-      : [FetchOptions<FilterKeys<paths[P], "put">>]
-  ) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    ...init: I
+  ): Promise<NonNullable<FetchResponse<paths[P]["put"], I[0]>["data"]>> {
     const response = await this.sdk.PUT(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -210,16 +194,13 @@ export class APIClient {
   /**
    * @internal
    */
-  protected async makePatchRequest<P extends PathsWithMethod<paths, "patch">>(
+  protected async makePatchRequest<
+    P extends PathsWithMethod<paths, "patch">,
+    I extends MaybeOptionalInit<paths[P], "patch">
+  >(
     path: P,
-    ...init: HasRequiredKeys<
-      FetchOptions<FilterKeys<paths[P], "patch">>
-    > extends never
-      ? [(FetchOptions<FilterKeys<paths[P], "patch">> | undefined)?]
-      : [FetchOptions<FilterKeys<paths[P], "patch">>]
-  ) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    ...init: I
+  ): Promise<NonNullable<FetchResponse<paths[P]["patch"], I[0]>["data"]>> {
     const response = await this.sdk.PATCH(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {
@@ -235,16 +216,13 @@ export class APIClient {
   /**
    * @internal
    */
-  protected async makeDeleteRequest<P extends PathsWithMethod<paths, "delete">>(
+  protected async makeDeleteRequest<
+    P extends PathsWithMethod<paths, "delete">,
+    I extends MaybeOptionalInit<paths[P], "delete">
+  >(
     path: P,
-    ...init: HasRequiredKeys<
-      FetchOptions<FilterKeys<paths[P], "delete">>
-    > extends never
-      ? [(FetchOptions<FilterKeys<paths[P], "delete">> | undefined)?]
-      : [FetchOptions<FilterKeys<paths[P], "delete">>]
-  ) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    ...init: I
+  ): Promise<NonNullable<FetchResponse<paths[P]["delete"], I[0]>["data"]>> {
     const response = await this.sdk.DELETE(path, ...init);
     if (response.error || !response.data) {
       throw new BrowserStackError(`Request failed`, {

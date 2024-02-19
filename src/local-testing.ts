@@ -160,8 +160,13 @@ export class LocalTestingClient extends APIClient {
         },
         parseAs: "arrayBuffer",
       })
-      .then((r) => r.response.arrayBuffer())
-      .then((buffer) => {
+      .then(({ data: buffer }) => {
+        if (!buffer) {
+          throw new BrowserStackError(
+            `Failed to download BrowserStackLocal-${osArch}.zip: Unexpected response.`
+          );
+        }
+
         const files = unzipSync(new Uint8Array(buffer), {
           filter: (file) => {
             return file.name.startsWith(filenamePrefix);

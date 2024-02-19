@@ -1,10 +1,12 @@
-import { paths } from "@/generated/openapi.ts"
+import { paths } from "@/generated/openapi.ts";
 import { FetchOptions, FetchResponse } from "openapi-fetch";
 
-export type ErrorContext<P extends keyof paths, T> = (FetchOptions<unknown> & {
-  path?: P;
-  response: T;
-}) | Error;
+export type ErrorContext<P extends keyof paths, T> =
+  | (FetchOptions<unknown> & {
+      path?: P;
+      response: T;
+    })
+  | Error;
 
 /**
  * BrowserStackError represents an error returned from a BrowserStack Client.
@@ -12,7 +14,7 @@ export type ErrorContext<P extends keyof paths, T> = (FetchOptions<unknown> & {
  */
 export class BrowserStackError<
   P extends keyof paths,
-  T = FetchResponse<unknown>
+  T = FetchResponse<unknown, FetchOptions<unknown>>
 > extends Error {
   readonly code?: string;
   readonly stack?: string;

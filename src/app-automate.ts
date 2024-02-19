@@ -1,6 +1,10 @@
-import { APIClient, APIFetchOptions, BrowserStackOptions } from "@/api-client.ts"
-import { BrowserStackError } from "@/error.ts"
-import { components, operations } from "@/generated/openapi.ts"
+import {
+  APIClient,
+  APIFetchOptions,
+  BrowserStackOptions,
+} from "@/api-client.ts";
+import { BrowserStackError } from "@/error.ts";
+import { components, operations } from "@/generated/openapi.ts";
 
 /**
  * AppAutomateClient represents a client for interacting with the BrowserStack App Automate API.
@@ -235,7 +239,7 @@ export class AppAutomateClient extends APIClient {
    */
   uploadBuildTerminalLogs(
     buildId: string,
-    body: operations["uploadAppAutomateBuildTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
+    data: operations["uploadAppAutomateBuildTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
     options?: APIFetchOptions<operations["uploadAppAutomateBuildTerminalLogs"]>
@@ -245,10 +249,10 @@ export class AppAutomateClient extends APIClient {
       "/app-automate/builds/{buildId}/terminallogs",
       {
         ...options,
-        body,
-        bodySerializer: () => {
+        body: data,
+        bodySerializer: (body) => {
           const formData = new FormData();
-          formData.append("file", body.file, body.filename);
+          formData.append("file", body.file, data.filename);
           return formData;
         },
         params: {
@@ -269,7 +273,7 @@ export class AppAutomateClient extends APIClient {
    */
   uploadSessionTerminalLogs(
     sessionId: string,
-    body: operations["uploadAppAutomateSessionTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
+    data: operations["uploadAppAutomateSessionTerminalLogs"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
     options?: APIFetchOptions<
@@ -281,10 +285,10 @@ export class AppAutomateClient extends APIClient {
       "/app-automate/sessions/{sessionId}/terminallogs",
       {
         ...options,
-        body,
-        bodySerializer: () => {
+        body: data,
+        bodySerializer: (body) => {
           const formData = new FormData();
-          formData.append("file", body.file, body.filename);
+          formData.append("file", body.file, data.filename);
           return formData;
         },
         params: {
@@ -530,17 +534,17 @@ export class AppAutomateClient extends APIClient {
    * @returns A promise that resolves to the response of the API request.
    */
   uploadMediaFile(
-    body: operations["uploadAppAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
+    data: operations["uploadAppAutomateMediaFile"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
     options?: APIFetchOptions<operations["uploadAppAutomateMediaFile"]>
   ) {
     return this.makePostRequest("/app-automate/upload-media", {
       ...options,
-      body,
-      bodySerializer: () => {
+      body: data,
+      bodySerializer: (body) => {
         const formData = new FormData();
-        formData.append("file", body.file, body.filename);
+        formData.append("file", body.file, data.filename);
 
         if (body.custom_id) {
           formData.append("custom_id", body.custom_id);
@@ -632,18 +636,18 @@ export class AppAutomateClient extends APIClient {
    * @returns A Promise that resolves to the response of the upload request.
    */
   uploadAppiumApp(
-    body: operations["uploadAppAutomateApp"]["requestBody"]["content"]["multipart/form-data"] & {
+    data: operations["uploadAppAutomateApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
     options?: APIFetchOptions<operations["uploadAppAutomateApp"]>
   ) {
     return this.makePostRequest("/app-automate/upload", {
       ...options,
-      body,
-      bodySerializer: () => {
+      body: data,
+      bodySerializer: (body) => {
         const formData = new FormData();
         if ("file" in body) {
-          formData.append("file", body.file, body.filename);
+          formData.append("file", body.file, data.filename);
         } else {
           formData.append("url", body.url);
         }
@@ -748,7 +752,7 @@ export class AppAutomateClient extends APIClient {
    */
   uploadFlutterApp<P extends FlutterPlatform>(
     platform: P,
-    body: operations[P extends FlutterPlatform.android
+    data: operations[P extends FlutterPlatform.android
       ? "uploadAppAutomateFlutterAndroidApp"
       : "uploadAppAutomateFlutteriOSApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
@@ -765,11 +769,11 @@ export class AppAutomateClient extends APIClient {
         : "/app-automate/flutter-integration-tests/v2/ios/test-package",
       {
         ...options,
-        body,
-        bodySerializer: () => {
+        body: data,
+        bodySerializer: (body) => {
           const formData = new FormData();
           if ("file" in body) {
-            formData.append("file", body.file, body.filename);
+            formData.append("file", body.file, data.filename);
           } else {
             formData.append("url", body.url);
           }
@@ -914,18 +918,18 @@ export class AppAutomateClient extends APIClient {
    * @returns A promise that resolves to the response from the server.
    */
   uploadEspressoApp(
-    body: operations["uploadAppAutomateEspressoApp"]["requestBody"]["content"]["multipart/form-data"] & {
+    data: operations["uploadAppAutomateEspressoApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
     options?: APIFetchOptions<operations["uploadAppAutomateEspressoApp"]>
   ) {
     return this.makePostRequest("/app-automate/espresso/v2/app", {
       ...options,
-      body,
-      bodySerializer: () => {
+      body: data,
+      bodySerializer: (body) => {
         const formData = new FormData();
         if ("file" in body) {
-          formData.append("file", body.file, body.filename);
+          formData.append("file", body.file, data.filename);
         } else {
           formData.append("url", body.url);
         }
@@ -1000,18 +1004,18 @@ export class AppAutomateClient extends APIClient {
    * @returns A Promise that resolves to the response of the request.
    */
   uploadXCUITestApp(
-    body: operations["uploadAppAutomateXCUITestApp"]["requestBody"]["content"]["multipart/form-data"] & {
+    data: operations["uploadAppAutomateXCUITestApp"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
     },
     options?: APIFetchOptions<operations["uploadAppAutomateXCUITestApp"]>
   ) {
     return this.makePostRequest("/app-automate/xcuitest/v2/app", {
       ...options,
-      body,
-      bodySerializer: () => {
+      body: data,
+      bodySerializer: (body) => {
         const formData = new FormData();
         if ("file" in body) {
-          formData.append("file", body.file, body.filename);
+          formData.append("file", body.file, data.filename);
         } else {
           formData.append("url", body.url);
         }
@@ -1080,7 +1084,7 @@ export class AppAutomateClient extends APIClient {
 
   uploadDetoxAndroidApp<T extends "app" | "app-client">(
     type: T,
-    body: operations[T extends "app"
+    data: operations[T extends "app"
       ? "uploadAppAutomateDetoxAndroidApp"
       : "uploadAppAutomateDetoxAndroidAppClient"]["requestBody"]["content"]["multipart/form-data"] & {
       filename: string;
@@ -1097,11 +1101,11 @@ export class AppAutomateClient extends APIClient {
         : "/app-automate/detox/v2/android/app-client",
       {
         ...options,
-        body,
-        bodySerializer: () => {
+        body: data,
+        bodySerializer: (body) => {
           const formData = new FormData();
           if ("file" in body) {
-            formData.append("file", body.file, body.filename);
+            formData.append("file", body.file, data.filename);
           } else {
             formData.append("url", body.url);
           }

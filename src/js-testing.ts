@@ -1,5 +1,9 @@
-import { APIClient, APIFetchOptions, BrowserStackOptions } from "@/api-client.ts"
-import { components, operations } from "@/generated/openapi.ts"
+import {
+  APIClient,
+  APIFetchOptions,
+  BrowserStackOptions,
+} from "@/api-client.ts";
+import { components, operations } from "@/generated/openapi.ts";
 
 /**
  * Represents a client for interacting with the BrowserStack JavaScript Testing API.
@@ -18,10 +22,8 @@ export class JSTestingClient extends APIClient {
     });
   }
 
-  getAccountStatus(
-    options?: APIFetchOptions<operations["getStatus"]["parameters"]["query"]>
-  ): Promise<components["schemas"]["Status"]> {
-    return this.makeGetRequest("/status", options);
+  getAccountStatus(): Promise<components["schemas"]["Status"]> {
+    return this.makeGetRequest("/status");
   }
 
   getBrowsers<T extends true>(
