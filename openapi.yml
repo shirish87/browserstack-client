@@ -165,13 +165,13 @@ paths:
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
 
-  /worker/{workedId}:
+  /worker/{workerId}:
     get:
       summary: Fetch details of a worker.
       description: Fetch details a worker.
       operationId: getWorker
       parameters:
-        - name: workedId
+        - name: workerId
           in: path
           required: true
           description: "ID of the worker"
@@ -205,7 +205,7 @@ paths:
       description: Terminate a worker.
       operationId: deleteWorker
       parameters:
-        - name: workedId
+        - name: workerId
           in: path
           required: true
           description: "ID of the worker"
@@ -219,8 +219,12 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [time]
+                required: [message]
                 properties:
+                  message:
+                    type: string
+                    description: "Status of the termination operation"
+                    example: "worker is running for 19.405956957 secs, minimum life is 30 sec"
                   time:
                     type: number
                     description: "Duration of the worker"
@@ -230,6 +234,114 @@ paths:
           $ref: '#/components/schemas/400.BadRequest'
         "401":
           $ref: '#/components/schemas/401.Unauthorized'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /worker/{workerId}/url.json:
+    put:
+      summary: Set a new URL for a worker-browser instance to navigate to
+      description: Set a new URL for a worker-browser instance to navigate to
+      operationId: updateWorkerURL
+      parameters:
+        - name: workerId
+          in: path
+          required: true
+          description: "ID of the worker"
+          schema:
+            type: number
+            example: 122326697
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url:
+                  type: string
+                  description: "New URL for the worker"
+                  example: "https://www.google.com/ncr"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message]
+                properties:
+                  message:
+                    type: string
+                    description: "Status of the update URL operation"
+                    example: "Browser updated with new url"
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "403":
+          $ref: '#/components/schemas/403.Forbidden'
+        "404":
+          $ref: '#/components/schemas/404.NotFound'
+        "422":
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        "500":
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+  /worker/{workerId}/screenshot.{format}:
+    get:
+      summary: Fetch a screenshot of the specified worker.
+      description: Fetch a screenshot of the current state of the worker.
+      operationId: getWorkerScreenshot
+      parameters:
+        - name: workerId
+          in: path
+          required: true
+          description: "ID of the worker"
+          schema:
+            type: number
+            example: 122326697
+        - name: format
+          in: path
+          required: true
+          description: "Format of the screenshot"
+          schema:
+            type: string
+            enum: ["png", "json", "xml"]
+            example: "png"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: object
+                required: [url]
+                properties:
+                  url:
+                    type: string
+                    description: "Link to the captured screenshot"
+                    example: "https://s3.amazonaws.com/testautomation/efe4b6a63529d2b8ff64909db1a60fa473f1d8bf/js-screenshot-1708342782.png"
+            application/xml:
+              schema:
+                type: string
+
+        "400":
+          $ref: '#/components/schemas/400.BadRequest'
+        "401":
+          $ref: '#/components/schemas/401.Unauthorized'
+        "403":
+          $ref: '#/components/schemas/403.Forbidden'
         "404":
           $ref: '#/components/schemas/404.NotFound'
         "422":
@@ -4945,7 +5057,7 @@ components:
           example: "be9989892cbba9b9edc2c95f403050aa4996ac6a"
         state:
           type: string
-          enum: ["pending", "done", "failed"]
+          enum: ["processing", "pending", "done", "failed"]
         url:
           type: string
           example: "https://nextjs-template.vercel.app/"

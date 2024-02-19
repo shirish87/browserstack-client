@@ -4,10 +4,7 @@
   "docsRoot": "./docs",
   "entryPoints": ["./src/index.node.ts"],
   "entryPointStrategy": "expand",
-  "exclude": [
-    "./src/__tests__/**/*.ts",
-    "./src/pkginfo.ts",
-  ],
+  "exclude": ["./src/__tests__/**/*.ts", "./src/pkginfo.ts"],
   "excludeInternal": true,
   "excludeNotDocumented": true,
   "excludeNotDocumentedKinds": ["Property"],

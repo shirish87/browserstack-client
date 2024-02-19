@@ -59,12 +59,54 @@ describe("JSTestingClient", () => {
       expectTypeOf(data).toMatchTypeOf<components["schemas"]["Worker"]>();
     });
 
+    test<BrowserStackTestContext>("ensureWorkerRunning", async ({ jsTesting: { client, randomWorkerId } }) => {
+      const workerId = await randomWorkerId();
+      const data = await client.ensureWorkerRunning(workerId);
+      expect(data).toBeDefined();
+      expect(data.id).toBeDefined();
+      expect(data.id).toBeGreaterThan(0);
+      expect(data.status).toBeDefined();
+      expect(data.status).toEqual("running");
+    });
+
+    test<BrowserStackTestContext>("updateWorkerURL", async ({ jsTesting: { client, randomWorkerId } }) => {
+      const workerId = await randomWorkerId();
+      const data = await client.updateWorkerURL(workerId, { url: "https://www.msn.com" });
+      expect(data).toBeDefined();
+      expect(data.message).toBeDefined();
+      expect(data.message).toEqual("Browser updated with new url");
+    });
+
+    test.skip<BrowserStackTestContext>("getWorkerScreenshot-png", async ({ jsTesting: { client, randomWorkerId } }) => {
+      const workerId = await randomWorkerId();
+      const data = await client.getWorkerScreenshot(workerId, "png");
+      expect(data).toBeDefined();
+      expect(data.byteLength).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<ArrayBuffer>();
+    });
+
+    test.skip<BrowserStackTestContext>("getWorkerScreenshot-json", async ({ jsTesting: { client, randomWorkerId } }) => {
+      const workerId = await randomWorkerId();
+      const data = await client.getWorkerScreenshot(workerId, "json");
+      expect(data).toBeDefined();
+      expect(data.url).toBeDefined();
+      expect(data.url.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<{ url: string }>();
+    });
+
+    test.skip<BrowserStackTestContext>("getWorkerScreenshot-xml", async ({ jsTesting: { client, randomWorkerId } }) => {
+      const workerId = await randomWorkerId();
+      const data = await client.getWorkerScreenshot(workerId, "xml");
+      expect(data).toBeDefined();
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<string>();
+    });
+
     test<BrowserStackTestContext>("deleteWorker", async ({ jsTesting: { client, randomWorkerId } }) => {
       const workerId = await randomWorkerId();
       const data = await client.deleteWorker(workerId);
       expect(data).toBeDefined();
-      expect(data.time).toBeDefined();
-      expectTypeOf(data).toMatchTypeOf<{ time: number }>();
+      expectTypeOf(data).toMatchTypeOf<{ message: string, time?: number }>();
     });
   });
-}, 15_000);
+}, 20_000);
