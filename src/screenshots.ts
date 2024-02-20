@@ -138,10 +138,32 @@ export class ScreenshotsClient extends APIClient {
           }
         }
 
-        if (screenshots.length === result.size) {
+        if (job.state === "done" || screenshots.length === result.size) {
           end();
         }
       }, pollInterval);
     });
+  }
+
+  /**
+   * Launches a screenshots job with the specified parameters.
+   *
+   * @param body - The request body for creating the screenshots job.
+   * @param onScreenshot - Optional callback function to be called when a screenshot is available.
+   * @param options - Optional options for the API fetch and job tracking, including pollInterval.
+   * @returns A promise that resolves to the result of the job tracking.
+   */
+  async launch(
+    body: operations["createScreenshotsJob"]["requestBody"]["content"]["application/json"],
+    onScreenshot?: (
+      screenshot: components["schemas"]["Screenshot"]
+    ) => void | Promise<void>,
+    options?: APIFetchOptions<operations["createScreenshotsJob"]> & {
+      pollInterval?: number;
+    }
+  ) {
+    const { pollInterval, ...createJobOptions } = options ?? {};
+    const { id } = await this.createJob(body, createJobOptions);
+    return this.trackJob(id, onScreenshot, undefined, pollInterval);
   }
 }

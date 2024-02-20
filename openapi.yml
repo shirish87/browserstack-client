@@ -4156,7 +4156,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/Browser"
         - type: object
-          required: [os, os_version, device, real_mobile]
+          required: [os, os_version]
           properties:
             os:
               type: string
@@ -5046,6 +5046,11 @@ components:
               type: string
               description: "Unique identifier for the screenshot job."
               example: "4207442b2b0567368956dba064c22a3235a76214"
+            state:
+              type: string
+              enum: ["queued_all", "done"]
+              description: "State of the screenshot job."
+              example: "done"
 
     ScreenshotBase:
       type: object

@@ -1,6 +1,7 @@
 import { components } from "@/generated/openapi.ts"
-import { describe, expect, expectTypeOf, test } from "vitest";
+import { afterAll, describe, expect, expectTypeOf, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup.ts";
+import { JSTestingClient } from "@/js-testing.ts";
 
 describe("JSTestingClient", () => {
 
@@ -22,6 +23,35 @@ describe("JSTestingClient", () => {
       const data = await client.getBrowsers({ flat: false });
       expect(data).toBeDefined();
       expectTypeOf(data).toMatchTypeOf<components["schemas"]["BrowserMap"]>();
+    });
+  });
+
+  describe("Launch", () => {
+    let instance: Awaited<ReturnType<JSTestingClient["launch"]>> | undefined;
+
+    afterAll(async () => {
+      await instance?.terminate?.();
+    });
+
+    test<BrowserStackTestContext>("launch", async ({ jsTesting: { client } }) => {
+      instance = await client.launch({
+        os: "Windows",
+        os_version: "10",
+        browser: "Chrome",
+        browser_version: "latest",
+        url: "https://www.google.com",
+      });
+
+      expect(instance).toBeDefined();
+      expect(instance.id).toBeDefined();
+      expect(instance.id).toBeGreaterThan(0);
+      expect(instance.updateURL).toBeInstanceOf(Function);
+      expect(instance.getScreenshot).toBeInstanceOf(Function);
+      expectTypeOf(instance.getScreenshot).toMatchTypeOf<() => Promise<ArrayBuffer>>();
+      expect(instance.getScreenshotURL).toBeInstanceOf(Function);
+      expectTypeOf(instance.getScreenshotURL).toMatchTypeOf<() => Promise<string>>();
+      expect(instance.terminate).toBeInstanceOf(Function);
+      expectTypeOf(instance).toMatchTypeOf<components["schemas"]["Worker"]>();
     });
   });
 

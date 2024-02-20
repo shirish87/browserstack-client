@@ -1,4 +1,4 @@
-import { components } from "@/generated/openapi.ts"
+import { components } from "@/generated/openapi.ts";
 import { describe, expect, expectTypeOf, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup.ts";
 
@@ -42,5 +42,21 @@ describe("ScreenshotsClient", () => {
     expect(data).toBeDefined();
     expect(data.id).toEqual(jobId);
     expectTypeOf(data).toMatchTypeOf<components["schemas"]["ScreenshotsJob"]>();
-  }, 20_000);
-});
+  });
+
+  // fails due to job.state=queued_all until test timeout
+  test.skip<BrowserStackTestContext>("launch", async ({
+    screenshots: { client },
+  }) => {
+    const browsers = await client.getBrowsers();
+    const screenshots = await client.launch({
+      url: "https://www.google.com",
+      browsers: browsers.slice(0, 1),
+    });
+    expect(screenshots).toBeDefined();
+    expect(screenshots.length).toBeGreaterThan(0);
+    expectTypeOf(screenshots).toMatchTypeOf<
+      components["schemas"]["Screenshot"][]
+    >();
+  });
+}, 30_000);

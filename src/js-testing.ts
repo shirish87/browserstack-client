@@ -255,4 +255,37 @@ export class JSTestingClient extends APIClient {
       }, pollInterval);
     });
   }
+
+  /**
+   * High-level abstraction for launching a worker-browser with the specified options.
+   *
+   * @param body The request body for creating the worker.
+   * @param options The options for creating the worker.
+   * @returns A promise that resolves to the launched worker.
+   */
+  async launch(
+    body: operations["createWorker"]["requestBody"]["content"]["application/json"],
+    options?: APIFetchOptions<operations["createWorker"]> & {
+      pollInterval?: number;
+    }
+  ) {
+    const { pollInterval, ...createWorkerOptions } = options ?? {};
+    const { id } = await this.createWorker(body, createWorkerOptions);
+    const worker = await this.ensureWorkerRunning(id, undefined, pollInterval);
+
+    const instance = {
+      ...worker,
+      updateURL: (url: string) => this.updateWorkerURL(worker.id, { url }),
+      getScreenshot: () => this.getWorkerScreenshot(worker.id, "png"),
+      getScreenshotURL: () =>
+        this.getWorkerScreenshot(worker.id, "json").then((data) => data.url),
+      terminate: async () =>
+        this.deleteWorker(worker.id).then((r) => {
+          instance.status = undefined;
+          return r;
+        }),
+    };
+
+    return instance;
+  }
 }
