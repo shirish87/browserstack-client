@@ -1,17 +1,17 @@
 import { currentArch, currentPlatform } from "@/env.ts";
 import { BrowserStackError } from "@/error.ts";
 import { operations } from "@/generated/openapi.ts";
+import { writeFileAtomic } from "@/write-file-atomic";
 import { spawnSync } from "node:child_process";
 import {
   chmod,
   constants,
   lstat,
   mkdir,
-  unlink,
   readFile,
+  unlink,
 } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import writeFileAtomic from "write-file-atomic";
 
 export async function binaryPath(
   binHome: string,
@@ -159,7 +159,6 @@ export async function saveFile(
   fileMode: number
 ): Promise<string> {
   const filePath = join(resolve(dirPath), filename);
-
   try {
     await writeFileAtomic(filePath, Buffer.from(content), { mode: fileMode });
     return filePath;

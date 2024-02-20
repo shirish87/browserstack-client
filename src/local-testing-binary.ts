@@ -14,6 +14,9 @@ import {
 import { LocalTestingClient } from "@/local-testing.ts";
 import cp from "node:child_process";
 import { randomBytes } from "node:crypto";
+import { unlink } from "node:fs/promises";
+import { homedir, tmpdir } from "node:os";
+import { join } from "node:path";
 
 export type {
   LocalBinaryFlags,
@@ -191,7 +194,8 @@ export class LocalTestingBinary extends LocalTestingClient {
       ) => boolean;
     },
     commandTimeoutMs: number = this.commandTimeoutMs,
-    binHome: string = this.binHome
+    binHome: string = this.binHome,
+    healBinary: boolean = false
   ): Promise<void> {
     const previousState = {
       state: this.state,
@@ -199,18 +203,42 @@ export class LocalTestingBinary extends LocalTestingClient {
       args: this.child.args,
     };
 
-    // all branches must reset state to "failureState" on error
-    const raiseError = (err: Error) => {
+    const restoreState = () => {
       // running of this command request failed
       // reset to previous state
       this.state = previousState.state;
       this.child.pid = previousState.pid;
       this.child.args = previousState.args;
+    };
 
+    // all branches must reset state to "failureState" on error
+    const raiseError = (err: Error) => {
+      restoreState();
       throw err;
     };
 
+    if (healBinary) {
+      try {
+        await unlink(await binaryPath(binHome));
+      } catch {
+        /* ignore best-effort cleanup error */
+      }
+    }
+
     const binFilePath = await this.ensureBinaryExists().catch(raiseError);
+
+    const retryRun = async (err: Error) => {
+      restoreState();
+
+      if (healBinary) {
+        // we were already in a retry effort
+        return Promise.reject(
+          new BrowserStackError(`Failed to run binary: ${binFilePath}`, err)
+        );
+      }
+
+      return this.runDaemonCommand(command, commandTimeoutMs, binHome, true);
+    };
 
     const binArgs = await LocalTestingBinary.resolveArgs(
       this.authToken,
@@ -229,7 +257,14 @@ export class LocalTestingBinary extends LocalTestingClient {
       });
 
       if (child.error) {
-        return reject(new BrowserStackError(child.error.message, child.error));
+        const err = new BrowserStackError(child.error.message, child.error);
+        if (err.code === "EACCES") {
+          // invalid permissions on binary
+          // download and retry run
+          return retryRun(err).then(resolve).catch(reject);
+        }
+
+        return reject(err);
       }
 
       const data = child.stdout?.toString?.("utf8")?.trim?.();
@@ -270,8 +305,13 @@ export class LocalTestingBinary extends LocalTestingClient {
               return reject(new BrowserStackError(`${message} state=${state}`));
             }
           }
-        } catch {
+        } catch (err) {
           // non-JSON output from binary is unexpected
+          // we have an invalid binary
+          // download and retry run
+          return retryRun(new Error("Invalid binary: stderr"))
+            .then(resolve)
+            .catch(reject);
         }
       }
 
@@ -491,13 +531,26 @@ export class LocalTestingBinary extends LocalTestingClient {
   }
 
   /**
+   * Returns the default home directory for the BrowserStack binary.
+   * If the user's home directory is available, it will be used.
+   * Otherwise, the system's temporary directory will be used.
+   * @returns The default home directory path.
+   *
+   * @internal
+   */
+  private defaultBinHome(): string {
+    return join(homedir() ?? tmpdir(), ".browserstack");
+  }
+
+  /**
    * @internal
    */
   private getBinHome(): string {
     const binHome =
       this.options?.binHome ??
       env.BROWSERSTACK_LOCAL_BINARY_HOME ??
-      env.BROWSERSTACK_LOCAL_BINARY_PATH;
+      env.BROWSERSTACK_LOCAL_BINARY_PATH ??
+      this.defaultBinHome();
 
     if (typeof binHome !== "string" || !binHome.trim().length) {
       throw new BrowserStackError("Missing options.binHome");

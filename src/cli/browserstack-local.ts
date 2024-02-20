@@ -4,11 +4,11 @@ import { env } from "@/env";
 import { BrowserStackError } from "@/error";
 import { ensureDirExists } from "@/fs-utils";
 import { BrowserStack, LocalTestingBinaryOptions } from "@/index.node";
+import { writeFileAtomic } from "@/write-file-atomic";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
-import writeFileAtomic from "write-file-atomic";
 
 const require = createRequire(import.meta.url);
 
@@ -334,7 +334,7 @@ async function writeStatusFile(
       null,
       2
     ),
-    fileEncoding
+    { encoding: fileEncoding },
   );
 }
 
