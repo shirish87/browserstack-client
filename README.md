@@ -37,9 +37,9 @@ import { BrowserStack } from "browserstack-client";
 // set environment variables BROWSERSTACK_USERNAME and BROWSERSTACK_KEY
 
 // BrowserStack JavaScript Testing API
-const jsTestingClient = new BrowserStack.Client();
+const jsTestingClient = new BrowserStack.JSTestingClient();
 /* ...or
-const jsTestingClient = new BrowserStack.Client({
+const jsTestingClient = new BrowserStack.JSTestingClient({
   username: "<browserstack-username>",
   key: "<browserstack-access-key>",
 });
@@ -100,7 +100,7 @@ const options = {
 };
 
 // BrowserStack JavaScript Testing API
-const jsTestingClient = new BrowserStack.Client(options);
+const jsTestingClient = new BrowserStack.JSTestingClient(options);
 console.log(await jsTestingClient.getAccountStatus());
 ```
 
@@ -119,7 +119,7 @@ npm install proxy-agent // or proxy specific https-proxy-agent (see docs)
 
 ```js
 // index.mjs
-import { Client } from "browserstack-client";
+import { JSTestingClient } from "browserstack-client";
 import fetch from "node-fetch";
 import { ProxyAgent } from "proxy-agent";
 
@@ -130,7 +130,7 @@ import { ProxyAgent } from "proxy-agent";
 const agent = new ProxyAgent();
 
 // BrowserStack JavaScript Testing API
-const jsTestingClient = new Client({
+const jsTestingClient = new JSTestingClient({
   username: "<browserstack-username>",
   key: "<browserstack-access-key>",
   // provide your own Fetch API implementation
