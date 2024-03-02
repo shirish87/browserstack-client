@@ -1,4 +1,4 @@
-import SwaggerParser from '@apidevtools/swagger-parser';
+import SwaggerParser from "@apidevtools/swagger-parser";
 import fs from "node:fs/promises";
 import path from "node:path";
 import openapiTS, { astToString } from "openapi-typescript";
@@ -11,6 +11,7 @@ const dirOutput = './src/generated';
 
 const main = async () => {
   const api = await SwaggerParser.bundle('./openapi.yml');
+  api.info.version = process.env.npm_package_version;
   await SwaggerParser.validate(api);
   await fs.mkdir(dirOutput, { recursive: true });
   await fs.writeFile(path.join(dirOutput, 'openapi.json'), JSON.stringify(api, null, 2));
