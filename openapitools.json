@@ -1,0 +1,47 @@
+{
+  "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.3.0",
+    "generators": {
+      "java": {
+        "generatorName": "java",
+        "inputSpec": "src/generated/openapi.json",
+        "output": "generated/java",
+        "apiPackage": "com.dotslashlabs.browserstack.client",
+        "artifactId": "browserstack-client",
+        "groupId": "com.dotslashlabs",
+        "apiNameSuffix": "Client",
+        "skipValidateSpec": true,
+        "additionalProperties": {}
+      },
+      "csharp": {
+        "generatorName": "csharp",
+        "inputSpec": "src/generated/openapi.json",
+        "packageName": "BrowserStack",
+        "output": "generated/csharp",
+        "skipValidateSpec": true
+      },
+      "kotlin": {
+        "generatorName": "kotlin",
+        "inputSpec": "src/generated/openapi.json",
+        "output": "generated/kotlin",
+        "apiPackage": "com.dotslashlabs.browserstack.client",
+        "artifactId": "browserstack-client",
+        "groupId": "com.dotslashlabs",
+        "apiNameSuffix": "Client",
+        "skipValidateSpec": true
+      },
+      "ruby": {
+        "generatorName": "ruby",
+        "inputSpec": "src/generated/openapi.json",
+        "output": "generated/ruby",
+        "skipValidateSpec": true,
+        "additionalProperties": {
+          "gemName": "browserstack_client",
+          "moduleName": "BrowserStackClient"
+        }
+      }
+    }
+  }
+}

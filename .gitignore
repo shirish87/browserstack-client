@@ -9,6 +9,7 @@ lerna-debug.log*
 
 .env
 src/generated/*
+generated/*
 coverage
 node_modules
 dist
