@@ -1,5 +1,4 @@
 import { resolve } from "path";
-import dts from "vite-plugin-dts";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -10,13 +9,7 @@ export default defineConfig({
       fileName: "browserstack-client",
     },
   },
-  plugins: [
-    dts({
-      entryRoot: "src",
-      exclude: ["**/__tests__/**", "src/index.node.ts", "**/**/openapi.json"],
-      outDir: "dist/types",
-    }),
-  ],
+  plugins: [],
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),

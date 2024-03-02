@@ -38,8 +38,8 @@ export default defineConfig({
   plugins: [
     dts({
       entryRoot: "src",
-      exclude: ["**/__tests__/**", "src/index.ts", "**/**/openapi.json"],
-      outDir: "dist/node/types",
+      exclude: ["**/__tests__/**", "**/**/openapi.json"],
+      outDir: "dist/types",
     }),
   ],
   resolve: {
