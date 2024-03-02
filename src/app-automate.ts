@@ -1082,6 +1082,14 @@ export class AppAutomateClient extends APIClient {
     });
   }
 
+  /**
+   * Uploads a Detox Android app or app client to the App Automate service.
+   *
+   * @param type - The type of the upload, either "app" or "app-client".
+   * @param data - The data of the upload, including the app file and filename.
+   * @param options - Optional API fetch options for the request.
+   * @returns A promise that resolves to the response of the request.
+   */
   uploadDetoxAndroidApp<T extends "app" | "app-client">(
     type: T,
     data: operations[T extends "app"
