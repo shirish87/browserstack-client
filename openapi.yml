@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  title: BrowserStack API
+  title: BrowserStack Client
   version: 5.0.0
   description: >-
     BrowserStack is a cloud web and mobile testing platform that provides developers with the ability to test
@@ -32,12 +32,13 @@ servers:
         default: api-cloud.browserstack.com
 
 security:
-  - BasicAuth: []
+  - basicAuth: []
 
 paths:
   # JS APIs
   /browsers:
     get:
+      tags: [JSTesting]
       parameters:
         - name: flat
           in: query
@@ -57,6 +58,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetBrowsersResponse
                 oneOf:
                   - $ref: '#/components/schemas/BrowserList'
                   - $ref: '#/components/schemas/BrowserMap'
@@ -73,6 +75,7 @@ paths:
 
   /status:
     get:
+      tags: [JSTesting]
       summary: Fetches status.
       description: Fetches status.
       operationId: getStatus
@@ -96,6 +99,7 @@ paths:
 
   /worker:
     post:
+      tags: [JSTesting]
       summary: Create a browser worker.
       description: >-
         Create a browser worker. A browser worker is simply a new browser instance. A user can start multiple
@@ -116,6 +120,7 @@ paths:
           content:
             application/json:
               schema:
+                title: CreateWorkerResponse
                 type: object
                 required: [id]
                 properties:
@@ -141,6 +146,7 @@ paths:
 
   /workers:
     get:
+      tags: [JSTesting]
       summary: Fetches all workers.
       description: Fetches all workers.
       operationId: getWorkers
@@ -167,6 +173,7 @@ paths:
 
   /worker/{workerId}:
     get:
+      tags: [JSTesting]
       summary: Fetch details of a worker.
       description: Fetch details a worker.
       operationId: getWorker
@@ -184,7 +191,6 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/Worker'
 
         "400":
@@ -201,6 +207,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     delete:
+      tags: [JSTesting]
       summary: Terminate a worker.
       description: Terminate a worker.
       operationId: deleteWorker
@@ -218,6 +225,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteWorkerResponse
                 type: object
                 required: [message]
                 properties:
@@ -243,6 +251,7 @@ paths:
 
   /worker/{workerId}/url.json:
     put:
+      tags: [JSTesting]
       summary: Set a new URL for a worker-browser instance to navigate to
       description: Set a new URL for a worker-browser instance to navigate to
       operationId: updateWorkerURL
@@ -260,6 +269,7 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateWorkerURLRequest
               type: object
               required: [url]
               properties:
@@ -273,6 +283,7 @@ paths:
           content:
             application/json:
               schema:
+                title: UpdateWorkerURLResponse
                 type: object
                 required: [message]
                 properties:
@@ -296,6 +307,7 @@ paths:
 
   /worker/{workerId}/screenshot.{format}:
     get:
+      tags: [JSTesting]
       summary: Fetch a screenshot of the specified worker.
       description: Fetch a screenshot of the current state of the worker.
       operationId: getWorkerScreenshot
@@ -353,6 +365,7 @@ paths:
   # Automate APIs
   /automate/plan.json:
     get:
+      tags: [Automate]
       summary: Get Automate plan details
       description: Fetches Automate plan details
       operationId: getAutomatePlan
@@ -376,6 +389,7 @@ paths:
 
   /automate/recycle_key.json:
     put:
+      tags: [Automate]
       summary: Reset Automate access key
       description: Reset Automate access key
       operationId: recycleAutomateKey
@@ -390,6 +404,7 @@ paths:
           content:
             application/json:
               schema:
+                title: RecycleAutomateKeyResponse
                 type: object
                 required: [old_key, new_key]
                 properties:
@@ -412,6 +427,7 @@ paths:
 
   /automate/browsers.json:
     get:
+      tags: [Automate]
       summary: Fetches all automate browsers.
       description: Fetches all automate browsers.
       operationId: getAutomateBrowsers
@@ -435,6 +451,7 @@ paths:
 
   /automate/projects.json:
     get:
+      tags: [Automate]
       summary: Fetches list of projects
       description: >-
         Fetches list of projects associated with your username and access key. You will need
@@ -462,6 +479,7 @@ paths:
 
   /automate/projects/{projectId}.json:
     get:
+      tags: [Automate]
       summary: Fetches a project
       description: Specific information about a particular project can be queried using the project ID
       operationId: getAutomateProject
@@ -479,6 +497,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAutomateProjectResponse
                 type: object
                 required: [project]
                 properties:
@@ -505,6 +524,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     put:
+      tags: [Automate]
       summary: Update the name of your project
       description: Update the name of your project after the project is complete
       operationId: updateAutomateProject
@@ -521,6 +541,7 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateAutomateProjectRequest
               type: object
               required:
                 -  name
@@ -549,6 +570,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     delete:
+      tags: [Automate]
       summary: Delete your project
       description: >-
         Delete a project on the server using the DELETE method. Please note that to delete a project,
@@ -568,6 +590,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAutomateProjectResponse
                 type: object
                 properties:
                   status:
@@ -592,6 +615,7 @@ paths:
 
   /automate/projects/{projectId}/badge_key:
     get:
+      tags: [Automate]
       summary: Fetches the badge key for the project
       description: >-
         Fetches the badge key for sharing a public link for the Automate dashboard to view
@@ -629,6 +653,7 @@ paths:
 
   /automate/builds.json:
     get:
+      tags: [Automate]
       summary: Fetches list of builds
       description: >-
         Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number
@@ -671,6 +696,7 @@ paths:
               schema:
                 type: array
                 items:
+                  title: GetAutomateBuildsResponse
                   type: object
                   required: [automation_build]
                   properties:
@@ -689,6 +715,7 @@ paths:
 
   /automate/builds/{buildId}.json:
     get:
+      tags: [Automate]
       summary: Fetches a build
       description: Fetches a build
       operationId: getAutomateBuild
@@ -706,6 +733,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAutomateBuildResponse
                 type: object
                 required: [build]
                 properties:
@@ -737,6 +765,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     put:
+      tags: [Automate]
       summary: Update the name or tag of your build
       description: >-
         Update the name or tag of your build after the build is complete. To delete a build tag,
@@ -755,6 +784,7 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateAutomateBuildRequest
               type: object
               anyOf:
                 - required: [name]
@@ -774,6 +804,7 @@ paths:
           content:
             application/json:
               schema:
+                title: UpdateAutomateBuildResponse
                 oneOf:
                   - type: object
                     required: [automation_build]
@@ -800,6 +831,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     delete:
+      tags: [Automate]
       summary: Delete a build on the server
       description: >-
         Delete a build on the server. Please note that deleting a build will delete all the sessions
@@ -819,6 +851,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAutomateBuildResponse
                 type: object
                 properties:
                   status:
@@ -843,6 +876,7 @@ paths:
 
   /automate/builds:
     delete:
+      tags: [Automate]
       summary: Delete multiple builds on the server
       description: >-
         Delete multiple builds on the server. You can delete a maximum of 5 builds at a time.
@@ -865,6 +899,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAutomateBuildsResponse
                 type: object
                 properties:
                   message:
@@ -885,6 +920,7 @@ paths:
 
   /automate/builds/{buildId}/terminallogs:
     post:
+      tags: [Automate]
       summary: Upload terminal logs for your build.
       description: Upload terminal logs for your build.
       operationId: uploadAutomateBuildTerminalLogs
@@ -901,6 +937,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAutomateBuildTerminalLogsRequest
               type: object
               required: [file]
               properties:
@@ -915,6 +952,7 @@ paths:
           content:
             application/json:
               schema:
+                title: UploadAutomateBuildTerminalLogsResponse
                 type: object
                 required: [message]
                 properties:
@@ -936,6 +974,7 @@ paths:
 
   /automate/builds/{buildId}/sessions.json:
     get:
+      tags: [Automate]
       summary: Fetches list of sessions
       description: Fetches list of sessions for a particular build
       operationId: getAutomateSessions
@@ -974,6 +1013,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAutomateSessionsResponse
                 type: array
                 items:
                   type: object
@@ -995,6 +1035,7 @@ paths:
 
   /automate/sessions/{sessionId}.json:
     get:
+      tags: [Automate]
       summary: Fetches a session
       description: Fetches a session for a particular build
       operationId: getAutomateSession
@@ -1012,6 +1053,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAutomateSessionResponse
                 type: object
                 required: [automation_session]
                 properties:
@@ -1028,7 +1070,9 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
+
     put:
+      tags: [Automate]
       summary: Update session status or name
       description: >-
         Set the status for a session or update the name of the session. You can mark test status
@@ -1047,6 +1091,7 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateAutomateSessionRequest
               oneOf:
                 - type: object
                   required:
@@ -1076,6 +1121,7 @@ paths:
           content:
             application/json:
               schema:
+                title: UpdateAutomateSessionResponse
                 type: object
                 required: [automation_session]
                 properties:
@@ -1092,7 +1138,9 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
+
     delete:
+      tags: [Automate]
       summary: Delete a session on the server
       description: Delete a session on the server. Sessions once deleted cannot be recovered
       operationId: deleteAutomateSession
@@ -1110,6 +1158,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAutomateSessionResponse
                 type: object
                 properties:
                   status:
@@ -1134,6 +1183,7 @@ paths:
 
   /automate/sessions:
     delete:
+      tags: [Automate]
       summary: Delete multiple sessions on the server
       description: Delete multiple sessions on the server. Sessions once deleted cannot be recovered.
       operationId: deleteAutomateSessions
@@ -1153,6 +1203,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAutomateSessionsResponse
                 type: object
                 properties:
                   message:
@@ -1173,6 +1224,7 @@ paths:
 
   /automate/sessions/{sessionId}/logs:
     get:
+      tags: [Automate]
       summary: Fetches session logs
       description: >-
         Fetches session logs. Whenever you execute a session on BrowserStack, a session log is generated.
@@ -1207,6 +1259,7 @@ paths:
 
   /automate/sessions/{sessionId}/terminallogs:
     post:
+      tags: [Automate]
       summary: Upload terminal logs for your session.
       description: Upload terminal logs for your session.
       operationId: uploadAutomateSessionTerminalLogs
@@ -1223,6 +1276,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAutomateSessionTerminalLogsRequest
               type: object
               required: [file]
               properties:
@@ -1237,6 +1291,7 @@ paths:
           content:
             application/json:
               schema:
+                title: UploadAutomateSessionTerminalLogsResponse
                 type: object
                 required: [message]
                 properties:
@@ -1258,6 +1313,7 @@ paths:
 
   /automate/sessions/{sessionId}/networklogs:
     get:
+      tags: [Automate]
       summary: Fetches network logs for a session
       description: >-
         Fetches network logs for a session. Network Logs for each session are available to you
@@ -1293,6 +1349,7 @@ paths:
 
   /automate/sessions/{sessionId}/consolelogs:
     get:
+      tags: [Automate]
       summary: Fetches console logs for a session
       description: >-
         Fetches console logs for a session. Console logs are enabled by default and are set to errors.
@@ -1330,6 +1387,7 @@ paths:
 
   /automate/sessions/{sessionId}/seleniumlogs:
     get:
+      tags: [Automate]
       summary: Fetches Selenium logs for a session
       description: >-
         Fetches Selenium logs for a session. Raw Selenium logs for each session are
@@ -1365,6 +1423,7 @@ paths:
 
   /automate/sessions/{sessionId}/appiumlogs:
     get:
+      tags: [Automate]
       summary: Fetches Appium logs for a session
       description: Fetches Appium logs for a session. Raw Appium Logs for each session are available to you in text format.
       operationId: getAutomateSessionAppiumLogs
@@ -1398,6 +1457,7 @@ paths:
 
   /automate/sessions/{sessionId}/telemetrylogs:
     get:
+      tags: [Automate]
       summary: Fetches telemetry logs for a session
       description: >-
         Fetches telemetry logs for a session. Telemetry logs for a session are available for tests
@@ -1435,6 +1495,7 @@ paths:
 
   /automate/upload-media:
     post:
+      tags: [Automate]
       summary: Upload a media file
       description: Upload a media file you want to use in your tests
       operationId: uploadAutomateMediaFile
@@ -1443,6 +1504,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAutomateMediaFileRequest
               type: object
               required: [file]
               properties:
@@ -1456,6 +1518,7 @@ paths:
           content:
             application/json:
               schema:
+                title: UploadAutomateMediaFileResponse
                 type: object
                 required: [media_url]
                 properties:
@@ -1477,6 +1540,7 @@ paths:
 
   /automate/recent_media_files:
     get:
+      tags: [Automate]
       summary: Fetches list of uploaded media files
       description: Fetches list of recently uploaded media files
       operationId: getAutomateMediaFiles
@@ -1504,6 +1568,7 @@ paths:
 
   /automate/custom_media/delete/{mediaId}:
     delete:
+      tags: [Automate]
       summary: Delete a media file earlier uploaded to BrowserStack
       description: Delete a media file on the server. Media files once deleted cannot be recovered
       operationId: deleteAutomateMediaFile
@@ -1521,6 +1586,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAutomateMediaFileResponse
                 type: object
                 required: [success]
                 properties:
@@ -1544,6 +1610,7 @@ paths:
   # Screenshots APIs
   /screenshots/browsers.json:
     get:
+      tags: [Screenshots]
       summary: Fetches list of browsers
       description: Fetches list of browsers supported by Screenshots API
       operationId: getScreenshotsBrowsers
@@ -1568,6 +1635,7 @@ paths:
 
   /screenshots:
     post:
+      tags: [Screenshots]
       summary: Take a screenshot
       description: Take a screenshot of a website on a particular browser
       operationId: createScreenshotsJob
@@ -1598,6 +1666,7 @@ paths:
 
   /screenshots/{jobId}.json:
     get:
+      tags: [Screenshots]
       summary: Fetches a screenshot job
       description: Fetches a screenshot job
       operationId: getScreenshotsJob
@@ -1631,6 +1700,7 @@ paths:
   # App Automate APIs
   /app-automate/plan.json:
     get:
+      tags: [AppAutomate]
       summary: Get App Automate plan details
       description: Fetches App Automate plan details
       operationId: getAppAutomatePlan
@@ -1654,6 +1724,7 @@ paths:
 
   /app-automate/devices.json:
     get:
+      tags: [AppAutomate]
       summary: Get a list of supported Android and iOS devices
       description: Fetches list of devices supported by App Automate
       operationId: getAppAutomateDevices
@@ -1681,6 +1752,7 @@ paths:
 
   /app-automate/projects.json:
     get:
+      tags: [AppAutomate]
       summary: Retrieve a list of recent projects for your BrowserStack group
       description: >-
         Fetch the last 10 projects or your BrowserStack group. You can also limit the number
@@ -1732,6 +1804,7 @@ paths:
 
   /app-automate/projects/{projectId}.json:
     get:
+      tags: [AppAutomate]
       summary: Fetches a project
       description: Specific information about a particular project can be queried using the project ID
       operationId: getAppAutomateProject
@@ -1749,6 +1822,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateProjectResponse
                 type: object
                 required: [project]
                 properties:
@@ -1775,6 +1849,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     put:
+      tags: [AppAutomate]
       summary: Update the name of your project
       description: Update the name of your project after the project is complete
       operationId: updateAppAutomateProject
@@ -1791,6 +1866,7 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateAppAutomateProjectRequest
               type: object
               required:
                 -  name
@@ -1819,6 +1895,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     delete:
+      tags: [AppAutomate]
       summary: Delete your project
       description: >-
         Delete a project on the server using the DELETE method. Please note that to delete a project,
@@ -1838,6 +1915,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAppAutomateProjectResponse
                 type: object
                 properties:
                   status:
@@ -1862,6 +1940,7 @@ paths:
 
   /app-automate/projects/{projectId}/badge_key:
     get:
+      tags: [AppAutomate]
       summary: Fetches the badge key for the project
       description: >-
         Fetches the badge key for sharing a public link for the Automate dashboard to view
@@ -1899,6 +1978,7 @@ paths:
 
   /app-automate/builds.json:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of builds
       description: >-
         Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number
@@ -1939,6 +2019,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateBuildsResponse
                 type: array
                 items:
                   type: object
@@ -1959,6 +2040,7 @@ paths:
 
   /app-automate/builds/{buildId}.json:
     get:
+      tags: [AppAutomate]
       summary: Fetches a build
       description: Fetches a build
       operationId: getAppAutomateBuild
@@ -1976,6 +2058,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateBuildResponse
                 type: object
                 required: [build]
                 properties:
@@ -2007,6 +2090,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     put:
+      tags: [AppAutomate]
       summary: Update the tag of your build
       description: >-
         Update the tag of your build after the build is complete. To delete a build tag,
@@ -2025,6 +2109,7 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateAppAutomateBuildRequest
               type: object
               required: [build_tag]
               properties:
@@ -2038,6 +2123,7 @@ paths:
           content:
             application/json:
               schema:
+                title: UpdateAppAutomateBuildResponse
                 oneOf:
                   - type: object
                     required: [automation_build]
@@ -2064,6 +2150,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     delete:
+      tags: [AppAutomate]
       summary: Delete a build on the server
       description: >-
         Delete a build on the server. Please note that deleting a build will delete all the sessions
@@ -2083,6 +2170,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAppAutomateBuildResponse
                 type: object
                 properties:
                   status:
@@ -2107,6 +2195,7 @@ paths:
 
   /app-automate/builds/{buildId}/terminallogs:
     post:
+      tags: [AppAutomate]
       summary: Upload terminal logs for your build.
       description: Upload terminal logs for your build.
       operationId: uploadAppAutomateBuildTerminalLogs
@@ -2123,6 +2212,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAppAutomateBuildTerminalLogsRequest
               type: object
               required: [file]
               properties:
@@ -2137,6 +2227,7 @@ paths:
           content:
             application/json:
               schema:
+                title: UploadAppAutomateBuildTerminalLogsResponse
                 type: object
                 required: [message]
                 properties:
@@ -2158,6 +2249,7 @@ paths:
 
   /app-automate/sessions/{sessionId}.json:
     get:
+      tags: [AppAutomate]
       summary: Fetches a session
       description: >-
         Get details of a test session including its status and debugging
@@ -2177,6 +2269,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateSessionResponse
                 type: object
                 required: [automation_session]
                 properties:
@@ -2193,7 +2286,9 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
+
     put:
+      tags: [AppAutomate]
       summary: Update session status
       description: >-
         Set the status for a session. You can mark test status
@@ -2212,6 +2307,7 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateAppAutomateSessionRequest
               type: object
               required:
                 - status
@@ -2249,7 +2345,9 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         "500":
           $ref: '#/components/schemas/5xx.InternalServerError'
+
     delete:
+      tags: [AppAutomate]
       summary: Delete a session on the server
       description: Delete a session on the server. Sessions once deleted cannot be recovered
       operationId: deleteAppAutomateSession
@@ -2267,6 +2365,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAppAutomateSessionResponse
                 type: object
                 properties:
                   status:
@@ -2291,6 +2390,7 @@ paths:
 
   /app-automate/sessions/{sessionId}/terminallogs:
     post:
+      tags: [AppAutomate]
       summary: Upload terminal logs for your session.
       description: Upload terminal logs for your session.
       operationId: uploadAppAutomateSessionTerminalLogs
@@ -2307,6 +2407,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAppAutomateSessionTerminalLogsRequest
               type: object
               required: [file]
               properties:
@@ -2321,6 +2422,7 @@ paths:
           content:
             application/json:
               schema:
+                title: UploadAppAutomateSessionTerminalLogsResponse
                 type: object
                 required: [message]
                 properties:
@@ -2342,6 +2444,7 @@ paths:
 
   /app-automate/builds/{buildId}/sessions/{sessionId}/logs:
     get:
+      tags: [AppAutomate]
       summary: Fetches session logs
       description: >-
         Access the logs for the session in textual format. It includes information about
@@ -2388,6 +2491,7 @@ paths:
 
   /app-automate/builds/{buildId}/sessions/{sessionId}/devicelogs:
     get:
+      tags: [AppAutomate]
       summary: Fetches device logs
       description: >-
         Access the device logs for your session. These are system logs specific
@@ -2433,6 +2537,7 @@ paths:
 
   /app-automate/builds/{buildId}/sessions/{sessionId}/appiumlogs:
     get:
+      tags: [AppAutomate]
       summary: Fetches Appium logs
       description: >-
         Access the Appium logs for your session. These are logs generated by the Appium
@@ -2478,6 +2583,7 @@ paths:
 
   /app-automate/builds/{buildId}/sessions/{sessionId}/networklogs:
     get:
+      tags: [AppAutomate]
       summary: Fetches network logs
       description: >-
         Access the network logs for your session. These logs capture network data
@@ -2522,6 +2628,7 @@ paths:
 
   /app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling:
     get:
+      tags: [AppAutomate]
       summary: Fetches app profiling data
       description: >-
         Access the app profiling logs to view the resource consumption
@@ -2566,6 +2673,7 @@ paths:
 
   /app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling/v2:
     get:
+      tags: [AppAutomate]
       summary: Fetches app profiling data v2
       description: >-
         Access the detailed app profling metrics such as installed app size,
@@ -2607,6 +2715,7 @@ paths:
 
   /app-automate/upload-media:
     post:
+      tags: [AppAutomate]
       summary: Upload a media file
       description: Upload a media file you want to use in your tests
       operationId: uploadAppAutomateMediaFile
@@ -2615,6 +2724,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAppAutomateMediaFileRequest
               type: object
               required: [file]
               properties:
@@ -2647,6 +2757,7 @@ paths:
 
   /app-automate/recent_media_files:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded media files
       description: Fetches list of recently uploaded media files
       operationId: getAppAutomateMediaFiles
@@ -2656,6 +2767,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateMediaFilesResponse
                 oneOf:
                   - type: array
                     items:
@@ -2680,6 +2792,7 @@ paths:
 
   /app-automate/recent_media_files/{customId}:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded media files by custom ID
       description: Fetches list of recently uploaded media files by custom ID
       operationId: getAppAutomateMediaFilesByCustomId
@@ -2697,6 +2810,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateMediaFilesByCustomIdResponse
                 oneOf:
                   - type: array
                     items:
@@ -2721,6 +2835,7 @@ paths:
 
   /app-automate/recent_group_media:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded media files for the entire group
       description: Fetches list of recently uploaded media files for the entire group
       operationId: getAppAutomateGroupMediaFiles
@@ -2730,6 +2845,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateGroupMediaFilesResponse
                 oneOf:
                   - type: array
                     items:
@@ -2754,6 +2870,7 @@ paths:
 
   /app-automate/custom_media/delete/{mediaId}:
     delete:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded media files for the entire group
       description: Fetches list of recently uploaded media files for the entire group
       operationId: deleteAppAutomateMediaFile
@@ -2772,6 +2889,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAppAutomateMediaFileResponse
                 type: object
                 required: [success]
                 properties:
@@ -2792,6 +2910,7 @@ paths:
 
   /app-automate/upload:
     post:
+      tags: [AppAutomate]
       summary: Upload an app
       description: Upload the application under test (AUT) for Appium testing.
       operationId: uploadAppAutomateApp
@@ -2800,6 +2919,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAppAutomateAppRequest
               allOf:
                 - type: object
                   properties:
@@ -2851,6 +2971,7 @@ paths:
 
   /app-automate/recent_apps:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded apps
       description: Fetches list of recently uploaded apps
       operationId: getAppAutomateApps
@@ -2860,6 +2981,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateAppsResponse
                 oneOf:
                   - type: array
                     items:
@@ -2884,6 +3006,7 @@ paths:
 
   /app-automate/recent_apps/{customId}:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded apps by custom ID
       description: Fetches list of uploaded apps by custom ID
       operationId: getAppAutomateAppsByCustomId
@@ -2901,6 +3024,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateAppsByCustomIdResponse
                 oneOf:
                   - type: array
                     items:
@@ -2925,6 +3049,7 @@ paths:
 
   /app-automate/recent_group_apps:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded apps for the entire group
       description: Fetches list of recently uploaded apps for the entire group
       operationId: getAppAutomateGroupApps
@@ -2934,6 +3059,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateGroupAppsResponse
                 oneOf:
                   - type: array
                     items:
@@ -2958,6 +3084,7 @@ paths:
 
   /app-automate/app/delete/{appId}:
     delete:
+      tags: [AppAutomate]
       summary: Delete an app that was previously uploaded to BrowserStack
       description: >-
         Delete an app that was previously uploaded to BrowserStack.
@@ -2978,6 +3105,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAppAutomateAppResponse
                 type: object
                 required: [success]
                 properties:
@@ -2998,6 +3126,7 @@ paths:
 
   /app-automate/flutter-integration-tests/v2/android/app:
     post:
+      tags: [AppAutomate]
       summary: Upload an app
       description: Upload the application under test (AUT) for Flutter testing.
       operationId: uploadAppAutomateFlutterAndroidApp
@@ -3006,6 +3135,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAppAutomateFlutterAndroidAppRequest
               allOf:
                 - type: object
                   properties:
@@ -3057,6 +3187,7 @@ paths:
 
   /app-automate/flutter-integration-tests/v2/android/apps:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded Flutter apps
       description: Fetches list of recently uploaded Flutter apps
       operationId: getAppAutomateFlutterAndroidApps
@@ -3089,6 +3220,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateFlutterAndroidAppsResponse
                 oneOf:
                   - type: object
                     required: [apps]
@@ -3117,6 +3249,7 @@ paths:
 
   /app-automate/flutter-integration-tests/v2/android/apps/{appId}:
     get:
+      tags: [AppAutomate]
       summary: Get details of an uploaded Flutter app
       description: Get details of an uploaded Flutter app
       operationId: getAppAutomateFlutterAndroidApp
@@ -3134,6 +3267,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateFlutterAndroidAppResponse
                 type: object
                 required: [app]
                 properties:
@@ -3153,6 +3287,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     delete:
+      tags: [AppAutomate]
       summary: Delete a Flutter app that was previously uploaded to BrowserStack
       description: >-
         Delete an app that was previously uploaded to BrowserStack.
@@ -3173,6 +3308,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAppAutomateFlutterAndroidAppResponse
                 type: object
                 required: [success]
                 properties:
@@ -3198,6 +3334,7 @@ paths:
 
   /app-automate/flutter-integration-tests/v2/ios/test-package:
     post:
+      tags: [AppAutomate]
       summary: Upload a Flutter test package for iOS
       description: Upload the application under test (AUT) for Flutter iOS testing in .zip format.
       operationId: uploadAppAutomateFlutteriOSApp
@@ -3206,6 +3343,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAppAutomateFlutteriOSAppRequest
               allOf:
                 - type: object
                   properties:
@@ -3257,6 +3395,7 @@ paths:
 
   /app-automate/flutter-integration-tests/v2/ios/test-packages:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded Flutter iOS test packages
       description: Fetches list of recently uploaded Flutter iOS test packages
       operationId: getAppAutomateFlutteriOSApps
@@ -3289,6 +3428,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateFlutteriOSAppsResponse
                 oneOf:
                   - type: object
                     required: [test_packages]
@@ -3317,6 +3457,7 @@ paths:
 
   /app-automate/flutter-integration-tests/v2/ios/test-package/{appId}:
     get:
+      tags: [AppAutomate]
       summary: Get details of an uploaded Flutter iOS test package
       description: Get details of an uploaded Flutter iOS test package
       operationId: getAppAutomateFlutteriOSApp
@@ -3353,6 +3494,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     delete:
+      tags: [AppAutomate]
       summary: Delete a Flutter iOS test package that was previously uploaded to BrowserStack
       description: >-
         Delete a Flutter iOS test package that was previously uploaded to BrowserStack.
@@ -3373,6 +3515,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAppAutomateFlutteriOSAppResponse
                 type: object
                 required: [success]
                 properties:
@@ -3398,6 +3541,7 @@ paths:
 
   /app-automate/detox/v2/android/app:
     post:
+      tags: [AppAutomate]
       summary: Upload an app
       description: Upload the application under test (AUT) for Detox Android testing.
       operationId: uploadAppAutomateDetoxAndroidApp
@@ -3406,6 +3550,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAppAutomateDetoxAndroidAppRequest
               allOf:
                 - type: object
                   properties:
@@ -3457,6 +3602,7 @@ paths:
 
   /app-automate/detox/v2/android/app-client:
     post:
+      tags: [AppAutomate]
       summary: Upload an app client
       description: Upload the app client under test for Detox Android testing.
       operationId: uploadAppAutomateDetoxAndroidAppClient
@@ -3465,6 +3611,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAppAutomateDetoxAndroidAppClientRequest
               allOf:
                 - type: object
                   properties:
@@ -3516,6 +3663,7 @@ paths:
 
   /app-automate/espresso/v2/app:
     post:
+      tags: [AppAutomate]
       summary: Upload an app
       description: Upload the application under test (AUT) for Espresso testing.
       operationId: uploadAppAutomateEspressoApp
@@ -3524,6 +3672,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAppAutomateEspressoAppRequest
               allOf:
                 - type: object
                   properties:
@@ -3575,6 +3724,7 @@ paths:
 
   /app-automate/espresso/v2/apps:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded Espresso apps
       description: Fetches list of recently uploaded Espresso apps
       operationId: getAppAutomateEspressoApps
@@ -3607,6 +3757,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateEspressoAppsResponse
                 oneOf:
                   - type: object
                     required: [apps]
@@ -3635,6 +3786,7 @@ paths:
 
   /app-automate/espresso/v2/apps/{appId}:
     get:
+      tags: [AppAutomate]
       summary: Get details of an uploaded Espresso app
       description: Get details of an uploaded Espresso app
       operationId: getAppAutomateEspressoApp
@@ -3652,6 +3804,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateEspressoAppResponse
                 type: object
                 required: [app]
                 properties:
@@ -3671,6 +3824,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     delete:
+      tags: [AppAutomate]
       summary: Delete a Espresso app that was previously uploaded to BrowserStack
       description: >-
         Delete an app that was previously uploaded to BrowserStack.
@@ -3691,6 +3845,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAppAutomateEspressoAppResponse
                 type: object
                 required: [success]
                 properties:
@@ -3716,6 +3871,7 @@ paths:
 
   /app-automate/xcuitest/v2/app:
     post:
+      tags: [AppAutomate]
       summary: Upload an app
       description: Upload the application under test (AUT) for XCUITest testing.
       operationId: uploadAppAutomateXCUITestApp
@@ -3724,6 +3880,7 @@ paths:
         content:
           multipart/form-data:
             schema:
+              title: UploadAppAutomateXCUITestAppRequest
               allOf:
                 - type: object
                   properties:
@@ -3775,6 +3932,7 @@ paths:
 
   /app-automate/xcuitest/v2/apps:
     get:
+      tags: [AppAutomate]
       summary: Fetches list of uploaded XCUITest apps
       description: Fetches list of recently uploaded XCUITest apps
       operationId: getAppAutomateXCUITestApps
@@ -3807,6 +3965,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateXCUITestAppsResponse
                 oneOf:
                   - type: object
                     required: [apps]
@@ -3835,6 +3994,7 @@ paths:
 
   /app-automate/xcuitest/v2/apps/{appId}:
     get:
+      tags: [AppAutomate]
       summary: Get details of an uploaded XCUITest app
       description: Get details of an uploaded XCUITest app
       operationId: getAppAutomateXCUITestApp
@@ -3852,6 +4012,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAppAutomateXCUITestAppResponse
                 type: object
                 required: [app]
                 properties:
@@ -3871,6 +4032,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     delete:
+      tags: [AppAutomate]
       summary: Delete a XCUITest app that was previously uploaded to BrowserStack
       description: >-
         Delete an app that was previously uploaded to BrowserStack.
@@ -3891,6 +4053,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DeleteAppAutomateXCUITestAppResponse
                 type: object
                 required: [success]
                 properties:
@@ -3917,6 +4080,7 @@ paths:
   # Local Testing APIs
   /local/v1/list:
     get:
+      tags: [LocalTesting]
       summary: Fetches list of recent binary instances
       description: >-
         Fetches list of recent binary instances for local testing.
@@ -3949,6 +4113,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetLocalBinaryInstancesResponse
                 type: object
                 required: [api_version, meta_data, instances]
                 properties:
@@ -3984,6 +4149,7 @@ paths:
 
   /local/v1/{localInstanceId}:
     get:
+      tags: [LocalTesting]
       summary: Fetches details of a Local binary instance
       description: >-
         Fetches details of a Local binary instance used for local testing.
@@ -4010,6 +4176,7 @@ paths:
           content:
             application/json:
               schema:
+                title: GetLocalBinaryInstanceResponse
                 type: object
                 required: [api_version, meta_data, instances]
                 properties:
@@ -4044,6 +4211,7 @@ paths:
           $ref: '#/components/schemas/5xx.InternalServerError'
 
     delete:
+      tags: [LocalTesting]
       summary: Disconnect a Local binary instance
       description: Disconnect a Local binary instance
       operationId: disconnectLocalBinaryInstance
@@ -4068,6 +4236,7 @@ paths:
           content:
             application/json:
               schema:
+                title: DisconnectLocalBinaryInstanceResponse
                 type: object
                 required: [api_version, meta_data, message]
                 properties:
@@ -4101,6 +4270,7 @@ paths:
 
   /browserstack-local/BrowserStackLocal-{osArch}.zip:
     get:
+      tags: [LocalTestingBinary]
       summary: Download the BrowserStackLocal binary zip file
       description: Download the BrowserStackLocal binary zip file
       operationId: downloadLocalBinary
@@ -4142,6 +4312,7 @@ paths:
 components:
   schemas:
     Browser:
+      title: Browser
       type: object
       required: [browser, browser_version]
       properties:
@@ -4153,6 +4324,7 @@ components:
           example: "80.0"
 
     BrowserPlatform:
+      title: BrowserPlatform
       allOf:
         - $ref: "#/components/schemas/Browser"
         - type: object
@@ -4172,6 +4344,7 @@ components:
               example: null
 
     BrowserDevice:
+      title: BrowserDevice
       allOf:
         - $ref: "#/components/schemas/Browser"
         - type: object
@@ -4192,6 +4365,7 @@ components:
               maxItems: 0
 
     BrowserRealDevice:
+      title: BrowserRealDevice
       allOf:
         - $ref: "#/components/schemas/Browser"
         - type: object
@@ -4212,6 +4386,7 @@ components:
                 example: Google Pixel 6 Pro
 
     BrowserMap:
+      title: BrowserMap
       type: object
       properties:
         Windows:
@@ -4406,11 +4581,13 @@ components:
                   - $ref: '#/components/schemas/BrowserDevice'
 
     BrowserList:
+      title: BrowserList
       type: array
       items:
         $ref: '#/components/schemas/BrowserPlatform'
 
     AutomatePlan:
+      title: AutomatePlan
       type: object
       required: [automate_plan, parallel_sessions_running, parallel_sessions_max_allowed, team_parallel_sessions_max_allowed, queued_sessions, queued_sessions_max_allowed]
       properties:
@@ -4440,6 +4617,7 @@ components:
           example: 240
 
     AutomateProject:
+      title: AutomateProject
       type: object
       required: [id, name, user_id, group_id, sub_group_id, created_at, updated_at]
       properties:
@@ -4473,6 +4651,7 @@ components:
           example: "2020-09-18T09:45:57.000Z"
 
     AutomateBuild:
+      title: AutomateBuild
       type: object
       required: [name, hashed_id, duration, status, build_tag, public_url]
       properties:
@@ -4536,6 +4715,7 @@ components:
           example: "2020-09-18T09:45:57.000Z"
 
     AutomateSession:
+      title: AutomateSession
       allOf:
         - $ref: "#/components/schemas/BrowserPlatform"
         - type: object
@@ -4614,6 +4794,7 @@ components:
               example: "2020-03-11T10:14:36.000Z"
 
     Status:
+      title: Status
       type: object
       required: [used_time, running_sessions, session_limit, total_available_time]
       properties:
@@ -4631,6 +4812,7 @@ components:
           example: Unlimited Testing Time
 
     AutomateMediaFile:
+      title: AutomateMediaFile
       type: object
       required: [media_name, media_url, media_id, uploaded_at]
       properties:
@@ -4652,6 +4834,7 @@ components:
           example: "2021-10-13T10:30:00.000Z"
 
     AppAutomateMediaFile:
+      title: AppAutomateMediaFile
       type: object
       required: [media_id, media_url]
       properties:
@@ -4681,6 +4864,7 @@ components:
           example: "steve/SampleMedia"
 
     AppAutomateApp:
+      title: AppAutomateApp
       type: object
       required: [app_url]
       properties:
@@ -4710,6 +4894,7 @@ components:
           example: "steve/SampleApp"
 
     AppAutomateTestPackage:
+      title: AppAutomateTestPackage
       type: object
       required: [test_package_url]
       properties:
@@ -4739,6 +4924,7 @@ components:
           example: "steve/SampleApp"
 
     AppAutomateDevice:
+      title: AppAutomateDevice
       type: object
       required: [os, os_version, device, real_mobile]
       properties:
@@ -4756,6 +4942,7 @@ components:
           example: true
 
     AppAutomateSession:
+      title: AppAutomateSession
       allOf:
         - type: object
           $ref: "#/components/schemas/AutomateSession"
@@ -4789,6 +4976,7 @@ components:
                   example: "2021-09-30T10:00:00.000Z"
 
     AppAutomateAppProfilingV1:
+      title: AppAutomateAppProfilingV1
       type: object
       required: [ts, cpu, mem, mema, batt, temp]
       properties:
@@ -4821,6 +5009,7 @@ components:
           description: "Additional properties"
 
     AppAutomateAppProfilingV2:
+      title: AppAutomateAppProfilingV2
       type: object
       required: [metadata, data]
       properties:
@@ -4836,6 +5025,7 @@ components:
           additionalProperties: true
 
     NewWorker:
+      title: NewWorker
       allOf:
         - type: object
           required:
@@ -4911,6 +5101,7 @@ components:
                 example: "80.0"
 
     Worker:
+      title: Worker
       allOf:
         - $ref: "#/components/schemas/BrowserPlatform"
         - type: object
@@ -4934,6 +5125,7 @@ components:
               example: ""
 
     NewScreenshot:
+      title: NewScreenshot
       type: object
       required: [browsers, url]
       properties:
@@ -4990,6 +5182,7 @@ components:
           example: 5
 
     ScreenshotsJobBase:
+      title: ScreenshotsJobBase
       type: object
       properties:
         job_id:
@@ -5026,6 +5219,7 @@ components:
             $ref: "#/components/schemas/Screenshot"
 
     NewScreenshotsJob:
+      title: NewScreenshotsJob
       allOf:
         - $ref: "#/components/schemas/ScreenshotsJobBase"
         - type: object
@@ -5037,6 +5231,7 @@ components:
               example: "4207442b2b0567368956dba064c22a3235a76214"
 
     ScreenshotsJob:
+      title: ScreenshotsJob
       allOf:
         - $ref: "#/components/schemas/ScreenshotsJobBase"
         - type: object
@@ -5053,6 +5248,7 @@ components:
               example: "done"
 
     ScreenshotBase:
+      title: ScreenshotBase
       type: object
       required: [id, state, url, os, os_version]
       properties:
@@ -5074,6 +5270,7 @@ components:
           example: "10"
 
     Screenshot:
+      title: Screenshot
       allOf:
         - $ref: "#/components/schemas/ScreenshotBase"
         - oneOf:
@@ -5114,6 +5311,7 @@ components:
               example: "2013-03-14 16:25:45 UTC"
 
     LocalBinaryInstance:
+      title: LocalBinaryInstance
       type: object
       required: [id, email, lastActiveOn, startTime, localIdentifier]
       properties:
@@ -5184,6 +5382,6 @@ components:
       description: Indicates an error with BrowserStack servers.
 
   securitySchemes:
-    BasicAuth:
+    basicAuth:
       type: http
       scheme: basic
