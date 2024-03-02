@@ -3,8 +3,6 @@
 
 This module interfaces all REST APIs offered by [BrowserStack](https://www.browserstack.com).
 
-***This module is a work-in-progress and may see breaking changes.***
-
 
 ## Installation
 ```

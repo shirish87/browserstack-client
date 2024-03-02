@@ -10,6 +10,27 @@
   "excludeNotDocumentedKinds": ["Property"],
   "sort": ["source-order"],
   "tsconfig": "./tsconfig.json",
+  "groupOrder": [
+    "Classes",
+    "Interfaces",
+    "Type Aliases",
+    "Enumerations",
+    "Enumeration Members",
+    "Namespaces",
+    "References",
+    "Modules",
+    "Constructors",
+    "Properties",
+    "Variables",
+    "Functions",
+    "Accessors",
+    "Methods"
+  ],
   "hideGenerator": true,
-  "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"]
+  "parametersFormat": "table",
+  "propertiesFormat": "table",
+  "typeDeclarationFormat": "table",
+  "indexFormat": "table",
+  "theme": "vitepress",
+  "plugin": ["typedoc-plugin-markdown", "./typedoc-vitepress-theme.mjs"]
 }
