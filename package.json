@@ -5,7 +5,8 @@
   "type": "module",
   "main": "./dist/browserstack-client.umd.cjs",
   "bin": {
-    "browserstack-local": "./dist/node/browserstack-local.cjs"
+    "browserstack-local": "./dist/node/browserstack-local.cjs",
+    "browserstack-app-automate": "./dist/node/browserstack-app-automate.cjs"
   },
   "module": "./dist/browserstack-client.js",
   "types": "./dist/types/index.d.ts",

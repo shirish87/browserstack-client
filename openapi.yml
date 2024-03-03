@@ -4878,11 +4878,19 @@ components:
           example: "media://90c7a8h8dc82308108734e9a46c24d8f01de12881"
         app_name:
           type: string
-          description: "Name of the media file uploaded."
-          example: "media.jpg"
+          description: "Name of the app file uploaded."
+          example: "app-release.apk"
+        app_version:
+          type: string
+          description: "Version of the app."
+          example: "1.0.0"
         uploaded_at:
           type: string
-          description: "Timestamp of the media file upload."
+          description: "Timestamp of the app file upload."
+          example: "2021-09-30T10:00:00.000Z"
+        expiry:
+          type: string
+          description: "Timestamp of the app file expiry."
           example: "2021-09-30T10:00:00.000Z"
         custom_id:
           type: string

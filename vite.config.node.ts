@@ -9,11 +9,14 @@ export default defineConfig({
       entry: [
         resolve(__dirname, "src/index.node.ts"),
         resolve(__dirname, "src/cli/browserstack-local.ts"),
+        resolve(__dirname, "src/cli/browserstack-app-automate.ts"),
       ],
       fileName: (format, name) => {
         const extn = (format === "es") ? "js" : "cjs";
         if (name.match(/browserstack-local/)) {
           return `browserstack-local.${extn}`;
+        } else if (name.match(/browserstack-app-automate/)) {
+          return `browserstack-app-automate.${extn}`;
         }
 
         return `browserstack-client.${extn}`;
