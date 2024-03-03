@@ -105,7 +105,7 @@ class AppPlatformCommand {
     );
 
     if (app?.app_url) {
-      logger.info(`Uploaded successfully at ${app?.app_url}`);
+      logger.info(app.app_url, "Uploaded successfully");
     } else {
       logger.error(`Failed to upload app`, app);
     }
@@ -143,7 +143,8 @@ class AppPlatformCommand {
     );
 
     if (success) {
-      logger.info(`Deleted successfully: ${appId}`);
+      // TODO: should we really URI for consistency?
+      logger.info(`bs://${appId}`, "Deleted successfully");
     } else {
       logger.error(`Failed to delete app: ${appId}`);
     }
