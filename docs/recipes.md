@@ -39,7 +39,72 @@ You can also retrieve a list of active (not necessarily still running) local-ide
 TODO: Network proxy support for CLI. Use programmatic API if you require configuring a proxy.
 
 
-## JavaScript Testing Helper
+## App Automate npm Scripts for App Uploads
+
+Similar to the above npm scripts for BrowserStack Local, you can upload and manage your app binaries (Android apk/aab, iOS ipa/zip packages) for various frameworks supported by BrowserStack. You can later refer to these in tests using the `bs://<app_id>` URIs.
+
+> Note that this feature needs further testing, and the CLI commands and responses may change.
+
+
+### Flutter
+
+```
+browserstack-app-automate flutter list ios
+browserstack-app-automate flutter upload <local-file-path> ios
+browserstack-app-automate flutter upload <public-url> <filename> ios
+browserstack-app-automate flutter get <app-id> ios
+browserstack-app-automate flutter delete <app-id> ios
+
+browserstack-app-automate flutter list android
+browserstack-app-automate flutter upload <local-file-path> android
+browserstack-app-automate flutter upload <public-url> <filename> android
+browserstack-app-automate flutter get <app-id> android
+browserstack-app-automate flutter delete <app-id> android
+```
+
+
+### Appium
+
+```
+browserstack-app-automate appium list
+browserstack-app-automate appium upload <local-file-path>
+browserstack-app-automate appium upload <public-url> <filename>
+browserstack-app-automate appium get <app-id>
+browserstack-app-automate appium delete <app-id>
+```
+
+
+### Espresso
+
+```
+browserstack-app-automate espresso list
+browserstack-app-automate espresso upload <local-file-path>
+browserstack-app-automate espresso upload <public-url> <filename>
+browserstack-app-automate espresso get <app-id>
+browserstack-app-automate espresso delete <app-id>
+```
+
+
+### XCUITest
+
+```
+browserstack-app-automate xcuitest list
+browserstack-app-automate xcuitest upload <local-file-path>
+browserstack-app-automate xcuitest upload <public-url> <filename>
+browserstack-app-automate xcuitest get <app-id>
+browserstack-app-automate xcuitest delete <app-id>
+```
+
+
+### Detox Android
+
+```
+browserstack-app-automate detox upload <local-file-path> app
+browserstack-app-automate detox upload <local-file-path> app-client
+```
+
+
+## JavaScript Testing Launch Helper
 
 ```ts
 import { JSTestingClient } from "browserstack-client";
@@ -60,7 +125,7 @@ await browser.terminate();
 ```
 
 
-## Screenshots Helper
+## Screenshots Launch Helper
 
 ```ts
 import { ScreenshotsClient } from "browserstack-client";
