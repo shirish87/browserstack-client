@@ -3,10 +3,12 @@
 
 This module interfaces all REST APIs offered by [BrowserStack](https://www.browserstack.com).
 
+![Build Status](https://github.com/shirish87/browserstack-client/actions/workflows/main.yml/badge.svg)
+
 
 ## Installation
 ```
-$ npm i --save browserstack-client
+$ npm i --save-dev browserstack-client
 ```
 
 ## Requirements
@@ -138,3 +140,7 @@ const jsTestingClient = new JSTestingClient({
 console.log(await jsTestingClient.getAccountStatus());
 
 ```
+
+## Thanks
+
+Sponsored access to [BrowserStack](https://www.browserstack.com/), courtesy BrowserStack.
