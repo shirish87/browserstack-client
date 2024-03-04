@@ -35,7 +35,6 @@ export function load(app) {
     );
 
     for (const c of classes) {
-      console.log('c.comment', c.comment);
       c.comment ??= {
         blockTags: [],
         modifierTags: new Set(),
