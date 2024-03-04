@@ -15,19 +15,54 @@ import { basename, resolve } from "node:path";
 
 const require = createRequire(import.meta.url);
 
-enum AppPlatform {
+enum Platform {
   flutter = "flutter",
   appium = "appium",
   espresso = "espresso",
   xcuitest = "xcuitest",
   detox = "detox",
+  media = "media",
 }
 
-enum AppAutomateAction {
+enum PlatformAction {
   upload = "upload",
   get = "get",
   list = "list",
   delete = "delete",
+}
+
+interface PlatformCommandSpec<T> {
+  list: (
+    clientOptions: Partial<BrowserStackOptions>,
+    args: string[]
+  ) => Promise<T[]>;
+
+  upload: (
+    options: { filename: string } & (
+      | { file: Blob; url?: never }
+      | { url: string; file?: never }
+    ),
+    clientOptions: Partial<BrowserStackOptions>,
+    args: string[]
+  ) => Promise<T>;
+
+  get: (
+    options: { id: string },
+    clientOptions: Partial<BrowserStackOptions>,
+    args: string[]
+  ) => Promise<T>;
+
+  delete: (
+    options: { id: string },
+    clientOptions: Partial<BrowserStackOptions>,
+    args: string[]
+  ) => Promise<boolean>;
+
+  getURL: (app: T) => string | undefined;
+
+  logParams: (app: T) => [string, ...unknown[]];
+
+  getURLProtocol: () => string;
 }
 
 /**
@@ -35,43 +70,22 @@ enum AppAutomateAction {
  *
  * @internal
  */
-class AppPlatformCommand {
-  readonly appPlatform: AppPlatform;
-  readonly supportedActions: AppAutomateAction[];
+class PlatformCommand<T> {
+  readonly platform: Platform;
+  readonly supportedActions: PlatformAction[];
 
-  private readonly _implPlatformCommand: {
-    list: (
-      clientOptions: Partial<BrowserStackOptions>,
-      args: string[]
-    ) => Promise<components["schemas"]["AppAutomateApp"][]>;
-    upload: (
-      options: { filename: string } & (
-        | { file: Blob; url?: never }
-        | { url: string; file?: never }
-      ),
-      clientOptions: Partial<BrowserStackOptions>,
-      args: string[]
-    ) => Promise<components["schemas"]["AppAutomateApp"]>;
-    get: (
-      options: { appId: string },
-      clientOptions: Partial<BrowserStackOptions>,
-      args: string[]
-    ) => Promise<components["schemas"]["AppAutomateApp"]>;
-    delete: (
-      options: { appId: string },
-      clientOptions: Partial<BrowserStackOptions>,
-      args: string[]
-    ) => Promise<boolean>;
-  };
+  private readonly _implPlatformCommand: PlatformCommandSpec<T>;
+  private readonly _urlProtocol: string;
 
   constructor(
-    appPlatform: AppPlatform,
-    supportedActions: AppAutomateAction[],
-    platformRun: AppPlatformCommand["_implPlatformCommand"]
+    platform: Platform,
+    supportedActions: PlatformAction[],
+    platformRun: PlatformCommand<T>["_implPlatformCommand"]
   ) {
-    this.appPlatform = appPlatform;
+    this.platform = platform;
     this.supportedActions = supportedActions;
     this._implPlatformCommand = platformRun;
+    this._urlProtocol = this._implPlatformCommand.getURLProtocol();
   }
 
   async list(
@@ -104,8 +118,9 @@ class AppPlatformCommand {
       args
     );
 
-    if (app?.app_url) {
-      logger.info(app.app_url, "Uploaded successfully");
+    const appURL = app ? this._implPlatformCommand.getURL(app) : undefined;
+    if (appURL) {
+      logger.info(appURL, "Uploaded successfully");
     } else {
       logger.error(`Failed to upload app`, app);
     }
@@ -113,14 +128,14 @@ class AppPlatformCommand {
 
   async get(
     options: Partial<BrowserStackOptions> & {
-      appId: string;
+      id: string;
     },
     args: string[],
     logger: Logger
   ) {
-    const { appId, ...clientOptions } = options;
+    const { id, ...clientOptions } = options;
     const app = await this._implPlatformCommand.get(
-      { appId: AppPlatformCommand.cleanAppId(appId) },
+      { id: this.cleanupId(id) },
       clientOptions,
       args
     );
@@ -130,40 +145,32 @@ class AppPlatformCommand {
 
   async delete(
     options: Partial<BrowserStackOptions> & {
-      appId: string;
+      id: string;
     },
     args: string[],
     logger: Logger
   ) {
-    const { appId, ...clientOptions } = options;
+    const { id, ...clientOptions } = options;
     const success = await this._implPlatformCommand.delete(
-      { appId: AppPlatformCommand.cleanAppId(appId) },
+      { id: this.cleanupId(id) },
       clientOptions,
       args
     );
 
     if (success) {
       // TODO: should we really URI for consistency?
-      logger.info(`bs://${appId}`, "Deleted successfully");
+      logger.info(`${this._urlProtocol}${id}`, "Deleted successfully");
     } else {
-      logger.error(`Failed to delete app: ${appId}`);
+      logger.error(`Failed to delete app: ${id}`);
     }
   }
 
-  private _logApp(
-    app: components["schemas"]["AppAutomateApp"],
-    logger: Logger
-  ) {
-    logger.info(
-      app.app_url,
-      app.uploaded_at ? new Date(app.uploaded_at).toISOString() : "",
-      app.app_name,
-      app.app_version
-    );
+  private _logApp(app: T, logger: Logger) {
+    logger.info(...this._implPlatformCommand.logParams(app));
   }
 
-  static cleanAppId(appId: string, urlProto = "bs://") {
-    return appId.startsWith(urlProto) ? appId.replace(urlProto, "") : appId;
+  cleanupId(id: string, urlProto = this._urlProtocol) {
+    return id.startsWith(urlProto) ? id.replace(urlProto, "") : id;
   }
 }
 
@@ -196,18 +203,33 @@ const ensureFlutterPlatform = (
   return platform as FlutterPlatform;
 };
 
+const appPlatformCommand: Pick<
+  PlatformCommandSpec<components["schemas"]["AppAutomateApp"]>,
+  "getURL" | "logParams" | "getURLProtocol"
+> = {
+  getURLProtocol: () => "bs://",
+  getURL: (app) => app?.app_url,
+  logParams: (app) => [
+    app?.app_url ?? "",
+    app?.uploaded_at ? new Date(app.uploaded_at).toISOString() : "",
+    app?.app_name,
+    app?.app_version,
+  ],
+};
+
 /**
  * Represents a command with actions for interacting with Flutter apps on BrowserStack App Automate.
  */
-const flutterPlatformCommand = new AppPlatformCommand(
-  AppPlatform.flutter,
+const flutterPlatformCommand = new PlatformCommand(
+  Platform.flutter,
   [
-    AppAutomateAction.upload,
-    AppAutomateAction.list,
-    AppAutomateAction.get,
-    AppAutomateAction.delete,
+    PlatformAction.upload,
+    PlatformAction.list,
+    PlatformAction.get,
+    PlatformAction.delete,
   ],
   {
+    ...appPlatformCommand,
     list: (clientOptions, args) => {
       const client = new AppAutomateClient(clientOptions);
       const platform = ensureFlutterPlatform(
@@ -250,11 +272,11 @@ const flutterPlatformCommand = new AppPlatformCommand(
       );
 
       if (platform === FlutterPlatform.android) {
-        return client.getFlutterApp(FlutterPlatform.android, options.appId);
+        return client.getFlutterApp(FlutterPlatform.android, options.id);
       }
 
       return client
-        .getFlutterApp(FlutterPlatform.ios, options.appId)
+        .getFlutterApp(FlutterPlatform.ios, options.id)
         .then(transformFlutterTestPackageToApp);
     },
     delete: async (options, clientOptions, args) => {
@@ -264,8 +286,8 @@ const flutterPlatformCommand = new AppPlatformCommand(
       );
 
       const result = await (platform === FlutterPlatform.android
-        ? client.deleteFlutterApp(FlutterPlatform.android, options.appId)
-        : client.deleteFlutterApp(FlutterPlatform.ios, options.appId));
+        ? client.deleteFlutterApp(FlutterPlatform.android, options.id)
+        : client.deleteFlutterApp(FlutterPlatform.ios, options.id));
 
       return result?.success?.message?.length > 0;
     },
@@ -278,7 +300,7 @@ const flutterPlatformCommand = new AppPlatformCommand(
 const patchAppIdWithCustomId = (
   app: components["schemas"]["AppAutomateApp"]
 ): components["schemas"]["AppAutomateApp"] => {
-  if (!app.custom_id) {
+  if (!app.app_id || !app.custom_id) {
     return app;
   }
 
@@ -287,7 +309,7 @@ const patchAppIdWithCustomId = (
   return {
     ...app,
     app_id: app.custom_id,
-    app_url: `bs://${app.custom_id}`,
+    app_url: app.app_url.replace(app.app_id, app.custom_id),
     custom_id: customId,
   };
 };
@@ -295,15 +317,16 @@ const patchAppIdWithCustomId = (
 /**
  * Represents a command with actions for interacting with Appium apps on BrowserStack App Automate.
  */
-const appiumPlatformCommand = new AppPlatformCommand(
-  AppPlatform.appium,
+const appiumPlatformCommand = new PlatformCommand(
+  Platform.appium,
   [
-    AppAutomateAction.upload,
-    AppAutomateAction.list,
-    AppAutomateAction.get,
-    AppAutomateAction.delete,
+    PlatformAction.upload,
+    PlatformAction.list,
+    PlatformAction.get,
+    PlatformAction.delete,
   ],
   {
+    ...appPlatformCommand,
     list: (clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
       return client.getAppiumApps().then((r) => r.map(patchAppIdWithCustomId));
@@ -321,11 +344,9 @@ const appiumPlatformCommand = new AppPlatformCommand(
     get: (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
 
-      return client.getAppiumAppsByCustomId(options.appId).then((r) => {
+      return client.getAppiumAppsByCustomId(options.id).then((r) => {
         if (!r.length) {
-          throw new BrowserStackError(
-            `No app found with custom ID: ${options.appId}`
-          );
+          throw new BrowserStackError(`${options.id} Not found`);
         }
 
         return patchAppIdWithCustomId(r[0]);
@@ -333,9 +354,9 @@ const appiumPlatformCommand = new AppPlatformCommand(
     },
     delete: async (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      const [app] = await client.getAppiumAppsByCustomId(options.appId);
+      const [app] = await client.getAppiumAppsByCustomId(options.id);
       // if custom_id is not found, use app_id
-      const appId = app?.app_id ?? options.appId;
+      const appId = app?.app_id ?? options.id;
       const r = await client.deleteAppiumApp(appId);
       return r?.success === true;
     },
@@ -345,15 +366,16 @@ const appiumPlatformCommand = new AppPlatformCommand(
 /**
  * Represents a command with actions for interacting with Espresso apps on BrowserStack App Automate.
  */
-const espressoPlatformCommand = new AppPlatformCommand(
-  AppPlatform.espresso,
+const espressoPlatformCommand = new PlatformCommand(
+  Platform.espresso,
   [
-    AppAutomateAction.upload,
-    AppAutomateAction.list,
-    AppAutomateAction.get,
-    AppAutomateAction.delete,
+    PlatformAction.upload,
+    PlatformAction.list,
+    PlatformAction.get,
+    PlatformAction.delete,
   ],
   {
+    ...appPlatformCommand,
     list: (clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
       return client.getEspressoApps();
@@ -364,11 +386,11 @@ const espressoPlatformCommand = new AppPlatformCommand(
     },
     get: (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      return client.getEspressoApp(options.appId);
+      return client.getEspressoApp(options.id);
     },
     delete: async (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      const r = await client.deleteEspressoApp(options.appId);
+      const r = await client.deleteEspressoApp(options.id);
       return r?.success?.message?.length > 0;
     },
   }
@@ -377,15 +399,16 @@ const espressoPlatformCommand = new AppPlatformCommand(
 /**
  * Represents a command with actions for interacting with XCUITest apps on BrowserStack App Automate.
  */
-const xcuiTestPlatformCommand = new AppPlatformCommand(
-  AppPlatform.xcuitest,
+const xcuiTestPlatformCommand = new PlatformCommand(
+  Platform.xcuitest,
   [
-    AppAutomateAction.upload,
-    AppAutomateAction.list,
-    AppAutomateAction.get,
-    AppAutomateAction.delete,
+    PlatformAction.upload,
+    PlatformAction.list,
+    PlatformAction.get,
+    PlatformAction.delete,
   ],
   {
+    ...appPlatformCommand,
     list: (clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
       return client.getXCUITestApps();
@@ -396,11 +419,11 @@ const xcuiTestPlatformCommand = new AppPlatformCommand(
     },
     get: (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      return client.getXCUITestApp(options.appId);
+      return client.getXCUITestApp(options.id);
     },
     delete: async (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      const r = await client.deleteXCUITestApp(options.appId);
+      const r = await client.deleteXCUITestApp(options.id);
       return r?.success?.message?.length > 0;
     },
   }
@@ -409,10 +432,11 @@ const xcuiTestPlatformCommand = new AppPlatformCommand(
 /**
  * Represents a command with actions for interacting with Detox apps on BrowserStack App Automate.
  */
-const detoxPlatformCommand = new AppPlatformCommand(
-  AppPlatform.detox,
-  [AppAutomateAction.upload],
+const detoxPlatformCommand = new PlatformCommand(
+  Platform.detox,
+  [PlatformAction.upload],
   {
+    ...appPlatformCommand,
     upload: (options, clientOptions, args) => {
       const appType = args?.[0]?.toLowerCase?.()?.trim?.();
 
@@ -440,16 +464,111 @@ const detoxPlatformCommand = new AppPlatformCommand(
   }
 );
 
+// there's no documented API to get an Appium app by it's app_id
+// so we generate a custom_id and swap app_id with custom_id (sigh)
+// TODO: revisit this hack
+const patchMediaIdWithCustomId = (
+  media: components["schemas"]["AppAutomateMediaFile"]
+): components["schemas"]["AppAutomateMediaFile"] => {
+  if (!media.custom_id) {
+    return media;
+  }
+
+  const customId = media.media_id;
+
+  return {
+    ...media,
+    media_id: media.custom_id,
+    media_url: media.media_url.replace(media.media_id, media.custom_id),
+    custom_id: customId,
+  };
+};
+
+/**
+ * Represents a command with actions for interacting with media files on BrowserStack App Automate.
+ */
+const mediaPlatformCommand = new PlatformCommand<
+  components["schemas"]["AppAutomateMediaFile"]
+>(
+  Platform.media,
+  [
+    PlatformAction.upload,
+    PlatformAction.list,
+    PlatformAction.get,
+    PlatformAction.delete,
+  ],
+  {
+    getURLProtocol: () => "media://",
+    getURL: (media) => media?.media_url,
+    logParams: (media) => [
+      media?.media_url ?? "",
+      media?.uploaded_at ? new Date(media.uploaded_at).toISOString() : "",
+      media?.media_name,
+    ],
+    list: (clientOptions) => {
+      const client = new AppAutomateClient(clientOptions);
+      return client
+        .getMediaFiles()
+        .then((r) => r.map(patchMediaIdWithCustomId));
+    },
+    upload: (options, clientOptions) => {
+      if (options.url) {
+        throw new BrowserStackError(
+          "URL upload is not supported for media files"
+        );
+      }
+
+      if (!options.file) {
+        throw new BrowserStackError("No file provided for media upload");
+      }
+
+      const client = new AppAutomateClient(clientOptions);
+      return client
+        .uploadMediaFile({
+          ...options,
+          custom_id: randomBytes(20).toString("hex"),
+        })
+        .then(patchMediaIdWithCustomId);
+    },
+    get: (options, clientOptions) => {
+      const client = new AppAutomateClient(clientOptions);
+
+      return client.getMediaFilesByCustomId(options.id).then((r) => {
+        if (!r.length) {
+          throw new BrowserStackError(`${options.id} Not found`);
+        }
+
+        return patchMediaIdWithCustomId(r[0]);
+      });
+    },
+    delete: async (options, clientOptions) => {
+      const client = new AppAutomateClient(clientOptions);
+      const [app] = await client.getMediaFilesByCustomId(options.id);
+      // if custom_id is not found, use media_id
+      const mediaId = app?.media_id ?? options.id;
+      const r = await client.deleteMediaFile(mediaId);
+      return r?.success === true;
+    },
+  }
+);
+
+type PlatformCommands =
+  | PlatformCommand<components["schemas"]["AppAutomateApp"]>
+  | PlatformCommand<components["schemas"]["AppAutomateMediaFile"]>;
+
 /**
  * Map that associates each AppPlatform with its corresponding AppPlatformCommand.
  */
-const appPlatformCommands = new Map<AppPlatform, AppPlatformCommand>([
-  [AppPlatform.flutter, flutterPlatformCommand],
-  [AppPlatform.appium, appiumPlatformCommand],
-  [AppPlatform.espresso, espressoPlatformCommand],
-  [AppPlatform.xcuitest, xcuiTestPlatformCommand],
-  [AppPlatform.detox, detoxPlatformCommand],
-]);
+const platformCommands = new Map<Platform, PlatformCommands>(
+  [
+    flutterPlatformCommand,
+    appiumPlatformCommand,
+    espressoPlatformCommand,
+    xcuiTestPlatformCommand,
+    detoxPlatformCommand,
+    mediaPlatformCommand,
+  ].map((command) => [command.platform, command])
+);
 
 /**
  * Runs the specified action for the given AppPlatformCommand.
@@ -458,16 +577,16 @@ const appPlatformCommands = new Map<AppPlatform, AppPlatformCommand>([
  * @param action - The AppAutomateAction to perform.
  * @param args - The arguments for the action.
  * @param logger - The logger to use for logging.
- * @param platforms - The platforms to consider for URL upload.
+ * @param osPlatforms - The platforms to consider for URL upload.
  * @returns A promise that resolves when the action is completed.
  * @throws {BrowserStackError} If the action is invalid or if required parameters are missing.
  */
 async function run(
-  platformRun: AppPlatformCommand,
-  action: AppAutomateAction,
+  platformRun: PlatformCommands,
+  action: PlatformAction,
   args: string[],
   logger: Logger = globalThis.console,
-  platforms: string[] = ["android", "ios"]
+  osPlatforms: string[] = ["android", "ios"]
 ) {
   if (!platformRun.supportedActions.includes(action)) {
     throw new BrowserStackError(
@@ -478,14 +597,14 @@ async function run(
   }
 
   switch (action) {
-    case AppAutomateAction.upload: {
+    case PlatformAction.upload: {
       const pathArg = args.shift();
       if (!pathArg) {
         throw new BrowserStackError("No file path or URL provided");
       }
 
       if (pathArg?.toLowerCase?.().startsWith?.("http")) {
-        if (!args[0] || platforms.includes(args[0])) {
+        if (!args[0] || osPlatforms.includes(args[0])) {
           // URL must be followed by filename and later optionally by platform=android|ios
           // maybe consider using basename(url.pathname) as filename
           throw new BrowserStackError("No filename provided for URL upload");
@@ -509,16 +628,16 @@ async function run(
       );
       break;
     }
-    case AppAutomateAction.list: {
+    case PlatformAction.list: {
       await platformRun.list({}, args, logger);
       break;
     }
-    case AppAutomateAction.get: {
-      await platformRun.get({ appId: args[0] }, args.slice(1), logger);
+    case PlatformAction.get: {
+      await platformRun.get({ id: args[0] }, args.slice(1), logger);
       break;
     }
-    case AppAutomateAction.delete: {
-      await platformRun.delete({ appId: args[0] }, args.slice(1), logger);
+    case PlatformAction.delete: {
+      await platformRun.delete({ id: args[0] }, args.slice(1), logger);
       break;
     }
     default:
@@ -532,24 +651,22 @@ interface Logger {
 }
 
 /**
- * Ensures that the provided app platform is valid.
+ * Ensures that the provided platform is valid.
  *
- * @param inputAppPlatform - The app platform to validate.
- * @param validAppPlatforms - An array of valid app platforms. Defaults to all values of AppPlatform.
+ * @param inputPlatform - The platform to validate.
+ * @param validAppPlatforms - An array of valid platforms. Defaults to all values of AppPlatform.
  * @returns The validated action.
  * @throws {BrowserStackError} If the action is invalid.
  *
  * @internal
  */
-function ensureValidAppPlatform(
-  inputAppPlatform: string | undefined
-): AppPlatform {
-  const action = inputAppPlatform?.toLowerCase?.()?.trim?.();
-  if (action && appPlatformCommands.has(action as AppPlatform)) {
-    return action as AppPlatform;
+function ensureValidPlatform(inputPlatform: string | undefined): Platform {
+  const action = inputPlatform?.toLowerCase?.()?.trim?.();
+  if (action && platformCommands.has(action as Platform)) {
+    return action as Platform;
   }
 
-  throw new BrowserStackError(`Invalid app platform: ${action}`);
+  throw new BrowserStackError(`Invalid platform: ${action}`);
 }
 
 /**
@@ -564,11 +681,11 @@ function ensureValidAppPlatform(
  */
 function ensureValidAction(
   inputAction: string | undefined,
-  validActions = Object.values(AppAutomateAction)
-): AppAutomateAction {
+  validActions = Object.values(PlatformAction)
+): PlatformAction {
   const action = inputAction?.toLowerCase?.()?.trim?.();
-  if (action && validActions.includes(action as AppAutomateAction)) {
-    return action as AppAutomateAction;
+  if (action && validActions.includes(action as PlatformAction)) {
+    return action as PlatformAction;
   }
 
   throw new BrowserStackError(`Invalid action: ${action}`);
@@ -584,11 +701,11 @@ export async function main(
 
     const args = inputArgs.map((arg) => arg.trim());
 
-    const appPlatformCommand = appPlatformCommands.get(
-      ensureValidAppPlatform(args[0])
+    const appPlatformCommand = platformCommands.get(
+      ensureValidPlatform(args[0])
     );
     if (!appPlatformCommand) {
-      throw new BrowserStackError("Invalid app platform");
+      throw new BrowserStackError("Invalid platform");
     }
 
     const action = ensureValidAction(args[1]);

@@ -9,7 +9,7 @@ Please ensure you've set environment variables `BROWSERSTACK_USERNAME` and `BROW
 
 Example below shows use of npm `pre` and `post` scripts in `package.json` to start and stop the `BrowserStackLocal` binary. CLI script assumes a node.js runtime environment.
 
-`npm i -D browserstack-client`
+> npm install --save-dev browserstack-client
 
 ```json
 {
@@ -39,9 +39,9 @@ You can also retrieve a list of active (not necessarily still running) local-ide
 TODO: Network proxy support for CLI. Use programmatic API if you require configuring a proxy.
 
 
-## App Automate npm Scripts for App Uploads
+## App Automate npm Scripts for App/Media Uploads
 
-Similar to the above npm scripts for BrowserStack Local, you can upload and manage your app binaries (Android apk/aab, iOS ipa/zip packages) for various frameworks supported by BrowserStack. You can later refer to these in tests using the `bs://<app_id>` URIs.
+Similar to the above npm scripts for BrowserStack Local, you can upload and manage your app binaries (Android apk/aab, iOS ipa/zip packages) for various frameworks supported by BrowserStack and media files (images, videos, audio). You can later refer to these in tests using the `bs://<app-id>` or `media://<media-id>` URIs.
 
 > Note that this feature needs further testing, and the CLI commands and responses may change.
 
@@ -101,6 +101,15 @@ browserstack-app-automate xcuitest delete <app-id>
 ```
 browserstack-app-automate detox upload <local-file-path> app
 browserstack-app-automate detox upload <local-file-path> app-client
+```
+
+### Media Files
+
+```
+browserstack-app-automate media list
+browserstack-app-automate media upload <local-file-path>
+browserstack-app-automate media get <media-id>
+browserstack-app-automate media delete <media-id>
 ```
 
 
