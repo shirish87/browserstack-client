@@ -35,13 +35,12 @@ export function load(app) {
     );
 
     for (const c of classes) {
-      c.comment ??= [
-        {
-          blockTags: [],
-          modifierTags: new Set(),
-          summary: [],
-        },
-      ];
+      console.log('c.comment', c.comment);
+      c.comment ??= {
+        blockTags: [],
+        modifierTags: new Set(),
+        summary: [],
+      };
 
       const methods = c.children.filter((o) => o.kind === 0x800);
       if (methods.length) {
