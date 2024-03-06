@@ -106,7 +106,7 @@ console.log(await jsTestingClient.getAccountStatus());
 
 ## Documentation
 
-Please refer to the [documentation](https://shirish87.github.io/browserstack-client/api/namespaces/BrowserStack/README.html) for methods available for each of these clients.
+Please refer to the [documentation](https://shirish87.github.io/browserstack-client/api/globals.html) for methods available for each of these clients.
 
 
 ## Proxy Support
