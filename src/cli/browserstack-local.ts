@@ -5,10 +5,12 @@ import { BrowserStackError } from "@/error";
 import { ensureDirExists } from "@/fs-utils";
 import { BrowserStack, LocalTestingBinaryOptions } from "@/index.node";
 import { writeFileAtomic } from "@/write-file-atomic";
+import cp from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
+import { onExit } from "signal-exit";
 
 const require = createRequire(import.meta.url);
 
@@ -16,6 +18,7 @@ enum BrowserStackLocalAction {
   start = "start",
   stop = "stop",
   list = "list",
+  runWith = "run-with",
 }
 
 interface Logger {
@@ -67,6 +70,8 @@ async function start(
     await writeStatusFile(statusPath, localIdentifiers, entries);
     logger.info(`${localIdentifier}: ${status}`);
   }
+
+  return localIdentifier;
 }
 
 async function stopInstance(
@@ -156,9 +161,61 @@ async function stop(
  */
 async function list(statusPath: string, logger: Logger = globalThis.console) {
   const { localIdentifiers = [] } = await readOrCreateStatusFile(statusPath);
+  localIdentifiers.forEach((localIdentifier) => logger.info(localIdentifier));
+}
 
-  for (const localIdentifier of localIdentifiers) {
-    logger.info(localIdentifier);
+/**
+ * Runs the local testing binary before a user-provided command and stops it after the command has finished.
+ * Also sets the BROWSERSTACK_LOCAL_ID and BROWSERSTACK_LOCAL_IDENTIFIER environment variables.
+ *
+ * @param options - The options for running the local testing binary.
+ * @param statusPath - The path to the status file.
+ * @param runWithArgs - The arguments to run the local testing binary with.
+ * @param logger - The logger instance.
+ */
+async function runWith(
+  options: LocalTestingBinaryOptions,
+  statusPath: string,
+  runWithArgs: string[],
+  logger: Logger
+) {
+  const localIdentifier = await start(options, statusPath, logger);
+  let childExitCode: number;
+
+  const exitHandler = async (code?: number | null) => {
+    await stop({ ...options, localIdentifier }, statusPath, logger);
+    process.exit(typeof code === "number" ? code : childExitCode);
+  };
+
+  const removeOnExitHandler = onExit(() => {
+    (async () => await exitHandler())();
+  });
+
+  try {
+    const [cmd, ...args] = runWithArgs;
+    const childProcess = cp.spawnSync(cmd, args, {
+      cwd: process.cwd(),
+      stdio: "inherit",
+      windowsHide: true,
+      env: {
+        ...process.env,
+        BROWSERSTACK_LOCAL_ID: localIdentifier,
+        BROWSERSTACK_LOCAL_IDENTIFIER: localIdentifier,
+      },
+    });
+
+    childExitCode = childProcess.status ?? (childProcess.error ? 1 : 0);
+  } catch (err) {
+    childExitCode = 1;
+
+    if (err instanceof Error) {
+      logger.error(err?.message);
+    } else {
+      logger.error(`An unexpected error occurred: ${err}`);
+    }
+  } finally {
+    removeOnExitHandler();
+    await exitHandler();
   }
 }
 
@@ -334,19 +391,23 @@ async function writeStatusFile(
       null,
       2
     ),
-    { encoding: fileEncoding },
+    { encoding: fileEncoding }
   );
 }
 
 export async function main(
   inputArgs: string[] = process.argv.slice(2),
-  logger: Logger = globalThis.console
+  logger: Logger = globalThis.console,
+  cmdSeparator: string = "--"
 ) {
   try {
     const args = inputArgs.map((arg) => arg.trim());
     const action = ensureValidAction(args[0]);
-    const localIdentifier = resolveEnvLocalIdentifier() ?? args[1];
-    const key = ensureKeyExists(args[2]);
+    const localIdentifier =
+      resolveEnvLocalIdentifier() ??
+      (args[1] === cmdSeparator ? undefined : args[1]);
+
+    const key = ensureKeyExists(args[2] === cmdSeparator ? undefined : args[2]);
     const binHome = await ensureBinHomeExists();
     const statusPath = join(binHome, "status.json");
 
@@ -362,6 +423,29 @@ export async function main(
       case BrowserStackLocalAction.list: {
         await list(statusPath, logger);
         break;
+      }
+      case BrowserStackLocalAction.runWith: {
+        const cmdStartIndex = args.findIndex((arg) => arg === cmdSeparator);
+        if (cmdStartIndex === -1) {
+          throw new BrowserStackError(
+            `Invalid run-with command: no command separator ${cmdSeparator} found`
+          );
+        }
+
+        const runWithArgs = args.slice(cmdStartIndex + 1);
+        if (!runWithArgs.length) {
+          throw new BrowserStackError(
+            "Invalid run-with command: no command provided"
+          );
+        }
+
+        // resolves and exits by itself
+        return await runWith(
+          { key, binHome, localIdentifier },
+          statusPath,
+          runWithArgs,
+          logger
+        );
       }
       default:
         throw new BrowserStackError(
