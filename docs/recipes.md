@@ -28,9 +28,36 @@ Example below shows use of npm `pre` and `post` scripts in `package.json` to sta
 
 ```
 
+However, if the npm `start` command exits with an error, the `poststart` script is never executed, and the BrowserStackLocal binary is left running on your system. You can cleanup all binaries by running `browserstack-local stop`.
+
+A better option is to use `browserstack run-with -- <your-command>`.
+
+This will:
+- Start the local binary
+- Set `BROWSERSTACK_LOCAL_IDENTIFIER` environment variable for `<your-command>`
+- Run `<your-command>` _synchronously_ as a child process inheriting `std*`
+- Stop the local binary after `<your-command>` ends
+- Exit with the exit code of `<your-command>`
+
+```json
+{
+  "name": "your-package",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    // use %npm_package_name% to pass your package name as localIdentifier on Windows
+    "test": "browserstack-local run-with $npm_package_name -- playwright test",
+  },
+  "devDependencies": {
+    "browserstack-client": "latest"
+  }
+}
+
+```
+
 Optionally, you may supply a `localIdentifier` that distinguishes your current project from other local projects being tested on BrowserStack.
 
-`browserstack-local (start|stop) [local-identifier]`
+`browserstack-local (start|stop|run-with) [local-identifier]`
 
 > Calling `browserstack-local stop` without a local-identifier will terminate all locally running instances of the binary that have previously been started by `browserstack-local start`.
 
