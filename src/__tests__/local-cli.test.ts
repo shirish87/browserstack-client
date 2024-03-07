@@ -16,6 +16,30 @@ describe("LocalCLI", () => {
     }
   );
 
+  describe("Test instance run-with", () => {
+    test("run-with", async () => {
+      await main(
+        [
+          "run-with",
+          "--",
+          "node",
+          "-e",
+          "'assert(process.env.BROWSERSTACK_LOCAL_IDENTIFIER);'",
+        ],
+        {
+          info(message) {
+            expect(message).toMatch(
+              /[0-9a-z]+: (Connected|BrowserStackLocal stopped successfully)/
+            );
+          },
+          error(message) {
+            expect(message).toBeFalsy();
+          },
+        }
+      );
+    });
+  });
+
   describe("Test instance start-list-stop", () => {
     let localIdentifier: string | undefined;
 
