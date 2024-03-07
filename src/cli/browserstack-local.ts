@@ -179,9 +179,9 @@ async function runWith(
   const localIdentifier = await start(options, statusPath, logger);
   let childExitCode: number;
 
-  const exitHandler = async (code?: number | null) => {
+  const exitHandler = async () => {
     await stop({ ...options, localIdentifier }, statusPath, logger);
-    process.exit(typeof code === "number" ? code : childExitCode);
+    process.exit(childExitCode);
   };
 
   const removeOnExitHandler = onExit(() => {
@@ -192,7 +192,6 @@ async function runWith(
     const [cmd, ...args] = runWithArgs;
     const childProcess = cp.spawnSync(cmd, args, {
       cwd: process.cwd(),
-      stdio: "inherit",
       windowsHide: true,
       env: {
         ...process.env,
@@ -201,7 +200,11 @@ async function runWith(
       },
     });
 
-    childExitCode = childProcess.status ?? (childProcess.error ? 1 : 0);
+    if (childProcess.error) {
+      throw childProcess.error;
+    }
+
+    childExitCode = Number(childProcess.status ?? 0);
   } catch (err) {
     childExitCode = 1;
 
@@ -443,7 +446,10 @@ export async function main(
           statusPath,
           runWithArgs,
           logger
-        );
+        ).catch(() => {
+          // ignore since all code-paths process.exit()
+          // error: process.exit unexpectedly called with "0"
+        });
       }
       default:
         throw new BrowserStackError(
