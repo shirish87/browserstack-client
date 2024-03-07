@@ -192,6 +192,7 @@ async function runWith(
     const [cmd, ...args] = runWithArgs;
     const childProcess = cp.spawnSync(cmd, args, {
       cwd: process.cwd(),
+      stdio: ["pipe", "inherit", "inherit"],
       windowsHide: true,
       env: {
         ...process.env,
