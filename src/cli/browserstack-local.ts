@@ -199,6 +199,8 @@ async function runWith(
         BROWSERSTACK_LOCAL_ID: localIdentifier,
         BROWSERSTACK_LOCAL_IDENTIFIER: localIdentifier,
       },
+      // https://stackoverflow.com/a/54515183
+      ...(process.platform === "win32" ? { shell: true } : {}),
     });
 
     if (childProcess.error) {
