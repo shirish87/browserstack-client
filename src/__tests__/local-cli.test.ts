@@ -12,7 +12,10 @@ describe("LocalCLI", () => {
     async ({ localTestingBinary: { options } }) => {
       env.BROWSERSTACK_KEY = options.key;
 
-      await main(["stop"]);
+      await main(["stop"], {
+        info() {},
+        error() {},
+      });
     }
   );
 
