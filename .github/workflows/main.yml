@@ -36,7 +36,7 @@ jobs:
         run: |
           npm install
           npm run build
-          npm test -- -t "LocalLocalCLI"
+          npm test -- -t "LocalCLI"
 
 
   test-node-lts:
