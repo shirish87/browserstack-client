@@ -83,7 +83,7 @@ export class LocalTestingBinary extends LocalTestingClient {
     }
 
     this.localIdentifier = localIdentifier;
-    this.commandTimeoutMs = options?.commandTimeoutMs ?? 10_000;
+    this.commandTimeoutMs = options?.commandTimeoutMs ?? 20_000;
     this.binHome = this.getBinHome();
   }
 
