@@ -3,6 +3,7 @@ import { components } from "@/generated/openapi.ts";
 import { LocalTestingBinary } from "@/local-testing-binary.ts";
 import { unlink } from "node:fs/promises";
 import { join } from "node:path";
+import process from "node:process";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
 import type { BrowserStackTestContext } from "./setup.ts";
 
@@ -58,5 +59,15 @@ describe("LocalClient", () => {
     // console.info(data);
     // expect(data).toMatch(/successfully disconnected/i);
     expectTypeOf(data).toMatchTypeOf<string>();
+  });
+
+  test.skip<BrowserStackTestContext>("downloadBinary-darwin-x64", async ({
+    localTesting: { client },
+  }) => {
+    const { content, filename } = await client.downloadBinary("darwin-x64");
+    expect(content).toBeDefined();
+    expect(content).toBeInstanceOf(Uint8Array);
+    expect(content.length).toBeGreaterThan(0);
+    expectTypeOf(filename).toMatchTypeOf<string>();
   });
 }, 30_000);

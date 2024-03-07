@@ -14,6 +14,7 @@ import {
 } from "@/local-testing-binary.ts";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
+import process from "node:process";
 import { assert, beforeEach } from "vitest";
 
 export interface BrowserStackTestContext {

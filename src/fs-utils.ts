@@ -1,7 +1,8 @@
 import { currentArch, currentPlatform } from "@/env.ts";
 import { BrowserStackError } from "@/error.ts";
 import { operations } from "@/generated/openapi.ts";
-import { writeFileAtomic } from "@/write-file-atomic";
+import { writeFileAtomic } from "@/write-file-atomic.ts";
+import { Buffer } from "node:buffer";
 import { spawnSync } from "node:child_process";
 import {
   chmod,
@@ -12,6 +13,7 @@ import {
   unlink,
 } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import process from "node:process";
 
 export async function binaryPath(
   binHome: string,

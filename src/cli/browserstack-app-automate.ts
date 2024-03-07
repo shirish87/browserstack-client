@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 
-import { ensureKeyExists, ensureUsernameExists } from "@/cli/cli-utils";
-import { BrowserStackError } from "@/error";
-import { components } from "@/generated/openapi";
+import { ensureKeyExists, ensureUsernameExists } from "@/cli/cli-utils.ts";
+import { BrowserStackError } from "@/error.ts";
+import { components } from "@/generated/openapi.ts";
 import {
   AppAutomateClient,
   BrowserStackOptions,
   FlutterPlatform,
-} from "@/index";
+} from "@/index.ts";
 import { randomBytes } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { basename, resolve } from "node:path";
+import process from "node:process";
 
 const require = createRequire(import.meta.url);
 

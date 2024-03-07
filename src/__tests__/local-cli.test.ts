@@ -1,7 +1,7 @@
 import { main } from "@/cli/browserstack-local.ts";
 import { env } from "@/env.ts";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
-import { BrowserStackTestContext } from "./setup";
+import { BrowserStackTestContext } from "./setup.ts";
 
 describe("LocalCLI", () => {
   beforeAll(() => {

@@ -1,5 +1,5 @@
-import { env } from "@/env";
-import { BrowserStackError } from "@/error";
+import { env } from "@/env.ts";
+import { BrowserStackError } from "@/error.ts";
 
 /**
  * Ensures that a key exists and returns it.

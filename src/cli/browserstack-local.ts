@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-
-import { env } from "@/env";
-import { BrowserStackError } from "@/error";
-import { ensureDirExists } from "@/fs-utils";
-import { BrowserStack, LocalTestingBinaryOptions } from "@/index.node";
-import { writeFileAtomic } from "@/write-file-atomic";
+import { env } from "@/env.ts";
+import { BrowserStackError } from "@/error.ts";
+import { ensureDirExists } from "@/fs-utils.ts";
+import { LocalTestingBinary, LocalTestingBinaryOptions } from "@/index.node.ts";
+import { BufferEncoding, writeFileAtomic } from "@/write-file-atomic.ts";
 import cp from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
+import process from "node:process";
 import { onExit } from "signal-exit";
 
 const require = createRequire(import.meta.url);
@@ -44,10 +44,7 @@ async function start(
     statusPath
   );
 
-  const localTestingBinary = new BrowserStack.LocalTestingBinary({
-    ...options,
-  });
-
+  const localTestingBinary = new LocalTestingBinary(options);
   const localIdentifier = localTestingBinary.localIdentifier;
   let status: string | undefined;
 
@@ -79,7 +76,7 @@ async function stopInstance(
   options: Omit<LocalTestingBinaryOptions, "localIdentifier">,
   logger: Logger = globalThis.console
 ) {
-  const localTestingBinary = new BrowserStack.LocalTestingBinary({
+  const localTestingBinary = new LocalTestingBinary({
     ...options,
     localIdentifier,
   });
@@ -315,7 +312,7 @@ async function readOrCreateStatusFile(
 ): Promise<{ localIdentifiers: string[] } & Record<string, unknown>> {
   try {
     const contents = await readFile(statusPath, fileEncoding).then((data) =>
-      data.trim()
+      data.toString().trim()
     );
 
     if (contents.length) {
@@ -406,8 +403,9 @@ export async function main(
     const localIdentifier =
       resolveEnvLocalIdentifier() ??
       (args[1] === cmdSeparator ? undefined : args[1]);
-
-    const key = ensureKeyExists(args[2] === cmdSeparator ? undefined : args[2]);
+    const key = ensureKeyExists(
+      action === BrowserStackLocalAction.runWith ? undefined : args[2]
+    );
     const binHome = await ensureBinHomeExists();
     const statusPath = join(binHome, "status.json");
 
