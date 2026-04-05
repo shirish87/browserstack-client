@@ -56,7 +56,7 @@ export class APIClient {
       throw new BrowserStackError("Missing options.username");
     }
 
-    const key = options.key ?? env.BROWSERSTACK_KEY;
+    const key = options.key ?? env.BROWSERSTACK_KEY ?? env.BROWSERSTACK_ACCESS_KEY;
     if (typeof key !== "string" || !key.trim().length) {
       throw new BrowserStackError("Missing options.key");
     }
