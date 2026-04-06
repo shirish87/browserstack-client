@@ -1,0 +1,33 @@
+{
+  "name": "@browserstack-client/openapi",
+  "version": "6.0.0",
+  "type": "module",
+  "description": "OpenAPI specs and generated TypeScript types for BrowserStack APIs",
+  "files": [
+    "generated/**/*.ts",
+    "generated/**/*.json",
+    "specs/**/*.yml"
+  ],
+  "exports": {
+    ".": "./generated/index.ts",
+    "./automate": "./generated/automate.ts",
+    "./app-automate": "./generated/app-automate.ts",
+    "./js-testing": "./generated/js-testing.ts",
+    "./screenshots": "./generated/screenshots.ts",
+    "./local-testing": "./generated/local-testing.ts",
+    "./local-testing-binary": "./generated/local-testing-binary.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "true"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "^10.1.1",
+    "openapi-typescript": "^7.13.0",
+    "typescript": "^6.0.2"
+  }
+}

@@ -1,27 +1,21 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "ES2020",
-    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM"],
     "module": "ESNext",
-    "lib": ["ES2020"],
-    "skipLibCheck": true,
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
+    "useDefineForClassFields": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "@browserstack-client/*": ["packages/*/src/index.ts"]
-    }
-  },
-  "include": ["packages/*/src"]
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  }
 }

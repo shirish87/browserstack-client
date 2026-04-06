@@ -1,7 +1,7 @@
 # Recipes
 
 ### Prerequisites
-* Environment variables `BROWSERSTACK_USERNAME` and `BROWSERSTACK_KEY` set in your shell
+* Environment variables `BROWSERSTACK_USERNAME` and `BROWSERSTACK_ACCESS_KEY` (or `BROWSERSTACK_KEY`) set in your shell
 * Node.js runtime
 
 ## BrowserStackLocal in npm scripts for testing local websites
@@ -15,7 +15,7 @@ Example below shows use of [npm `pre` and `post` scripts](https://docs.npmjs.com
 ```json
 {
   "name": "your-package",
-  "version": "1.0.0",
+  "version": "6.0.0",
   "main": "index.js",
   "scripts": {
     "prestart": "browserstack-local start",
@@ -43,7 +43,7 @@ This will:
 ```json
 {
   "name": "your-package",
-  "version": "1.0.0",
+  "version": "6.0.0",
   "main": "index.js",
   "scripts": {
     // use %npm_package_name% to pass your package name as localIdentifier on Windows

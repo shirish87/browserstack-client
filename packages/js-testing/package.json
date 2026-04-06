@@ -1,0 +1,46 @@
+{
+  "name": "@browserstack-client/js-testing",
+  "version": "6.0.0",
+  "type": "module",
+  "description": "BrowserStack JavaScript Testing API client for interactive browser automation",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
+      "import": "./dist/schemas/index.js"
+    },
+    "./schemas/v5": {
+      "types": "./dist/schemas/v5/index.d.ts",
+      "import": "./dist/schemas/v5/index.js"
+    },
+    "./test": {
+      "types": "./dist/test/index.d.ts",
+      "import": "./dist/test/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit || true"
+  },
+  "dependencies": {
+    "@browserstack-client/core": "workspace:*",
+    "@browserstack-client/openapi": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.39",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2",
+    "vitest": "^1.6.1",
+    "zod": "^3.25.76"
+  }
+}

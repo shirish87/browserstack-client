@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true,
+    "paths": {
+      "@browserstack-client/openapi": ["../openapi/generated/index.ts"]
+    }
+  },
+  "include": ["src"]
+}

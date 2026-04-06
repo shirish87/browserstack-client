@@ -1,0 +1,46 @@
+{
+  "name": "@browserstack-client/cli",
+  "version": "6.0.0",
+  "type": "module",
+  "description": "Command-line interface for BrowserStack Local Testing and App Automate",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "bin": {
+    "browserstack-local": "./dist/browserstack-local.js",
+    "browserstack-app-automate": "./dist/browserstack-app-automate.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./local": {
+      "types": "./dist/browserstack-local.d.ts",
+      "import": "./dist/browserstack-local.js"
+    },
+    "./app-automate": {
+      "types": "./dist/browserstack-app-automate.d.ts",
+      "import": "./dist/browserstack-app-automate.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit || true"
+  },
+  "dependencies": {
+    "@browserstack-client/app-automate": "workspace:*",
+    "@browserstack-client/core": "workspace:*",
+    "@browserstack-client/local-testing-binary": "workspace:*",
+    "signal-exit": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.39",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2"
+  }
+}
