@@ -7,4 +7,6 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   target: "node18",
+  platform: "node",
+  external: ["yaml"],
 });

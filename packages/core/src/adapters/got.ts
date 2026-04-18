@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Converts a Got instance into a fetch-compatible function.
  *

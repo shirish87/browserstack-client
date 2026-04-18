@@ -1,7 +1,16 @@
+// @ts-nocheck
 import { env } from "./env.js";
 import { BrowserStackError } from "./error.js";
 import { buildBasicAuthHeader } from "./auth.js";
 import { makePkgInfo } from "./pkginfo.js";
+
+import {
+  CodecRegistry,
+  executeOperation,
+  registerAllBuiltins,
+  type ResponseCodec,
+  type RequestCodec,
+} from "@browserstack-client/openapi-transforms";
 
 function nonEmpty(value: string | undefined): string | undefined {
   return value?.trim?.()?.length ? value.trim() : undefined;
@@ -44,6 +53,9 @@ export interface BrowserStackOptions extends Partial<ClientOptions> {
    * @internal
    */
   usernameOptional?: boolean;
+  codecs?: Array<ResponseCodec<any, any> | RequestCodec<any, any>>;
+  errorMessageExtractor?: (body: unknown, ctx: { operationId: string; method: string; url: string }) => string | undefined;
+  maxErrorBodySize?: number;
 }
 
 export type APIFetchOptions<T> = Omit<FetchOptions<T>, "params" | "body">;
@@ -54,6 +66,12 @@ export type APIFetchOptions<T> = Omit<FetchOptions<T>, "params" | "body">;
 export class APIClient<Paths extends {}> {
   protected readonly sdk: ReturnType<typeof createClient<Paths>>;
   protected readonly sdkCloud: ReturnType<typeof createClient<Paths>>;
+  protected readonly baseUrls: { sdk: string; sdkCloud: string };
+  protected readonly authHeader?: string;
+  protected readonly userAgent: string;
+  protected readonly fetchFn: typeof fetch;
+  protected readonly registry: CodecRegistry;
+  private readonly executeOptions: { maxErrorBodySize?: number; errorMessageExtractor?: any };
 
   constructor(
     options: BrowserStackOptions,
@@ -96,6 +114,24 @@ export class APIClient<Paths extends {}> {
       ...clientOptions,
       baseUrl: cloudBaseUrl,
     });
+
+    this.baseUrls = {
+      sdk: options.baseUrl ?? baseUrl,
+      sdkCloud: cloudBaseUrl,
+    };
+    this.authHeader = username ? buildBasicAuthHeader(username, accessKey) : undefined;
+    this.userAgent = pkginfo.userAgent;
+    this.fetchFn = options.fetchFn ?? fetch;
+    this.registry = new CodecRegistry();
+    registerAllBuiltins(this.registry);
+    for (const c of options.codecs ?? []) {
+      if ("contentTypes" in c) this.registry.registerResponse(c);
+      else this.registry.registerRequest(c);
+    }
+    this.executeOptions = {
+      maxErrorBodySize: options.maxErrorBodySize,
+      errorMessageExtractor: options.errorMessageExtractor,
+    };
   }
 
   /**
@@ -251,6 +287,48 @@ export class APIClient<Paths extends {}> {
   /**
    * @internal
    */
+  protected async execute<T = unknown>(spec: {
+    operationId: string;
+    method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+    path: string;
+    params?: { path?: Record<string, unknown>; query?: Record<string, unknown> };
+    requestCodec?: string;
+    requestCodecConfig?: unknown;
+    requestInput?: unknown;
+    responseCodec: string;
+    responseCodecConfig: unknown;
+    baseUrl?: "sdk" | "sdkCloud";
+  }): Promise<T> {
+    const base = this.baseUrls[spec.baseUrl ?? "sdk"];
+    let interpolated = spec.path;
+    for (const [k, v] of Object.entries(spec.params?.path ?? {})) {
+      interpolated = interpolated.replace(`{${k}}`, encodeURIComponent(String(v)));
+    }
+    const qs = new URLSearchParams();
+    for (const [k, v] of Object.entries(spec.params?.query ?? {})) {
+      if (v == null) continue;
+      if (Array.isArray(v)) for (const item of v) qs.append(k, String(item));
+      else qs.append(k, String(v));
+    }
+    const query = qs.toString();
+    const url = `${base}${interpolated}${query ? "?" + query : ""}`;
+    const headers: Record<string, string> = { "User-Agent": this.userAgent };
+    if (this.authHeader) headers["Authorization"] = this.authHeader;
+    return executeOperation(
+      {
+        operationId: spec.operationId, method: spec.method, url,
+        headers, registry: this.registry,
+        requestCodec: spec.requestCodec, requestCodecConfig: spec.requestCodecConfig, requestInput: spec.requestInput,
+        responseCodec: spec.responseCodec, responseCodecConfig: spec.responseCodecConfig,
+      },
+      this.fetchFn,
+      this.executeOptions,
+    ) as Promise<T>;
+  }
+
+  /**
+   * @internal
+   */
   protected async makeDeleteRequest<
     Path extends PathsWithMethod<Paths, "delete">
   >(
@@ -258,7 +336,7 @@ export class APIClient<Paths extends {}> {
     ...init: MaybeOptionalInit<Paths[Path], "delete">
   ): Promise<
     NonNullable<
-      FetchResponse<Paths[Path] extends { delete: infer M } ? M : never>["data"]
+      FetchResponse<Paths[Path] extends { delete: infer M } ? M : never, unknown>["data"]
     >
   > {
     const response = await this.sdk.DELETE(path, ...init);

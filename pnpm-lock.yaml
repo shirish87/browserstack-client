@@ -242,6 +242,10 @@ importers:
         version: 6.0.2
 
   packages/openapi:
+    dependencies:
+      '@browserstack-client/openapi-transforms':
+        specifier: workspace:*
+        version: link:../openapi-transforms
     devDependencies:
       '@apidevtools/swagger-parser':
         specifier: ^10.1.1
@@ -262,6 +266,9 @@ importers:
         specifier: ^0.0.21
         version: 0.0.21
     devDependencies:
+      '@types/node':
+        specifier: ^20.19.39
+        version: 20.19.39
       fast-check:
         specifier: ^3.23.0
         version: 3.23.2

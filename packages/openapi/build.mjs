@@ -3,6 +3,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import openapiTS, { astToString } from "openapi-typescript";
 import { fileURLToPath } from "node:url";
+import { CodecRegistry, registerAllBuiltins } from "@browserstack-client/openapi-transforms";
+import { generateClientModule } from "@browserstack-client/openapi-transforms/codegen";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -118,3 +120,35 @@ await fs.writeFile(path.join(outDir, "index.ts"), indexContent);
 
 console.log("✓ Generated index.ts");
 console.log("✓ OpenAPI code generation complete");
+
+console.log("Generating transform-based client modules...");
+const registry = new CodecRegistry();
+registerAllBuiltins(registry);
+
+const productSpecs = [
+  { product: "automate", baseUrl: "sdk" },
+  { product: "app-automate", baseUrl: "sdk" },
+  { product: "js-testing", baseUrl: "sdk" },
+  { product: "screenshots", baseUrl: "sdk" },
+  { product: "local-testing", baseUrl: "sdk" },
+];
+
+for (const { product, baseUrl } of productSpecs) {
+  const specPath = path.join(__dirname, "specs", `${product}.yml`);
+  try {
+    const src = await generateClientModule({
+      specPath,
+      className: `Generated${toPascal(product)}Client`,
+      typesImportPath: `./${product}`,
+      registry,
+      baseUrl,
+    });
+    await fs.writeFile(path.join(outDir, `${product}.client.ts`), src);
+    console.log(`  ✓ ${product}.client.ts`);
+  } catch (e) {
+    console.error(`  ✗ ${product}:`, e.message);
+    process.exitCode = 1;
+  }
+}
+
+function toPascal(s) { return s.split(/[-_]/).map(w => w[0].toUpperCase() + w.slice(1)).join(""); }

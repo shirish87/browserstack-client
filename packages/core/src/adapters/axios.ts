@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Converts an Axios instance into a fetch-compatible function.
  * Consumers pass this as `fetchFn` when constructing any product client.

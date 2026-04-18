@@ -6,10 +6,19 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
-    "./codegen": { "types": "./dist/codegen/index.d.ts", "import": "./dist/codegen/index.js" }
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./codegen": {
+      "types": "./dist/codegen/index.d.ts",
+      "import": "./dist/codegen/index.js"
+    }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
@@ -18,13 +27,14 @@
     "test:mem": "node --expose-gc ./node_modules/vitest/vitest.mjs run src/__tests__/streaming/memory.test.ts"
   },
   "dependencies": {
-    "@streamparser/json": "^0.0.21",
-    "@standard-schema/spec": "^1.0.0"
+    "@standard-schema/spec": "^1.0.0",
+    "@streamparser/json": "^0.0.21"
   },
   "peerDependencies": {
     "openapi-fetch": "^0.9.2"
   },
   "devDependencies": {
+    "@types/node": "^20.19.39",
     "fast-check": "^3.23.0",
     "openapi-fetch": "0.9.2",
     "tsup": "^8.5.1",

@@ -8,6 +8,8 @@ const __dirname = path.dirname(__filename);
 function getSharedAliases(packageDir: string) {
   return {
     "@browserstack-client/core": path.resolve(__dirname, "packages/core/src/index.ts"),
+    "@browserstack-client/openapi/automate/client": path.resolve(__dirname, "packages/openapi/generated/automate.client.ts"),
+    "@browserstack-client/openapi/automate": path.resolve(__dirname, "packages/openapi/generated/automate.ts"),
     "@browserstack-client/openapi": path.resolve(__dirname, "packages/openapi/generated/index.ts"),
     "@browserstack-client/app-automate": path.resolve(__dirname, "packages/app-automate/src/index.ts"),
     "@browserstack-client/automate": path.resolve(__dirname, "packages/automate/src/index.ts"),

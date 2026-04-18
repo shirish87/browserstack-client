@@ -11,10 +11,15 @@
   "exports": {
     ".": "./generated/index.ts",
     "./automate": "./generated/automate.ts",
+    "./automate/client": "./generated/automate.client.ts",
     "./app-automate": "./generated/app-automate.ts",
+    "./app-automate/client": "./generated/app-automate.client.ts",
     "./js-testing": "./generated/js-testing.ts",
+    "./js-testing/client": "./generated/js-testing.client.ts",
     "./screenshots": "./generated/screenshots.ts",
+    "./screenshots/client": "./generated/screenshots.client.ts",
     "./local-testing": "./generated/local-testing.ts",
+    "./local-testing/client": "./generated/local-testing.client.ts",
     "./local-testing-binary": "./generated/local-testing-binary.ts",
     "./package.json": "./package.json"
   },
@@ -29,5 +34,8 @@
     "@apidevtools/swagger-parser": "^10.1.1",
     "openapi-typescript": "^7.13.0",
     "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "@browserstack-client/openapi-transforms": "workspace:*"
   }
 }

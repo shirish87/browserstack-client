@@ -31,12 +31,20 @@ export type { PathAst, PathNode } from "./path/types.js";
 export { streamExtract } from "./streaming/json-stream.js";
 export {
   registerBuiltinResponseCodecs,
+  registerBuiltinRequestCodecs,
+  registerAllBuiltins,
   jsonResponseCodec,
   jsonUnwrapCodec,
   jsonComposeCodec,
   textResponseCodec,
   binaryResponseCodec,
+  jsonRequestCodec,
+  multipartRequestCodec,
 } from "./codecs/index.js";
 export type { JsonUnwrapConfig } from "./codecs/response-json-unwrap.js";
 export type { JsonComposeConfig } from "./codecs/response-json-compose.js";
 export type { BinaryConfig } from "./codecs/response-binary.js";
+export type { MultipartConfig } from "./codecs/request-multipart.js";
+
+export { executeOperation } from "./execute.js";
+export type { ExecuteSpec, ExecuteOptions } from "./execute.js";

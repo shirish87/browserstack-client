@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(journalctl *)",
+      "Bash(pnpm list *)",
+      "Bash(systemd-analyze blame)",
+      "Bash(apt list *)",
+      "Bash(docker-compose ps *)",
+      "Bash(docker-compose logs *)",
+      "Bash(pnpm test *)",
+      "Bash(pnpm test)",
+      "Bash(pnpm -F * test*)",
+      "Bash(pnpm -F * typecheck*)",
+      "Bash(pnpm typecheck *)",
+      "Bash(pnpm typecheck)",
+      "Bash(pnpm -w typecheck*)",
+      "Bash(lsof -i *)"
+    ]
+  }
+}

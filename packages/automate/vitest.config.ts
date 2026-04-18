@@ -10,4 +10,7 @@ export default defineConfig({
     name: "automate",
     environment: "node",
   },
+  resolve: {
+    alias: getSharedAliases(__dirname),
+  },
 });

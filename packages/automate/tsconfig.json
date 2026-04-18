@@ -5,6 +5,8 @@
     "noEmit": true,
     "paths": {
       "@browserstack-client/core": ["../core/src/index.ts"],
+      "@browserstack-client/openapi/automate/client": ["../openapi/generated/automate.client.ts"],
+      "@browserstack-client/openapi/automate": ["../openapi/generated/automate.ts"],
       "@browserstack-client/openapi": ["../openapi/generated/index.ts"]
     }
   },
