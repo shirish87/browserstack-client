@@ -134,6 +134,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@browserstack-client/openapi-transforms':
+        specifier: workspace:*
+        version: link:../openapi-transforms
       openapi-fetch:
         specifier: 0.9.2
         version: 0.9.2

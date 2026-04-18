@@ -29,3 +29,22 @@ export class BrowserStackError extends Error {
     Object.setPrototypeOf(this, BrowserStackError.prototype);
   }
 }
+
+export {
+  OpenAPIError,
+  NetworkError,
+  HttpError,
+  DecodeError,
+  TransformError,
+  ClientError,
+  isNetworkError,
+  isHttpError,
+  isDecodeError,
+  isTransformError,
+  isClientError,
+} from "@browserstack-client/openapi-transforms";
+export type {
+  CodecContext,
+  ErrorKind,
+  ErrorBody,
+} from "@browserstack-client/openapi-transforms";

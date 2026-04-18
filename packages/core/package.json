@@ -25,6 +25,7 @@
     "typecheck": "tsc --noEmit || true"
   },
   "dependencies": {
+    "@browserstack-client/openapi-transforms": "workspace:*",
     "openapi-fetch": "0.9.2",
     "openapi-typescript-helpers": "^0.0.7"
   },
