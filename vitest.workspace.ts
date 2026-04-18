@@ -16,6 +16,7 @@ function getSharedAliases(packageDir: string) {
     "@browserstack-client/local-testing": path.resolve(__dirname, "packages/local-testing/src/index.ts"),
     "@browserstack-client/local-testing-binary": path.resolve(__dirname, "packages/local-testing-binary/src/index.ts"),
     "@browserstack-client/cli": path.resolve(__dirname, "packages/cli/src/index.ts"),
+    "@browserstack-client/openapi-transforms": path.resolve(__dirname, "packages/openapi-transforms/src/index.ts"),
   };
 }
 
@@ -78,5 +79,13 @@ export default defineWorkspace([
     },
     resolve: { alias: getSharedAliases("cli") },
     root: "./packages/cli",
+  },
+  {
+    test: {
+      name: "openapi-transforms",
+      environment: "node",
+    },
+    resolve: { alias: getSharedAliases("openapi-transforms") },
+    root: "./packages/openapi-transforms",
   },
 ]);
