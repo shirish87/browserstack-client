@@ -131,9 +131,9 @@ export class AutomateClient extends GeneratedAutomateClient {
     return this.getAutomateBuilds({
       ...options,
       params: {
-        ...options?.params,
+        ...(options as any)?.params,
         query: {
-          ...options?.params?.query,
+          ...(options as any)?.params?.query,
           ...query,
         },
       },
@@ -202,9 +202,9 @@ export class AutomateClient extends GeneratedAutomateClient {
     return this.deleteAutomateBuilds({
       ...options,
       params: {
-        ...options?.params,
+        ...(options as any)?.params,
         query: {
-          ...options?.params?.query,
+          ...(options as any)?.params?.query,
           "buildId[]": buildIds,
         },
       },
@@ -227,9 +227,9 @@ export class AutomateClient extends GeneratedAutomateClient {
     return this.getAutomateSessions(buildId, {
       ...options,
       params: {
-        ...options?.params,
+        ...(options as any)?.params,
         query: {
-          ...options?.params?.query,
+          ...(options as any)?.params?.query,
           ...query,
         },
       },
@@ -291,9 +291,9 @@ export class AutomateClient extends GeneratedAutomateClient {
     return this.deleteAutomateSessions({
       ...options,
       params: {
-        ...options?.params,
+        ...(options as any)?.params,
         query: {
-          ...options?.params?.query,
+          ...(options as any)?.params?.query,
           "sessionId[]": sessionIds,
         },
       },
@@ -321,7 +321,7 @@ export class AutomateClient extends GeneratedAutomateClient {
         body: data,
         bodySerializer: (body) => {
           const formData = new FormData();
-          formData.append("file", body.file as Blob, data.filename);
+          formData.append("file", body.file as unknown as Blob, data.filename);
           return formData;
         },
         params: {
@@ -354,7 +354,7 @@ export class AutomateClient extends GeneratedAutomateClient {
         body: data,
         bodySerializer: (body) => {
           const formData = new FormData();
-          formData.append("file", body.file as Blob, data.filename);
+          formData.append("file", body.file as unknown as Blob, data.filename);
           return formData;
         },
         params: {
@@ -475,7 +475,7 @@ export class AutomateClient extends GeneratedAutomateClient {
       body: data,
       bodySerializer: (body) => {
         const formData = new FormData();
-        formData.append("file", body.file as Blob, data.filename);
+        formData.append("file", body.file as unknown as Blob, data.filename);
         return formData;
       },
     });

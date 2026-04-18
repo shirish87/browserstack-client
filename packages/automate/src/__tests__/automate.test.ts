@@ -78,7 +78,7 @@ describe("AutomateClient", () => {
       const data = await client.getBadgeKey(projectId);
       expect(data).toBeDefined();
       expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toBeString();
+      expectTypeOf(data).toEqualTypeOf<string>();
     });
 
     test.skip("deleteProject", async () => {
@@ -158,7 +158,7 @@ describe("AutomateClient", () => {
       const { client, randomBuildId } = automateContext;
       const buildId = await randomBuildId();
       const data = await client.uploadBuildTerminalLogs(buildId, {
-        file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
+        file: new Blob(["Logs Logs Logs"], { type: "text/plain" }) as any,
         filename: "terminal.txt",
       });
 
@@ -250,7 +250,7 @@ describe("AutomateClient", () => {
       const { client, randomSessionId } = automateContext;
       const sessionId = await randomSessionId();
       const data = await client.uploadSessionTerminalLogs(sessionId, {
-        file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
+        file: new Blob(["Logs Logs Logs"], { type: "text/plain" }) as any,
         filename: "terminal.txt",
       });
 
@@ -265,12 +265,12 @@ describe("AutomateClient", () => {
     test("uploadMediaFile", async () => {
       const { client } = automateContext;
       const data = await client.uploadMediaFile({
-        file: new Blob(["test"], { type: "text/plain" }),
+        file: new Blob(["test"], { type: "text/plain" }) as any,
         filename: "test.txt",
       });
       expect(data).toBeDefined();
       expect(data.media_url).toBeDefined();
-      expectTypeOf(data.media_url).toBeString();
+      expectTypeOf(data.media_url).toEqualTypeOf<string>();
     }, 10_000);
 
     test("getMediaFiles", async () => {

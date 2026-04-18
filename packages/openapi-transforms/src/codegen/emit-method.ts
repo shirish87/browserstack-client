@@ -29,8 +29,6 @@ export function emitMethod(input: EmitMethodInput): string {
   return `
   ${input.operationId}(${params}): Promise<${input.returnType}> {
     return this.execute({
-      operationId: "${input.operationId}",
-      method: "${input.method}",
       path: "${input.path}",
       params: ${pathArg},
       ${input.hasRequestBody ? "requestInput: body," : ""}
@@ -40,6 +38,8 @@ export function emitMethod(input: EmitMethodInput): string {
       responseCodecConfig: ${configLit},
       baseUrl: "${input.baseUrl}",
       ...options,
+      operationId: "${input.operationId}",
+      method: "${input.method}" as const,
     }) as Promise<${input.returnType}>;
   }`.trim();
 }

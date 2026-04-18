@@ -14,7 +14,7 @@ export function deriveReturnType(baseType: string, ann: OperationAnnotations): s
       return applyPath(baseType, path);
     }
     case "json-compose": {
-      return baseType;
+      return "any";
     }
     default:
       return "unknown";

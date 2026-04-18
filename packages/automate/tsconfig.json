@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "noEmit": true,
     "paths": {
       "@browserstack-client/core": ["../core/src/index.ts"],

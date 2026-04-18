@@ -58,7 +58,7 @@ export interface BrowserStackOptions extends Partial<ClientOptions> {
   maxErrorBodySize?: number;
 }
 
-export type APIFetchOptions<T> = Omit<FetchOptions<T>, "params" | "body">;
+export type APIFetchOptions<T> = Omit<FetchOptions<T>, "body">;
 
 /**
  * @internal

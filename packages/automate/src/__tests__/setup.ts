@@ -1,4 +1,4 @@
-import { AutomateClient, BrowserStackOptions } from "@browserstack-client/automate";
+import { AutomateClient, BrowserStackOptions } from "../index.js";
 import { resolveAccessKey, resolveUsername } from "@browserstack-client/core";
 import { assert } from "vitest";
 

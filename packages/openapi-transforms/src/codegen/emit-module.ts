@@ -10,7 +10,7 @@ export interface EmitModuleInput {
 
 export function emitModule(input: EmitModuleInput): string {
   const header = `/* AUTO-GENERATED — do not edit */
-import type { operations, components, paths } from "${input.typesImportPath}";
+import type { operations, paths } from "${input.typesImportPath}";
 import { APIClient, type APIFetchOptions } from "@browserstack-client/core";
 import { HttpError } from "@browserstack-client/openapi-transforms";
 `;
