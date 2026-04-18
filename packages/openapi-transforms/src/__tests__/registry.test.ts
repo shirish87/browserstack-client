@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CodecRegistry, type ResponseCodec, type RequestCodec } from "../registry.js";
+import { registerBuiltinResponseCodecs } from "../codecs/index.js";
 
 const stubSchema = { "~standard": { version: 1, vendor: "stub", validate: (v: unknown) => ({ value: v }) } } as any;
 
@@ -36,5 +37,10 @@ describe("CodecRegistry", () => {
   it("throws on unknown name at resolve", () => {
     const r = new CodecRegistry();
     expect(() => r.resolveResponse("missing")).toThrow(/unknown response codec/i);
+  });
+  it("registerBuiltinResponseCodecs adds all response codecs", () => {
+    const r = new CodecRegistry();
+    registerBuiltinResponseCodecs(r);
+    expect(r.listResponse().sort()).toEqual(["binary", "json", "json-compose", "json-unwrap", "text"]);
   });
 });
