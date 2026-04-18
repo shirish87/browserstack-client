@@ -14,7 +14,8 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:mem": "node --expose-gc ./node_modules/vitest/vitest.mjs run src/__tests__/streaming/memory.test.ts"
   },
   "dependencies": {
     "@streamparser/json": "^0.0.21",
