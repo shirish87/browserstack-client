@@ -49,6 +49,8 @@ export async function streamExtract(
     throw cause instanceof Error ? cause : new Error(String(cause));
   }
 
-  if (!matched) throw new Error(`path did not match any value: ${selector.join(".") || "$"}`);
+  if (!matched && !isArray) {
+    throw new Error(`path did not match any value: ${selector.join(".") || "$"}`);
+  }
   return isArray ? collected : whole;
 }
