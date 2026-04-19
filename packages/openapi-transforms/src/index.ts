@@ -10,7 +10,7 @@ export {
   isDecodeError,
   isTransformError,
   isClientError,
-} from "./errors.js";
+} from "./errors";
 export type {
   CodecContext,
   ErrorKind,
@@ -18,17 +18,17 @@ export type {
   HttpErrorFields,
   DecodeErrorFields,
   TransformErrorFields,
-} from "./errors.js";
-export { captureErrorBody } from "./body-capture.js";
-export { defaultErrorMessage } from "./error-message.js";
-export { isRetryable } from "./retryable.js";
-export { CodecRegistry } from "./registry.js";
-export type { ResponseCodec, RequestCodec, EncodedRequest } from "./registry.js";
-export { CodecError } from "./codec-error.js";
-export { parsePath } from "./path/parser.js";
-export { extract, isArrayPath } from "./path/matcher.js";
-export type { PathAst, PathNode } from "./path/types.js";
-export { streamExtract } from "./streaming/json-stream.js";
+} from "./errors";
+export { captureErrorBody } from "./body-capture";
+export { defaultErrorMessage } from "./error-message";
+export { isRetryable } from "./retryable";
+export { CodecRegistry } from "./registry";
+export type { ResponseCodec, RequestCodec, EncodedRequest } from "./registry";
+export { CodecError } from "./codec-error";
+export { parsePath } from "./path/parser";
+export { extract, isArrayPath } from "./path/matcher";
+export type { PathAst, PathNode } from "./path/types";
+export { streamExtract } from "./streaming/json-stream";
 export {
   registerBuiltinResponseCodecs,
   registerBuiltinRequestCodecs,
@@ -40,11 +40,13 @@ export {
   binaryResponseCodec,
   jsonRequestCodec,
   multipartRequestCodec,
-} from "./codecs/index.js";
-export type { JsonUnwrapConfig } from "./codecs/response-json-unwrap.js";
-export type { JsonComposeConfig } from "./codecs/response-json-compose.js";
-export type { BinaryConfig } from "./codecs/response-binary.js";
-export type { MultipartConfig } from "./codecs/request-multipart.js";
+} from "./codecs/index";
+export type { JsonUnwrapConfig } from "./codecs/response-json-unwrap";
+export type { JsonComposeConfig } from "./codecs/response-json-compose";
+export type { BinaryConfig } from "./codecs/response-binary";
+export type { MultipartConfig } from "./codecs/request-multipart";
 
-export { executeOperation } from "./execute.js";
-export type { ExecuteSpec, ExecuteOptions } from "./execute.js";
+export { executeOperation } from "./execute";
+export type { ExecuteSpec, ExecuteOptions } from "./execute";
+
+export { toCamelCase, toSnakeCase } from "./transforms/case";
