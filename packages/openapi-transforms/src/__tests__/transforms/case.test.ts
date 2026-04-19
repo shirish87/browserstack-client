@@ -46,6 +46,7 @@ describe("toCamelCase", () => {
 
   it("leaves non-object values untouched", () => {
     expect(toCamelCase("hello")).toBe("hello");
+    expect(toCamelCase(42)).toBe(42);
     expect(toCamelCase(null)).toBe(null);
   });
 });

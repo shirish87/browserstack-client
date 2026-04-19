@@ -7,7 +7,7 @@ function camelKey(key: string): string {
 }
 
 export function toSnakeCase(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(toSnakeCase);
+  if (Array.isArray(value)) return value.map((v) => toSnakeCase(v));
   if (value !== null && typeof value === "object") {
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
@@ -19,7 +19,7 @@ export function toSnakeCase(value: unknown): unknown {
 }
 
 export function toCamelCase(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(toCamelCase);
+  if (Array.isArray(value)) return value.map((v) => toCamelCase(v));
   if (value !== null && typeof value === "object") {
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
