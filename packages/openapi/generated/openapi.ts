@@ -2731,7 +2731,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "image/png": string;
+                    "image/png": Blob;
                     "application/json": {
                         /**
                          * @description Link to the captured screenshot
@@ -3209,7 +3209,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the terminal log file on your machine. The max allowed file size is 2MB
                      */
-                    file: string;
+                    file: Blob;
                 };
             };
         };
@@ -3473,7 +3473,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the terminal log file on your machine. The max allowed file size is 2MB
                      */
-                    file: string;
+                    file: Blob;
                 };
             };
         };
@@ -3654,7 +3654,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the media file on your machine. Note: You can upload up to 10 media files on the BrowserStack server. By default, we delete the uploaded files after 30 days from the date of upload.
                      */
-                    file: string;
+                    file: Blob;
                 };
             };
         };
@@ -4215,7 +4215,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the terminal log file on your machine. The max allowed file size is 2MB
                      */
-                    file: string;
+                    file: Blob;
                 };
             };
         };
@@ -4374,7 +4374,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the terminal log file on your machine. The max allowed file size is 2MB
                      */
-                    file: string;
+                    file: Blob;
                 };
             };
         };
@@ -4595,7 +4595,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the media file on your machine. Note: You can upload up to 10 media files on the BrowserStack server. By default, we delete the uploaded files after 30 days from the date of upload.
                      */
-                    file: string;
+                    file: Blob;
                     /**
                      * @description Custom ID for the media file. This ID is used to specify the media files to be used in your tests.
                      * @example media_1
@@ -4756,7 +4756,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
                      */
-                    file: string;
+                    file: Blob;
                 } | {
                     /**
                      * @description URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
@@ -4918,7 +4918,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
                      */
-                    file: string;
+                    file: Blob;
                 } | {
                     /**
                      * @description URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
@@ -5067,7 +5067,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
                      */
-                    file: string;
+                    file: Blob;
                 } | {
                     /**
                      * @description URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
@@ -5216,7 +5216,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
                      */
-                    file: string;
+                    file: Blob;
                 } | {
                     /**
                      * @description URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
@@ -5263,7 +5263,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the app file on your machine. Supported file formats are .apk and .aab files for Android
                      */
-                    file: string;
+                    file: Blob;
                 } | {
                     /**
                      * @description URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android
@@ -5310,7 +5310,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
                      */
-                    file: string;
+                    file: Blob;
                 } | {
                     /**
                      * @description URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
@@ -5459,7 +5459,7 @@ export interface operations {
                      * Format: binary
                      * @description Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
                      */
-                    file: string;
+                    file: Blob;
                 } | {
                     /**
                      * @description URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS
@@ -5741,7 +5741,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/zip": string;
+                    "application/zip": Blob;
                 };
             };
             400: components["schemas"]["400.BadRequest"];

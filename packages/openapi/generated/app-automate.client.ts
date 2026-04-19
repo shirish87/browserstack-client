@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — do not edit */
-import type { operations, paths } from "./app-automate";
-import { APIClient, type APIFetchOptions } from "@browserstack-client/core";
-import { HttpError } from "@browserstack-client/openapi-transforms";
+import type { operations } from "./app-automate";
+import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
+import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
 
 export type GetAppAutomateBuildError = HttpError<
   | (operations["getAppAutomateBuild"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -332,14 +332,6 @@ export type GetAppAutomateGroupAppsError = HttpError<
   | (operations["getAppAutomateGroupApps"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
-export type UploadAppAutomateEspressoAppError = HttpError<
-  | (operations["uploadAppAutomateEspressoApp"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
-  | (operations["uploadAppAutomateEspressoApp"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
-  | (operations["uploadAppAutomateEspressoApp"]["responses"][404] extends { content: { "application/json": infer E } } ? E : unknown)
-  | (operations["uploadAppAutomateEspressoApp"]["responses"][422] extends { content: { "application/json": infer E } } ? E : unknown)
-  | (operations["uploadAppAutomateEspressoApp"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
->;
-
 export type GetAppAutomateAppsByCustomIdError = HttpError<
   | (operations["getAppAutomateAppsByCustomId"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
   | (operations["getAppAutomateAppsByCustomId"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -404,89 +396,89 @@ export type GetAppAutomateProjectBadgeKeyError = HttpError<
   | (operations["getAppAutomateProjectBadgeKey"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
-export abstract class GeneratedAppAutomateClient extends APIClient<paths> {
-getAppAutomateBuild(buildId: string, options?: APIFetchOptions<operations["getAppAutomateBuild"]>): Promise<operations["getAppAutomateBuild"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+export abstract class GeneratedAppAutomateClient extends APIClient {
+getAppAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateBuild"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/builds/{buildId}.json",
-      params: { path: { buildId } },
+      params: { path: { buildId: buildId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateBuild",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateBuild"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateBuild"]["responses"][200]["content"]["application/json"]>;
   }
 
-updateAppAutomateBuild(buildId: string, body: operations["updateAppAutomateBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["updateAppAutomateBuild"]>): Promise<operations["updateAppAutomateBuild"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+updateAppAutomateBuild(buildId: string, body: operations["updateAppAutomateBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["updateAppAutomateBuild"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/builds/{buildId}.json",
-      params: { path: { buildId } },
-      requestInput: body,
+      params: { path: { buildId: buildId } },
+      requestInput: toSnakeCase(body, undefined),
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "updateAppAutomateBuild",
       method: "PUT" as const,
-    }) as Promise<operations["updateAppAutomateBuild"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["updateAppAutomateBuild"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAppAutomateBuild(buildId: string, options?: APIFetchOptions<operations["deleteAppAutomateBuild"]>): Promise<operations["deleteAppAutomateBuild"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAppAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<operations["deleteAppAutomateBuild"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/builds/{buildId}.json",
-      params: { path: { buildId } },
+      params: { path: { buildId: buildId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAppAutomateBuild",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAppAutomateBuild"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAppAutomateBuild"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateMediaFilesByCustomId(customId: string, options?: APIFetchOptions<operations["getAppAutomateMediaFilesByCustomId"]>): Promise<operations["getAppAutomateMediaFilesByCustomId"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateMediaFilesByCustomId(customId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateMediaFilesByCustomId"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/recent_media_files/{customId}",
-      params: { path: { customId } },
+      params: { path: { customId: customId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateMediaFilesByCustomId",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateMediaFilesByCustomId"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateMediaFilesByCustomId"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateSessionLogs(buildId: string, sessionId: string, options?: APIFetchOptions<operations["getAppAutomateSessionLogs"]>): Promise<string> {
-    return this.execute({
+getAppAutomateSessionLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<string> {
+    return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/logs",
-      params: { path: { buildId, sessionId } },
+      params: { path: { buildId: buildId, sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateSessionLogs",
       method: "GET" as const,
-    }) as Promise<string>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
-getAppAutomateApps(options?: APIFetchOptions<operations["getAppAutomateApps"]>): Promise<operations["getAppAutomateApps"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateApps(options?: ExecuteOptions): Promise<operations["getAppAutomateApps"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/recent_apps",
       params: undefined,
       
@@ -494,15 +486,15 @@ getAppAutomateApps(options?: APIFetchOptions<operations["getAppAutomateApps"]>):
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateApps",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateApps"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateApps"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateGroupMediaFiles(options?: APIFetchOptions<operations["getAppAutomateGroupMediaFiles"]>): Promise<operations["getAppAutomateGroupMediaFiles"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateGroupMediaFiles(options?: ExecuteOptions): Promise<operations["getAppAutomateGroupMediaFiles"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/recent_group_media",
       params: undefined,
       
@@ -510,111 +502,111 @@ getAppAutomateGroupMediaFiles(options?: APIFetchOptions<operations["getAppAutoma
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateGroupMediaFiles",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateGroupMediaFiles"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateGroupMediaFiles"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateXCUITestApp(appId: string, options?: APIFetchOptions<operations["getAppAutomateXCUITestApp"]>): Promise<operations["getAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateXCUITestApp(appId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/xcuitest/v2/apps/{appId}",
-      params: { path: { appId } },
+      params: { path: { appId: appId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateXCUITestApp",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAppAutomateXCUITestApp(appId: string, options?: APIFetchOptions<operations["deleteAppAutomateXCUITestApp"]>): Promise<operations["deleteAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAppAutomateXCUITestApp(appId: string, options?: ExecuteOptions): Promise<operations["deleteAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/xcuitest/v2/apps/{appId}",
-      params: { path: { appId } },
+      params: { path: { appId: appId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAppAutomateXCUITestApp",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateNetworkLogs(buildId: string, sessionId: string, options?: APIFetchOptions<operations["getAppAutomateNetworkLogs"]>): Promise<operations["getAppAutomateNetworkLogs"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateNetworkLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateNetworkLogs"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/networklogs",
-      params: { path: { buildId, sessionId } },
+      params: { path: { buildId: buildId, sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateNetworkLogs",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateNetworkLogs"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateNetworkLogs"]["responses"][200]["content"]["application/json"]>;
   }
 
-uploadAppAutomateBuildTerminalLogs(buildId: string, body: operations["uploadAppAutomateBuildTerminalLogs"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["uploadAppAutomateBuildTerminalLogs"]>): Promise<operations["uploadAppAutomateBuildTerminalLogs"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+uploadAppAutomateBuildTerminalLogs(buildId: string, body: { file: Blob; fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<operations["uploadAppAutomateBuildTerminalLogs"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/builds/{buildId}/terminallogs",
-      params: { path: { buildId } },
-      requestInput: body,
-      requestCodec: "json",
-      requestCodecConfig: {},
+      params: { path: { buildId: buildId } },
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "uploadAppAutomateBuildTerminalLogs",
       method: "POST" as const,
-    }) as Promise<operations["uploadAppAutomateBuildTerminalLogs"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["uploadAppAutomateBuildTerminalLogs"]["responses"][200]["content"]["application/json"]>;
   }
 
-uploadAppAutomateFlutterAndroidApp(body: operations["uploadAppAutomateFlutterAndroidApp"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["uploadAppAutomateFlutterAndroidApp"]>): Promise<operations["uploadAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+uploadAppAutomateFlutterAndroidApp(body: { file: Blob; fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<operations["uploadAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/android/app",
       params: undefined,
-      requestInput: body,
-      requestCodec: "json",
-      requestCodecConfig: {},
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "uploadAppAutomateFlutterAndroidApp",
       method: "POST" as const,
-    }) as Promise<operations["uploadAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["uploadAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-uploadAppAutomateDetoxAndroidApp(body: operations["uploadAppAutomateDetoxAndroidApp"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["uploadAppAutomateDetoxAndroidApp"]>): Promise<operations["uploadAppAutomateDetoxAndroidApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+uploadAppAutomateDetoxAndroidApp(body: { file: Blob; fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<operations["uploadAppAutomateDetoxAndroidApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/detox/v2/android/app",
       params: undefined,
-      requestInput: body,
-      requestCodec: "json",
-      requestCodecConfig: {},
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "uploadAppAutomateDetoxAndroidApp",
       method: "POST" as const,
-    }) as Promise<operations["uploadAppAutomateDetoxAndroidApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["uploadAppAutomateDetoxAndroidApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateXCUITestApps(options?: APIFetchOptions<operations["getAppAutomateXCUITestApps"]>): Promise<operations["getAppAutomateXCUITestApps"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateXCUITestApps(options?: ExecuteOptions): Promise<operations["getAppAutomateXCUITestApps"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/xcuitest/v2/apps",
       params: undefined,
       
@@ -622,31 +614,31 @@ getAppAutomateXCUITestApps(options?: APIFetchOptions<operations["getAppAutomateX
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateXCUITestApps",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateXCUITestApps"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateXCUITestApps"]["responses"][200]["content"]["application/json"]>;
   }
 
-uploadAppAutomateSessionTerminalLogs(sessionId: string, body: operations["uploadAppAutomateSessionTerminalLogs"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["uploadAppAutomateSessionTerminalLogs"]>): Promise<operations["uploadAppAutomateSessionTerminalLogs"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+uploadAppAutomateSessionTerminalLogs(sessionId: string, body: { file: Blob; fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<operations["uploadAppAutomateSessionTerminalLogs"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/sessions/{sessionId}/terminallogs",
-      params: { path: { sessionId } },
-      requestInput: body,
-      requestCodec: "json",
-      requestCodecConfig: {},
+      params: { path: { sessionId: sessionId } },
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "uploadAppAutomateSessionTerminalLogs",
       method: "POST" as const,
-    }) as Promise<operations["uploadAppAutomateSessionTerminalLogs"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["uploadAppAutomateSessionTerminalLogs"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomatePlan(options?: APIFetchOptions<operations["getAppAutomatePlan"]>): Promise<operations["getAppAutomatePlan"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomatePlan(options?: ExecuteOptions): Promise<operations["getAppAutomatePlan"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/plan.json",
       params: undefined,
       
@@ -654,111 +646,111 @@ getAppAutomatePlan(options?: APIFetchOptions<operations["getAppAutomatePlan"]>):
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomatePlan",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomatePlan"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomatePlan"]["responses"][200]["content"]["application/json"]>;
   }
 
-uploadAppAutomateFlutteriOSApp(body: operations["uploadAppAutomateFlutteriOSApp"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["uploadAppAutomateFlutteriOSApp"]>): Promise<operations["uploadAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+uploadAppAutomateFlutteriOSApp(body: { file: Blob; fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<operations["uploadAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/ios/test-package",
       params: undefined,
-      requestInput: body,
-      requestCodec: "json",
-      requestCodecConfig: {},
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "uploadAppAutomateFlutteriOSApp",
       method: "POST" as const,
-    }) as Promise<operations["uploadAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["uploadAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-uploadAppAutomateDetoxAndroidAppClient(body: operations["uploadAppAutomateDetoxAndroidAppClient"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["uploadAppAutomateDetoxAndroidAppClient"]>): Promise<operations["uploadAppAutomateDetoxAndroidAppClient"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+uploadAppAutomateDetoxAndroidAppClient(body: { file: Blob; fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<operations["uploadAppAutomateDetoxAndroidAppClient"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/detox/v2/android/app-client",
       params: undefined,
-      requestInput: body,
-      requestCodec: "json",
-      requestCodecConfig: {},
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "uploadAppAutomateDetoxAndroidAppClient",
       method: "POST" as const,
-    }) as Promise<operations["uploadAppAutomateDetoxAndroidAppClient"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["uploadAppAutomateDetoxAndroidAppClient"]["responses"][200]["content"]["application/json"]>;
   }
 
-uploadAppAutomateXCUITestApp(body: operations["uploadAppAutomateXCUITestApp"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["uploadAppAutomateXCUITestApp"]>): Promise<operations["uploadAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+uploadAppAutomateXCUITestApp(body: { file: Blob; fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<operations["uploadAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/xcuitest/v2/app",
       params: undefined,
-      requestInput: body,
-      requestCodec: "json",
-      requestCodecConfig: {},
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "uploadAppAutomateXCUITestApp",
       method: "POST" as const,
-    }) as Promise<operations["uploadAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["uploadAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateProject(projectId: string, options?: APIFetchOptions<operations["getAppAutomateProject"]>): Promise<operations["getAppAutomateProject"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateProject(projectId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateProject"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/projects/{projectId}.json",
-      params: { path: { projectId } },
+      params: { path: { projectId: projectId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateProject",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateProject"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateProject"]["responses"][200]["content"]["application/json"]>;
   }
 
-updateAppAutomateProject(projectId: string, body: operations["updateAppAutomateProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["updateAppAutomateProject"]>): Promise<operations["updateAppAutomateProject"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+updateAppAutomateProject(projectId: string, body: operations["updateAppAutomateProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["updateAppAutomateProject"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/projects/{projectId}.json",
-      params: { path: { projectId } },
-      requestInput: body,
+      params: { path: { projectId: projectId } },
+      requestInput: toSnakeCase(body, undefined),
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "updateAppAutomateProject",
       method: "PUT" as const,
-    }) as Promise<operations["updateAppAutomateProject"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["updateAppAutomateProject"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAppAutomateProject(projectId: string, options?: APIFetchOptions<operations["deleteAppAutomateProject"]>): Promise<operations["deleteAppAutomateProject"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAppAutomateProject(projectId: string, options?: ExecuteOptions): Promise<operations["deleteAppAutomateProject"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/projects/{projectId}.json",
-      params: { path: { projectId } },
+      params: { path: { projectId: projectId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAppAutomateProject",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAppAutomateProject"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAppAutomateProject"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateDevices(options?: APIFetchOptions<operations["getAppAutomateDevices"]>): Promise<operations["getAppAutomateDevices"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateDevices(options?: ExecuteOptions): Promise<operations["getAppAutomateDevices"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/devices.json",
       params: undefined,
       
@@ -766,95 +758,95 @@ getAppAutomateDevices(options?: APIFetchOptions<operations["getAppAutomateDevice
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateDevices",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateDevices"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateDevices"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateAppiumLogs(buildId: string, sessionId: string, options?: APIFetchOptions<operations["getAppAutomateAppiumLogs"]>): Promise<string> {
-    return this.execute({
+getAppAutomateAppiumLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<string> {
+    return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/appiumlogs",
-      params: { path: { buildId, sessionId } },
+      params: { path: { buildId: buildId, sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateAppiumLogs",
       method: "GET" as const,
-    }) as Promise<string>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
-deleteAppAutomateApp(appId: string, options?: APIFetchOptions<operations["deleteAppAutomateApp"]>): Promise<operations["deleteAppAutomateApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAppAutomateApp(appId: string, options?: ExecuteOptions): Promise<operations["deleteAppAutomateApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/app/delete/{appId}",
-      params: { path: { appId } },
+      params: { path: { appId: appId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAppAutomateApp",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAppAutomateApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAppAutomateApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateFlutterAndroidApp(appId: string, options?: APIFetchOptions<operations["getAppAutomateFlutterAndroidApp"]>): Promise<operations["getAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateFlutterAndroidApp(appId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/android/apps/{appId}",
-      params: { path: { appId } },
+      params: { path: { appId: appId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateFlutterAndroidApp",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAppAutomateFlutterAndroidApp(appId: string, options?: APIFetchOptions<operations["deleteAppAutomateFlutterAndroidApp"]>): Promise<operations["deleteAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAppAutomateFlutterAndroidApp(appId: string, options?: ExecuteOptions): Promise<operations["deleteAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/android/apps/{appId}",
-      params: { path: { appId } },
+      params: { path: { appId: appId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAppAutomateFlutterAndroidApp",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-uploadAppAutomateMediaFile(body: operations["uploadAppAutomateMediaFile"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["uploadAppAutomateMediaFile"]>): Promise<operations["uploadAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+uploadAppAutomateMediaFile(body: { file: Blob; fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<operations["uploadAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/upload-media",
       params: undefined,
-      requestInput: body,
-      requestCodec: "json",
-      requestCodecConfig: {},
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "uploadAppAutomateMediaFile",
       method: "POST" as const,
-    }) as Promise<operations["uploadAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["uploadAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateEspressoApps(options?: APIFetchOptions<operations["getAppAutomateEspressoApps"]>): Promise<operations["getAppAutomateEspressoApps"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateEspressoApps(options?: ExecuteOptions): Promise<operations["getAppAutomateEspressoApps"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/espresso/v2/apps",
       params: undefined,
       
@@ -862,79 +854,79 @@ getAppAutomateEspressoApps(options?: APIFetchOptions<operations["getAppAutomateE
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateEspressoApps",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateEspressoApps"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateEspressoApps"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateAppProfilingDataV2(buildId: string, sessionId: string, options?: APIFetchOptions<operations["getAppAutomateAppProfilingDataV2"]>): Promise<operations["getAppAutomateAppProfilingDataV2"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateAppProfilingDataV2(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateAppProfilingDataV2"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling/v2",
-      params: { path: { buildId, sessionId } },
+      params: { path: { buildId: buildId, sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateAppProfilingDataV2",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateAppProfilingDataV2"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateAppProfilingDataV2"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateSession(sessionId: string, options?: APIFetchOptions<operations["getAppAutomateSession"]>): Promise<operations["getAppAutomateSession"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateSession"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/sessions/{sessionId}.json",
-      params: { path: { sessionId } },
+      params: { path: { sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateSession",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateSession"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateSession"]["responses"][200]["content"]["application/json"]>;
   }
 
-updateAppAutomateSession(sessionId: string, body: operations["updateAppAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["updateAppAutomateSession"]>): Promise<operations["updateAppAutomateSession"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+updateAppAutomateSession(sessionId: string, body: operations["updateAppAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["updateAppAutomateSession"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/sessions/{sessionId}.json",
-      params: { path: { sessionId } },
-      requestInput: body,
+      params: { path: { sessionId: sessionId } },
+      requestInput: toSnakeCase(body, undefined),
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "updateAppAutomateSession",
       method: "PUT" as const,
-    }) as Promise<operations["updateAppAutomateSession"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["updateAppAutomateSession"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAppAutomateSession(sessionId: string, options?: APIFetchOptions<operations["deleteAppAutomateSession"]>): Promise<operations["deleteAppAutomateSession"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAppAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<operations["deleteAppAutomateSession"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/sessions/{sessionId}.json",
-      params: { path: { sessionId } },
+      params: { path: { sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAppAutomateSession",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAppAutomateSession"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAppAutomateSession"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateProjects(options?: APIFetchOptions<operations["getAppAutomateProjects"]>): Promise<operations["getAppAutomateProjects"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateProjects(options?: ExecuteOptions): Promise<operations["getAppAutomateProjects"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/projects.json",
       params: undefined,
       
@@ -942,63 +934,63 @@ getAppAutomateProjects(options?: APIFetchOptions<operations["getAppAutomateProje
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateProjects",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateProjects"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateProjects"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAppAutomateMediaFile(mediaId: string, options?: APIFetchOptions<operations["deleteAppAutomateMediaFile"]>): Promise<operations["deleteAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAppAutomateMediaFile(mediaId: string, options?: ExecuteOptions): Promise<operations["deleteAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/custom_media/delete/{mediaId}",
-      params: { path: { mediaId } },
+      params: { path: { mediaId: mediaId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAppAutomateMediaFile",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateEspressoApp(appId: string, options?: APIFetchOptions<operations["getAppAutomateEspressoApp"]>): Promise<operations["getAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateEspressoApp(appId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/espresso/v2/apps/{appId}",
-      params: { path: { appId } },
+      params: { path: { appId: appId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateEspressoApp",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAppAutomateEspressoApp(appId: string, options?: APIFetchOptions<operations["deleteAppAutomateEspressoApp"]>): Promise<operations["deleteAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAppAutomateEspressoApp(appId: string, options?: ExecuteOptions): Promise<operations["deleteAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/espresso/v2/apps/{appId}",
-      params: { path: { appId } },
+      params: { path: { appId: appId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAppAutomateEspressoApp",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateMediaFiles(options?: APIFetchOptions<operations["getAppAutomateMediaFiles"]>): Promise<operations["getAppAutomateMediaFiles"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateMediaFiles(options?: ExecuteOptions): Promise<operations["getAppAutomateMediaFiles"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/recent_media_files",
       params: undefined,
       
@@ -1006,15 +998,15 @@ getAppAutomateMediaFiles(options?: APIFetchOptions<operations["getAppAutomateMed
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateMediaFiles",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateFlutteriOSApps(options?: APIFetchOptions<operations["getAppAutomateFlutteriOSApps"]>): Promise<operations["getAppAutomateFlutteriOSApps"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateFlutteriOSApps(options?: ExecuteOptions): Promise<operations["getAppAutomateFlutteriOSApps"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/ios/test-packages",
       params: undefined,
       
@@ -1022,31 +1014,31 @@ getAppAutomateFlutteriOSApps(options?: APIFetchOptions<operations["getAppAutomat
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateFlutteriOSApps",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateFlutteriOSApps"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateFlutteriOSApps"]["responses"][200]["content"]["application/json"]>;
   }
 
-uploadAppAutomateApp(body: operations["uploadAppAutomateApp"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["uploadAppAutomateApp"]>): Promise<operations["uploadAppAutomateApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+uploadAppAutomateApp(body: { file: Blob; fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<operations["uploadAppAutomateApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/upload",
       params: undefined,
-      requestInput: body,
-      requestCodec: "json",
-      requestCodecConfig: {},
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "uploadAppAutomateApp",
       method: "POST" as const,
-    }) as Promise<operations["uploadAppAutomateApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["uploadAppAutomateApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateGroupApps(options?: APIFetchOptions<operations["getAppAutomateGroupApps"]>): Promise<operations["getAppAutomateGroupApps"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateGroupApps(options?: ExecuteOptions): Promise<operations["getAppAutomateGroupApps"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/recent_group_apps",
       params: undefined,
       
@@ -1054,47 +1046,31 @@ getAppAutomateGroupApps(options?: APIFetchOptions<operations["getAppAutomateGrou
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateGroupApps",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateGroupApps"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateGroupApps"]["responses"][200]["content"]["application/json"]>;
   }
 
-uploadAppAutomateEspressoApp(body: operations["uploadAppAutomateEspressoApp"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["uploadAppAutomateEspressoApp"]>): Promise<operations["uploadAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
-      path: "/app-automate/espresso/v2/app",
-      params: undefined,
-      requestInput: body,
-      requestCodec: "json",
-      requestCodecConfig: {},
-      responseCodec: "json",
-      responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
-      operationId: "uploadAppAutomateEspressoApp",
-      method: "POST" as const,
-    }) as Promise<operations["uploadAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>;
-  }
-
-getAppAutomateAppsByCustomId(customId: string, options?: APIFetchOptions<operations["getAppAutomateAppsByCustomId"]>): Promise<operations["getAppAutomateAppsByCustomId"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateAppsByCustomId(customId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateAppsByCustomId"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/recent_apps/{customId}",
-      params: { path: { customId } },
+      params: { path: { customId: customId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateAppsByCustomId",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateAppsByCustomId"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateAppsByCustomId"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateFlutterAndroidApps(options?: APIFetchOptions<operations["getAppAutomateFlutterAndroidApps"]>): Promise<operations["getAppAutomateFlutterAndroidApps"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateFlutterAndroidApps(options?: ExecuteOptions): Promise<operations["getAppAutomateFlutterAndroidApps"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/android/apps",
       params: undefined,
       
@@ -1102,47 +1078,47 @@ getAppAutomateFlutterAndroidApps(options?: APIFetchOptions<operations["getAppAut
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateFlutterAndroidApps",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateFlutterAndroidApps"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateFlutterAndroidApps"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateDeviceLogs(buildId: string, sessionId: string, options?: APIFetchOptions<operations["getAppAutomateDeviceLogs"]>): Promise<string> {
-    return this.execute({
+getAppAutomateDeviceLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<string> {
+    return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/devicelogs",
-      params: { path: { buildId, sessionId } },
+      params: { path: { buildId: buildId, sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateDeviceLogs",
       method: "GET" as const,
-    }) as Promise<string>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
-getAppAutomateAppProfilingDataV1(buildId: string, sessionId: string, options?: APIFetchOptions<operations["getAppAutomateAppProfilingDataV1"]>): Promise<operations["getAppAutomateAppProfilingDataV1"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateAppProfilingDataV1(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateAppProfilingDataV1"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling",
-      params: { path: { buildId, sessionId } },
+      params: { path: { buildId: buildId, sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateAppProfilingDataV1",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateAppProfilingDataV1"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateAppProfilingDataV1"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateBuilds(options?: APIFetchOptions<operations["getAppAutomateBuilds"]>): Promise<operations["getAppAutomateBuilds"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateBuilds(options?: ExecuteOptions): Promise<operations["getAppAutomateBuilds"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/builds.json",
       params: undefined,
       
@@ -1150,58 +1126,58 @@ getAppAutomateBuilds(options?: APIFetchOptions<operations["getAppAutomateBuilds"
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateBuilds",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateBuilds"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateBuilds"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateFlutteriOSApp(appId: string, options?: APIFetchOptions<operations["getAppAutomateFlutteriOSApp"]>): Promise<operations["getAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAppAutomateFlutteriOSApp(appId: string, options?: ExecuteOptions): Promise<operations["getAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/ios/test-package/{appId}",
-      params: { path: { appId } },
+      params: { path: { appId: appId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateFlutteriOSApp",
       method: "GET" as const,
-    }) as Promise<operations["getAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAppAutomateFlutteriOSApp(appId: string, options?: APIFetchOptions<operations["deleteAppAutomateFlutteriOSApp"]>): Promise<operations["deleteAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAppAutomateFlutteriOSApp(appId: string, options?: ExecuteOptions): Promise<operations["deleteAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/ios/test-package/{appId}",
-      params: { path: { appId } },
+      params: { path: { appId: appId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAppAutomateFlutteriOSApp",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAppAutomateProjectBadgeKey(projectId: string, options?: APIFetchOptions<operations["getAppAutomateProjectBadgeKey"]>): Promise<string> {
-    return this.execute({
+getAppAutomateProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise<string> {
+    return (this.execute({
       path: "/app-automate/projects/{projectId}/badge_key",
-      params: { path: { projectId } },
+      params: { path: { projectId: projectId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAppAutomateProjectBadgeKey",
       method: "GET" as const,
-    }) as Promise<string>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 }

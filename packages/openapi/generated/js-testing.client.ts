@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — do not edit */
-import type { operations, paths } from "./js-testing";
-import { APIClient, type APIFetchOptions } from "@browserstack-client/core";
-import { HttpError } from "@browserstack-client/openapi-transforms";
+import type { operations } from "./js-testing";
+import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
+import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
 
 export type GetStatusError = HttpError<
   | (operations["getStatus"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -70,9 +70,9 @@ export type DeleteWorkerError = HttpError<
   | (operations["deleteWorker"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
-export abstract class GeneratedJsTestingClient extends APIClient<paths> {
-getStatus(options?: APIFetchOptions<operations["getStatus"]>): Promise<operations["getStatus"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+export abstract class GeneratedJsTestingClient extends APIClient {
+getStatus(options?: ExecuteOptions): Promise<operations["getStatus"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/status",
       params: undefined,
       
@@ -80,47 +80,47 @@ getStatus(options?: APIFetchOptions<operations["getStatus"]>): Promise<operation
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getStatus",
       method: "GET" as const,
-    }) as Promise<operations["getStatus"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getStatus"]["responses"][200]["content"]["application/json"]>;
   }
 
-getWorkerScreenshot(workerId: string, format: string, options?: APIFetchOptions<operations["getWorkerScreenshot"]>): Promise<operations["getWorkerScreenshot"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getWorkerScreenshot(workerId: string, format: string, options?: ExecuteOptions): Promise<operations["getWorkerScreenshot"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/worker/{workerId}/screenshot.{format}",
-      params: { path: { workerId, format } },
+      params: { path: { workerId: workerId, format: format } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getWorkerScreenshot",
       method: "GET" as const,
-    }) as Promise<operations["getWorkerScreenshot"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getWorkerScreenshot"]["responses"][200]["content"]["application/json"]>;
   }
 
-updateWorkerURL(workerId: string, body: operations["updateWorkerURL"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["updateWorkerURL"]>): Promise<operations["updateWorkerURL"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+updateWorkerURL(workerId: string, body: operations["updateWorkerURL"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["updateWorkerURL"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/worker/{workerId}/url.json",
-      params: { path: { workerId } },
-      requestInput: body,
+      params: { path: { workerId: workerId } },
+      requestInput: toSnakeCase(body, undefined),
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "updateWorkerURL",
       method: "PUT" as const,
-    }) as Promise<operations["updateWorkerURL"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["updateWorkerURL"]["responses"][200]["content"]["application/json"]>;
   }
 
-getBrowsers(options?: APIFetchOptions<operations["getBrowsers"]>): Promise<operations["getBrowsers"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getBrowsers(options?: ExecuteOptions): Promise<operations["getBrowsers"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/browsers",
       params: undefined,
       
@@ -128,15 +128,15 @@ getBrowsers(options?: APIFetchOptions<operations["getBrowsers"]>): Promise<opera
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getBrowsers",
       method: "GET" as const,
-    }) as Promise<operations["getBrowsers"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getBrowsers"]["responses"][200]["content"]["application/json"]>;
   }
 
-getWorkers(options?: APIFetchOptions<operations["getWorkers"]>): Promise<operations["getWorkers"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getWorkers(options?: ExecuteOptions): Promise<operations["getWorkers"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/workers",
       params: undefined,
       
@@ -144,58 +144,58 @@ getWorkers(options?: APIFetchOptions<operations["getWorkers"]>): Promise<operati
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getWorkers",
       method: "GET" as const,
-    }) as Promise<operations["getWorkers"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getWorkers"]["responses"][200]["content"]["application/json"]>;
   }
 
-createWorker(body: operations["createWorker"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["createWorker"]>): Promise<operations["createWorker"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+createWorker(body: operations["createWorker"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["createWorker"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/worker",
       params: undefined,
-      requestInput: body,
+      requestInput: toSnakeCase(body, undefined),
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "createWorker",
       method: "POST" as const,
-    }) as Promise<operations["createWorker"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["createWorker"]["responses"][200]["content"]["application/json"]>;
   }
 
-getWorker(workerId: string, options?: APIFetchOptions<operations["getWorker"]>): Promise<operations["getWorker"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getWorker(workerId: string, options?: ExecuteOptions): Promise<operations["getWorker"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/worker/{workerId}",
-      params: { path: { workerId } },
+      params: { path: { workerId: workerId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getWorker",
       method: "GET" as const,
-    }) as Promise<operations["getWorker"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getWorker"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteWorker(workerId: string, options?: APIFetchOptions<operations["deleteWorker"]>): Promise<operations["deleteWorker"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteWorker(workerId: string, options?: ExecuteOptions): Promise<operations["deleteWorker"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/worker/{workerId}",
-      params: { path: { workerId } },
+      params: { path: { workerId: workerId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteWorker",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteWorker"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteWorker"]["responses"][200]["content"]["application/json"]>;
   }
 }

@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — do not edit */
-import type { operations, paths } from "./automate";
-import { APIClient, type APIFetchOptions } from "@browserstack-client/core";
-import { HttpError } from "@browserstack-client/openapi-transforms";
+import type { operations } from "./automate";
+import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
+import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
 
 export type GetAutomateBrowsersError = HttpError<
   | (operations["getAutomateBrowsers"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -212,9 +212,9 @@ export type GetAutomateSessionNetworkLogsError = HttpError<
   | (operations["getAutomateSessionNetworkLogs"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
-export abstract class GeneratedAutomateClient extends APIClient<paths> {
-getAutomateBrowsers(options?: APIFetchOptions<operations["getAutomateBrowsers"]>): Promise<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+export abstract class GeneratedAutomateClient extends APIClient {
+getAutomateBrowsers(options?: ExecuteOptions): Promise<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/browsers.json",
       params: undefined,
       
@@ -222,15 +222,15 @@ getAutomateBrowsers(options?: APIFetchOptions<operations["getAutomateBrowsers"]>
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateBrowsers",
       method: "GET" as const,
-    }) as Promise<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAutomatePlan(options?: APIFetchOptions<operations["getAutomatePlan"]>): Promise<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAutomatePlan(options?: ExecuteOptions): Promise<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/plan.json",
       params: undefined,
       
@@ -238,47 +238,47 @@ getAutomatePlan(options?: APIFetchOptions<operations["getAutomatePlan"]>): Promi
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomatePlan",
       method: "GET" as const,
-    }) as Promise<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAutomateSessionAppiumLogs(sessionId: string, options?: APIFetchOptions<operations["getAutomateSessionAppiumLogs"]>): Promise<string> {
-    return this.execute({
+getAutomateSessionAppiumLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
+    return (this.execute({
       path: "/automate/sessions/{sessionId}/appiumlogs",
-      params: { path: { sessionId } },
+      params: { path: { sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateSessionAppiumLogs",
       method: "GET" as const,
-    }) as Promise<string>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
-getAutomateProjectBadgeKey(projectId: string, options?: APIFetchOptions<operations["getAutomateProjectBadgeKey"]>): Promise<string> {
-    return this.execute({
+getAutomateProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise<string> {
+    return (this.execute({
       path: "/automate/projects/{projectId}/badge_key",
-      params: { path: { projectId } },
+      params: { path: { projectId: projectId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateProjectBadgeKey",
       method: "GET" as const,
-    }) as Promise<string>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
-deleteAutomateBuilds(options?: APIFetchOptions<operations["deleteAutomateBuilds"]>): Promise<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAutomateBuilds(options?: ExecuteOptions): Promise<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/builds",
       params: undefined,
       
@@ -286,63 +286,63 @@ deleteAutomateBuilds(options?: APIFetchOptions<operations["deleteAutomateBuilds"
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAutomateBuilds",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAutomateSession(sessionId: string, options?: APIFetchOptions<operations["getAutomateSession"]>): Promise<operations["getAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]> {
-    return this.execute({
+getAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<operations["getAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]> {
+    return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
-      params: { path: { sessionId } },
+      params: { path: { sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-unwrap",
       responseCodecConfig: {"path":"$.automation_session"},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateSession",
       method: "GET" as const,
-    }) as Promise<operations["getAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]>;
   }
 
-updateAutomateSession(sessionId: string, body: operations["updateAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["updateAutomateSession"]>): Promise<operations["updateAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]> {
-    return this.execute({
+updateAutomateSession(sessionId: string, body: operations["updateAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["updateAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]> {
+    return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
-      params: { path: { sessionId } },
-      requestInput: body,
+      params: { path: { sessionId: sessionId } },
+      requestInput: toSnakeCase(body, undefined),
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-unwrap",
       responseCodecConfig: {"path":"$.automation_session"},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "updateAutomateSession",
       method: "PUT" as const,
-    }) as Promise<operations["updateAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["updateAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]>;
   }
 
-deleteAutomateSession(sessionId: string, options?: APIFetchOptions<operations["deleteAutomateSession"]>): Promise<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
-      params: { path: { sessionId } },
+      params: { path: { sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAutomateSession",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAutomateSessions(options?: APIFetchOptions<operations["deleteAutomateSessions"]>): Promise<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAutomateSessions(options?: ExecuteOptions): Promise<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/sessions",
       params: undefined,
       
@@ -350,191 +350,191 @@ deleteAutomateSessions(options?: APIFetchOptions<operations["deleteAutomateSessi
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAutomateSessions",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAutomateMediaFile(mediaId: string, options?: APIFetchOptions<operations["deleteAutomateMediaFile"]>): Promise<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAutomateMediaFile(mediaId: string, options?: ExecuteOptions): Promise<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/custom_media/delete/{mediaId}",
-      params: { path: { mediaId } },
+      params: { path: { mediaId: mediaId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAutomateMediaFile",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAutomateBuild(buildId: string, options?: APIFetchOptions<operations["getAutomateBuild"]>): Promise<any> {
-    return this.execute({
+getAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<any> {
+    return (this.execute({
       path: "/automate/builds/{buildId}.json",
-      params: { path: { buildId } },
+      params: { path: { buildId: buildId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-compose",
       responseCodecConfig: {"base":"$.build.automation_build","merge":{"sessions":"$.build.sessions[*].automation_session"}},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateBuild",
       method: "GET" as const,
-    }) as Promise<any>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<any>;
   }
 
-updateAutomateBuild(buildId: string, body: operations["updateAutomateBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["updateAutomateBuild"]>): Promise<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+updateAutomateBuild(buildId: string, body: operations["updateAutomateBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/builds/{buildId}.json",
-      params: { path: { buildId } },
-      requestInput: body,
+      params: { path: { buildId: buildId } },
+      requestInput: toSnakeCase(body, undefined),
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "updateAutomateBuild",
       method: "PUT" as const,
-    }) as Promise<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAutomateBuild(buildId: string, options?: APIFetchOptions<operations["deleteAutomateBuild"]>): Promise<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/builds/{buildId}.json",
-      params: { path: { buildId } },
+      params: { path: { buildId: buildId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAutomateBuild",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAutomateSessionLogs(sessionId: string, options?: APIFetchOptions<operations["getAutomateSessionLogs"]>): Promise<string> {
-    return this.execute({
+getAutomateSessionLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
+    return (this.execute({
       path: "/automate/sessions/{sessionId}/logs",
-      params: { path: { sessionId } },
+      params: { path: { sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateSessionLogs",
       method: "GET" as const,
-    }) as Promise<string>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
-recycleAutomateKey(body: operations["recycleAutomateKey"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["recycleAutomateKey"]>): Promise<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+recycleAutomateKey(body: operations["recycleAutomateKey"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/recycle_key.json",
       params: undefined,
-      requestInput: body,
+      requestInput: toSnakeCase(body, undefined),
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "recycleAutomateKey",
       method: "PUT" as const,
-    }) as Promise<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAutomateSessions(buildId: string, options?: APIFetchOptions<operations["getAutomateSessions"]>): Promise<Array<operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number]["automation_session"]>> {
-    return this.execute({
+getAutomateSessions(buildId: string, options?: ExecuteOptions): Promise<Array<operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number]["automation_session"]>> {
+    return (this.execute({
       path: "/automate/builds/{buildId}/sessions.json",
-      params: { path: { buildId } },
+      params: { path: { buildId: buildId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-unwrap",
       responseCodecConfig: {"path":"$[*].automation_session"},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateSessions",
       method: "GET" as const,
-    }) as Promise<Array<operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number]["automation_session"]>>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<Array<operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number]["automation_session"]>>;
   }
 
-getAutomateProject(projectId: string, options?: APIFetchOptions<operations["getAutomateProject"]>): Promise<operations["getAutomateProject"]["responses"][200]["content"]["application/json"]["project"]> {
-    return this.execute({
+getAutomateProject(projectId: string, options?: ExecuteOptions): Promise<operations["getAutomateProject"]["responses"][200]["content"]["application/json"]["project"]> {
+    return (this.execute({
       path: "/automate/projects/{projectId}.json",
-      params: { path: { projectId } },
+      params: { path: { projectId: projectId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-unwrap",
       responseCodecConfig: {"path":"$.project"},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateProject",
       method: "GET" as const,
-    }) as Promise<operations["getAutomateProject"]["responses"][200]["content"]["application/json"]["project"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateProject"]["responses"][200]["content"]["application/json"]["project"]>;
   }
 
-updateAutomateProject(projectId: string, body: operations["updateAutomateProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: APIFetchOptions<operations["updateAutomateProject"]>): Promise<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+updateAutomateProject(projectId: string, body: operations["updateAutomateProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/projects/{projectId}.json",
-      params: { path: { projectId } },
-      requestInput: body,
+      params: { path: { projectId: projectId } },
+      requestInput: toSnakeCase(body, undefined),
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "updateAutomateProject",
       method: "PUT" as const,
-    }) as Promise<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]>;
   }
 
-deleteAutomateProject(projectId: string, options?: APIFetchOptions<operations["deleteAutomateProject"]>): Promise<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+deleteAutomateProject(projectId: string, options?: ExecuteOptions): Promise<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/projects/{projectId}.json",
-      params: { path: { projectId } },
+      params: { path: { projectId: projectId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "deleteAutomateProject",
       method: "DELETE" as const,
-    }) as Promise<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAutomateSessionSeleniumLogs(sessionId: string, options?: APIFetchOptions<operations["getAutomateSessionSeleniumLogs"]>): Promise<string> {
-    return this.execute({
+getAutomateSessionSeleniumLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
+    return (this.execute({
       path: "/automate/sessions/{sessionId}/seleniumlogs",
-      params: { path: { sessionId } },
+      params: { path: { sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateSessionSeleniumLogs",
       method: "GET" as const,
-    }) as Promise<string>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
-getAutomateMediaFiles(options?: APIFetchOptions<operations["getAutomateMediaFiles"]>): Promise<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAutomateMediaFiles(options?: ExecuteOptions): Promise<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/recent_media_files",
       params: undefined,
       
@@ -542,15 +542,15 @@ getAutomateMediaFiles(options?: APIFetchOptions<operations["getAutomateMediaFile
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateMediaFiles",
       method: "GET" as const,
-    }) as Promise<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAutomateProjects(options?: APIFetchOptions<operations["getAutomateProjects"]>): Promise<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAutomateProjects(options?: ExecuteOptions): Promise<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/projects.json",
       params: undefined,
       
@@ -558,47 +558,47 @@ getAutomateProjects(options?: APIFetchOptions<operations["getAutomateProjects"]>
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateProjects",
       method: "GET" as const,
-    }) as Promise<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]>;
   }
 
-getAutomateSessionConsoleLogs(sessionId: string, options?: APIFetchOptions<operations["getAutomateSessionConsoleLogs"]>): Promise<string> {
-    return this.execute({
+getAutomateSessionConsoleLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
+    return (this.execute({
       path: "/automate/sessions/{sessionId}/consolelogs",
-      params: { path: { sessionId } },
+      params: { path: { sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateSessionConsoleLogs",
       method: "GET" as const,
-    }) as Promise<string>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
-getAutomateSessionTelemetryLogs(sessionId: string, options?: APIFetchOptions<operations["getAutomateSessionTelemetryLogs"]>): Promise<ArrayBuffer> {
-    return this.execute({
+getAutomateSessionTelemetryLogs(sessionId: string, options?: ExecuteOptions): Promise<ArrayBuffer> {
+    return (this.execute({
       path: "/automate/sessions/{sessionId}/telemetrylogs",
-      params: { path: { sessionId } },
+      params: { path: { sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "binary",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateSessionTelemetryLogs",
       method: "GET" as const,
-    }) as Promise<ArrayBuffer>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<ArrayBuffer>;
   }
 
-getAutomateBuilds(options?: APIFetchOptions<operations["getAutomateBuilds"]>): Promise<Array<operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number]["automation_build"]>> {
-    return this.execute({
+getAutomateBuilds(options?: ExecuteOptions): Promise<Array<operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number]["automation_build"]>> {
+    return (this.execute({
       path: "/automate/builds.json",
       params: undefined,
       
@@ -606,26 +606,26 @@ getAutomateBuilds(options?: APIFetchOptions<operations["getAutomateBuilds"]>): P
       requestCodecConfig: {},
       responseCodec: "json-unwrap",
       responseCodecConfig: {"path":"$[*].automation_build"},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateBuilds",
       method: "GET" as const,
-    }) as Promise<Array<operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number]["automation_build"]>>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<Array<operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number]["automation_build"]>>;
   }
 
-getAutomateSessionNetworkLogs(sessionId: string, options?: APIFetchOptions<operations["getAutomateSessionNetworkLogs"]>): Promise<operations["getAutomateSessionNetworkLogs"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getAutomateSessionNetworkLogs(sessionId: string, options?: ExecuteOptions): Promise<operations["getAutomateSessionNetworkLogs"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/automate/sessions/{sessionId}/networklogs",
-      params: { path: { sessionId } },
+      params: { path: { sessionId: sessionId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getAutomateSessionNetworkLogs",
       method: "GET" as const,
-    }) as Promise<operations["getAutomateSessionNetworkLogs"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateSessionNetworkLogs"]["responses"][200]["content"]["application/json"]>;
   }
 }

@@ -1,19 +1,18 @@
 servers:
-  - url: "{scheme}://{host}{basePath}"
-    variables:
-      scheme:
-        default: https
-      host:
-        default: api.browserstack.com
-      basePath:
-        default: "/5"
-  - url: "{scheme}://{host}"
-    variables:
-      scheme:
-        default: https
-      host:
-        default: api-cloud.browserstack.com
-
+- url: '{scheme}://{host}{basePath}'
+  variables:
+    scheme:
+      default: https
+    host:
+      default: api.browserstack.com
+    basePath:
+      default: /5
+- url: '{scheme}://{host}'
+  variables:
+    scheme:
+      default: https
+    host:
+      default: api-cloud.browserstack.com
 openapi: 3.0.2
 info:
   title: BrowserStack App Automate
@@ -22,15 +21,11 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/license/mit/
-
 externalDocs:
   description: Find out more about BrowserStack
   url: https://www.browserstack.com/docs/
-
-
 security:
-  - basicAuth: []
-
+- basicAuth: []
 paths:
   /app-automate/builds/{buildId}.json:
     get:
@@ -87,6 +82,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.build
     put:
       tags:
       - AppAutomate
@@ -152,8 +148,9 @@ paths:
       tags:
       - AppAutomate
       summary: Delete a build on the server
-      description: Delete a build on the server. Please note that deleting a build will
-        delete all the sessions contained within it. Builds once deleted cannot be recovered
+      description: Delete a build on the server. Please note that deleting a build
+        will delete all the sessions contained within it. Builds once deleted cannot
+        be recovered
       operationId: deleteAppAutomateBuild
       parameters:
       - name: buildId
@@ -239,10 +236,10 @@ paths:
       tags:
       - AppAutomate
       summary: Fetches session logs
-      description: "Access the logs for the session in textual format. It includes information\
-        \ about the test session\u2019s desired capabilities and detailed information\
-        \ about every request and response. You can view all the steps executed in the\
-        \ test and troubleshoot errors for any failed steps."
+      description: "Access the logs for the session in textual format. It includes\
+        \ information about the test session\u2019s desired capabilities and detailed\
+        \ information about every request and response. You can view all the steps\
+        \ executed in the test and troubleshoot errors for any failed steps."
       operationId: getAppAutomateSessionLogs
       parameters:
       - name: buildId
@@ -278,6 +275,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: text
   /app-automate/recent_apps:
     get:
       tags:
@@ -387,6 +385,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.app
     delete:
       tags:
       - AppAutomate
@@ -439,9 +438,9 @@ paths:
       - AppAutomate
       summary: Fetches network logs
       description: Access the network logs for your session. These logs capture network
-        data such as network traffic, latency, HTTP requests/responses in the HAR (HTTP
-        Archive) format. You can identify any performance bottlenecks or debug failed
-        REST API responses. Network logs are disabled by default.
+        data such as network traffic, latency, HTTP requests/responses in the HAR
+        (HTTP Archive) format. You can identify any performance bottlenecks or debug
+        failed REST API responses. Network logs are disabled by default.
       operationId: getAppAutomateNetworkLogs
       parameters:
       - name: buildId
@@ -483,6 +482,11 @@ paths:
       summary: Upload terminal logs for your build.
       description: Upload terminal logs for your build.
       operationId: uploadAppAutomateBuildTerminalLogs
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       parameters:
       - name: buildId
         in: path
@@ -504,8 +508,8 @@ paths:
                 file:
                   type: string
                   format: binary
-                  description: Path to the terminal log file on your machine. The max
-                    allowed file size is 2MB
+                  description: Path to the terminal log file on your machine. The
+                    max allowed file size is 2MB
       responses:
         '200':
           description: Successful operation
@@ -538,6 +542,11 @@ paths:
       summary: Upload an app
       description: Upload the application under test (AUT) for Flutter testing.
       operationId: uploadAppAutomateFlutterAndroidApp
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       requestBody:
         required: true
         content:
@@ -561,19 +570,19 @@ paths:
                     file:
                       type: string
                       format: binary
-                      description: Path to the app file on your machine. Supported file
-                        formats are .apk and .aab files for Android and .ipa file for
-                        iOS
+                      description: Path to the app file on your machine. Supported
+                        file formats are .apk and .aab files for Android and .ipa
+                        file for iOS
                 - type: object
                   required:
                   - url
                   properties:
                     url:
                       type: string
-                      description: URL of the app file. Ensure that its a publicly accessible
-                        URL as BrowserStack will attempt to download the app from this
-                        location. Supported file formats are .apk and .aab files for
-                        Android and .ipa file for iOS
+                      description: URL of the app file. Ensure that its a publicly
+                        accessible URL as BrowserStack will attempt to download the
+                        app from this location. Supported file formats are .apk and
+                        .aab files for Android and .ipa file for iOS
                       example: https://example.com/app.ipa
       responses:
         '200':
@@ -599,6 +608,11 @@ paths:
       summary: Upload an app
       description: Upload the application under test (AUT) for Detox Android testing.
       operationId: uploadAppAutomateDetoxAndroidApp
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       requestBody:
         required: true
         content:
@@ -622,19 +636,19 @@ paths:
                     file:
                       type: string
                       format: binary
-                      description: Path to the app file on your machine. Supported file
-                        formats are .apk and .aab files for Android and .ipa file for
-                        iOS
+                      description: Path to the app file on your machine. Supported
+                        file formats are .apk and .aab files for Android and .ipa
+                        file for iOS
                 - type: object
                   required:
                   - url
                   properties:
                     url:
                       type: string
-                      description: URL of the app file. Ensure that its a publicly accessible
-                        URL as BrowserStack will attempt to download the app from this
-                        location. Supported file formats are .apk and .aab files for
-                        Android and .ipa file for iOS
+                      description: URL of the app file. Ensure that its a publicly
+                        accessible URL as BrowserStack will attempt to download the
+                        app from this location. Supported file formats are .apk and
+                        .aab files for Android and .ipa file for iOS
                       example: https://example.com/app.ipa
       responses:
         '200':
@@ -673,8 +687,8 @@ paths:
       - name: custom_id
         in: query
         description: Filter recently uploaded apps by custom ID. Accepted characters
-          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
-          is 100.
+          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character
+          limit is 100.
         schema:
           type: string
           example: app_1
@@ -717,6 +731,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.apps
   /app-automate/sessions/{sessionId}/terminallogs:
     post:
       tags:
@@ -724,6 +739,11 @@ paths:
       summary: Upload terminal logs for your session.
       description: Upload terminal logs for your session.
       operationId: uploadAppAutomateSessionTerminalLogs
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       parameters:
       - name: sessionId
         in: path
@@ -745,8 +765,8 @@ paths:
                 file:
                   type: string
                   format: binary
-                  description: Path to the terminal log file on your machine. The max
-                    allowed file size is 2MB
+                  description: Path to the terminal log file on your machine. The
+                    max allowed file size is 2MB
       responses:
         '200':
           description: Successful operation
@@ -801,9 +821,14 @@ paths:
       tags:
       - AppAutomate
       summary: Upload a Flutter test package for iOS
-      description: Upload the application under test (AUT) for Flutter iOS testing in
-        .zip format.
+      description: Upload the application under test (AUT) for Flutter iOS testing
+        in .zip format.
       operationId: uploadAppAutomateFlutteriOSApp
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       requestBody:
         required: true
         content:
@@ -827,19 +852,19 @@ paths:
                     file:
                       type: string
                       format: binary
-                      description: Path to the app file on your machine. Supported file
-                        formats are .apk and .aab files for Android and .ipa file for
-                        iOS
+                      description: Path to the app file on your machine. Supported
+                        file formats are .apk and .aab files for Android and .ipa
+                        file for iOS
                 - type: object
                   required:
                   - url
                   properties:
                     url:
                       type: string
-                      description: URL of the app file. Ensure that its a publicly accessible
-                        URL as BrowserStack will attempt to download the app from this
-                        location. Supported file formats are .apk and .aab files for
-                        Android and .ipa file for iOS
+                      description: URL of the app file. Ensure that its a publicly
+                        accessible URL as BrowserStack will attempt to download the
+                        app from this location. Supported file formats are .apk and
+                        .aab files for Android and .ipa file for iOS
                       example: https://example.com/app.ipa
       responses:
         '200':
@@ -865,6 +890,11 @@ paths:
       summary: Upload an app client
       description: Upload the app client under test for Detox Android testing.
       operationId: uploadAppAutomateDetoxAndroidAppClient
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       requestBody:
         required: true
         content:
@@ -888,18 +918,18 @@ paths:
                     file:
                       type: string
                       format: binary
-                      description: Path to the app file on your machine. Supported file
-                        formats are .apk and .aab files for Android
+                      description: Path to the app file on your machine. Supported
+                        file formats are .apk and .aab files for Android
                 - type: object
                   required:
                   - url
                   properties:
                     url:
                       type: string
-                      description: URL of the app file. Ensure that its a publicly accessible
-                        URL as BrowserStack will attempt to download the app from this
-                        location. Supported file formats are .apk and .aab files for
-                        Android
+                      description: URL of the app file. Ensure that its a publicly
+                        accessible URL as BrowserStack will attempt to download the
+                        app from this location. Supported file formats are .apk and
+                        .aab files for Android
                       example: https://example.com/app.apk
       responses:
         '200':
@@ -925,6 +955,11 @@ paths:
       summary: Upload an app
       description: Upload the application under test (AUT) for XCUITest testing.
       operationId: uploadAppAutomateXCUITestApp
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       requestBody:
         required: true
         content:
@@ -948,19 +983,19 @@ paths:
                     file:
                       type: string
                       format: binary
-                      description: Path to the app file on your machine. Supported file
-                        formats are .apk and .aab files for Android and .ipa file for
-                        iOS
+                      description: Path to the app file on your machine. Supported
+                        file formats are .apk and .aab files for Android and .ipa
+                        file for iOS
                 - type: object
                   required:
                   - url
                   properties:
                     url:
                       type: string
-                      description: URL of the app file. Ensure that its a publicly accessible
-                        URL as BrowserStack will attempt to download the app from this
-                        location. Supported file formats are .apk and .aab files for
-                        Android and .ipa file for iOS
+                      description: URL of the app file. Ensure that its a publicly
+                        accessible URL as BrowserStack will attempt to download the
+                        app from this location. Supported file formats are .apk and
+                        .aab files for Android and .ipa file for iOS
                       example: https://example.com/app.ipa
       responses:
         '200':
@@ -984,8 +1019,8 @@ paths:
       tags:
       - AppAutomate
       summary: Fetches a project
-      description: Specific information about a particular project can be queried using
-        the project ID
+      description: Specific information about a particular project can be queried
+        using the project ID
       operationId: getAppAutomateProject
       parameters:
       - name: projectId
@@ -1027,6 +1062,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.project
     put:
       tags:
       - AppAutomate
@@ -1077,9 +1113,9 @@ paths:
       tags:
       - AppAutomate
       summary: Delete your project
-      description: Delete a project on the server using the DELETE method. Please note
-        that to delete a project, it needs to be empty of builds and sessions, and projects
-        once deleted cannot be recovered
+      description: Delete a project on the server using the DELETE method. Please
+        note that to delete a project, it needs to be empty of builds and sessions,
+        and projects once deleted cannot be recovered
       operationId: deleteAppAutomateProject
       parameters:
       - name: projectId
@@ -1187,6 +1223,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: text
   /app-automate/app/delete/{appId}:
     delete:
       tags:
@@ -1266,6 +1303,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.app
     delete:
       tags:
       - AppAutomate
@@ -1319,6 +1357,11 @@ paths:
       summary: Upload a media file
       description: Upload a media file you want to use in your tests
       operationId: uploadAppAutomateMediaFile
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       requestBody:
         required: true
         content:
@@ -1332,9 +1375,10 @@ paths:
                 file:
                   type: string
                   format: binary
-                  description: 'Path to the media file on your machine. Note: You can
-                    upload up to 10 media files on the BrowserStack server. By default,
-                    we delete the uploaded files after 30 days from the date of upload.'
+                  description: 'Path to the media file on your machine. Note: You
+                    can upload up to 10 media files on the BrowserStack server. By
+                    default, we delete the uploaded files after 30 days from the date
+                    of upload.'
                 custom_id:
                   type: string
                   description: Custom ID for the media file. This ID is used to specify
@@ -1377,8 +1421,8 @@ paths:
       - name: custom_id
         in: query
         description: Filter recently uploaded apps by custom ID. Accepted characters
-          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
-          is 100.
+          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character
+          limit is 100.
         schema:
           type: string
           example: app_1
@@ -1421,13 +1465,14 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.apps
   /app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling/v2:
     get:
       tags:
       - AppAutomate
       summary: Fetches app profiling data v2
-      description: Access the detailed app profling metrics such as installed app size,
-        UI rendering metrics, resource consumption metrics, etc.
+      description: Access the detailed app profling metrics such as installed app
+        size, UI rendering metrics, resource consumption metrics, etc.
       operationId: getAppAutomateAppProfilingDataV2
       parameters:
       - name: buildId
@@ -1500,6 +1545,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.automation_session
     put:
       tags:
       - AppAutomate
@@ -1559,11 +1605,13 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.automation_session
     delete:
       tags:
       - AppAutomate
       summary: Delete a session on the server
-      description: Delete a session on the server. Sessions once deleted cannot be recovered
+      description: Delete a session on the server. Sessions once deleted cannot be
+        recovered
       operationId: deleteAppAutomateSession
       parameters:
       - name: sessionId
@@ -1589,8 +1637,8 @@ paths:
                   message:
                     type: string
                     description: Message indicating the deletion of the session
-                    example: Session 4207442b2b0567368956dba064c22a3235a76214 was deleted
-                      successfully.
+                    example: Session 4207442b2b0567368956dba064c22a3235a76214 was
+                      deleted successfully.
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -1606,8 +1654,8 @@ paths:
       tags:
       - AppAutomate
       summary: Retrieve a list of recent projects for your BrowserStack group
-      description: Fetch the last 10 projects or your BrowserStack group. You can also
-        limit the number of projects and paginate through your data
+      description: Fetch the last 10 projects or your BrowserStack group. You can
+        also limit the number of projects and paginate through your data
       operationId: getAppAutomateProjects
       parameters:
       - name: limit
@@ -1734,6 +1782,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.app
     delete:
       tags:
       - AppAutomate
@@ -1835,8 +1884,8 @@ paths:
       - name: custom_id
         in: query
         description: Filter recently uploaded apps by custom ID. Accepted characters
-          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
-          is 100.
+          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character
+          limit is 100.
         schema:
           type: string
           example: app_1
@@ -1879,6 +1928,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.test_packages
   /app-automate/upload:
     post:
       tags:
@@ -1886,6 +1936,12 @@ paths:
       summary: Upload an app
       description: Upload the application under test (AUT) for Appium testing.
       operationId: uploadAppAutomateApp
+      # TODO: url-only upload path needs a multipart-url codec variant (follow-up)
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       requestBody:
         required: true
         content:
@@ -1909,19 +1965,19 @@ paths:
                     file:
                       type: string
                       format: binary
-                      description: Path to the app file on your machine. Supported file
-                        formats are .apk and .aab files for Android and .ipa file for
-                        iOS
+                      description: Path to the app file on your machine. Supported
+                        file formats are .apk and .aab files for Android and .ipa
+                        file for iOS
                 - type: object
                   required:
                   - url
                   properties:
                     url:
                       type: string
-                      description: URL of the app file. Ensure that its a publicly accessible
-                        URL as BrowserStack will attempt to download the app from this
-                        location. Supported file formats are .apk and .aab files for
-                        Android and .ipa file for iOS
+                      description: URL of the app file. Ensure that its a publicly
+                        accessible URL as BrowserStack will attempt to download the
+                        app from this location. Supported file formats are .apk and
+                        .aab files for Android and .ipa file for iOS
                       example: https://example.com/app.ipa
       responses:
         '200':
@@ -2005,19 +2061,19 @@ paths:
                     file:
                       type: string
                       format: binary
-                      description: Path to the app file on your machine. Supported file
-                        formats are .apk and .aab files for Android and .ipa file for
-                        iOS
+                      description: Path to the app file on your machine. Supported
+                        file formats are .apk and .aab files for Android and .ipa
+                        file for iOS
                 - type: object
                   required:
                   - url
                   properties:
                     url:
                       type: string
-                      description: URL of the app file. Ensure that its a publicly accessible
-                        URL as BrowserStack will attempt to download the app from this
-                        location. Supported file formats are .apk and .aab files for
-                        Android and .ipa file for iOS
+                      description: URL of the app file. Ensure that its a publicly
+                        accessible URL as BrowserStack will attempt to download the
+                        app from this location. Supported file formats are .apk and
+                        .aab files for Android and .ipa file for iOS
                       example: https://example.com/app.ipa
       responses:
         '200':
@@ -2036,6 +2092,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-request-custom: true
   /app-automate/recent_apps/{customId}:
     get:
       tags:
@@ -2099,8 +2156,8 @@ paths:
       - name: custom_id
         in: query
         description: Filter recently uploaded apps by custom ID. Accepted characters
-          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
-          is 100.
+          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character
+          limit is 100.
         schema:
           type: string
           example: app_1
@@ -2143,14 +2200,15 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.apps
   /app-automate/builds/{buildId}/sessions/{sessionId}/devicelogs:
     get:
       tags:
       - AppAutomate
       summary: Fetches device logs
-      description: Access the device logs for your session. These are system logs specific
-        to your application generated by the OS(Android/iOS) and can be helpful for
-        debugging any application crashes during test execution.
+      description: Access the device logs for your session. These are system logs
+        specific to your application generated by the OS(Android/iOS) and can be helpful
+        for debugging any application crashes during test execution.
       operationId: getAppAutomateDeviceLogs
       parameters:
       - name: buildId
@@ -2186,14 +2244,15 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: text
   /app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling:
     get:
       tags:
       - AppAutomate
       summary: Fetches app profiling data
-      description: Access the app profiling logs to view the resource consumption (CPU,
-        memory, battery, and network) by your app on the device. The logs are only available
-        for Android.
+      description: Access the app profiling logs to view the resource consumption
+        (CPU, memory, battery, and network) by your app on the device. The logs are
+        only available for Android.
       operationId: getAppAutomateAppProfilingDataV1
       parameters:
       - name: buildId
@@ -2234,8 +2293,8 @@ paths:
       tags:
       - AppAutomate
       summary: Fetches list of builds
-      description: Fetch the 10 recent test builds that have run on BrowserStack. You
-        can also limit the number of builds and paginate through your data
+      description: Fetch the 10 recent test builds that have run on BrowserStack.
+        You can also limit the number of builds and paginate through your data
       operationId: getAppAutomateBuilds
       parameters:
       - name: projectId
@@ -2296,6 +2355,7 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $[*].automation_build
   /app-automate/flutter-integration-tests/v2/ios/test-package/{appId}:
     get:
       tags:
@@ -2334,12 +2394,13 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+      x-response-transform: json-unwrap $.test_package
     delete:
       tags:
       - AppAutomate
       summary: Delete a Flutter iOS test package that was previously uploaded to BrowserStack
-      description: Delete a Flutter iOS test package that was previously uploaded to
-        BrowserStack. Note that apps once deleted cannot be recovered.
+      description: Delete a Flutter iOS test package that was previously uploaded
+        to BrowserStack. Note that apps once deleted cannot be recovered.
       operationId: deleteAppAutomateFlutteriOSApp
       parameters:
       - name: appId
@@ -2416,13 +2477,12 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
-
+      x-response-transform: text
 components:
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
-
   schemas:
     400.BadRequest:
       description: Bad request.
@@ -2433,8 +2493,8 @@ components:
     404.NotFound:
       description: The requested resource could not be found.
     422.UnprocessableEntity:
-      description: Request is well-formed but has semantic errors. The response will provide
-        more details about error.
+      description: Request is well-formed but has semantic errors. The response will
+        provide more details about error.
     5xx.InternalServerError:
       description: Indicates an error with BrowserStack servers.
     AppAutomateApp:
@@ -2449,9 +2509,9 @@ components:
           example: 90c7a8h8dc82308108734e9a46c24d8f01de12881
         app_url:
           type: string
-          description: Unique identifier returned upon successful upload of your app on
-            BrowserStack. This value can be used later to specify the application under
-            test in your Appium test scripts.
+          description: Unique identifier returned upon successful upload of your app
+            on BrowserStack. This value can be used later to specify the application
+            under test in your Appium test scripts.
           example: media://90c7a8h8dc82308108734e9a46c24d8f01de12881
         app_name:
           type: string
@@ -2471,14 +2531,14 @@ components:
           example: '2021-09-30T10:00:00.000Z'
         custom_id:
           type: string
-          description: Custom ID defined for the uploaded app. Accepted characters are
-            A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
-            is 100.
+          description: Custom ID defined for the uploaded app. Accepted characters
+            are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character
+            limit is 100.
           example: media_1
         shareable_id:
           type: string
-          description: Shareable ID allows other users in your organization to test an
-            app you uploaded.
+          description: Shareable ID allows other users in your organization to test
+            an app you uploaded.
           example: steve/SampleApp
     AppAutomateDevice:
       title: AppAutomateDevice
@@ -2510,13 +2570,14 @@ components:
       properties:
         media_id:
           type: string
-          description: Unique ID returned on successful upload of your media file on BrowserStack.
+          description: Unique ID returned on successful upload of your media file
+            on BrowserStack.
           example: 90c7a8h8dc82308108734e9a46c24d8f01de12881
         media_url:
           type: string
           description: Unique identifier returned upon successful upload of your media
-            file on BrowserStack. This value is used to specify the media files to be
-            used in your tests.
+            file on BrowserStack. This value is used to specify the media files to
+            be used in your tests.
           example: media://90c7a8h8dc82308108734e9a46c24d8f01de12881
         media_name:
           type: string
@@ -2528,13 +2589,14 @@ components:
           example: '2021-09-30T10:00:00.000Z'
         custom_id:
           type: string
-          description: Custom ID of the media file uploaded. Accepted characters are A-Z,
-            a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.
+          description: Custom ID of the media file uploaded. Accepted characters are
+            A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
+            is 100.
           example: media_1
         shareable_id:
           type: string
-          description: Shareable ID allows members of other teams to use the media files
-            in their tests.
+          description: Shareable ID allows members of other teams to use the media
+            files in their tests.
           example: steve/SampleMedia
     AppAutomateSession:
       title: AppAutomateSession
@@ -2558,9 +2620,9 @@ components:
                 example: '1.0'
               app_url:
                 type: string
-                description: Unique identifier returned upon successful upload of your
-                  app on BrowserStack. This value can be used later to specify the application
-                  under test in your Appium test scripts."
+                description: Unique identifier returned upon successful upload of
+                  your app on BrowserStack. This value can be used later to specify
+                  the application under test in your Appium test scripts."
                 example: media://90c7a8h8dc82308108734e9a46c24d8f01de12881
               app_custom_id:
                 type: string
@@ -2582,9 +2644,9 @@ components:
           example: 90c7a8h8dc82308108734e9a46c24d8f01de12881
         test_package_url:
           type: string
-          description: Unique identifier returned upon successful upload of your app on
-            BrowserStack. This value can be used later to specify the application under
-            test in your Appium test scripts.
+          description: Unique identifier returned upon successful upload of your app
+            on BrowserStack. This value can be used later to specify the application
+            under test in your Appium test scripts.
           example: media://90c7a8h8dc82308108734e9a46c24d8f01de12881
         test_package_name:
           type: string
@@ -2596,14 +2658,14 @@ components:
           example: '2021-09-30T10:00:00.000Z'
         custom_id:
           type: string
-          description: Custom ID defined for the uploaded app. Accepted characters are
-            A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
-            is 100.
+          description: Custom ID defined for the uploaded app. Accepted characters
+            are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character
+            limit is 100.
           example: media_1
         shareable_id:
           type: string
-          description: Shareable ID allows other users in your organization to test an
-            app you uploaded.
+          description: Shareable ID allows other users in your organization to test
+            an app you uploaded.
           example: steve/SampleApp
     Browser:
       title: Browser
@@ -2896,10 +2958,10 @@ components:
             example: '10'
           device:
             type: string
-            example:
+            example: null
           real_mobile:
             type: boolean
-            example:
+            example: null
     BrowserRealDevice:
       title: BrowserRealDevice
       allOf:
@@ -2938,9 +3000,9 @@ components:
           timeout:
             type: number
             description: 'Time in seconds before the worker is terminated. The default
-              value is 300 seconds and the minimum value is 60 seconds. IMPORTANT: Irrespective
-              of the timeout parameter, a browser worker is alive for a maximum time of
-              1800 seconds.'
+              value is 300 seconds and the minimum value is 60 seconds. IMPORTANT:
+              Irrespective of the timeout parameter, a browser worker is alive for
+              a maximum time of 1800 seconds.'
             example: 300
           os:
             type: string
@@ -2964,13 +3026,13 @@ components:
             example: pricing-project
           browserstack.video:
             type: boolean
-            description: Enable video recording for the session. The default value is
-              false.
+            description: Enable video recording for the session. The default value
+              is false.
             example: true
           resolution:
             type: string
-            description: Set the resolution of VM before the beginning of your test. Available
-              for Desktop only. The default value is 1024x768.
+            description: Set the resolution of VM before the beginning of your test.
+              Available for Desktop only. The default value is 1024x768.
             example: 1024x768
       - oneOf:
         - type: object
@@ -2990,8 +3052,8 @@ components:
           properties:
             device:
               type: string
-              description: Device name. If a device is not provided it defaults to the
-                first device available for that os version.
+              description: Device name. If a device is not provided it defaults to
+                the first device available for that os version.
               example: iPhone 11 Pro
             browser:
               type: string

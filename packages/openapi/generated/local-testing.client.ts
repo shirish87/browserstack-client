@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — do not edit */
-import type { operations, paths } from "./local-testing";
-import { APIClient, type APIFetchOptions } from "@browserstack-client/core";
-import { HttpError } from "@browserstack-client/openapi-transforms";
+import type { operations } from "./local-testing";
+import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
+import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
 
 export type GetLocalBinaryInstancesError = HttpError<
   | (operations["getLocalBinaryInstances"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -27,9 +27,9 @@ export type DisconnectLocalBinaryInstanceError = HttpError<
   | (operations["disconnectLocalBinaryInstance"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
-export abstract class GeneratedLocalTestingClient extends APIClient<paths> {
-getLocalBinaryInstances(options?: APIFetchOptions<operations["getLocalBinaryInstances"]>): Promise<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+export abstract class GeneratedLocalTestingClient extends APIClient {
+getLocalBinaryInstances(options?: ExecuteOptions): Promise<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/local/v1/list",
       params: undefined,
       
@@ -37,42 +37,42 @@ getLocalBinaryInstances(options?: APIFetchOptions<operations["getLocalBinaryInst
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getLocalBinaryInstances",
       method: "GET" as const,
-    }) as Promise<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]>;
   }
 
-getLocalBinaryInstance(localInstanceId: string, options?: APIFetchOptions<operations["getLocalBinaryInstance"]>): Promise<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+getLocalBinaryInstance(localInstanceId: string, options?: ExecuteOptions): Promise<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/local/v1/{localInstanceId}",
-      params: { path: { localInstanceId } },
+      params: { path: { localInstanceId: localInstanceId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "getLocalBinaryInstance",
       method: "GET" as const,
-    }) as Promise<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>;
   }
 
-disconnectLocalBinaryInstance(localInstanceId: string, options?: APIFetchOptions<operations["disconnectLocalBinaryInstance"]>): Promise<operations["disconnectLocalBinaryInstance"]["responses"][200]["content"]["application/json"]> {
-    return this.execute({
+disconnectLocalBinaryInstance(localInstanceId: string, options?: ExecuteOptions): Promise<operations["disconnectLocalBinaryInstance"]["responses"][200]["content"]["application/json"]> {
+    return (this.execute({
       path: "/local/v1/{localInstanceId}",
-      params: { path: { localInstanceId } },
+      params: { path: { localInstanceId: localInstanceId } },
       
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
       responseCodecConfig: {},
-      baseUrl: "sdk",
-      ...options,
+      baseUrl: "sdk" as const,
       operationId: "disconnectLocalBinaryInstance",
       method: "DELETE" as const,
-    }) as Promise<operations["disconnectLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>;
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["disconnectLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>;
   }
 }
