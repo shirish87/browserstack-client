@@ -31,3 +31,7 @@ export function toCamelCase(value: unknown, overrides?: Record<string, string>):
   }
   return value;
 }
+
+export function camelize(s: string): string {
+  return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+}

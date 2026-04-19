@@ -2,7 +2,10 @@ import yaml from "yaml";
 import fs from "node:fs/promises";
 
 export interface OperationOverrides {
-  request?: Record<string, string>;  // snake_case_wire → camelCasePublic
+  // Stored as snake_case_wire → camelCasePublic (matches YAML sidecar convention).
+  // Inverted to camelCasePublic → snake_case_wire at emit time before passing to toSnakeCase.
+  request?: Record<string, string>;
+  // snake_case_wire → camelCasePublic (used as-is by toCamelCase)
   response?: Record<string, string>;
 }
 

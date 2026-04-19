@@ -1,5 +1,6 @@
 import type { OperationAnnotations } from "./annotations";
 import type { OperationOverrides } from "./field-overrides";
+import { camelize } from "../transforms/case";
 
 export interface EmitMethodInput {
   operationId: string;
@@ -41,6 +42,7 @@ export function emitMethod(input: EmitMethodInput): string {
   const configLit = JSON.stringify(input.annotations.responseCodecConfig);
   const reqConfigLit = JSON.stringify(input.annotations.requestCodecConfig);
 
+  // Sidecar stores snake→camel; toSnakeCase expects camel→snake, so invert here
   const reqOverrides = input.overrides?.request ?? {};
   const reqOverrideLit = Object.keys(reqOverrides).length
     ? JSON.stringify(Object.fromEntries(Object.entries(reqOverrides).map(([snake, camel]) => [camel, snake])))
@@ -73,6 +75,3 @@ export function emitMethod(input: EmitMethodInput): string {
   }`.trim();
 }
 
-function camelize(s: string): string {
-  return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-}
