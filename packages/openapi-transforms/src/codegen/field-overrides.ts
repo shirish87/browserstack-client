@@ -16,8 +16,9 @@ export async function loadFieldOverrides(path: string): Promise<FieldOverrides> 
   let raw: string;
   try {
     raw = await fs.readFile(path, "utf8");
-  } catch {
-    return {};
+  } catch (err: unknown) {
+    if ((err as NodeJS.ErrnoException).code === "ENOENT") return {};
+    throw err;
   }
   const doc = yaml.parse(raw) as SidecarDoc;
   return doc?.overrides ?? {};

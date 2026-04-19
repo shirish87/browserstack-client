@@ -37,6 +37,7 @@ export async function generateClientModule(opts: GenerateClientOptions): Promise
   const fieldOverrides: FieldOverrides = opts.fieldOverridesPath
     ? await loadFieldOverrides(opts.fieldOverridesPath)
     : {};
+  // fieldOverrides is wired into emitModule in Task 4 when EmitModuleInput gains the field
   void fieldOverrides;
   const methods: EmitMethodInput[] = [];
   const errorAliases: Array<{ operationId: string; errorStatuses: number[] }> = [];
