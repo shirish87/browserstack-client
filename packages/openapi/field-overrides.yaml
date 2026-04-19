@@ -1,0 +1,13 @@
+# packages/openapi/field-overrides.yaml
+# Per-field camelCase name overrides for API inconsistencies.
+# Format:
+#   overrides:
+#     <operationId>:
+#       request:
+#         <snake_case_wire_name>: <camelCase_public_name>
+#       response:
+#         <snake_case_wire_name>: <camelCase_public_name>
+#
+# Only add entries here when the blanket snake_case→camelCase transform
+# produces a wrong or confusing name. Most fields don't need overrides.
+overrides: {}
