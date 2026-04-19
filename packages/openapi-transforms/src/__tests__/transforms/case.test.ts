@@ -50,3 +50,17 @@ describe("toCamelCase", () => {
     expect(toCamelCase(null)).toBe(null);
   });
 });
+
+describe("toSnakeCase with overrides", () => {
+  it("uses override map instead of default conversion", () => {
+    expect(toSnakeCase({ appId: "abc" }, { appId: "custom_id" }))
+      .toEqual({ custom_id: "abc" });
+  });
+});
+
+describe("toCamelCase with overrides", () => {
+  it("uses override map for matching keys", () => {
+    expect(toCamelCase({ automation_build: { id: "x" } }, { automation_build: "build" }))
+      .toEqual({ build: { id: "x" } });
+  });
+});
