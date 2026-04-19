@@ -2,6 +2,7 @@ import SwaggerParser from "@apidevtools/swagger-parser";
 import fs from "node:fs/promises";
 import path from "node:path";
 import openapiTS, { astToString } from "openapi-typescript";
+import ts from "typescript";
 import { fileURLToPath } from "node:url";
 import { CodecRegistry, registerAllBuiltins } from "@browserstack-client/openapi-transforms";
 import { generateClientModule } from "@browserstack-client/openapi-transforms/codegen";
@@ -31,12 +32,16 @@ console.log("Generating TypeScript types...");
 // For now, generate a single comprehensive type file
 const specUrl = new URL("../../openapi.yml", import.meta.url);
 
+const blobType = ts.factory.createTypeReferenceNode("Blob");
+const blobOrNull = ts.factory.createUnionTypeNode([
+  blobType,
+  ts.factory.createLiteralTypeNode(ts.factory.createNull()),
+]);
+
 const ast = await openapiTS(specUrl, {
   transform(schemaObject) {
     if (schemaObject.format === "binary") {
-      return schemaObject.nullable
-        ? `Blob | null`
-        : `Blob`;
+      return schemaObject.nullable ? blobOrNull : blobType;
     }
   },
 });
@@ -133,6 +138,8 @@ const productSpecs = [
   { product: "local-testing", baseUrl: "sdk" },
 ];
 
+const fieldOverridesPath = path.join(__dirname, "field-overrides.yaml");
+
 for (const { product, baseUrl } of productSpecs) {
   const specPath = path.join(__dirname, "specs", `${product}.yml`);
   try {
@@ -142,6 +149,7 @@ for (const { product, baseUrl } of productSpecs) {
       typesImportPath: `./${product}`,
       registry,
       baseUrl,
+      fieldOverridesPath,
     });
     await fs.writeFile(path.join(outDir, `${product}.client.ts`), src);
     console.log(`  ✓ ${product}.client.ts`);
