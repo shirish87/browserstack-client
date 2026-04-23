@@ -3,6 +3,7 @@
 import { ensureAccessKeyExists, ensureUsernameExists } from "./utils.ts";
 import { BrowserStackError } from "@browserstack-client/core";
 import { components } from "@browserstack-client/openapi/app-automate";
+import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
 import {
   AppAutomateClient,
   BrowserStackOptions,
@@ -10,11 +11,8 @@ import {
 } from "@browserstack-client/app-automate";
 import { randomBytes } from "node:crypto";
 import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
 import { basename, resolve } from "node:path";
 import process from "node:process";
-
-const require = createRequire(import.meta.url);
 
 enum Platform {
   flutter = "flutter",
@@ -175,18 +173,21 @@ class PlatformCommand<T> {
   }
 }
 
+type CamelApp = DeepCamelCase<components["schemas"]["AppAutomateApp"]>;
+type CamelTestPackage = DeepCamelCase<components["schemas"]["AppAutomateTestPackage"]>;
+type CamelMediaFile = DeepCamelCase<components["schemas"]["AppAutomateMediaFile"]>;
+
 const transformFlutterTestPackageToApp = (
-  testPackage: components["schemas"]["AppAutomateTestPackage"]
-): components["schemas"]["AppAutomateApp"] => {
-  const { test_package_id, test_package_url, test_package_name, ...common } =
-    testPackage;
+  testPackage: CamelTestPackage
+): CamelApp => {
+  const { testPackageId, testPackageUrl, testPackageName, ...common } = testPackage;
 
   return {
     ...common,
-    app_id: test_package_id,
-    app_url: test_package_url,
-    app_name: test_package_name,
-  };
+    appId: testPackageId,
+    appUrl: testPackageUrl,
+    appName: testPackageName,
+  } as CamelApp;
 };
 
 const ensureFlutterPlatform = (
@@ -205,16 +206,16 @@ const ensureFlutterPlatform = (
 };
 
 const appPlatformCommand: Pick<
-  PlatformCommandSpec<components["schemas"]["AppAutomateApp"]>,
+  PlatformCommandSpec<CamelApp>,
   "getURL" | "logParams" | "getURLProtocol"
 > = {
   getURLProtocol: () => "bs://",
-  getURL: (app) => app?.app_url,
+  getURL: (app) => app?.appUrl,
   logParams: (app) => [
-    app?.app_url ?? "",
-    app?.uploaded_at ? new Date(app.uploaded_at).toISOString() : "",
-    app?.app_name,
-    app?.app_version,
+    app?.appUrl ?? "",
+    app?.uploadedAt ? new Date(app.uploadedAt).toISOString() : "",
+    app?.appName,
+    app?.appVersion,
   ],
 };
 
@@ -238,12 +239,12 @@ const flutterPlatformCommand = new PlatformCommand(
       );
 
       if (platform === FlutterPlatform.android) {
-        return client.getFlutterApps(FlutterPlatform.android);
+        return client.getAppAutomateFlutterAndroidApps().then((r) => Array.isArray(r) ? r : []);
       }
 
       return client
-        .getFlutterApps(FlutterPlatform.ios)
-        .then((r) => r.map(transformFlutterTestPackageToApp));
+        .getAppAutomateFlutteriOSApps()
+        .then((r) => (Array.isArray(r) ? r : []).map(transformFlutterTestPackageToApp));
     },
     upload: (options, clientOptions, args) => {
       const client = new AppAutomateClient(clientOptions);
@@ -259,11 +260,11 @@ const flutterPlatformCommand = new PlatformCommand(
       }
 
       if (platform === FlutterPlatform.android) {
-        return client.uploadFlutterApp(FlutterPlatform.android, options);
+        return client.uploadAppAutomateFlutterAndroidApp({ ...options, fileName: options.filename });
       }
 
       return client
-        .uploadFlutterApp(FlutterPlatform.ios, options)
+        .uploadAppAutomateFlutteriOSApp({ ...options, fileName: options.filename })
         .then(transformFlutterTestPackageToApp);
     },
     get: (options, clientOptions, args) => {
@@ -273,11 +274,11 @@ const flutterPlatformCommand = new PlatformCommand(
       );
 
       if (platform === FlutterPlatform.android) {
-        return client.getFlutterApp(FlutterPlatform.android, options.id);
+        return client.getAppAutomateFlutterAndroidApp(options.id);
       }
 
       return client
-        .getFlutterApp(FlutterPlatform.ios, options.id)
+        .getAppAutomateFlutteriOSApp(options.id)
         .then(transformFlutterTestPackageToApp);
     },
     delete: async (options, clientOptions, args) => {
@@ -287,10 +288,10 @@ const flutterPlatformCommand = new PlatformCommand(
       );
 
       const result = await (platform === FlutterPlatform.android
-        ? client.deleteFlutterApp(FlutterPlatform.android, options.id)
-        : client.deleteFlutterApp(FlutterPlatform.ios, options.id));
+        ? client.deleteAppAutomateFlutterAndroidApp(options.id)
+        : client.deleteAppAutomateFlutteriOSApp(options.id));
 
-      return result?.success?.message?.length > 0;
+      return (result as { success?: { message?: string } })?.success?.message?.length as number > 0;
     },
   }
 );
@@ -298,20 +299,18 @@ const flutterPlatformCommand = new PlatformCommand(
 // there's no documented API to get an Appium app by it's app_id
 // so we generate a custom_id and swap app_id with custom_id (sigh)
 // TODO: revisit this hack
-const patchAppIdWithCustomId = (
-  app: components["schemas"]["AppAutomateApp"]
-): components["schemas"]["AppAutomateApp"] => {
-  if (!app.app_id || !app.custom_id) {
+const patchAppIdWithCustomId = (app: CamelApp): CamelApp => {
+  if (!app.appId || !app.customId) {
     return app;
   }
 
-  const customId = app.app_id;
+  const customId = app.appId;
 
   return {
     ...app,
-    app_id: app.custom_id,
-    app_url: app.app_url.replace(app.app_id, app.custom_id),
-    custom_id: customId,
+    appId: app.customId,
+    appUrl: app.appUrl.replace(app.appId, app.customId),
+    customId,
   };
 };
 
@@ -330,36 +329,39 @@ const appiumPlatformCommand = new PlatformCommand(
     ...appPlatformCommand,
     list: (clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      return client.getAppiumApps().then((r) => r.map(patchAppIdWithCustomId));
+      return client.getAppAutomateApps().then((r) => (Array.isArray(r) ? r : []).map(patchAppIdWithCustomId));
     },
     upload: (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
 
       return client
-        .uploadAppiumApp({
+        .uploadAppAutomateApp({
           ...options,
-          custom_id: randomBytes(20).toString("hex"),
+          fileName: options.filename,
+          customId: randomBytes(20).toString("hex"),
         })
         .then(patchAppIdWithCustomId);
     },
     get: (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
 
-      return client.getAppiumAppsByCustomId(options.id).then((r) => {
-        if (!r.length) {
+      return client.getAppAutomateAppsByCustomId(options.id).then((r) => {
+        const apps = Array.isArray(r) ? r : [];
+        if (!apps.length) {
           throw new BrowserStackError(`${options.id} Not found`);
         }
 
-        return patchAppIdWithCustomId(r[0]);
+        return patchAppIdWithCustomId(apps[0]);
       });
     },
     delete: async (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      const [app] = await client.getAppiumAppsByCustomId(options.id);
-      // if custom_id is not found, use app_id
-      const appId = app?.app_id ?? options.id;
-      const r = await client.deleteAppiumApp(appId);
-      return r?.success === true;
+      const result = await client.getAppAutomateAppsByCustomId(options.id);
+      const apps = Array.isArray(result) ? result : [];
+      // if customId is not found, use appId
+      const appId = apps[0]?.appId ?? options.id;
+      const r = await client.deleteAppAutomateApp(appId);
+      return (r as { success?: boolean })?.success === true;
     },
   }
 );
@@ -379,20 +381,20 @@ const espressoPlatformCommand = new PlatformCommand(
     ...appPlatformCommand,
     list: (clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      return client.getEspressoApps();
+      return client.getAppAutomateEspressoApps().then((r) => Array.isArray(r) ? r : []);
     },
     upload: (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      return client.uploadEspressoApp(options);
+      return client.uploadAppAutomateApp({ ...options, fileName: options.filename });
     },
     get: (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      return client.getEspressoApp(options.id);
+      return client.getAppAutomateEspressoApp(options.id);
     },
     delete: async (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      const r = await client.deleteEspressoApp(options.id);
-      return r?.success?.message?.length > 0;
+      const r = await client.deleteAppAutomateEspressoApp(options.id);
+      return (r as { success?: { message?: string } })?.success?.message?.length as number > 0;
     },
   }
 );
@@ -412,20 +414,20 @@ const xcuiTestPlatformCommand = new PlatformCommand(
     ...appPlatformCommand,
     list: (clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      return client.getXCUITestApps();
+      return client.getAppAutomateXCUITestApps().then((r) => Array.isArray(r) ? r : []);
     },
     upload: (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      return client.uploadXCUITestApp(options);
+      return client.uploadAppAutomateXCUITestApp({ ...options, fileName: options.filename });
     },
     get: (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      return client.getXCUITestApp(options.id);
+      return client.getAppAutomateXCUITestApp(options.id);
     },
     delete: async (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      const r = await client.deleteXCUITestApp(options.id);
-      return r?.success?.message?.length > 0;
+      const r = await client.deleteAppAutomateXCUITestApp(options.id);
+      return (r as { success?: { message?: string } })?.success?.message?.length as number > 0;
     },
   }
 );
@@ -442,10 +444,13 @@ const detoxPlatformCommand = new PlatformCommand(
       const appType = args?.[0]?.toLowerCase?.()?.trim?.();
 
       switch (appType) {
-        case "app":
+        case "app": {
+          const client = new AppAutomateClient(clientOptions);
+          return client.uploadAppAutomateDetoxAndroidApp({ ...options, fileName: options.filename });
+        }
         case "app-client": {
           const client = new AppAutomateClient(clientOptions);
-          return client.uploadDetoxAndroidApp(appType, options);
+          return client.uploadAppAutomateDetoxAndroidAppClient({ ...options, fileName: options.filename });
         }
         default:
           throw new BrowserStackError(
@@ -465,32 +470,28 @@ const detoxPlatformCommand = new PlatformCommand(
   }
 );
 
-// there's no documented API to get an Appium app by it's app_id
-// so we generate a custom_id and swap app_id with custom_id (sigh)
+// there's no documented API to get a media file by it's media_id
+// so we generate a custom_id and swap media_id with custom_id (sigh)
 // TODO: revisit this hack
-const patchMediaIdWithCustomId = (
-  media: components["schemas"]["AppAutomateMediaFile"]
-): components["schemas"]["AppAutomateMediaFile"] => {
-  if (!media.custom_id) {
+const patchMediaIdWithCustomId = (media: CamelMediaFile): CamelMediaFile => {
+  if (!media.customId) {
     return media;
   }
 
-  const customId = media.media_id;
+  const customId = media.mediaId;
 
   return {
     ...media,
-    media_id: media.custom_id,
-    media_url: media.media_url.replace(media.media_id, media.custom_id),
-    custom_id: customId,
+    mediaId: media.customId,
+    mediaUrl: media.mediaUrl.replace(media.mediaId, media.customId),
+    customId,
   };
 };
 
 /**
  * Represents a command with actions for interacting with media files on BrowserStack App Automate.
  */
-const mediaPlatformCommand = new PlatformCommand<
-  components["schemas"]["AppAutomateMediaFile"]
->(
+const mediaPlatformCommand = new PlatformCommand<CamelMediaFile>(
   Platform.media,
   [
     PlatformAction.upload,
@@ -500,17 +501,17 @@ const mediaPlatformCommand = new PlatformCommand<
   ],
   {
     getURLProtocol: () => "media://",
-    getURL: (media) => media?.media_url,
+    getURL: (media) => media?.mediaUrl,
     logParams: (media) => [
-      media?.media_url ?? "",
-      media?.uploaded_at ? new Date(media.uploaded_at).toISOString() : "",
-      media?.media_name,
+      media?.mediaUrl ?? "",
+      media?.uploadedAt ? new Date(media.uploadedAt).toISOString() : "",
+      media?.mediaName,
     ],
     list: (clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
       return client
-        .getMediaFiles()
-        .then((r) => r.map(patchMediaIdWithCustomId));
+        .getAppAutomateMediaFiles()
+        .then((r) => (Array.isArray(r) ? r : []).map(patchMediaIdWithCustomId));
     },
     upload: (options, clientOptions) => {
       if (options.url) {
@@ -525,37 +526,40 @@ const mediaPlatformCommand = new PlatformCommand<
 
       const client = new AppAutomateClient(clientOptions);
       return client
-        .uploadMediaFile({
+        .uploadAppAutomateMediaFile({
           ...options,
-          custom_id: randomBytes(20).toString("hex"),
+          fileName: options.filename,
+          customId: randomBytes(20).toString("hex"),
         })
         .then(patchMediaIdWithCustomId);
     },
     get: (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
 
-      return client.getMediaFilesByCustomId(options.id).then((r) => {
-        if (!r.length) {
+      return client.getAppAutomateMediaFilesByCustomId(options.id).then((r) => {
+        const media = Array.isArray(r) ? r : [];
+        if (!media.length) {
           throw new BrowserStackError(`${options.id} Not found`);
         }
 
-        return patchMediaIdWithCustomId(r[0]);
+        return patchMediaIdWithCustomId(media[0]);
       });
     },
     delete: async (options, clientOptions) => {
       const client = new AppAutomateClient(clientOptions);
-      const [app] = await client.getMediaFilesByCustomId(options.id);
-      // if custom_id is not found, use media_id
-      const mediaId = app?.media_id ?? options.id;
-      const r = await client.deleteMediaFile(mediaId);
-      return r?.success === true;
+      const result = await client.getAppAutomateMediaFilesByCustomId(options.id);
+      const media = Array.isArray(result) ? result : [];
+      // if customId is not found, use mediaId
+      const mediaId = media[0]?.mediaId ?? options.id;
+      const r = await client.deleteAppAutomateMediaFile(mediaId);
+      return (r as { success?: boolean })?.success === true;
     },
   }
 );
 
 type PlatformCommands =
-  | PlatformCommand<components["schemas"]["AppAutomateApp"]>
-  | PlatformCommand<components["schemas"]["AppAutomateMediaFile"]>;
+  | PlatformCommand<CamelApp>
+  | PlatformCommand<CamelMediaFile>;
 
 /**
  * Map that associates each AppPlatform with its corresponding AppPlatformCommand.
@@ -722,6 +726,7 @@ export async function main(
   }
 }
 
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
   main();
 }

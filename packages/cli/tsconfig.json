@@ -4,10 +4,15 @@
     "baseUrl": ".",
     "noEmit": true,
     "paths": {
+      "@browserstack-client/cli": ["./src/index.ts"],
       "@browserstack-client/core": ["../core/src/index.ts"],
+      "@browserstack-client/local-testing": ["../local-testing/src/index.ts"],
       "@browserstack-client/local-testing-binary": ["../local-testing-binary/src/index.ts"],
       "@browserstack-client/app-automate": ["../app-automate/src/index.ts"],
-      "@browserstack-client/openapi/app-automate": ["../openapi/generated/app-automate.ts"]
+      "@browserstack-client/automate": ["../automate/src/index.ts"],
+      "@browserstack-client/openapi": ["../openapi/generated/index.ts"],
+      "@browserstack-client/openapi/*": ["../openapi/generated/*.ts"],
+      "@browserstack-client/openapi-transforms": ["../openapi-transforms/src/index.ts"]
     }
   },
   "include": ["src"]

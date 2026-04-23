@@ -13,6 +13,7 @@ generated/*
 coverage
 node_modules
 dist
+dist-binary
 dist-ssr
 *.local
 

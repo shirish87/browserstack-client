@@ -5,14 +5,11 @@ import { LocalTestingBinary, LocalTestingBinaryOptions } from "@browserstack-cli
 import { BufferEncoding, writeFileAtomic } from "@browserstack-client/local-testing-binary";
 import cp from "node:child_process";
 import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";
 import { onExit } from "signal-exit";
 import { env, resolveAccessKey } from "@browserstack-client/core";
-
-const require = createRequire(import.meta.url);
 
 enum BrowserStackLocalAction {
   start = "start",
@@ -473,6 +470,7 @@ export async function main(
   }
 }
 
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
   main(process.argv.slice(2), globalThis.console, "--", true);
 }
