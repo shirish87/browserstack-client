@@ -13,6 +13,9 @@ export function getSharedAliases(packageDir: string) {
     "@browserstack-client/js-testing": path.resolve(packageDir, "../js-testing/src/index.ts"),
     "@browserstack-client/local-testing": path.resolve(packageDir, "../local-testing/src/index.ts"),
     "@browserstack-client/local-testing-binary": path.resolve(packageDir, "../local-testing-binary/src/index.ts"),
+    "@browserstack-client/test-management": path.resolve(packageDir, "../test-management/src/index.ts"),
+    "@browserstack-client/openapi/test-management/client": path.resolve(packageDir, "../openapi/generated/test-management.client.ts"),
+    "@browserstack-client/openapi/test-management": path.resolve(packageDir, "../openapi/generated/test-management.ts"),
     "@browserstack-client/cli": path.resolve(packageDir, "../cli/src/index.ts"),
   };
 }

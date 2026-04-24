@@ -8,6 +8,7 @@ export default defineConfig({
     "browserstack-app-automate": "src/browserstack-app-automate.ts",
     "browserstack-automate": "src/browserstack-automate.ts",
     "browserstack-local-testing": "src/browserstack-local-testing.ts",
+    "browserstack-test-management": "src/browserstack-test-management.ts",
   },
   format: ["esm"],
   dts: false,
@@ -24,6 +25,7 @@ export default defineConfig({
     "@browserstack-client/app-automate",
     "@browserstack-client/automate",
     "@browserstack-client/local-testing",
+    "@browserstack-client/test-management",
     "signal-exit",
   ],
 });

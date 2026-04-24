@@ -16,16 +16,26 @@ export interface GenerateClientOptions {
   fieldOverridesPath?: string;
 }
 
+interface SpecParam {
+  name: string;
+  in: string;
+  schema?: { type?: string };
+  $ref?: string;
+}
+
 interface SpecDoc {
   paths?: Record<string, Record<string, SpecOp | undefined>>;
+  components?: {
+    parameters?: Record<string, SpecParam>;
+  };
 }
 interface SpecOp {
   operationId?: string;
-  parameters?: Array<{ name: string; in: string; schema?: { type?: string } }>;
+  parameters?: Array<SpecParam>;
   requestBody?: unknown;
   responses?: Record<string, { content?: Record<string, unknown> }>;
-  "x-response-transform"?: { codec: string; config?: unknown };
-  "x-request-transform"?: { codec: string; config?: unknown };
+  "x-response-transform"?: { codec: string; config?: unknown } | string;
+  "x-request-transform"?: { codec: string; config?: unknown } | string;
   "x-response-custom"?: boolean;
   "x-request-custom"?: boolean;
   [key: string]: unknown;
@@ -50,7 +60,14 @@ export async function generateClientModule(opts: GenerateClientOptions): Promise
         ? `operations["${operationId}"]["responses"][200]["content"]["application/json"]`
         : op.responses?.["200"]?.content?.["text/plain"] ? `string` : `unknown`;
       const returnType = deriveReturnType(successCT, annotations);
-      const pathParams = (op.parameters ?? []).filter((p) => p.in === "path").map((p) => ({
+      const resolvedParams = (op.parameters ?? []).map((p) => {
+        if (p.$ref) {
+          const refName = p.$ref.replace("#/components/parameters/", "");
+          return (doc.components?.parameters?.[refName] ?? p);
+        }
+        return p;
+      });
+      const pathParams = resolvedParams.filter((p) => p.in === "path").map((p) => ({
         name: p.name, tsType: p.schema?.type === "integer" ? "number" : "string",
       }));
       methods.push({

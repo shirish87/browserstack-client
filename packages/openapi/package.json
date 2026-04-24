@@ -14,13 +14,13 @@
     "./automate/client": "./generated/automate.client.ts",
     "./app-automate": "./generated/app-automate.ts",
     "./app-automate/client": "./generated/app-automate.client.ts",
-    "./js-testing": "./generated/js-testing.ts",
-    "./js-testing/client": "./generated/js-testing.client.ts",
     "./screenshots": "./generated/screenshots.ts",
     "./screenshots/client": "./generated/screenshots.client.ts",
     "./local-testing": "./generated/local-testing.ts",
     "./local-testing/client": "./generated/local-testing.client.ts",
     "./local-testing-binary": "./generated/local-testing-binary.ts",
+    "./test-management": "./generated/test-management.ts",
+    "./test-management/client": "./generated/test-management.client.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -31,9 +31,9 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "@apidevtools/swagger-parser": "^10.1.1",
+    "@apidevtools/swagger-parser": "^12.1.0",
     "openapi-typescript": "^7.13.0",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   },
   "dependencies": {
     "@browserstack-client/openapi-transforms": "workspace:*"

@@ -6,12 +6,14 @@ import { main as runLocal } from "./browserstack-local.ts";
 import { main as runAppAutomate } from "./browserstack-app-automate.ts";
 import { main as runAutomate } from "./browserstack-automate.ts";
 import { main as runLocalTesting } from "./browserstack-local-testing.ts";
+import { main as runTestManagement } from "./browserstack-test-management.ts";
 
 const products: Record<string, (args: string[]) => Promise<void>> = {
   local: runLocal,
   "app-automate": runAppAutomate,
   automate: runAutomate,
   "local-testing": runLocalTesting,
+  "test-management": runTestManagement,
 };
 
 export async function main(inputArgs: string[] = process.argv.slice(2)) {

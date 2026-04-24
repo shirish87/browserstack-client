@@ -63,10 +63,6 @@ const products = {
     pathPatterns: [/^\/app-automate\//],
     description: "App Automate product types",
   },
-  "js-testing": {
-    pathPatterns: [/^\/browsers$/, /^\/status$/, /^\/worker/],
-    description: "JS Testing product types",
-  },
   screenshots: {
     pathPatterns: [/^\/screenshots/],
     description: "Screenshots product types",
@@ -80,6 +76,11 @@ const products = {
     description: "Local Testing Binary product types",
   },
 };
+
+// Standalone specs that have their own server base URL and are not part of openapi.yml
+const standaloneSpecs = [
+  { product: "test-management", description: "Test Management product types" },
+];
 
 // Generate per-product type files by filtering paths
 const paths = Object.keys(api.paths || {});
@@ -109,8 +110,29 @@ export type paths = Pick<allPaths, ${productPaths.map((p) => `"${p}"`).join(" | 
   console.log(`✓ Generated ${productName}.ts (${productPaths.length} operations)`);
 }
 
-// 5. Generate index.ts re-exporting all
-const products_list = Object.keys(products);
+// 5. Generate types for standalone specs (separate server, not in openapi.yml)
+for (const { product, description } of standaloneSpecs) {
+  const specPath = path.join(__dirname, "specs", `${product}.yml`);
+  const specUrl = new URL(`specs/${product}.yml`, import.meta.url);
+  const standaloneAst = await openapiTS(specUrl, {
+    transform(schemaObject) {
+      if (schemaObject.format === "binary") {
+        return schemaObject.nullable ? blobOrNull : blobType;
+      }
+    },
+  });
+  await fs.writeFile(
+    path.join(outDir, `${product}.ts`),
+    astToString(standaloneAst)
+  );
+  console.log(`✓ Generated ${product}.ts (standalone spec)`);
+}
+
+// 6. Generate index.ts re-exporting all
+const products_list = [
+  ...Object.keys(products),
+  ...standaloneSpecs.map((s) => s.product),
+];
 const indexContent = `/**
  * Generated OpenAPI types for all BrowserStack products
  * @internal - This is generated code. Do not modify.
@@ -133,9 +155,9 @@ registerAllBuiltins(registry);
 const productSpecs = [
   { product: "automate", baseUrl: "sdk" },
   { product: "app-automate", baseUrl: "sdk" },
-  { product: "js-testing", baseUrl: "sdk" },
   { product: "screenshots", baseUrl: "sdk" },
   { product: "local-testing", baseUrl: "sdk" },
+  { product: "test-management", baseUrl: "sdk" },
 ];
 
 const fieldOverridesPath = path.join(__dirname, "field-overrides.yaml");
