@@ -62,7 +62,7 @@ async function handleBuilds(
     }
     case "latest": {
       if (!args[0]) throw new BrowserStackError("Missing <projectName>");
-      const build = await client.getTestReportingLatestBuild({ projectName: args[0], buildName: args[1] } as any);
+      const build = await client.getTestReportingLatestBuild(args[0], args[1]);
       logger.info(JSON.stringify(build, null, 2));
       break;
     }
@@ -321,7 +321,7 @@ export async function main(
 const isMain =
   import.meta.url === `file://${process.argv[1]}` ||
   import.meta.url === `file://${resolve(process.argv[1])}` ||
-  (globalThis as any).__BUILD_TARGET__ === "binary";
+  (globalThis as Record<string, unknown>)["__BUILD_TARGET__"] === "binary";
 
 if (isMain) {
   main();

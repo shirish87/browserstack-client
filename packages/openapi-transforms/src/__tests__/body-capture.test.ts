@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { captureErrorBody } from "../body-capture.js";
+import { captureErrorBody } from "../body-capture";
 
 function mkResponse(body: string, contentType = "application/json", status = 400): Response {
   return new Response(body, { status, headers: { "content-type": contentType } });

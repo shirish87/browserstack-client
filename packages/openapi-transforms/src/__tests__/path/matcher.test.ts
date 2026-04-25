@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { parsePath } from "../../path/parser.js";
-import { extract, isArrayPath } from "../../path/matcher.js";
+import { parsePath } from "../../path/parser";
+import { extract, isArrayPath } from "../../path/matcher";
 
 describe("extract", () => {
   it("$ returns whole value", () => {

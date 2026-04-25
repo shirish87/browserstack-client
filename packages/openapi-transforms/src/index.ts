@@ -50,3 +50,4 @@ export { executeOperation } from "./execute";
 export type { ExecuteSpec, ExecuteOptions } from "./execute";
 
 export { toCamelCase, toSnakeCase } from "./transforms/case";
+export type { DeepCamelCase, DeepSnakeCase } from "./transforms/case";

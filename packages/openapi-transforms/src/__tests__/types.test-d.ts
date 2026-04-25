@@ -1,5 +1,5 @@
 import { expectTypeOf, test } from "vitest";
-import { HttpError, NetworkError, isHttpError, type CodecContext } from "../index.js";
+import { HttpError, NetworkError, isHttpError, type CodecContext } from "../index";
 
 test("HttpError status is non-optional number", () => {
   const ctx: CodecContext = { operationId: "x", method: "GET", url: "u" };

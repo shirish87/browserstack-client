@@ -70,10 +70,17 @@ export async function generateClientModule(opts: GenerateClientOptions): Promise
       const pathParams = resolvedParams.filter((p) => p.in === "path").map((p) => ({
         name: p.name, tsType: p.schema?.type === "integer" ? "number" : "string",
       }));
+      const queryParams = resolvedParams.filter((p) => p.in === "query").map((p) => {
+        const isArray = p.name.endsWith("[]");
+        const baseName = isArray ? p.name.slice(0, -2) : p.name;
+        const itemType = p.schema?.type === "integer" ? "number" : "string";
+        const tsType = isArray ? `${itemType}[]` : itemType;
+        return { name: p.name, baseName, tsType, required: false };
+      });
       methods.push({
         operationId, method: method.toUpperCase() as EmitMethodInput["method"], path,
-        pathParams, queryParams: [], hasRequestBody: Boolean(op.requestBody),
-        operationsKey: operationId, returnType, annotations, baseUrl: opts.baseUrl,
+        pathParams, queryParams, hasRequestBody: Boolean(op.requestBody),
+        operationsKey: operationId, returnType, annotations, baseUrl: (op["x-base-url"] ?? opts.baseUrl) as "sdk" | "sdkCloud",
       });
       const errorStatuses = Object.keys(op.responses ?? {}).map(Number)
         .filter((s) => Number.isFinite(s) && s >= 400);

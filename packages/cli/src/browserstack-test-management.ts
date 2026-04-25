@@ -584,7 +584,7 @@ export async function main(
 const isMain =
   import.meta.url === `file://${process.argv[1]}` ||
   import.meta.url === `file://${resolve(process.argv[1])}` ||
-  (globalThis as any).__BUILD_TARGET__ === "binary";
+  (globalThis as Record<string, unknown>)["__BUILD_TARGET__"] === "binary";
 
 if (isMain) {
   main();

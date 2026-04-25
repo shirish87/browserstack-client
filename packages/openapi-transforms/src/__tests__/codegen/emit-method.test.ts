@@ -25,7 +25,7 @@ describe("emitMethod", () => {
     expect(src).toContain("path: \"/automate/projects/{projectId}.json\"");
     expect(src).toContain("responseCodec: \"json-unwrap\"");
     expect(src).toContain("responseCodecConfig: {\"path\":\"$.project\"}");
-    expect(src).toContain("Promise<components[\"schemas\"][\"AutomateProject\"]>");
+    expect(src).toContain("Promise<DeepCamelCase<components[\"schemas\"][\"AutomateProject\"]>>");
   });
 
   it("camelizes snake_case path params in signature", () => {

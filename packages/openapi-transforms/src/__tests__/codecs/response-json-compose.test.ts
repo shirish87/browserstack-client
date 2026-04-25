@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { jsonComposeCodec } from "../../codecs/response-json-compose.js";
+import { jsonComposeCodec } from "../../codecs/response-json-compose";
 
 const ctx = { operationId: "op", method: "GET", url: "http://x" };
 

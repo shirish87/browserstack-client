@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { readAnnotations } from "../../codegen/annotations.js";
-import { CodecRegistry } from "../../registry.js";
-import { registerAllBuiltins } from "../../codecs/index.js";
+import { readAnnotations } from "../../codegen/annotations";
+import { CodecRegistry } from "../../registry";
+import { registerAllBuiltins } from "../../codecs/index";
 
 const registry = (() => { const r = new CodecRegistry(); registerAllBuiltins(r); return r; })();
 

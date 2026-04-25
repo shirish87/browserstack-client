@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { generateClientModule } from "../../codegen/index.js";
-import { CodecRegistry } from "../../registry.js";
-import { registerAllBuiltins } from "../../codecs/index.js";
+import { generateClientModule } from "../../codegen/index";
+import { CodecRegistry } from "../../registry";
+import { registerAllBuiltins } from "../../codecs/index";
 
 describe("codegen snapshot", () => {
   it("matches the golden file for tiny-spec", async () => {

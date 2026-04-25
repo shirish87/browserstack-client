@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import fc from "fast-check";
-import { streamExtract } from "../../streaming/json-stream.js";
-import { parsePath } from "../../path/parser.js";
-import { extract } from "../../path/matcher.js";
+import { streamExtract } from "../../streaming/json-stream";
+import { parsePath } from "../../path/parser";
+import { extract } from "../../path/matcher";
 
 const jsonValueArb: fc.Arbitrary<unknown> = fc.oneof(
   fc.integer(),

@@ -1,12 +1,9 @@
 import { vi } from "vitest";
-import { LocalTestingClient } from "../client.js";
-import * as fixtures from "./fixtures.js";
+import { LocalTestingClient, type LocalTestingOptions } from "../index";
+import * as fixtures from "./fixtures";
 
-/**
- * Creates a mock LocalTestingClient for testing
- */
 export function createMockLocalTestingClient(
-  options?: any
+  options?: LocalTestingOptions
 ): LocalTestingClient & {
   getBinaryInstances: ReturnType<typeof vi.fn>;
   getBinaryInstance: ReturnType<typeof vi.fn>;
@@ -21,7 +18,7 @@ export function createMockLocalTestingClient(
     getBinaryInstance: vi.fn().mockResolvedValue(fixtures.instance),
     disconnectBinaryInstance: vi.fn().mockResolvedValue("Disconnected"),
     downloadBinary: vi.fn().mockResolvedValue(fixtures.download),
-  } as any;
+  } as ReturnType<typeof createMockLocalTestingClient>;
 }
 
 export { fixtures };

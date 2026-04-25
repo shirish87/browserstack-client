@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { parsePath } from "../../path/parser.js";
-import { streamExtract } from "../../streaming/json-stream.js";
+import { parsePath } from "../../path/parser";
+import { streamExtract } from "../../streaming/json-stream";
 
 function bodyStream(s: string): ReadableStream<Uint8Array> {
   const bytes = new TextEncoder().encode(s);

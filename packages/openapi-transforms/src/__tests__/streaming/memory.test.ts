@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { streamExtract } from "../../streaming/json-stream.js";
-import { parsePath } from "../../path/parser.js";
+import { streamExtract } from "../../streaming/json-stream";
+import { parsePath } from "../../path/parser";
 
 function itemStream(count: number): ReadableStream<Uint8Array> {
   const enc = new TextEncoder();

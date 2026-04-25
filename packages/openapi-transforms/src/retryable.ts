@@ -1,4 +1,4 @@
-import type { ErrorKind } from "./errors.js";
+import type { ErrorKind } from "./errors";
 
 export function isRetryable(kind: ErrorKind, status?: number): boolean {
   if (kind === "network") return true;

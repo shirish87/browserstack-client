@@ -33,10 +33,15 @@ export const testManagementContext: TestManagementTestContext["testManagement"] 
   randomProjectId,
   randomFolderId: async (projectId: string): Promise<number> => {
     const folders = await client.getTestManagementFolders(projectId);
-    assert(Array.isArray(folders) && folders.length > 0, "No folders found");
-    const folder = folders[Math.floor(Math.random() * folders.length)]!;
-    assert(folder.id !== undefined, "Folder has no id");
-    return folder.id;
+    const list = Array.isArray(folders) && folders.length > 0 ? folders : null;
+    if (list) {
+      const folder = list[Math.floor(Math.random() * list.length)]!;
+      assert(folder.id !== undefined, "Folder has no id");
+      return folder.id;
+    }
+    const created = await client.createTestManagementFolder(projectId, { folder: { name: `setup-folder-${Date.now()}`, description: "" } });
+    assert(created?.id !== undefined, "Created folder has no id");
+    return created.id;
   },
   randomTestCaseId: async (projectId: string): Promise<string> => {
     const cases = await client.getTestManagementTestCases(projectId);

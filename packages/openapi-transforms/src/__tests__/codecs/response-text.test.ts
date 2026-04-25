@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { textResponseCodec } from "../../codecs/response-text.js";
+import { textResponseCodec } from "../../codecs/response-text";
 
 const ctx = { operationId: "op", method: "GET", url: "http://x" };
 

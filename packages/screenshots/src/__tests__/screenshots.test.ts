@@ -1,14 +1,16 @@
 import { components } from "@browserstack-client/openapi";
+import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
 import { describe, expect, expectTypeOf, test } from "vitest";
-import type { BrowserStackTestContext } from "./setup.ts";
 import { screenshotsContext } from "./setup.ts";
 
-describe("ScreenshotsClient", () => {
-  let browsers: components["schemas"]["BrowserList"];
+const LONG_TIMEOUT = 30_000;
 
-  test("getBrowsers", async () => {
+describe("ScreenshotsClient", () => {
+  let browsers: DeepCamelCase<components["schemas"]["BrowserList"]>;
+
+  test("getScreenshotsBrowsers", async () => {
     const { client } = screenshotsContext;
-    const data = await client.getBrowsers();
+    const data = await client.getScreenshotsBrowsers();
     expect(data).toBeDefined();
 
     // The Screenshots API may return { success: true } instead of a browser
@@ -20,7 +22,7 @@ describe("ScreenshotsClient", () => {
 
     browsers = data;
     expect(data.length).toBeGreaterThan(0);
-    expectTypeOf(data).toMatchTypeOf<components["schemas"]["BrowserList"]>([]);
+    expectTypeOf(data).toMatchTypeOf<DeepCamelCase<components["schemas"]["BrowserList"]>>();
   });
 
   test("createJob", async ({ skip }) => {
@@ -32,8 +34,8 @@ describe("ScreenshotsClient", () => {
       browsers: browsers.slice(0, 1),
     });
     expect(data).toBeDefined();
-    expect(data.job_id).toBeDefined();
-    expectTypeOf(data.job_id).toMatchTypeOf<string>();
+    expect(data.jobId).toBeDefined();
+    expectTypeOf(data.jobId).toMatchTypeOf<string>();
   });
 
   test("getJob", async ({ skip }) => {
@@ -45,19 +47,19 @@ describe("ScreenshotsClient", () => {
       browsers: browsers.slice(0, 1),
     });
     expect(job).toBeDefined();
-    expect(job.job_id).toBeDefined();
+    expect(job.jobId).toBeDefined();
 
-    const jobId = job.job_id;
+    const jobId = job.jobId;
     const data = await client.getJob(jobId);
     expect(data).toBeDefined();
     expect(data.id).toEqual(jobId);
-    expectTypeOf(data).toMatchTypeOf<components["schemas"]["ScreenshotsJob"]>();
+    expectTypeOf(data).toMatchTypeOf<DeepCamelCase<components["schemas"]["ScreenshotsJob"]>>();
   });
 
   // fails due to job.state=queued_all until test timeout
   test("launch", async () => {
     const { client } = screenshotsContext;
-    const data = await client.getBrowsers();
+    const data = await client.getScreenshotsBrowsers();
     if (!Array.isArray(data)) return;
 
     const screenshots = await client.launch({
@@ -67,7 +69,7 @@ describe("ScreenshotsClient", () => {
     expect(screenshots).toBeDefined();
     expect(screenshots.length).toBeGreaterThan(0);
     expectTypeOf(screenshots).toMatchTypeOf<
-      components["schemas"]["Screenshot"][]
+      DeepCamelCase<components["schemas"]["Screenshot"]>[]
     >();
   });
-}, 30_000);
+}, LONG_TIMEOUT);

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { executeOperation } from "../execute.js";
-import { CodecRegistry } from "../registry.js";
-import { registerAllBuiltins } from "../codecs/index.js";
-import { NetworkError, HttpError, DecodeError, TransformError, ClientError } from "../errors.js";
+import { executeOperation } from "../execute";
+import { CodecRegistry } from "../registry";
+import { registerAllBuiltins } from "../codecs/index";
+import { NetworkError, HttpError, DecodeError, TransformError, ClientError } from "../errors";
 
 function makeRegistry() {
   const r = new CodecRegistry();
@@ -12,18 +12,18 @@ function makeRegistry() {
 
 describe("executeOperation happy path", () => {
   it("GET + json codec returns parsed body", async () => {
-    const fetchFn = vi.fn(async () => new Response('{"ok":true}', { status: 200, headers: { "content-type":"application/json" } }));
+    const fetchFn = vi.fn<typeof fetch>(async () => new Response('{"ok":true}', { status: 200, headers: { "content-type": "application/json" } }));
     const r = await executeOperation({
       operationId: "op", method: "GET", url: "http://x/a",
       registry: makeRegistry(),
       responseCodec: "json", responseCodecConfig: {},
-    }, fetchFn as any);
+    }, fetchFn);
     expect(r).toEqual({ ok: true });
     expect(fetchFn).toHaveBeenCalledOnce();
   });
   it("POST with json request codec sends serialized body + content-type", async () => {
     let captured: RequestInit | undefined;
-    const fetchFn = vi.fn(async (_url: string, init: RequestInit) => {
+    const fetchFn = vi.fn<typeof fetch>(async (_url, init) => {
       captured = init;
       return new Response('{}', { status: 200, headers: { "content-type": "application/json" } });
     });
@@ -32,23 +32,24 @@ describe("executeOperation happy path", () => {
       registry: makeRegistry(),
       requestCodec: "json", requestCodecConfig: {}, requestInput: { a: 1 },
       responseCodec: "json", responseCodecConfig: {},
-    }, fetchFn as any);
+    }, fetchFn);
     expect(captured?.method).toBe("POST");
     expect(captured?.body).toBe('{"a":1}');
-    expect((captured?.headers as any)["content-type"]).toBe("application/json");
+    const headers = captured?.headers as Record<string, string>;
+    expect(headers["content-type"]).toBe("application/json");
   });
 });
 
 describe("executeOperation error paths", () => {
   it("wraps fetch reject as NetworkError", async () => {
-    const fetchFn = vi.fn(async () => { throw new Error("ECONNRESET"); });
+    const fetchFn = vi.fn<typeof fetch>(async () => { throw new Error("ECONNRESET"); });
     await expect(executeOperation({
       operationId: "op", method: "GET", url: "http://x",
       registry: makeRegistry(), responseCodec: "json", responseCodecConfig: {},
-    }, fetchFn as any)).rejects.toBeInstanceOf(NetworkError);
+    }, fetchFn)).rejects.toBeInstanceOf(NetworkError);
   });
   it("wraps non-2xx as HttpError with status/headers/body", async () => {
-    const fetchFn = vi.fn(async () => new Response('{"error":"bad"}', {
+    const fetchFn = vi.fn<typeof fetch>(async () => new Response('{"error":"bad"}', {
       status: 400, statusText: "Bad Request",
       headers: { "content-type": "application/json", "x-request-id": "rid-1" },
     }));
@@ -56,7 +57,7 @@ describe("executeOperation error paths", () => {
       await executeOperation({
         operationId: "op", method: "GET", url: "http://x",
         registry: makeRegistry(), responseCodec: "json", responseCodecConfig: {},
-      }, fetchFn as any);
+      }, fetchFn);
       throw new Error("should have thrown");
     } catch (e) {
       expect(e).toBeInstanceOf(HttpError);
@@ -68,28 +69,28 @@ describe("executeOperation error paths", () => {
     }
   });
   it("wraps codec decode failure as DecodeError", async () => {
-    const fetchFn = vi.fn(async () => new Response("not{json", { status: 200, headers: { "content-type": "application/json" } }));
+    const fetchFn = vi.fn<typeof fetch>(async () => new Response("not{json", { status: 200, headers: { "content-type": "application/json" } }));
     await expect(executeOperation({
       operationId: "op", method: "GET", url: "http://x",
       registry: makeRegistry(), responseCodec: "json", responseCodecConfig: {},
-    }, fetchFn as any)).rejects.toBeInstanceOf(DecodeError);
+    }, fetchFn)).rejects.toBeInstanceOf(DecodeError);
   });
   it("wraps codec transform failure as TransformError", async () => {
-    const fetchFn = vi.fn(async () => new Response('{"other":1}', { status: 200 }));
+    const fetchFn = vi.fn<typeof fetch>(async () => new Response('{"other":1}', { status: 200 }));
     await expect(executeOperation({
       operationId: "op", method: "GET", url: "http://x",
       registry: makeRegistry(),
       responseCodec: "json-unwrap", responseCodecConfig: { path: "$.missing" },
-    }, fetchFn as any)).rejects.toBeInstanceOf(TransformError);
+    }, fetchFn)).rejects.toBeInstanceOf(TransformError);
   });
   it("wraps encode failure as ClientError", async () => {
-    const fetchFn = vi.fn(async () => new Response('{}', { status: 200 }));
+    const fetchFn = vi.fn<typeof fetch>(async () => new Response('{}', { status: 200 }));
     await expect(executeOperation({
       operationId: "op", method: "POST", url: "http://x",
       registry: makeRegistry(),
       requestCodec: "multipart", requestCodecConfig: { fileField: "file", filenameFrom: "$.filename" },
       requestInput: { /* no file */ },
       responseCodec: "json", responseCodecConfig: {},
-    }, fetchFn as any)).rejects.toBeInstanceOf(ClientError);
+    }, fetchFn)).rejects.toBeInstanceOf(ClientError);
   });
 });

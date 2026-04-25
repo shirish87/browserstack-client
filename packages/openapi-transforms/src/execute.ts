@@ -1,12 +1,12 @@
-import type { CodecRegistry } from "./registry.js";
-import type { CodecContext } from "./errors.js";
+import type { CodecRegistry } from "./registry";
+import type { CodecContext } from "./errors";
 import {
   HttpError, NetworkError, DecodeError, TransformError, ClientError, OpenAPIError,
-} from "./errors.js";
-import { CodecError } from "./codec-error.js";
-import { captureErrorBody } from "./body-capture.js";
-import { defaultErrorMessage } from "./error-message.js";
-import { isRetryable } from "./retryable.js";
+} from "./errors";
+import { CodecError } from "./codec-error";
+import { captureErrorBody } from "./body-capture";
+import { defaultErrorMessage } from "./error-message";
+import { isRetryable } from "./retryable";
 
 export interface ExecuteOptions {
   maxErrorBodySize?: number;
@@ -24,6 +24,7 @@ export interface ExecuteSpec {
   requestInput?: unknown;
   responseCodec: string;
   responseCodecConfig: unknown;
+  signal?: AbortSignal;
 }
 
 export async function executeOperation(
@@ -51,7 +52,7 @@ export async function executeOperation(
 
   let response: Response;
   try {
-    response = await fetchFn(spec.url, { method: spec.method, headers, body });
+    response = await fetchFn(spec.url, { method: spec.method, headers, body, signal: spec.signal });
   } catch (cause) {
     throw new NetworkError((cause as Error).message || "network error", ctx, cause as Error);
   }

@@ -162,8 +162,14 @@ paths:
       summary: Upload terminal logs for your session.
       description: Upload terminal logs for your session.
       operationId: uploadAutomateSessionTerminalLogs
-      x-request-custom: true
-      x-response-custom: true
+      x-base-url: sdkCloud
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
+      x-response-transform:
+        codec: text
       parameters:
       - name: sessionId
         in: path
@@ -709,8 +715,11 @@ paths:
       summary: Upload a media file
       description: Upload a media file you want to use in your tests
       operationId: uploadAutomateMediaFile
-      x-request-custom: true
-      x-response-custom: true
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       requestBody:
         required: true
         content:
@@ -1050,8 +1059,13 @@ paths:
       summary: Upload terminal logs for your build.
       description: Upload terminal logs for your build.
       operationId: uploadAutomateBuildTerminalLogs
-      x-request-custom: true
-      x-response-custom: true
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
+      x-response-transform:
+        codec: text
       parameters:
       - name: buildId
         in: path

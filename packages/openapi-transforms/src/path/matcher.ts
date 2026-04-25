@@ -1,4 +1,4 @@
-import type { PathAst, PathNode } from "./types.js";
+import type { PathAst, PathNode } from "./types";
 
 export function isArrayPath(ast: PathAst): boolean {
   return ast.some((n) => n.kind === "wildcard");
@@ -23,5 +23,9 @@ function step(nodes: readonly PathNode[], value: unknown): unknown {
     if (!Array.isArray(value)) throw new Error(`expected array at [${head.index}], got ${typeof value}`);
     return step(rest, value[head.index]);
   }
-  throw new Error(`unreachable node: ${(head as any).kind}`);
+  if (head.kind === "root") {
+    return step(rest, value);
+  }
+  const never: never = head;
+  throw new Error(`unreachable node: ${JSON.stringify(never)}`);
 }

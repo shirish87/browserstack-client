@@ -487,6 +487,8 @@ paths:
         config:
           fileField: file
           filenameFrom: "$.file_name"
+      x-response-transform:
+        codec: text
       parameters:
       - name: buildId
         in: path
@@ -744,6 +746,8 @@ paths:
         config:
           fileField: file
           filenameFrom: "$.file_name"
+      x-response-transform:
+        codec: text
       parameters:
       - name: sessionId
         in: path
@@ -2092,7 +2096,11 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
-      x-request-custom: true
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
   /app-automate/recent_apps/{customId}:
     get:
       tags:

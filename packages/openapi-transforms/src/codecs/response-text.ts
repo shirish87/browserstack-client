@@ -1,12 +1,15 @@
-import type { ResponseCodec } from "../registry.js";
-import { CodecError } from "../codec-error.js";
+import type { ResponseCodec } from "../registry";
+import { CodecError } from "../codec-error";
+import { defineSchema } from "./schema";
 
-const schema = { "~standard": { version: 1 as const, vendor: "ot", validate: (v: unknown) => ({ value: v as {} }) } };
+type EmptyConfig = Record<string, never>;
 
-export const textResponseCodec: ResponseCodec<{}, string> = {
+const schema = defineSchema<EmptyConfig>("openapi-transforms", () => ({ value: {} as EmptyConfig }));
+
+export const textResponseCodec: ResponseCodec<EmptyConfig, string> = {
   name: "text",
   contentTypes: ["text/plain", "text/*"],
-  configSchema: schema as any,
+  configSchema: schema,
   async decode(response) {
     try { return await response.text(); }
     catch (cause) { throw new CodecError("text", "decode", (cause as Error).message, cause as Error); }

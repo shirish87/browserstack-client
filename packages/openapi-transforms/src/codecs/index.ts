@@ -1,9 +1,9 @@
-import type { CodecRegistry } from "../registry.js";
-import { jsonResponseCodec } from "./response-json.js";
-import { jsonUnwrapCodec } from "./response-json-unwrap.js";
-import { jsonComposeCodec } from "./response-json-compose.js";
-import { textResponseCodec } from "./response-text.js";
-import { binaryResponseCodec } from "./response-binary.js";
+import type { CodecRegistry } from "../registry";
+import { jsonResponseCodec } from "./response-json";
+import { jsonUnwrapCodec } from "./response-json-unwrap";
+import { jsonComposeCodec } from "./response-json-compose";
+import { textResponseCodec } from "./response-text";
+import { binaryResponseCodec } from "./response-binary";
 
 export {
   jsonResponseCodec,
@@ -21,17 +21,20 @@ export function registerBuiltinResponseCodecs(registry: CodecRegistry): void {
   registry.registerResponse(binaryResponseCodec);
 }
 
-import { jsonRequestCodec } from "./request-json.js";
-import { multipartRequestCodec } from "./request-multipart.js";
+import { jsonRequestCodec } from "./request-json";
+import { multipartRequestCodec } from "./request-multipart";
+import { rawRequestCodec } from "./request-raw";
 
 export {
   jsonRequestCodec,
   multipartRequestCodec,
+  rawRequestCodec,
 };
 
 export function registerBuiltinRequestCodecs(registry: CodecRegistry): void {
   registry.registerRequest(jsonRequestCodec);
   registry.registerRequest(multipartRequestCodec);
+  registry.registerRequest(rawRequestCodec);
 }
 
 export function registerAllBuiltins(registry: CodecRegistry): void {

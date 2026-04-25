@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { jsonRequestCodec } from "../../codecs/request-json.js";
+import { jsonRequestCodec } from "../../codecs/request-json";
 
 describe("jsonRequestCodec", () => {
   it("stringifies input with JSON content-type", () => {

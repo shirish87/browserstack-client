@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { jsonResponseCodec } from "../../codecs/response-json.js";
-import { CodecError } from "../../codec-error.js";
+import { jsonResponseCodec } from "../../codecs/response-json";
+import { CodecError } from "../../codec-error";
 
 const ctx = { operationId: "op", method: "GET", url: "http://x" };
 

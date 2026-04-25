@@ -10,11 +10,14 @@
       "Bash(pnpm test *)",
       "Bash(pnpm test)",
       "Bash(pnpm -F * test*)",
-      "Bash(pnpm -F * typecheck*)",
-      "Bash(pnpm typecheck *)",
-      "Bash(pnpm typecheck)",
-      "Bash(pnpm -w typecheck*)",
-      "Bash(lsof -i *)"
+      "Bash(pnpm -F * check*)",
+      "Bash(pnpm check *)",
+      "Bash(pnpm check)",
+      "Bash(pnpm -w check*)",
+      "Bash(lsof -i *)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm lint *)",
+      "Bash(pnpm --filter * check *)"
     ]
   }
 }

@@ -13,7 +13,7 @@ import {
   isClientError,
   type CodecContext,
   type ErrorBody,
-} from "../errors.js";
+} from "../errors";
 
 const ctx: CodecContext = {
   operationId: "getFoo",

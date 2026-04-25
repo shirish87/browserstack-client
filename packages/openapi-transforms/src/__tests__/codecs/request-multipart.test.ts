@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { multipartRequestCodec } from "../../codecs/request-multipart.js";
+import { multipartRequestCodec } from "../../codecs/request-multipart";
 
 describe("multipartRequestCodec", () => {
   it("builds FormData with file field + extra fields", () => {

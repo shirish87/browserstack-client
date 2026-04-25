@@ -1,77 +1,74 @@
 import { vi } from "vitest";
-import { AutomateClient } from "../client.js";
-import * as fixtures from "./fixtures.js";
+import { AutomateClient, type BrowserStackOptions } from "../index";
+import * as fixtures from "./fixtures";
 
-/**
- * Creates a mock AutomateClient for testing
- */
 export function createMockAutomateClient(
-  options?: any
+  options?: BrowserStackOptions
 ): AutomateClient & {
-  recycleKey: ReturnType<typeof vi.fn>;
-  getPlan: ReturnType<typeof vi.fn>;
-  getBrowsers: ReturnType<typeof vi.fn>;
-  getProjects: ReturnType<typeof vi.fn>;
-  getProject: ReturnType<typeof vi.fn>;
-  updateProject: ReturnType<typeof vi.fn>;
-  deleteProject: ReturnType<typeof vi.fn>;
-  getBadgeKey: ReturnType<typeof vi.fn>;
-  getBuilds: ReturnType<typeof vi.fn>;
-  getBuild: ReturnType<typeof vi.fn>;
-  updateBuild: ReturnType<typeof vi.fn>;
-  deleteBuild: ReturnType<typeof vi.fn>;
+  recycleAutomateKey: ReturnType<typeof vi.fn>;
+  getAutomatePlan: ReturnType<typeof vi.fn>;
+  getAutomateBrowsers: ReturnType<typeof vi.fn>;
+  getAutomateProjects: ReturnType<typeof vi.fn>;
+  getAutomateProject: ReturnType<typeof vi.fn>;
+  updateAutomateProject: ReturnType<typeof vi.fn>;
+  deleteAutomateProject: ReturnType<typeof vi.fn>;
+  getAutomateProjectBadgeKey: ReturnType<typeof vi.fn>;
+  getAutomateBuilds: ReturnType<typeof vi.fn>;
+  getAutomateBuild: ReturnType<typeof vi.fn>;
+  updateAutomateBuild: ReturnType<typeof vi.fn>;
+  deleteAutomateBuild: ReturnType<typeof vi.fn>;
   deleteBuilds: ReturnType<typeof vi.fn>;
-  getSessions: ReturnType<typeof vi.fn>;
-  getSession: ReturnType<typeof vi.fn>;
-  updateSession: ReturnType<typeof vi.fn>;
-  deleteSession: ReturnType<typeof vi.fn>;
+  getAutomateSessions: ReturnType<typeof vi.fn>;
+  getAutomateSession: ReturnType<typeof vi.fn>;
+  updateAutomateSession: ReturnType<typeof vi.fn>;
+  deleteAutomateSession: ReturnType<typeof vi.fn>;
   deleteSessions: ReturnType<typeof vi.fn>;
   uploadBuildTerminalLogs: ReturnType<typeof vi.fn>;
   uploadSessionTerminalLogs: ReturnType<typeof vi.fn>;
-  getSessionLogs: ReturnType<typeof vi.fn>;
-  getSessionNetworkLogs: ReturnType<typeof vi.fn>;
-  getSessionConsoleLogs: ReturnType<typeof vi.fn>;
-  getSessionSeleniumLogs: ReturnType<typeof vi.fn>;
-  getSessionAppiumLogs: ReturnType<typeof vi.fn>;
-  getSessionTelemetryLogs: ReturnType<typeof vi.fn>;
+  getAutomateSessionLogs: ReturnType<typeof vi.fn>;
+  getAutomateSessionNetworkLogs: ReturnType<typeof vi.fn>;
+  getAutomateSessionConsoleLogs: ReturnType<typeof vi.fn>;
+  getAutomateSessionSeleniumLogs: ReturnType<typeof vi.fn>;
+  getAutomateSessionAppiumLogs: ReturnType<typeof vi.fn>;
+  getAutomateSessionTelemetryLogs: ReturnType<typeof vi.fn>;
   uploadMediaFile: ReturnType<typeof vi.fn>;
-  getMediaFiles: ReturnType<typeof vi.fn>;
-  deleteMediaFile: ReturnType<typeof vi.fn>;
+  getAutomateMediaFiles: ReturnType<typeof vi.fn>;
+  deleteAutomateMediaFile: ReturnType<typeof vi.fn>;
 } {
   const client = new AutomateClient(options);
 
   return {
     ...client,
-    recycleKey: vi.fn().mockResolvedValue(fixtures.recycleKeyResponse),
-    getPlan: vi.fn().mockResolvedValue(fixtures.plan),
-    getBrowsers: vi.fn().mockResolvedValue(fixtures.browsers),
-    getProjects: vi.fn().mockResolvedValue(fixtures.projects),
-    getProject: vi.fn().mockResolvedValue(fixtures.project),
-    updateProject: vi.fn().mockResolvedValue(fixtures.project),
-    deleteProject: vi.fn().mockResolvedValue({}),
-    getBadgeKey: vi.fn().mockResolvedValue(fixtures.badgeKey),
-    getBuilds: vi.fn().mockResolvedValue(fixtures.builds),
-    getBuild: vi.fn().mockResolvedValue(fixtures.build),
-    updateBuild: vi.fn().mockResolvedValue(fixtures.build),
-    deleteBuild: vi.fn().mockResolvedValue({}),
+    recycleAutomateKey: vi.fn().mockResolvedValue(fixtures.recycleKeyResponse),
+    getAutomatePlan: vi.fn().mockResolvedValue(fixtures.plan),
+    getAutomateBrowsers: vi.fn().mockResolvedValue(fixtures.browsers),
+    getAutomateProjects: vi.fn().mockResolvedValue(fixtures.projects),
+    getAutomateProject: vi.fn().mockResolvedValue(fixtures.project),
+    updateAutomateProject: vi.fn().mockResolvedValue(fixtures.project),
+    deleteAutomateProject: vi.fn().mockResolvedValue({}),
+    getAutomateProjectBadgeKey: vi.fn().mockResolvedValue(fixtures.badgeKey),
+    getAutomateBuilds: vi.fn().mockResolvedValue(fixtures.builds),
+    getAutomateBuild: vi.fn().mockResolvedValue(fixtures.build),
+    updateAutomateBuild: vi.fn().mockResolvedValue(fixtures.build),
+    deleteAutomateBuild: vi.fn().mockResolvedValue({}),
     deleteBuilds: vi.fn().mockResolvedValue({}),
-    getSessions: vi.fn().mockResolvedValue(fixtures.sessions),
-    getSession: vi.fn().mockResolvedValue(fixtures.session),
-    updateSession: vi.fn().mockResolvedValue(fixtures.session),
-    deleteSession: vi.fn().mockResolvedValue({}),
+    getAutomateSessions: vi.fn().mockResolvedValue(fixtures.sessions),
+    getAutomateSession: vi.fn().mockResolvedValue(fixtures.session),
+    updateAutomateSession: vi.fn().mockResolvedValue(fixtures.session),
+    deleteAutomateSession: vi.fn().mockResolvedValue({}),
     deleteSessions: vi.fn().mockResolvedValue({}),
     uploadBuildTerminalLogs: vi.fn().mockResolvedValue({}),
     uploadSessionTerminalLogs: vi.fn().mockResolvedValue({}),
-    getSessionLogs: vi.fn().mockResolvedValue(fixtures.logs),
-    getSessionNetworkLogs: vi.fn().mockResolvedValue(fixtures.networkLogs),
-    getSessionConsoleLogs: vi.fn().mockResolvedValue(fixtures.consoleLogs),
-    getSessionSeleniumLogs: vi.fn().mockResolvedValue(fixtures.seleniumLogs),
-    getSessionAppiumLogs: vi.fn().mockResolvedValue(fixtures.appiumLogs),
-    getSessionTelemetryLogs: vi.fn().mockResolvedValue(fixtures.telemetryLogs),
+    getAutomateSessionLogs: vi.fn().mockResolvedValue(fixtures.logs),
+    getAutomateSessionNetworkLogs: vi.fn().mockResolvedValue(fixtures.networkLogs),
+    getAutomateSessionConsoleLogs: vi.fn().mockResolvedValue(fixtures.consoleLogs),
+    getAutomateSessionSeleniumLogs: vi.fn().mockResolvedValue(fixtures.seleniumLogs),
+    getAutomateSessionAppiumLogs: vi.fn().mockResolvedValue(fixtures.appiumLogs),
+    getAutomateSessionTelemetryLogs: vi.fn().mockResolvedValue(fixtures.telemetryLogs),
     uploadMediaFile: vi.fn().mockResolvedValue(fixtures.mediaFile),
-    getMediaFiles: vi.fn().mockResolvedValue(fixtures.mediaFiles),
-    deleteMediaFile: vi.fn().mockResolvedValue({}),
-  } as any;
+    getAutomateMediaFiles: vi.fn().mockResolvedValue(fixtures.mediaFiles),
+    deleteAutomateMediaFile: vi.fn().mockResolvedValue({}),
+  } as ReturnType<typeof createMockAutomateClient>;
 }
 
 export { fixtures };

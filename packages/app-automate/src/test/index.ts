@@ -1,85 +1,80 @@
 import { vi } from "vitest";
-import { AppAutomateClient } from "../client.js";
-import * as fixtures from "./fixtures.js";
+import { AppAutomateClient, type BrowserStackOptions } from "../index";
+import * as fixtures from "./fixtures";
 
-/**
- * Creates a mock AppAutomateClient for testing
- */
 export function createMockAppAutomateClient(
-  options?: any
+  options?: BrowserStackOptions
 ): AppAutomateClient & {
-  getPlan: ReturnType<typeof vi.fn>;
-  getDevices: ReturnType<typeof vi.fn>;
-  getProjects: ReturnType<typeof vi.fn>;
-  getProject: ReturnType<typeof vi.fn>;
-  updateProject: ReturnType<typeof vi.fn>;
-  deleteProject: ReturnType<typeof vi.fn>;
-  getBadgeKey: ReturnType<typeof vi.fn>;
-  getBuilds: ReturnType<typeof vi.fn>;
-  getBuild: ReturnType<typeof vi.fn>;
-  updateBuild: ReturnType<typeof vi.fn>;
-  deleteBuild: ReturnType<typeof vi.fn>;
-  uploadBuildTerminalLogs: ReturnType<typeof vi.fn>;
-  uploadSessionTerminalLogs: ReturnType<typeof vi.fn>;
-  getSession: ReturnType<typeof vi.fn>;
-  updateSessionStatus: ReturnType<typeof vi.fn>;
-  deleteSession: ReturnType<typeof vi.fn>;
-  getSessionLogs: ReturnType<typeof vi.fn>;
-  getSessionDeviceLogs: ReturnType<typeof vi.fn>;
-  getSessionAppiumLogs: ReturnType<typeof vi.fn>;
-  getSessionNetworkLogs: ReturnType<typeof vi.fn>;
-  getSessionAppProfilingDataV1: ReturnType<typeof vi.fn>;
-  getSessionAppProfilingDataV2: ReturnType<typeof vi.fn>;
-  uploadMediaFile: ReturnType<typeof vi.fn>;
-  getMediaFiles: ReturnType<typeof vi.fn>;
-  getMediaFilesByCustomId: ReturnType<typeof vi.fn>;
-  getGroupMediaFiles: ReturnType<typeof vi.fn>;
-  deleteMediaFile: ReturnType<typeof vi.fn>;
-  uploadAppiumApp: ReturnType<typeof vi.fn>;
-  getAppiumApps: ReturnType<typeof vi.fn>;
-  getAppiumAppsByCustomId: ReturnType<typeof vi.fn>;
-  getGroupAppiumApps: ReturnType<typeof vi.fn>;
-  deleteAppiumApp: ReturnType<typeof vi.fn>;
-  getSessions: ReturnType<typeof vi.fn>;
+  getAppAutomatePlan: ReturnType<typeof vi.fn>;
+  getAppAutomateDevices: ReturnType<typeof vi.fn>;
+  getAppAutomateProjects: ReturnType<typeof vi.fn>;
+  getAppAutomateProject: ReturnType<typeof vi.fn>;
+  updateAppAutomateProject: ReturnType<typeof vi.fn>;
+  deleteAppAutomateProject: ReturnType<typeof vi.fn>;
+  getAppAutomateProjectBadgeKey: ReturnType<typeof vi.fn>;
+  getAppAutomateBuilds: ReturnType<typeof vi.fn>;
+  getAppAutomateBuild: ReturnType<typeof vi.fn>;
+  updateAppAutomateBuild: ReturnType<typeof vi.fn>;
+  deleteAppAutomateBuild: ReturnType<typeof vi.fn>;
+  uploadAppAutomateBuildTerminalLogs: ReturnType<typeof vi.fn>;
+  uploadAppAutomateSessionTerminalLogs: ReturnType<typeof vi.fn>;
+  getAppAutomateSession: ReturnType<typeof vi.fn>;
+  updateAppAutomateSession: ReturnType<typeof vi.fn>;
+  deleteAppAutomateSession: ReturnType<typeof vi.fn>;
+  getAppAutomateSessionLogs: ReturnType<typeof vi.fn>;
+  getAppAutomateDeviceLogs: ReturnType<typeof vi.fn>;
+  getAppAutomateAppiumLogs: ReturnType<typeof vi.fn>;
+  getAppAutomateNetworkLogs: ReturnType<typeof vi.fn>;
+  getAppAutomateAppProfilingDataV1: ReturnType<typeof vi.fn>;
+  getAppAutomateAppProfilingDataV2: ReturnType<typeof vi.fn>;
+  uploadAppAutomateMediaFile: ReturnType<typeof vi.fn>;
+  getAppAutomateMediaFiles: ReturnType<typeof vi.fn>;
+  getAppAutomateMediaFilesByCustomId: ReturnType<typeof vi.fn>;
+  getAppAutomateGroupMediaFiles: ReturnType<typeof vi.fn>;
+  deleteAppAutomateMediaFile: ReturnType<typeof vi.fn>;
+  uploadAppAutomateApp: ReturnType<typeof vi.fn>;
+  getAppAutomateApps: ReturnType<typeof vi.fn>;
+  getAppAutomateAppsByCustomId: ReturnType<typeof vi.fn>;
+  getAppAutomateGroupApps: ReturnType<typeof vi.fn>;
+  deleteAppAutomateApp: ReturnType<typeof vi.fn>;
 } {
   const client = new AppAutomateClient(options);
 
   return {
     ...client,
-    getPlan: vi.fn().mockResolvedValue(fixtures.plan),
-    getDevices: vi.fn().mockResolvedValue(fixtures.devices),
-    getProjects: vi.fn().mockResolvedValue(fixtures.projects),
-    getProject: vi.fn().mockResolvedValue(fixtures.project),
-    updateProject: vi.fn().mockResolvedValue(fixtures.project),
-    deleteProject: vi.fn().mockResolvedValue({}),
-    getBadgeKey: vi.fn().mockResolvedValue(fixtures.badgeKey),
-    getBuilds: vi.fn().mockResolvedValue(fixtures.builds),
-    getBuild: vi.fn().mockResolvedValue(fixtures.build),
-    updateBuild: vi.fn().mockResolvedValue(fixtures.build),
-    deleteBuild: vi.fn().mockResolvedValue({}),
-    uploadBuildTerminalLogs: vi.fn().mockResolvedValue({}),
-    uploadSessionTerminalLogs: vi.fn().mockResolvedValue({}),
-    getSession: vi.fn().mockResolvedValue(fixtures.session),
-    updateSessionStatus: vi.fn().mockResolvedValue(fixtures.session),
-    deleteSession: vi.fn().mockResolvedValue({}),
-    getSessionLogs: vi.fn().mockResolvedValue(fixtures.logs),
-    getSessionDeviceLogs: vi.fn().mockResolvedValue(fixtures.deviceLogs),
-    getSessionAppiumLogs: vi.fn().mockResolvedValue(fixtures.appiumLogs),
-    getSessionNetworkLogs: vi.fn().mockResolvedValue(fixtures.networkLogs),
-    getSessionAppProfilingDataV1: vi.fn().mockResolvedValue(fixtures.profilingDataV1),
-    getSessionAppProfilingDataV2: vi.fn().mockResolvedValue(fixtures.profilingDataV2),
-    uploadMediaFile: vi.fn().mockResolvedValue(fixtures.mediaFile),
-    getMediaFiles: vi.fn().mockResolvedValue(fixtures.mediaFiles),
-    getMediaFilesByCustomId: vi.fn().mockResolvedValue([fixtures.mediaFile]),
-    getGroupMediaFiles: vi.fn().mockResolvedValue(fixtures.mediaFiles),
-    deleteMediaFile: vi.fn().mockResolvedValue({}),
-    uploadAppiumApp: vi.fn().mockResolvedValue(fixtures.appiumApp),
-    getAppiumApps: vi.fn().mockResolvedValue(fixtures.appiumApps),
-    getAppiumAppsByCustomId: vi.fn().mockResolvedValue([fixtures.appiumApp]),
-    getGroupAppiumApps: vi.fn().mockResolvedValue(fixtures.appiumApps),
-    deleteAppiumApp: vi.fn().mockResolvedValue({}),
-    getSessions: vi.fn().mockResolvedValue(fixtures.sessions),
-  } as any;
+    getAppAutomatePlan: vi.fn().mockResolvedValue(fixtures.plan),
+    getAppAutomateDevices: vi.fn().mockResolvedValue(fixtures.devices),
+    getAppAutomateProjects: vi.fn().mockResolvedValue(fixtures.projects),
+    getAppAutomateProject: vi.fn().mockResolvedValue(fixtures.project),
+    updateAppAutomateProject: vi.fn().mockResolvedValue(fixtures.project),
+    deleteAppAutomateProject: vi.fn().mockResolvedValue({}),
+    getAppAutomateProjectBadgeKey: vi.fn().mockResolvedValue(fixtures.badgeKey),
+    getAppAutomateBuilds: vi.fn().mockResolvedValue(fixtures.builds),
+    getAppAutomateBuild: vi.fn().mockResolvedValue(fixtures.build),
+    updateAppAutomateBuild: vi.fn().mockResolvedValue(fixtures.build),
+    deleteAppAutomateBuild: vi.fn().mockResolvedValue({}),
+    uploadAppAutomateBuildTerminalLogs: vi.fn().mockResolvedValue({}),
+    uploadAppAutomateSessionTerminalLogs: vi.fn().mockResolvedValue({}),
+    getAppAutomateSession: vi.fn().mockResolvedValue(fixtures.session),
+    updateAppAutomateSession: vi.fn().mockResolvedValue(fixtures.session),
+    deleteAppAutomateSession: vi.fn().mockResolvedValue({}),
+    getAppAutomateSessionLogs: vi.fn().mockResolvedValue(fixtures.logs),
+    getAppAutomateDeviceLogs: vi.fn().mockResolvedValue(fixtures.deviceLogs),
+    getAppAutomateAppiumLogs: vi.fn().mockResolvedValue(fixtures.appiumLogs),
+    getAppAutomateNetworkLogs: vi.fn().mockResolvedValue(fixtures.networkLogs),
+    getAppAutomateAppProfilingDataV1: vi.fn().mockResolvedValue(fixtures.profilingDataV1),
+    getAppAutomateAppProfilingDataV2: vi.fn().mockResolvedValue(fixtures.profilingDataV2),
+    uploadAppAutomateMediaFile: vi.fn().mockResolvedValue(fixtures.mediaFile),
+    getAppAutomateMediaFiles: vi.fn().mockResolvedValue(fixtures.mediaFiles),
+    getAppAutomateMediaFilesByCustomId: vi.fn().mockResolvedValue([fixtures.mediaFile]),
+    getAppAutomateGroupMediaFiles: vi.fn().mockResolvedValue(fixtures.mediaFiles),
+    deleteAppAutomateMediaFile: vi.fn().mockResolvedValue({}),
+    uploadAppAutomateApp: vi.fn().mockResolvedValue(fixtures.appiumApp),
+    getAppAutomateApps: vi.fn().mockResolvedValue(fixtures.appiumApps),
+    getAppAutomateAppsByCustomId: vi.fn().mockResolvedValue([fixtures.appiumApp]),
+    getAppAutomateGroupApps: vi.fn().mockResolvedValue(fixtures.appiumApps),
+    deleteAppAutomateApp: vi.fn().mockResolvedValue({}),
+  } as ReturnType<typeof createMockAppAutomateClient>;
 }
 
 export { fixtures };

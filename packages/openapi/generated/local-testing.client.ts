@@ -1,7 +1,8 @@
 /* AUTO-GENERATED — do not edit */
 import type { operations } from "./local-testing";
 import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
-import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
+import { HttpError, toCamelCase } from "@browserstack-client/openapi-transforms";
+import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
 
 export type GetLocalBinaryInstancesError = HttpError<
   | (operations["getLocalBinaryInstances"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -27,12 +28,12 @@ export type DisconnectLocalBinaryInstanceError = HttpError<
   | (operations["disconnectLocalBinaryInstance"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
-export abstract class GeneratedLocalTestingClient extends APIClient {
-getLocalBinaryInstances(options?: ExecuteOptions): Promise<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]> {
+export class GeneratedLocalTestingClient extends APIClient {
+getLocalBinaryInstances(authToken?: string, last?: string, state?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/local/v1/list",
-      params: undefined,
-      
+      params: { query: { "auth_token": authToken, "last": last, "state": state } },
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -41,14 +42,14 @@ getLocalBinaryInstances(options?: ExecuteOptions): Promise<operations["getLocalB
       operationId: "getLocalBinaryInstances",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getLocalBinaryInstance(localInstanceId: string, options?: ExecuteOptions): Promise<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]> {
+getLocalBinaryInstance(localInstanceId: string, authToken?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/local/v1/{localInstanceId}",
-      params: { path: { localInstanceId: localInstanceId } },
-      
+      params: { path: { localInstanceId: localInstanceId }, query: { "auth_token": authToken } },
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -57,14 +58,14 @@ getLocalBinaryInstance(localInstanceId: string, options?: ExecuteOptions): Promi
       operationId: "getLocalBinaryInstance",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>>;
   }
 
-disconnectLocalBinaryInstance(localInstanceId: string, options?: ExecuteOptions): Promise<operations["disconnectLocalBinaryInstance"]["responses"][200]["content"]["application/json"]> {
+disconnectLocalBinaryInstance(localInstanceId: string, authToken?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["disconnectLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/local/v1/{localInstanceId}",
-      params: { path: { localInstanceId: localInstanceId } },
-      
+      params: { path: { localInstanceId: localInstanceId }, query: { "auth_token": authToken } },
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -73,6 +74,6 @@ disconnectLocalBinaryInstance(localInstanceId: string, options?: ExecuteOptions)
       operationId: "disconnectLocalBinaryInstance",
       method: "DELETE" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["disconnectLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["disconnectLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>>;
   }
 }

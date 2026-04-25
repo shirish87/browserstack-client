@@ -1,4 +1,4 @@
-import type { PathAst, PathNode } from "./types.js";
+import type { PathAst, PathNode } from "./types";
 
 export function parsePath(input: string): PathAst {
   if (!input.startsWith("$")) throw new Error(`path must start with $, got: ${input}`);

@@ -10,5 +10,5 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   splitting: false,
-  external: ["openapi-fetch", "openapi-typescript-helpers"],
+  external: [],
 });

@@ -1,6 +1,6 @@
 import { JSONParser } from "@streamparser/json";
-import type { PathAst } from "../path/types.js";
-import { isArrayPath } from "../path/matcher.js";
+import type { PathAst } from "../path/types";
+import { isArrayPath } from "../path/matcher";
 
 function astToSelector(ast: PathAst): string[] {
   const parts: string[] = [];

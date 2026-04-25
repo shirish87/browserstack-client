@@ -1487,27 +1487,29 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    name?: string;
-                    template?: string;
-                    description?: string;
-                    owner?: string;
-                    preconditions?: string;
-                    test_case_steps?: {
-                        description?: string;
-                        result?: string;
-                    }[];
-                    issues?: string[];
-                    issue_tracker?: {
+                    test_case?: {
                         name?: string;
-                        host?: string;
+                        template?: string;
+                        description?: string;
+                        owner?: string;
+                        preconditions?: string;
+                        test_case_steps?: {
+                            description?: string;
+                            result?: string;
+                        }[];
+                        issues?: string[];
+                        issue_tracker?: {
+                            name?: string;
+                            host?: string;
+                        };
+                        tags?: string[];
+                        case_type?: string;
+                        priority?: string;
+                        custom_fields?: Record<string, never>;
+                        feature?: string;
+                        scenario?: string;
+                        background?: string;
                     };
-                    tags?: string[];
-                    case_type?: string;
-                    priority?: string;
-                    custom_fields?: Record<string, never>;
-                    feature?: string;
-                    scenario?: string;
-                    background?: string;
                 };
             };
         };
@@ -1520,7 +1522,9 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
-                        test_case?: components["schemas"]["TestCase"];
+                        data?: {
+                            test_case?: components["schemas"]["TestCase"];
+                        };
                     };
                 };
             };
@@ -1567,28 +1571,30 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    name?: string;
-                    case_type?: string;
-                    priority?: string;
-                    status?: string;
-                    description?: string;
-                    owner?: string;
-                    preconditions?: string;
-                    test_case_steps?: {
-                        description?: string;
-                        result?: string;
-                    }[];
-                    issues?: string[];
-                    issue_tracker?: {
+                    test_case?: {
                         name?: string;
-                        host?: string;
+                        case_type?: string;
+                        priority?: string;
+                        status?: string;
+                        description?: string;
+                        owner?: string;
+                        preconditions?: string;
+                        test_case_steps?: {
+                            description?: string;
+                            result?: string;
+                        }[];
+                        issues?: string[];
+                        issue_tracker?: {
+                            name?: string;
+                            host?: string;
+                        };
+                        tags?: string[];
+                        custom_fields?: Record<string, never>;
+                        automation_status?: string;
+                        feature?: string;
+                        scenario?: string;
+                        background?: string;
                     };
-                    tags?: string[];
-                    custom_fields?: Record<string, never>;
-                    automation_status?: string;
-                    feature?: string;
-                    scenario?: string;
-                    background?: string;
                 };
             };
         };
@@ -1601,7 +1607,9 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
-                        test_case?: components["schemas"]["TestCase"];
+                        data?: {
+                            test_case?: components["schemas"]["TestCase"];
+                        };
                     };
                 };
             };
@@ -1629,7 +1637,9 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
-                        test_case?: components["schemas"]["TestCase"];
+                        data?: {
+                            test_case?: components["schemas"]["TestCase"];
+                        };
                     };
                 };
             };
@@ -1657,7 +1667,9 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
-                        test_case?: components["schemas"]["TestCase"];
+                        data?: {
+                            test_case?: components["schemas"]["TestCase"];
+                        };
                     };
                 };
             };
@@ -1691,7 +1703,9 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
-                        test_case?: components["schemas"]["TestCase"];
+                        data?: {
+                            test_case?: components["schemas"]["TestCase"];
+                        };
                     };
                 };
             };
@@ -1884,7 +1898,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
-                        testrun?: components["schemas"]["TestRun"];
+                        test_run?: components["schemas"]["TestRun"];
                     };
                 };
             };

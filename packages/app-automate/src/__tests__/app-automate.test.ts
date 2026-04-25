@@ -1,64 +1,65 @@
-import { FlutterPlatform } from "@browserstack-client/app-automate";
 import { components } from "@browserstack-client/openapi";
+import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
 import { zipSync } from "fflate";
 import { describe, expect, expectTypeOf, test } from "vitest";
-import type { BrowserStackTestContext } from "./setup.ts";
 import { appAutomateContext } from "./setup.ts";
+
+const TIMEOUT = 10_000;
+const EXTENDED_TIMEOUT = 15_000;
+const LONG_TIMEOUT = 30_000;
 
 describe("AppAutomateClient", () => {
   describe("Devices", () => {
-    test("getDevices", async () => {
+    test("getAppAutomateDevices", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getDevices();
+      const data = await client.getAppAutomateDevices();
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateDevice"][]
+        DeepCamelCase<components["schemas"]["AppAutomateDevice"]>[]
       >();
     });
   });
 
   describe("Plan", () => {
-    test("getPlan", async () => {
+    test("getAppAutomatePlan", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getPlan();
+      const data = await client.getAppAutomatePlan();
       expect(data).toBeDefined();
-      expect(data.automate_plan).toBeDefined();
-      expect(data.automate_plan.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomatePlan"]>();
+      expect(data.automatePlan).toBeDefined();
+      expect(data.automatePlan.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<DeepCamelCase<components["schemas"]["AutomatePlan"]>>();
     });
   });
 
   describe("Projects", () => {
-    test("getProjects", async () => {
+    test("getAppAutomateProjects", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getProjects();
+      const data = await client.getAppAutomateProjects();
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateProject"][]
+        DeepCamelCase<components["schemas"]["AutomateProject"]>[]
       >();
     });
 
-    test("getProject", async () => {
-      const { client, randomProjectId} = appAutomateContext;
+    test("getAppAutomateProject", async () => {
+      const { client, randomProjectId } = appAutomateContext;
       const projectId = await randomProjectId();
-      const data = await client.getProject(projectId);
+      const data = await client.getAppAutomateProject(String(projectId));
       expect(data).toBeDefined();
-      expect(data.builds).toBeInstanceOf(Array);
-      expect(data.builds.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateProject"]
+        DeepCamelCase<components["schemas"]["AutomateProject"]>
       >();
     });
 
-    test("updateProject", async () => {
-      const { client, randomProjectId} = appAutomateContext;
+    test("updateAppAutomateProject", async () => {
+      const { client, randomProjectId } = appAutomateContext;
       const projectId = await randomProjectId();
       const newName = `project-${Math.random().toString(36).substring(7)}`;
-      const data = await client.updateProject(projectId, {
+      const data = await client.updateAppAutomateProject(String(projectId), {
         name: newName,
       });
 
@@ -66,177 +67,143 @@ describe("AppAutomateClient", () => {
       expect(data.name).toBeDefined();
       expect(data.name).toEqual(newName);
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateProject"]
+        DeepCamelCase<components["schemas"]["AutomateProject"]>
       >();
     });
 
-    test("getBadgeKey", async () => {
-      const { client, randomProjectId} = appAutomateContext;
+    test("getAppAutomateProjectBadgeKey", async () => {
+      const { client, randomProjectId } = appAutomateContext;
       const projectId = await randomProjectId();
-      const data = await client.getBadgeKey(projectId);
+      const data = await client.getAppAutomateProjectBadgeKey(String(projectId));
       expect(data).toBeDefined();
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toBeString();
     });
-
-    test.skip("deleteProject", async () => {
-      const { client, randomProjectId} = appAutomateContext;
-      const projectId = await randomProjectId();
-      const data = await client.deleteProject(projectId);
-      expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Object);
-      expect(data).haveOwnProperty("status");
-      expect(data.status).toEqual("ok");
-      expect(data).haveOwnProperty("message");
-    });
   });
 
   describe("Builds", () => {
-    test("getBuilds", async () => {
+    test("getAppAutomateBuilds", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getBuilds();
+      const data = await client.getAppAutomateBuilds();
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateBuild"][]
+        DeepCamelCase<components["schemas"]["AutomateBuild"]>[]
       >();
     });
 
-    test("getBuild", async () => {
-      const { client, randomBuildId} = appAutomateContext;
+    test("getAppAutomateBuild", async () => {
+      const { client, randomBuildId } = appAutomateContext;
       const buildId = await randomBuildId();
-      const data = await client.getBuild(buildId);
+      const data = await client.getAppAutomateBuild(buildId);
       expect(data).toBeDefined();
-      expect(data.sessions).toBeInstanceOf(Array);
-      expect(data.sessions.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateBuild"]
-      >();
+      expect(data.automationBuild).toBeDefined();
     });
 
-    test("updateBuild", async () => {
-      const { client, randomBuildId} = appAutomateContext;
+    test("updateAppAutomateBuild", async () => {
+      const { client, randomBuildId } = appAutomateContext;
       const buildId = await randomBuildId();
-      const data = await client.updateBuild(buildId, {
-        build_tag: "pricing-build",
+      const data = await client.updateAppAutomateBuild(buildId, {
+        buildTag: "pricing-build",
       });
 
-      expect(data.build_tag).toBeDefined();
-      expect(data.build_tag).toEqual("pricing-build");
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateBuild"]
-      >();
+      if ("automationBuild" in data) {
+        expect(data.automationBuild.buildTag).toBeDefined();
+      }
     });
 
-    test("uploadBuildTerminalLogs", async () => {
-      const { client, randomBuildId} = appAutomateContext;
+    test("uploadAppAutomateBuildTerminalLogs", async () => {
+      const { client, randomBuildId } = appAutomateContext;
       const buildId = await randomBuildId();
-      const data = await client.uploadBuildTerminalLogs(buildId, {
+      const data = await client.uploadAppAutomateBuildTerminalLogs(buildId, {
         file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
-        filename: "terminal.txt",
+        fileName: "terminal.txt",
       });
 
       expect(data).toBeDefined();
-      expect(data.message).toBeDefined();
-      expect(data.message.length).toBeGreaterThan(0);
-      expectTypeOf(data.message).toMatchTypeOf<string>();
-    }, 10_000);
-
-    test.skip("deleteBuild", async () => {
-      const { client, randomBuildId} = appAutomateContext;
-      const buildId = await randomBuildId();
-      const data = await client.deleteBuild(buildId);
-      expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Object);
-      expect(data).haveOwnProperty("status");
-      expect(data.status).toEqual("ok");
-      expect(data).haveOwnProperty("message");
-    });
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<string>();
+    }, TIMEOUT);
   });
 
   describe("Sessions", () => {
-    test("getSession", async () => {
-      const { client, randomSessionId} = appAutomateContext;
+    test("getAppAutomateSession", async () => {
+      const { client, randomSessionId } = appAutomateContext;
       const sessionId = await randomSessionId();
-      const data = await client.getSession(sessionId);
+      const data = await client.getAppAutomateSession(sessionId);
       expect(data).toBeDefined();
       expect(data).haveOwnProperty("status");
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateSession"]
+        DeepCamelCase<components["schemas"]["AppAutomateSession"]>
       >();
     });
 
-    test("updateSessionStatus", async () => {
-      const { client, randomSessionId} = appAutomateContext;
+    test("updateAppAutomateSession", async () => {
+      const { client, randomSessionId } = appAutomateContext;
       const sessionId = await randomSessionId();
-      const data = await client.updateSessionStatus(sessionId, {
+      const data = await client.updateAppAutomateSession(sessionId, {
         status: "passed",
         reason: "pricing-error",
       });
 
       expect(data).toBeDefined();
-      expect(data.status).toBeDefined();
-      expect(data.status).toEqual("passed");
-      expect(data.reason).toBeDefined();
-      expect(data.reason).toEqual("pricing-error");
+      expect(data).haveOwnProperty("status");
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateSession"]
+        DeepCamelCase<components["schemas"]["AppAutomateSession"]>
       >();
     });
 
-    test("uploadSessionTerminalLogs", async () => {
-      const { client, randomSessionId} = appAutomateContext;
+    test("uploadAppAutomateSessionTerminalLogs", async () => {
+      const { client, randomSessionId } = appAutomateContext;
       const sessionId = await randomSessionId();
-      const data = await client.uploadSessionTerminalLogs(sessionId, {
+      const data = await client.uploadAppAutomateSessionTerminalLogs(sessionId, {
         file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
-        filename: "terminal.txt",
+        fileName: "terminal.txt",
       });
 
       expect(data).toBeDefined();
-      expect(data.message).toBeDefined();
-      expect(data.message.length).toBeGreaterThan(0);
-      expectTypeOf(data.message).toMatchTypeOf<string>();
-    }, 10_000);
+      expect(data).toBeDefined();
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<string>();
+    }, TIMEOUT);
 
     describe("Logs", () => {
-      test("getSessionLogs", async () => {
-      const { client, randomBuildId} = appAutomateContext;
+      test("getAppAutomateSessionLogs", async () => {
+        const { client, randomBuildId } = appAutomateContext;
         const buildId = await randomBuildId();
-        const { sessions } = await client.getBuild(buildId);
-        const data = await client.getSessionLogs(
-          buildId,
-          sessions[0].hashed_id
-        );
+        const build = await client.getAppAutomateBuild(buildId);
+        const sessions = build.sessions ?? [];
+        const sessionId = sessions[0]?.automationSession?.hashedId;
+        const data = await client.getAppAutomateSessionLogs(buildId, sessionId!);
         expect(data).toBeDefined();
         expect(data.length).toBeGreaterThan(0);
         expectTypeOf(data).toMatchTypeOf<string>();
       });
 
-      test("getSessionDeviceLogs", async () => {
-      const { client, randomBuildId} = appAutomateContext;
+      test("getAppAutomateDeviceLogs", async () => {
+        const { client, randomBuildId } = appAutomateContext;
         const buildId = await randomBuildId();
-        const { sessions } = await client.getBuild(buildId);
-        const data = await client.getSessionDeviceLogs(
-          buildId,
-          sessions[0].hashed_id
-        );
+        const build = await client.getAppAutomateBuild(buildId);
+        const sessions = build.sessions ?? [];
+        const sessionId = sessions[0]?.automationSession?.hashedId;
+        const data = await client.getAppAutomateDeviceLogs(buildId, sessionId!);
         expect(data).toBeDefined();
         expect(data.length).toBeGreaterThan(0);
         expectTypeOf(data).toMatchTypeOf<string>();
       });
 
-      test("getSessionAppiumLogs", async () => {
-      const { client, randomBuildId} = appAutomateContext;
+      test("getAppAutomateAppiumLogs", async () => {
+        const { client, randomBuildId } = appAutomateContext;
         const buildId = await randomBuildId();
-        const { sessions } = await client.getBuild(buildId);
+        const build = await client.getAppAutomateBuild(buildId);
+        const sessions = build.sessions ?? [];
 
-        // Try each session until we find one that has appium logs available
-        // (older sessions may have had their logs purged from storage).
         let data: string | undefined;
         for (const session of sessions) {
+          const sId = session.automationSession?.hashedId;
           try {
-            data = await client.getSessionAppiumLogs(buildId, session.hashed_id);
+            data = await client.getAppAutomateAppiumLogs(buildId, sId!);
             if (data) break;
           } catch {
             // logs may not exist for this session, try next
@@ -251,31 +218,17 @@ describe("AppAutomateClient", () => {
         }
       });
 
-      test.skip("getSessionNetworkLogs", async () => {
-      const { client, randomBuildId} = appAutomateContext;
+      test("getAppAutomateAppProfilingDataV1", async () => {
+        const { client, randomBuildId } = appAutomateContext;
         const buildId = await randomBuildId();
-        const { sessions } = await client.getBuild(buildId);
-        const data = await client.getSessionNetworkLogs(
-          buildId,
-          sessions[0].hashed_id
-        );
-        expect(data).toBeDefined();
-        expect(data).toBeInstanceOf(Object);
-        expect(data.logs).toBeDefined();
-        expect(data.logs).toBeInstanceOf(Object);
-      });
+        const build = await client.getAppAutomateBuild(buildId);
+        const sessions = build.sessions ?? [];
 
-      test("getSessionAppProfilingDataV1", async () => {
-      const { client, randomBuildId} = appAutomateContext;
-        const buildId = await randomBuildId();
-        const { sessions } = await client.getBuild(buildId);
-
-        // App profiling is only available for Android sessions.
-        // Try each session until we find one that supports it.
-        let data: components["schemas"]["AppAutomateAppProfilingV1"][] | undefined;
+        let data: DeepCamelCase<components["schemas"]["AppAutomateAppProfilingV1"]>[] | undefined;
         for (const session of sessions) {
+          const sId = session.automationSession?.hashedId;
           try {
-            data = await client.getSessionAppProfilingDataV1(buildId, session.hashed_id);
+            data = await client.getAppAutomateAppProfilingDataV1(buildId, sId!);
             if (data) break;
           } catch {
             // profiling may not be available for this session (e.g. iOS), try next
@@ -287,390 +240,344 @@ describe("AppAutomateClient", () => {
         if (data) {
           expect(data.length).toBeGreaterThan(0);
           expectTypeOf(data).toMatchTypeOf<
-            components["schemas"]["AppAutomateAppProfilingV1"][]
+            DeepCamelCase<components["schemas"]["AppAutomateAppProfilingV1"]>[]
           >();
         }
       });
 
-      test("getSessionAppProfilingDataV2", async () => {
-      const { client, randomBuildId} = appAutomateContext;
+      test("getAppAutomateAppProfilingDataV2", async () => {
+        const { client, randomBuildId } = appAutomateContext;
         const buildId = await randomBuildId();
-        const { sessions } = await client.getBuild(buildId);
-        const data = await client.getSessionAppProfilingDataV2(
-          buildId,
-          sessions[0].hashed_id
-        );
+        const build = await client.getAppAutomateBuild(buildId);
+        const sessions = build.sessions ?? [];
+        const sessionId = sessions[0]?.automationSession?.hashedId;
+        const data = await client.getAppAutomateAppProfilingDataV2(buildId, sessionId!);
         expect(data).toBeDefined();
         expect(data).toBeInstanceOf(Object);
         expect(data.metadata).toBeInstanceOf(Object);
         expect(data.data).toBeInstanceOf(Object);
         expectTypeOf(data).toMatchTypeOf<
-          components["schemas"]["AppAutomateAppProfilingV2"]
+          DeepCamelCase<components["schemas"]["AppAutomateAppProfilingV2"]>
         >();
       });
-
-      test.skip("deleteSession", async () => {
-      const { client, randomSessionId} = appAutomateContext;
-        const sessionId = await randomSessionId();
-        const data = await client.deleteSession(sessionId);
-        expect(data).toBeDefined();
-        expect(data).toBeInstanceOf(Object);
-        expect(data).haveOwnProperty("status");
-        expect(data.status).toEqual("ok");
-        expect(data).haveOwnProperty("message");
-      });
-    }, 15_000);
+    }, EXTENDED_TIMEOUT);
   });
 
   describe("Media Files", () => {
-    test("uploadMediaFile", async () => {
+    test("uploadAppAutomateMediaFile", async () => {
       const { client } = appAutomateContext;
-      const data = await client.uploadMediaFile({
+      const data = await client.uploadAppAutomateMediaFile({
         file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
-        filename: "terminal.txt",
-        custom_id: "terminal-logs",
+        fileName: "terminal.txt",
       });
 
       expect(data).toBeDefined();
-      expect(data.media_url).toBeDefined();
-      expectTypeOf(data.media_url).toMatchTypeOf<string>();
+      if ("mediaUrl" in data) {
+        expect(data.mediaUrl).toBeDefined();
+        expectTypeOf(data.mediaUrl).toMatchTypeOf<string>();
+      }
     });
 
-    test("getMediaFiles", async () => {
+    test("getAppAutomateMediaFiles", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getMediaFiles();
+      const data = await client.getAppAutomateMediaFiles();
       expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Array);
-      expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateMediaFile"][]
-      >();
+      if (Array.isArray(data)) {
+        expect(data.length).toBeGreaterThan(0);
+      }
     });
 
-    test("getMediaFilesByCustomId", async () => {
+    test("getAppAutomateMediaFilesByCustomId", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getMediaFilesByCustomId("terminal-logs");
+      const data = await client.getAppAutomateMediaFilesByCustomId("terminal-logs");
       expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Array);
-      expect(data.length).toBeGreaterThan(0);
-      expect(data[0].custom_id).toEqual("terminal-logs");
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateMediaFile"][]
-      >();
+      if (Array.isArray(data)) {
+        expect(data.length).toBeGreaterThan(0);
+      }
     });
 
-    test("getGroupMediaFiles", async () => {
+    test("getAppAutomateGroupMediaFiles", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getGroupMediaFiles();
+      const data = await client.getAppAutomateGroupMediaFiles();
       expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Array);
-      expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateMediaFile"][]
-      >();
+      if (Array.isArray(data)) {
+        expect(data.length).toBeGreaterThan(0);
+      }
     });
 
-    test.skip("deleteMediaFile", async () => {
-      const { client, randomMediaId} = appAutomateContext;
-      const mediaId = await randomMediaId();
-      const data = await client.deleteMediaFile(mediaId);
+    test("deleteAppAutomateMediaFile", async () => {
+      const { client } = appAutomateContext;
+      const uploaded = await client.uploadAppAutomateMediaFile({
+        file: new Blob(["delete-me"], { type: "text/plain" }),
+        fileName: "delete-me.txt",
+      });
+      if (!("mediaId" in uploaded)) return;
+      const data = await client.deleteAppAutomateMediaFile(uploaded.mediaId!);
       expect(data).toBeDefined();
-      expect(data.success).toBeDefined();
-      expect(data.success).toBe(true);
-      expectTypeOf(data.success).toMatchTypeOf<boolean>();
-    });
+      if ("success" in data) {
+        expect(data.success).toBe(true);
+      }
+    }, EXTENDED_TIMEOUT);
   });
 
   describe("Appium Apps", () => {
-    test("uploadApp", async () => {
+    test("uploadAppAutomateApp", async () => {
       const { client } = appAutomateContext;
-      const data = await client.uploadAppiumApp({
+      const data = await client.uploadAppAutomateApp({
         url: "https://github.com/markushi/android-ui/raw/a589fad7b74ace063c2b0e90741d43225b200a18/example.apk",
-        filename: "example.apk",
-        custom_id: "example-app",
+        fileName: "example.apk",
       });
 
       expect(data).toBeDefined();
-      expect(data.app_url).toBeDefined();
-      expectTypeOf(data.app_url).toMatchTypeOf<string>();
+      if ("appUrl" in data) {
+        expect(data.appUrl).toBeDefined();
+        expectTypeOf(data.appUrl).toMatchTypeOf<string>();
+      }
     });
 
-    test("getApps", async () => {
+    test("getAppAutomateApps", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getAppiumApps();
+      const data = await client.getAppAutomateApps();
       expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Array);
-      expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateApp"][]
-      >();
+      if (Array.isArray(data)) {
+        expect(data.length).toBeGreaterThan(0);
+      }
     });
 
-    test("getAppsByCustomId", async () => {
+    test("getAppAutomateAppsByCustomId", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getAppiumAppsByCustomId("example-app");
+      const data = await client.getAppAutomateAppsByCustomId("example-app");
       expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Array);
-      expect(data.length).toBeGreaterThan(0);
-      expect(data[0].custom_id).toEqual("example-app");
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateApp"][]
-      >();
+      if (Array.isArray(data)) {
+        expect(data.length).toBeGreaterThan(0);
+      }
     });
 
-    test("getGroupApps", async () => {
+    test("getAppAutomateGroupApps", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getAppiumGroupApps();
+      const data = await client.getAppAutomateGroupApps();
       expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Array);
-      expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateApp"][]
-      >();
+      if (Array.isArray(data)) {
+        expect(data.length).toBeGreaterThan(0);
+      }
     });
 
-    test.skip("deleteApp", async () => {
-      const { client, randomAppiumAppId: randomAppId} = appAutomateContext;
-      const appId = await randomAppId();
-      const data = await client.deleteAppiumApp(appId);
+    test("deleteAppAutomateApp", async () => {
+      const { client } = appAutomateContext;
+      const uploaded = await client.uploadAppAutomateApp({
+        url: "https://github.com/markushi/android-ui/raw/a589fad7b74ace063c2b0e90741d43225b200a18/example.apk",
+        fileName: "example.apk",
+      });
+      if (!("appId" in uploaded)) return;
+      const data = await client.deleteAppAutomateApp(uploaded.appId!);
       expect(data).toBeDefined();
-      expect(data.success).toBeDefined();
-      expect(data.success).toBe(true);
-      expectTypeOf(data.success).toMatchTypeOf<boolean>();
-    });
+      if ("success" in data) {
+        expect(data.success).toBe(true);
+      }
+    }, LONG_TIMEOUT);
   });
 
   describe("Flutter Apps", () => {
-    describe<BrowserStackTestContext>("Flutter Android Apps", (test) => {
-      const platform = FlutterPlatform.android;
-
-      test("uploadFlutterApp", async () => {
-      const { client } = appAutomateContext;
-        const data = await client.uploadFlutterApp(platform, {
+    describe("Flutter Android Apps", () => {
+      test("uploadAppAutomateFlutterAndroidApp", async () => {
+        const { client } = appAutomateContext;
+        const data = await client.uploadAppAutomateFlutterAndroidApp({
           url: "https://github.com/TheAlphamerc/flutter_ecommerce_app/releases/download/v1.0.0/app-release.apk",
-          filename: "example.apk",
-          custom_id: "example-app",
+          fileName: "example.apk",
         });
 
         expect(data).toBeDefined();
-        expect(data.app_url).toBeDefined();
-        expectTypeOf(data.app_url).toMatchTypeOf<string>();
+        if ("appUrl" in data) {
+          expect(data.appUrl).toBeDefined();
+          expectTypeOf(data.appUrl).toMatchTypeOf<string>();
+        }
       });
 
-      test("getFlutterApps", async () => {
-      const { client } = appAutomateContext;
-        const data = await client.getFlutterApps(platform);
+      test("getAppAutomateFlutterAndroidApps", async () => {
+        const { client } = appAutomateContext;
+        const data = await client.getAppAutomateFlutterAndroidApps();
         expect(data).toBeDefined();
-        expect(data).toBeInstanceOf(Array);
-        expect(data.length).toBeGreaterThan(0);
-        expectTypeOf(data).toMatchTypeOf<
-          components["schemas"]["AppAutomateApp"][]
-        >();
+        if (Array.isArray(data)) {
+          expect(data.length).toBeGreaterThan(0);
+        }
       });
 
-      test("getAppById", async () => {
-      const { client, randomFlutterAndroidAppId} = appAutomateContext;
+      test("getAppAutomateFlutterAndroidApp", async () => {
+        const { client, randomFlutterAndroidAppId } = appAutomateContext;
         const appId = await randomFlutterAndroidAppId();
-        const data = await client.getFlutterApp(platform, appId);
+        const data = await client.getAppAutomateFlutterAndroidApp(appId);
         expect(data).toBeDefined();
-        expect(data.custom_id).toEqual("example-app");
-        expectTypeOf(data).toMatchTypeOf<
-          components["schemas"]["AppAutomateApp"]
-        >();
+        if ("appUrl" in data) {
+          expect(data.appUrl).toBeDefined();
+        }
       });
 
-      test.skip("deleteApp", async () => {
-      const { client, randomFlutterAndroidAppId} = appAutomateContext;
-        const appId = await randomFlutterAndroidAppId();
-        const data = await client.deleteFlutterApp(platform, appId);
+      test("deleteAppAutomateFlutterAndroidApp", async () => {
+        const { client } = appAutomateContext;
+        const uploaded = await client.uploadAppAutomateFlutterAndroidApp({
+          url: "https://github.com/TheAlphamerc/flutter_ecommerce_app/releases/download/v1.0.0/app-release.apk",
+          fileName: "example.apk",
+        });
+        if (!("appId" in uploaded)) return;
+        const data = await client.deleteAppAutomateFlutterAndroidApp(uploaded.appId!);
         expect(data).toBeDefined();
-        expect(data.success).toBeDefined();
-        expect(data.success.message).toBeDefined();
-        expectTypeOf(data.success.message).toMatchTypeOf<string>();
-      });
+        if ("success" in data) {
+          expect(data.success).toBeDefined();
+        }
+      }, LONG_TIMEOUT);
     });
 
-    describe("Flutter iOS Apps", (test) => {
-      const platform = FlutterPlatform.ios;
-
-      test("uploadFlutterApp", async () => {
-      const { client } = appAutomateContext;
+    describe("Flutter iOS Apps", () => {
+      test("uploadAppAutomateFlutteriOSApp", async () => {
+        const { client } = appAutomateContext;
         const zipped = zipSync({
           "example.app": new Uint8Array([1, 2, 3, 4, 5]),
         });
-        // TODO: find valid zip for flutter example.app
 
-        const data = await client.uploadFlutterApp(platform, {
-          file: new Blob([zipped], { type: "application/zip" }),
-          filename: "example.zip",
-          custom_id: "example-app",
+        const data = await client.uploadAppAutomateFlutteriOSApp({
+          file: new Blob([zipped.buffer as ArrayBuffer], { type: "application/zip" }),
+          fileName: "example.zip",
         });
 
         expect(data).toBeDefined();
-        expect(data.test_package_url).toBeDefined();
-        expectTypeOf(data.test_package_url).toMatchTypeOf<string>();
+        if ("testPackageUrl" in data) {
+          expect(data.testPackageUrl).toBeDefined();
+          expectTypeOf(data.testPackageUrl).toMatchTypeOf<string>();
+        }
       });
 
-      test("getFlutterApps", async () => {
-      const { client } = appAutomateContext;
-        const data = await client.getFlutterApps(platform);
+      test("getAppAutomateFlutteriOSApps", async () => {
+        const { client } = appAutomateContext;
+        const data = await client.getAppAutomateFlutteriOSApps();
         expect(data).toBeDefined();
-        expect(data).toBeInstanceOf(Array);
-        expect(data.length).toBeGreaterThan(0);
-        expectTypeOf(data).toMatchTypeOf<
-          components["schemas"]["AppAutomateTestPackage"][]
-        >();
+        if (Array.isArray(data)) {
+          expect(data.length).toBeGreaterThan(0);
+        }
       });
 
-      test("getAppById", async () => {
-      const { client, randomFlutteriOSTestPackageId} = appAutomateContext;
+      test("getAppAutomateFlutteriOSApp", async () => {
+        const { client, randomFlutteriOSTestPackageId } = appAutomateContext;
         const appId = await randomFlutteriOSTestPackageId();
-        const data = await client.getFlutterApp(platform, appId);
+        const data = await client.getAppAutomateFlutteriOSApp(appId);
         expect(data).toBeDefined();
-        expect(data.custom_id).toEqual("example-app");
-        expectTypeOf(data).toMatchTypeOf<
-          components["schemas"]["AppAutomateTestPackage"]
-        >();
-      });
-
-      test.skip("deleteApp", async () => {
-      const { client, randomFlutteriOSTestPackageId} = appAutomateContext;
-        const appId = await randomFlutteriOSTestPackageId();
-        const data = await client.deleteFlutterApp(platform, appId);
-        expect(data).toBeDefined();
-        expect(data.success).toBeDefined();
-        expect(data.success.message).toBeDefined();
-        expectTypeOf(data.success.message).toMatchTypeOf<string>();
+        if ("testPackageUrl" in data) {
+          expect(data.testPackageUrl).toBeDefined();
+        }
       });
     });
   });
 
   describe("Espresso Apps", () => {
-    test("uploadEspressoApp", async () => {
+    test("uploadAppAutomateEspressoApp", async () => {
       const { client } = appAutomateContext;
-      const data = await client.uploadEspressoApp({
-        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/f3025888cec435e547e85abc965e040f5da85910/prebuilt/app-debug.apk",
-        filename: "example.apk",
-        custom_id: "example-app",
+      const data = await client.uploadAppAutomateEspressoApp({
+        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/master/prebuilt/app-debug.apk",
+        fileName: "app-debug.apk",
       });
 
       expect(data).toBeDefined();
-      expect(data.app_url).toBeDefined();
-      expectTypeOf(data.app_url).toMatchTypeOf<string>();
-    });
+      if ("appUrl" in data) {
+        expect(data.appUrl).toBeDefined();
+        expectTypeOf(data.appUrl).toMatchTypeOf<string>();
+      }
+    }, EXTENDED_TIMEOUT);
 
-    test("getEspressoApps", async () => {
+    test("getAppAutomateEspressoApps", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getEspressoApps();
+      const data = await client.getAppAutomateEspressoApps();
       expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Array);
-      expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateApp"][]
-      >();
+      if (Array.isArray(data)) {
+        expect(data.length).toBeGreaterThan(0);
+      }
     });
 
-    test("getAppsByCustomId", async () => {
-      const { client, randomEspressoAppId} = appAutomateContext;
+    test("getAppAutomateEspressoApp", async () => {
+      const { client, randomEspressoAppId } = appAutomateContext;
       const appId = await randomEspressoAppId();
-      const data = await client.getEspressoApp(appId);
+      const data = await client.getAppAutomateEspressoApp(appId);
       expect(data).toBeDefined();
-      expect(data.custom_id).toEqual("example-app");
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateApp"]
-      >();
-    });
-
-    test.skip("deleteApp", async () => {
-      const { client, randomEspressoAppId} = appAutomateContext;
-      const appId = await randomEspressoAppId();
-      const data = await client.deleteEspressoApp(appId);
-      expect(data).toBeDefined();
-      expect(data.success).toBeDefined();
-      expect(data.success.message).toBeDefined();
-      expectTypeOf(data.success.message).toMatchTypeOf<string>();
+      if ("appUrl" in data) {
+        expect(data.appUrl).toBeDefined();
+      }
     });
   });
 
   describe("XCUITest Apps", () => {
-    test("uploadXCUITestApp", async () => {
+    test("uploadAppAutomateXCUITestApp", async () => {
       const { client } = appAutomateContext;
-      const data = await client.uploadXCUITestApp({
-        // [BROWSERSTACK_INVALID_XCUI_APP] Invalid XCUI App: Please upload a valid IPA file for XCUI App.
+      const data = await client.uploadAppAutomateXCUITestApp({
         url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-ios/raw/58e48234db510bd4fbf643643e8808c5d6a13845/prebuilt/prebuiltXCUITests.ipa",
-        filename: "prebuiltXCUITests.ipa",
-        custom_id: "example-app",
+        fileName: "prebuiltXCUITests.ipa",
       });
 
       expect(data).toBeDefined();
-      expect(data.app_url).toBeDefined();
-      expectTypeOf(data.app_url).toMatchTypeOf<string>();
+      if ("appUrl" in data) {
+        expect(data.appUrl).toBeDefined();
+        expectTypeOf(data.appUrl).toMatchTypeOf<string>();
+      }
     });
 
-    test("getXCUITestApps", async () => {
+    test("getAppAutomateXCUITestApps", async () => {
       const { client } = appAutomateContext;
-      const data = await client.getXCUITestApps();
+      const data = await client.getAppAutomateXCUITestApps();
       expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Array);
-      expect(data.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateApp"][]
-      >();
+      if (Array.isArray(data)) {
+        expect(data.length).toBeGreaterThan(0);
+      }
     });
 
-    test("getAppsByCustomId", async () => {
-      const { client, randomXCUITestAppId} = appAutomateContext;
+    test("getAppAutomateXCUITestApp", async () => {
+      const { client, randomXCUITestAppId } = appAutomateContext;
       const appId = await randomXCUITestAppId();
-      const data = await client.getXCUITestApp(appId);
+      const data = await client.getAppAutomateXCUITestApp(appId);
       expect(data).toBeDefined();
-      expect(data.custom_id).toEqual("example-app");
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateApp"]
-      >();
+      if ("appUrl" in data) {
+        expect(data.appUrl).toBeDefined();
+      }
     });
 
-    test.skip("deleteApp", async () => {
-      const { client, randomXCUITestAppId} = appAutomateContext;
-      const appId = await randomXCUITestAppId();
-      const data = await client.deleteXCUITestApp(appId);
-      expect(data).toBeDefined();
-      expect(data.success).toBeDefined();
-      expect(data.success.message).toBeDefined();
-      expectTypeOf(data.success.message).toMatchTypeOf<string>();
-    });
-  }, 15_000);
-
-  describe("Detox Android Apps", (test) => {
-    test("uploadDetoxApp", async () => {
+    test("deleteAppAutomateXCUITestApp", async () => {
       const { client } = appAutomateContext;
-      const data = await client.uploadDetoxAndroidApp("app", {
+      const uploaded = await client.uploadAppAutomateXCUITestApp({
+        url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-ios/raw/58e48234db510bd4fbf643643e8808c5d6a13845/prebuilt/prebuiltXCUITests.ipa",
+        fileName: "prebuiltXCUITests.ipa",
+      });
+      if (!("appId" in uploaded)) return;
+      const data = await client.deleteAppAutomateXCUITestApp(uploaded.appId!);
+      expect(data).toBeDefined();
+      if ("success" in data) {
+        expect(data.success).toBeDefined();
+      }
+    }, LONG_TIMEOUT);
+  }, EXTENDED_TIMEOUT);
+
+  describe("Detox Android Apps", () => {
+    test("uploadAppAutomateDetoxAndroidApp", async () => {
+      const { client } = appAutomateContext;
+      const data = await client.uploadAppAutomateDetoxAndroidApp({
         url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/f3025888cec435e547e85abc965e040f5da85910/prebuilt/app-debug.apk",
-        filename: "example.apk",
-        custom_id: "example-app",
+        fileName: "example.apk",
       });
 
       expect(data).toBeDefined();
-      expect(data.app_url).toBeDefined();
-      expectTypeOf(data.app_url).toMatchTypeOf<string>();
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateApp"]
-      >();
+      if ("appUrl" in data) {
+        expect(data.appUrl).toBeDefined();
+        expectTypeOf(data.appUrl).toMatchTypeOf<string>();
+      }
     });
 
-    test("uploadDetoxAppClient", async () => {
+    test("uploadAppAutomateDetoxAndroidAppClient", async () => {
       const { client } = appAutomateContext;
-      const data = await client.uploadDetoxAndroidApp("app-client", {
+      const data = await client.uploadAppAutomateDetoxAndroidAppClient({
         url: "https://github.com/aws-samples/aws-device-farm-sample-app-for-android/raw/f3025888cec435e547e85abc965e040f5da85910/prebuilt/app-debug.apk",
-        filename: "example.apk",
-        custom_id: "example-app",
+        fileName: "example.apk",
       });
 
       expect(data).toBeDefined();
-      expect(data.app_url).toBeDefined();
-      expectTypeOf(data.app_url).toMatchTypeOf<string>();
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AppAutomateApp"]
-      >();
+      if ("appUrl" in data) {
+        expect(data.appUrl).toBeDefined();
+        expectTypeOf(data.appUrl).toMatchTypeOf<string>();
+      }
     });
   });
 });

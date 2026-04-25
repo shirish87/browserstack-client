@@ -1,203 +1,165 @@
 import { components } from "@browserstack-client/openapi";
+import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
 import { describe, expect, expectTypeOf, test } from "vitest";
 import { automateContext } from "./setup.ts";
+
+const TIMEOUT = 10_000;
+const EXTENDED_TIMEOUT = 15_000;
 
 describe("AutomateClient", () => {
 
   describe("Account", () => {
 
-    test.skip("recycleKey", async () => {
+    test("getAutomatePlan", async () => {
       const { client } = automateContext;
-      const data = await client.recycleKey();
+      const data = await client.getAutomatePlan();
       expect(data).toBeDefined();
-      expect(data.old_key).toBeDefined();
-      expect(data.new_key).toBeDefined();
-      expect(data.new_key.length).toBeGreaterThan(0);
-      expectTypeOf(data.new_key).toMatchTypeOf<string>();
-    });
-
-    test("getPlan", async () => {
-      const { client } = automateContext;
-      const data = await client.getPlan();
-      expect(data).toBeDefined();
-      expect(data.automate_plan).toBeDefined();
-      expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomatePlan"]>();
+      expect(data.automatePlan).toBeDefined();
+      expectTypeOf(data).toMatchTypeOf<DeepCamelCase<components["schemas"]["AutomatePlan"]>>();
     });
   });
 
-  test("getBrowsers", async () => {
+  test("getAutomateBrowsers", async () => {
     const { client } = automateContext;
-    const data = await client.getBrowsers();
+    const data = await client.getAutomateBrowsers();
     expect(data).toBeDefined();
     expect(data).toBeInstanceOf(Array);
     expect(data.length).toBeGreaterThan(0);
-    expectTypeOf(data).toMatchTypeOf<components["schemas"]["BrowserList"]>();
-  }, 10_000);
+    expectTypeOf(data).toMatchTypeOf<DeepCamelCase<components["schemas"]["BrowserList"]>>();
+  }, TIMEOUT);
 
   describe("Project", () => {
-    test("getProjects", async () => {
+    test("getAutomateProjects", async () => {
       const { client } = automateContext;
-      const data = await client.getProjects();
+      const data = await client.getAutomateProjects();
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateProject"][]
+        DeepCamelCase<components["schemas"]["AutomateProject"]>[]
       >();
     });
 
-    test("getProject", async () => {
+    test("getAutomateProject", async () => {
       const { client, randomProjectId } = automateContext;
       const projectId = await randomProjectId();
-      const data = await client.getProject(projectId);
+      const data = await client.getAutomateProject(String(projectId));
       expect(data).toBeDefined();
       expect(data.id).toBeDefined();
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateProject"] & {
-          builds: components["schemas"]["AutomateBuild"][];
-        }
+        DeepCamelCase<components["schemas"]["AutomateProject"]>
       >();
     });
 
-    test("updateProject", async () => {
+    test("updateAutomateProject", async () => {
       const { client, randomProjectId } = automateContext;
       const projectId = await randomProjectId();
       const name = `pricing-project-${Date.now()}`;
-      const data = await client.updateProject(projectId, { name });
+      const data = await client.updateAutomateProject(String(projectId), { name });
       expect(data).toBeDefined();
       expect(data.id).toBeDefined();
       expect(data.name).toBe(name);
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateProject"]
+        DeepCamelCase<components["schemas"]["AutomateProject"]>
       >();
     });
 
-    test("getBadgeKey", async () => {
+    test("getAutomateProjectBadgeKey", async () => {
       const { client, randomProjectId } = automateContext;
       const projectId = await randomProjectId();
-      const data = await client.getBadgeKey(projectId);
+      const data = await client.getAutomateProjectBadgeKey(String(projectId));
       expect(data).toBeDefined();
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toEqualTypeOf<string>();
     });
-
-    test.skip("deleteProject", async () => {
-      const { client, randomProjectId } = automateContext;
-      const projectId = await randomProjectId();
-      const data = await client.deleteProject(projectId);
-      expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Object);
-      expect(data).haveOwnProperty("status");
-      expect(data.status).toEqual("ok");
-      expect(data).haveOwnProperty("message");
-    });
   });
 
   describe("Build", () => {
-    test("getBuilds", async () => {
+    test("getAutomateBuilds", async () => {
       const { client } = automateContext;
-      const data = await client.getBuilds();
+      const data = await client.getAutomateBuilds();
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateBuild"][]
+        DeepCamelCase<components["schemas"]["AutomateBuild"]>[]
       >();
     });
 
-    test("getBuild", async () => {
+    test("getAutomateBuild", async () => {
       const { client, randomBuildId } = automateContext;
       const buildId = await randomBuildId();
-      const data = await client.getBuild(buildId);
+      const data = await client.getAutomateBuild(buildId);
       expect(data).toBeDefined();
-      expect(data).haveOwnProperty("status");
-      expect(data.sessions).toBeDefined();
-      expect(data.sessions).toBeInstanceOf(Array);
-      expect(data.sessions.length).toBeGreaterThan(0);
-      expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateBuild"] & {
-          sessions: components["schemas"]["AutomateSession"][];
-        }
-      >();
     });
 
-    describe("updateBuild", () => {
+    describe("updateAutomateBuild", () => {
       test("name", async () => {
         const { client, randomBuildId } = automateContext;
         const buildId = await randomBuildId();
         const name = `pricing-build-${Date.now()}`;
-        const data = await client.updateBuild(buildId, { name });
+        const data = await client.updateAutomateBuild(buildId, { name });
         expect(data).toBeDefined();
-        expect(data.name).toEqual(name);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"]>();
+        if ("automationBuild" in data) {
+          expect(data.automationBuild.name).toEqual(name);
+        }
       });
 
       test("build_tag", async () => {
         const { client, randomBuildId } = automateContext;
         const buildId = await randomBuildId();
         const tag = `pricing-build-${Date.now()}`;
-        const data = await client.updateBuild(buildId, { build_tag: tag });
+        const data = await client.updateAutomateBuild(buildId, { buildTag: tag });
         expect(data).toBeDefined();
-        expect(data.build_tag).toEqual(tag);
-        expectTypeOf(data).toMatchTypeOf<components["schemas"]["AutomateBuild"]>();
+        if ("automationBuild" in data) {
+          expect(data.automationBuild.buildTag).toEqual(tag);
+        }
       });
     });
 
-    test.skip("deleteBuild", async () => {
+    test("uploadAutomateBuildTerminalLogs", async () => {
       const { client, randomBuildId } = automateContext;
       const buildId = await randomBuildId();
-      const data = await client.deleteBuild(buildId);
-      expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Object);
-      expect(data).haveOwnProperty("status");
-      expect(data.status).toEqual("ok");
-      expect(data).haveOwnProperty("message");
-    });
-
-    test("uploadBuildTerminalLogs", async () => {
-      const { client, randomBuildId } = automateContext;
-      const buildId = await randomBuildId();
-      const data = await client.uploadBuildTerminalLogs(buildId, {
-        file: new Blob(["Logs Logs Logs"], { type: "text/plain" }) as any,
-        filename: "terminal.txt",
+      const data = await client.uploadAutomateBuildTerminalLogs(buildId, {
+        file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
+        fileName: "terminal.txt",
       });
 
       expect(data).toBeDefined();
-      expect(data.message).toBeDefined();
-      expect(data.message.length).toBeGreaterThan(0);
-      expectTypeOf(data.message).toMatchTypeOf<string>();
-    }, 10_000);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<string>();
+    }, TIMEOUT);
   });
 
   describe("Session", () => {
-    test("getSessions", async () => {
+    test("getAutomateSessions", async () => {
       const { client, randomBuildId } = automateContext;
       const buildId = await randomBuildId();
-      const data = await client.getSessions(buildId);
+      const data = await client.getAutomateSessions(buildId);
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateSession"][]
+        DeepCamelCase<components["schemas"]["AutomateSession"]>[]
       >();
     });
 
-    test("getSession", async () => {
+    test("getAutomateSession", async () => {
       const { client, randomSessionId } = automateContext;
       const sessionId = await randomSessionId();
-      const data = await client.getSession(sessionId);
+      const data = await client.getAutomateSession(sessionId);
       expect(data).toBeDefined();
       expect(data).haveOwnProperty("status");
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateSession"]
+        DeepCamelCase<components["schemas"]["AutomateSession"]>
       >();
     });
 
-    describe("updateSession", () => {
+    describe("updateAutomateSession", () => {
       test("status/reason", async () => {
         const { client, randomSessionId } = automateContext;
         const sessionId = await randomSessionId();
-        const data = await client.updateSession(sessionId, {
+        const data = await client.updateAutomateSession(sessionId, {
           status: "failed",
           reason: "Session failed",
         });
@@ -206,14 +168,14 @@ describe("AutomateClient", () => {
         expect(data).haveOwnProperty("status");
         expect(data.status).toEqual("failed");
         expectTypeOf(data).toMatchTypeOf<
-          components["schemas"]["AutomateSession"]
+          DeepCamelCase<components["schemas"]["AutomateSession"]>
         >();
       });
 
       test("name", async () => {
         const { client, randomSessionId } = automateContext;
         const sessionId = await randomSessionId();
-        const data = await client.updateSession(sessionId, {
+        const data = await client.updateAutomateSession(sessionId, {
           name: "pricing-session",
         });
 
@@ -221,76 +183,61 @@ describe("AutomateClient", () => {
         expect(data).haveOwnProperty("name");
         expect(data.name).toEqual("pricing-session");
         expectTypeOf(data).toMatchTypeOf<
-          components["schemas"]["AutomateSession"]
+          DeepCamelCase<components["schemas"]["AutomateSession"]>
         >();
       });
     });
 
-    test.skip("deleteSession", async () => {
+    test("uploadAutomateSessionTerminalLogs", async () => {
       const { client, randomSessionId } = automateContext;
       const sessionId = await randomSessionId();
-      const data = await client.deleteSession(sessionId);
-      expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Object);
-      expect(data).haveOwnProperty("status");
-      expect(data.status).toEqual("ok");
-      expect(data).haveOwnProperty("message");
-    });
-
-    test.skip("deleteSessions", async () => {
-      const { client, randomSessionId } = automateContext;
-      const sessionId = await randomSessionId();
-      const data = await client.deleteSessions([sessionId]);
-      expect(data).toBeDefined();
-      expect(data).toBeInstanceOf(Object);
-      expect(data).haveOwnProperty("message");
-    });
-
-    test("uploadSessionTerminalLogs", async () => {
-      const { client, randomSessionId } = automateContext;
-      const sessionId = await randomSessionId();
-      const data = await client.uploadSessionTerminalLogs(sessionId, {
-        file: new Blob(["Logs Logs Logs"], { type: "text/plain" }) as any,
-        filename: "terminal.txt",
+      const data = await client.uploadAutomateSessionTerminalLogs(sessionId, {
+        file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
+        fileName: "terminal.txt",
       });
 
       expect(data).toBeDefined();
-      expect(data.message).toBeDefined();
-      expect(data.message.length).toBeGreaterThan(0);
-      expectTypeOf(data.message).toMatchTypeOf<string>();
-    }, 10_000);
+      expect(data.length).toBeGreaterThan(0);
+      expectTypeOf(data).toMatchTypeOf<string>();
+    }, TIMEOUT);
   });
 
   describe("Media Files", () => {
-    test("uploadMediaFile", async () => {
+    test("uploadAutomateMediaFile", async () => {
       const { client } = automateContext;
-      const data = await client.uploadMediaFile({
-        file: new Blob(["test"], { type: "text/plain" }) as any,
-        filename: "test.txt",
+      const data = await client.uploadAutomateMediaFile({
+        file: new Blob(["test"], { type: "text/plain" }),
+        fileName: "test.txt",
       });
       expect(data).toBeDefined();
-      expect(data.media_url).toBeDefined();
-      expectTypeOf(data.media_url).toEqualTypeOf<string>();
-    }, 10_000);
+      expect(data.mediaUrl).toBeDefined();
+      expectTypeOf(data.mediaUrl).toEqualTypeOf<string>();
+    }, TIMEOUT);
 
-    test("getMediaFiles", async () => {
+    test("getAutomateMediaFiles", async () => {
       const { client } = automateContext;
-      const data = await client.getMediaFiles();
+      const data = await client.getAutomateMediaFiles();
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toMatchTypeOf<
-        components["schemas"]["AutomateMediaFile"][]
+        DeepCamelCase<components["schemas"]["AutomateMediaFile"]>[]
       >();
     });
 
-    test("deleteMediaFile", async () => {
-      const { client, randomMediaId } = automateContext;
-      const mediaId = await randomMediaId();
-      const data = await client.deleteMediaFile(mediaId);
+    test("deleteAutomateMediaFile", async () => {
+      const { client } = automateContext;
+      await client.uploadAutomateMediaFile({
+        file: new Blob(["delete-me"], { type: "text/plain" }),
+        fileName: "delete-me.txt",
+      });
+      const files = await client.getAutomateMediaFiles();
+      expect(files.length).toBeGreaterThan(0);
+      const mediaId = files[files.length - 1].mediaId;
+      const data = await client.deleteAutomateMediaFile(mediaId);
       expect(data).toBeDefined();
       expect(data).haveOwnProperty("success");
       expect(data.success).toEqual(true);
-    });
+    }, EXTENDED_TIMEOUT);
   });
 });

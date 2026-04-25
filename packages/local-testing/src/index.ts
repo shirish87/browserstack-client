@@ -1,2 +1,2 @@
-export { LocalTestingClient } from "./client.js";
-export type { LocalTestingOptions } from "./client.js";
+export { LocalTestingClient } from "./client";
+export type { LocalTestingOptions } from "./client";

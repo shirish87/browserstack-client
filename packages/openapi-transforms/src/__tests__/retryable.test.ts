@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isRetryable } from "../retryable.js";
+import { isRetryable } from "../retryable";
 
 describe("isRetryable", () => {
   it("network always retryable", () => {

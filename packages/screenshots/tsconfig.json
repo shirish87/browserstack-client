@@ -4,8 +4,11 @@
     "baseUrl": ".",
     "noEmit": true,
     "paths": {
+      "@browserstack-client/screenshots": ["./src/index.ts"],
       "@browserstack-client/core": ["../core/src/index.ts"],
-      "@browserstack-client/openapi": ["../openapi/generated/index.ts"]
+      "@browserstack-client/openapi": ["../openapi/generated/index.ts"],
+      "@browserstack-client/openapi/*": ["../openapi/generated/*.ts"],
+      "@browserstack-client/openapi-transforms": ["../openapi-transforms/src/index.ts"]
     }
   },
   "include": ["src"]

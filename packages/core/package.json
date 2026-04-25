@@ -25,15 +25,12 @@
     "typecheck": "tsc --noEmit || true"
   },
   "dependencies": {
-    "@browserstack-client/openapi-transforms": "workspace:*",
-    "openapi-fetch": "0.9.2",
-    "openapi-typescript-helpers": "^0.0.7"
+    "@browserstack-client/openapi-transforms": "workspace:*"
   },
   "devDependencies": {
     "@browserstack-client/openapi": "workspace:*",
-    "@types/axios": "^0.14.4",
-    "@types/node": "^20.19.39",
+    "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }

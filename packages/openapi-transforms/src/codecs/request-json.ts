@@ -1,9 +1,14 @@
-import type { RequestCodec } from "../registry.js";
-const schema = { "~standard": { version: 1 as const, vendor: "ot", validate: (v: unknown) => ({ value: (v ?? {}) as {} }) } };
-export const jsonRequestCodec: RequestCodec<unknown, {}> = {
+import type { RequestCodec } from "../registry";
+import { defineSchema } from "./schema";
+
+type EmptyConfig = Record<string, never>;
+
+const schema = defineSchema<EmptyConfig>("openapi-transforms", () => ({ value: {} as EmptyConfig }));
+
+export const jsonRequestCodec: RequestCodec<unknown, EmptyConfig> = {
   name: "json",
   contentType: "application/json",
-  configSchema: schema as any,
+  configSchema: schema,
   encode(input) {
     return { body: JSON.stringify(input), headers: { "content-type": "application/json" } };
   },

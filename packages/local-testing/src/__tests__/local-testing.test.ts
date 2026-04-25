@@ -5,8 +5,9 @@ import { unlink } from "node:fs/promises";
 import { join } from "node:path";
 import process from "node:process";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
-import type { BrowserStackTestContext } from "./setup.ts";
 import { localTestingContext } from "./setup.ts";
+
+const LONG_TIMEOUT = 30_000;
 
 describe("LocalClient", () => {
   beforeAll(async () => {
@@ -67,4 +68,4 @@ describe("LocalClient", () => {
     expect(content.length).toBeGreaterThan(0);
     expectTypeOf(filename).toMatchTypeOf<string>();
   });
-}, 30_000);
+}, LONG_TIMEOUT);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { defaultErrorMessage } from "../error-message.js";
+import { defaultErrorMessage } from "../error-message";
 
 describe("defaultErrorMessage", () => {
   it("returns undefined for null/undefined", () => {

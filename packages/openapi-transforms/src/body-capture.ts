@@ -1,4 +1,4 @@
-import type { ErrorBody } from "./errors.js";
+import type { ErrorBody } from "./errors";
 
 export async function captureErrorBody(
   response: Response,

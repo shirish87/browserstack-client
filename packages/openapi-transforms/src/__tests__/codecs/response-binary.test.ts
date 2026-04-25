@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { binaryResponseCodec } from "../../codecs/response-binary.js";
+import { binaryResponseCodec } from "../../codecs/response-binary";
 
 const ctx = { operationId: "op", method: "GET", url: "http://x" };
 

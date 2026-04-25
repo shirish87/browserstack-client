@@ -1,25 +1,18 @@
 import {
-  APIClient,
-  APIFetchOptions,
+  ExecuteOptions,
   BrowserStackOptions,
   resolveAccessKey,
 } from "@browserstack-client/core";
-import { BrowserStackError } from "@browserstack-client/core";
-import { operations, components, paths } from "@browserstack-client/openapi/local-testing";
+import { BrowserStackError, OpenAPIError } from "@browserstack-client/core";
+import { operations, components } from "@browserstack-client/openapi/local-testing";
+import { GeneratedLocalTestingClient } from "@browserstack-client/openapi/local-testing/client";
 import { unzipSync } from "fflate";
 
 export type LocalTestingOptions = Omit<BrowserStackOptions, "username">;
 
-/**
- * Represents a client for interacting with the BrowserStack Local API.
- */
-export class LocalTestingClient extends APIClient<paths> {
+export class LocalTestingClient extends GeneratedLocalTestingClient {
   protected readonly authToken: string;
 
-  /**
-   * Constructs a new instance of the LocalTestingClient class.
-   * @param options - Optional configuration options for the client.
-   */
   constructor(options?: LocalTestingOptions) {
     super(
       {
@@ -40,59 +33,58 @@ export class LocalTestingClient extends APIClient<paths> {
     this.authToken = authToken;
   }
 
-  /**
-   * Retrieves a list of recent Local binary instances from the server.
-   *
-   * @param options - The fetch options for the request.
-   * @returns A promise that resolves to a fetch response containing the list of active Local instances.
-   */
   getBinaryInstances(
     query?: Omit<
       operations["getLocalBinaryInstances"]["parameters"]["query"],
       "auth_token"
     >,
-    options?: APIFetchOptions<operations["getLocalBinaryInstances"]>
+    options?: ExecuteOptions
   ): Promise<components["schemas"]["LocalBinaryInstance"][]> {
-    return this.makeGetRequest("/local/v1/list", {
-      ...options,
+    return (this.execute({
+      operationId: "getLocalBinaryInstances",
+      method: "GET" as const,
+      path: "/local/v1/list",
       params: {
         query: {
           ...query,
           auth_token: this.authToken,
-        },
+        } as Record<string, unknown>,
       },
-    }).then((r) => r.instances);
+      requestCodec: "json",
+      requestCodecConfig: {},
+      responseCodec: "json",
+      responseCodecConfig: {},
+      baseUrl: "sdk" as const,
+      signal: options?.signal,
+    }) as Promise<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]>).then((r) => r.instances);
   }
 
-  /**
-   * Retrieves details of a Local binary instance from the server.
-   *
-   * @param localInstanceId The ID of the local binary instance to retrieve.
-   * @param query Optional query parameters for the request.
-   * @param options Optional fetch options for the request.
-   * @returns A promise that resolves to the retrieved local binary instance.
-   * @throws {BrowserStackError} If no local binary instance is found with the specified ID.
-   */
   getBinaryInstance(
     localInstanceId: string,
     query?: Omit<
       operations["getLocalBinaryInstances"]["parameters"]["query"],
       "auth_token"
     >,
-    options?: APIFetchOptions<operations["getLocalBinaryInstance"]>
+    options?: ExecuteOptions
   ): Promise<components["schemas"]["LocalBinaryInstance"]> {
-    return this.makeGetRequest(`/local/v1/{localInstanceId}`, {
-      ...options,
+    return (this.execute({
+      operationId: "getLocalBinaryInstance",
+      method: "GET" as const,
+      path: "/local/v1/{localInstanceId}",
       params: {
-        path: {
-          localInstanceId,
-        },
+        path: { localInstanceId },
         query: {
           ...query,
           auth_token: this.authToken,
-        },
+        } as Record<string, unknown>,
       },
-    }).then((r) => {
+      requestCodec: "json",
+      requestCodecConfig: {},
+      responseCodec: "json",
+      responseCodecConfig: {},
+      baseUrl: "sdk" as const,
+      signal: options?.signal,
+    }) as Promise<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>).then((r) => {
       if (!r.instances.length) {
         throw new BrowserStackError(
           `No Local binary instance found with id "${localInstanceId}"`
@@ -103,74 +95,54 @@ export class LocalTestingClient extends APIClient<paths> {
     });
   }
 
-  /**
-   * Disconnects a binary instance.
-   *
-   * @param localInstanceId - The ID of the local binary instance to disconnect.
-   * @param query - Optional query parameters for the request.
-   * @param options - Optional API fetch options.
-   * @returns A promise that resolves to a string representing the message from the server.
-   */
   disconnectBinaryInstance(
     localInstanceId: string,
     query?: Omit<
       operations["disconnectLocalBinaryInstance"]["parameters"]["query"],
       "auth_token"
     >,
-    options?: APIFetchOptions<operations["disconnectLocalBinaryInstance"]>
+    options?: ExecuteOptions
   ): Promise<string> {
-    return this.makeDeleteRequest(`/local/v1/{localInstanceId}`, {
-      ...options,
+    return (this.execute({
+      operationId: "disconnectLocalBinaryInstance",
+      method: "DELETE" as const,
+      path: "/local/v1/{localInstanceId}",
       params: {
-        path: {
-          localInstanceId,
-        },
+        path: { localInstanceId },
         query: {
           ...query,
           auth_token: this.authToken,
-        },
+        } as Record<string, unknown>,
       },
-    }).then((r) => r.message);
+      requestCodec: "json",
+      requestCodecConfig: {},
+      responseCodec: "json",
+      responseCodecConfig: {},
+      baseUrl: "sdk" as const,
+      signal: options?.signal,
+    }) as Promise<operations["disconnectLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>).then((r) => r.message);
   }
 
-  /**
-   * Downloads the BrowserStackLocal binary for the specified operating system architecture.
-   * Note that the file is downloaded to memory for the unzip operation.
-   * If the file is large, this method may fail with an out of memory error.
-   * This method is intended for use in Node.js environments and will fail in the browser.
-   *
-   * @internal
-   * @param osArch - The operating system architecture for which to download the binary.
-   * @param filenamePrefix - The prefix for the downloaded binary file name inside the ZIP file. Default is "BrowserStackLocal".
-   * @param options - Additional options for the API fetch request.
-   * @returns A Promise that resolves when the binary is successfully downloaded and saved.
-   */
   downloadBinary(
     osArch: operations["downloadLocalBinary"]["parameters"]["path"]["osArch"],
     filenamePrefix: string = "BrowserStackLocal",
-    options?: APIFetchOptions<operations["downloadLocalBinary"]>
+    options?: ExecuteOptions
   ): Promise<{
     content: Uint8Array;
     filename: string;
   }> {
-    return this.sdk
-      .GET("/browserstack-local/BrowserStackLocal-{osArch}.zip", {
-        ...options,
-        params: {
-          path: {
-            osArch,
-          },
-        },
-        parseAs: "arrayBuffer",
-      })
-      .then(({ data: buffer }) => {
-        if (!buffer) {
+    const url = `${this.baseUrls.sdk}/browserstack-local/BrowserStackLocal-${encodeURIComponent(osArch)}.zip`;
+    return this.fetchFn(url, { signal: options?.signal })
+      .then(async (response) => {
+        if (!response.ok) {
           throw new BrowserStackError(
-            `Failed to download BrowserStackLocal-${osArch}.zip: Unexpected response.`
+            `Failed to download BrowserStackLocal-${osArch}.zip: HTTP ${response.status}`
           );
         }
-
-        const files = unzipSync(new Uint8Array(buffer), {
+        return new Uint8Array(await response.arrayBuffer());
+      })
+      .then((buffer) => {
+        const files = unzipSync(buffer, {
           filter: (file) => {
             return file.name.startsWith(filenamePrefix);
           },
@@ -187,7 +159,7 @@ export class LocalTestingClient extends APIClient<paths> {
         return { content, filename: entries[0] };
       })
       .catch((err) => {
-        if (err instanceof BrowserStackError) {
+        if (err instanceof BrowserStackError || err instanceof OpenAPIError) {
           throw err;
         }
 

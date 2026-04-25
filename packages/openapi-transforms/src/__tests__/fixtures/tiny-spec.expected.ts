@@ -1,7 +1,8 @@
 /* AUTO-GENERATED — do not edit */
 import type { operations } from "./tiny-types";
 import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
-import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
+import { HttpError, toCamelCase } from "@browserstack-client/openapi-transforms";
+import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
 
 export type GetProjectError = HttpError<
   | (operations["getProject"]["responses"][404] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -9,12 +10,12 @@ export type GetProjectError = HttpError<
 
 export type GetLogsError = HttpError<unknown>;
 
-export abstract class TinyClient extends APIClient {
-getProject(projectId: number, options?: ExecuteOptions): Promise<operations["getProject"]["responses"][200]["content"]["application/json"]["project"]> {
+export class TinyClient extends APIClient {
+getProject(projectId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
     return (this.execute({
       path: "/projects/{projectId}",
       params: { path: { projectId: projectId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-unwrap",
@@ -23,14 +24,14 @@ getProject(projectId: number, options?: ExecuteOptions): Promise<operations["get
       operationId: "getProject",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getProject"]["responses"][200]["content"]["application/json"]["project"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>>;
   }
 
-getLogs(options?: ExecuteOptions): Promise<string> {
+getLogs(options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/logs",
       params: undefined,
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
@@ -39,6 +40,6 @@ getLogs(options?: ExecuteOptions): Promise<string> {
       operationId: "getLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parsePath } from "../../path/parser.js";
+import { parsePath } from "../../path/parser";
 
 describe("parsePath", () => {
   it("parses root", () => {

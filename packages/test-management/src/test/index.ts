@@ -1,9 +1,8 @@
 import { vi } from "vitest";
-import { TestManagementClient } from "../index";
+import { TestManagementClient, type BrowserStackOptions } from "../index";
 
-export function createMockTestManagementClient(options?: any): TestManagementClient {
-  const client = new TestManagementClient(options);
-  return client;
+export function createMockTestManagementClient(options?: BrowserStackOptions): TestManagementClient {
+  return new TestManagementClient(options);
 }
 
 export { vi };

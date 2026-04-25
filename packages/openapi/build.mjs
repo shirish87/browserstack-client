@@ -80,6 +80,8 @@ const products = {
 // Standalone specs that have their own server base URL and are not part of openapi.yml
 const standaloneSpecs = [
   { product: "test-management", description: "Test Management product types" },
+  { product: "test-reporting", description: "Test Reporting & Analytics product types" },
+  { product: "accessibility", description: "Accessibility product types" },
 ];
 
 // Generate per-product type files by filtering paths
@@ -158,6 +160,8 @@ const productSpecs = [
   { product: "screenshots", baseUrl: "sdk" },
   { product: "local-testing", baseUrl: "sdk" },
   { product: "test-management", baseUrl: "sdk" },
+  { product: "accessibility", baseUrl: "sdk" },
+  { product: "test-reporting", baseUrl: "sdk" },
 ];
 
 const fieldOverridesPath = path.join(__dirname, "field-overrides.yaml");

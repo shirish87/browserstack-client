@@ -9,6 +9,8 @@ export default defineConfig({
     "browserstack-automate": "src/browserstack-automate.ts",
     "browserstack-local-testing": "src/browserstack-local-testing.ts",
     "browserstack-test-management": "src/browserstack-test-management.ts",
+    "browserstack-accessibility": "src/browserstack-accessibility.ts",
+    "browserstack-test-reporting": "src/browserstack-test-reporting.ts",
   },
   format: ["esm"],
   dts: false,
@@ -16,9 +18,6 @@ export default defineConfig({
   clean: true,
   splitting: false,
   platform: "node",
-  banner: {
-    js: "#!/usr/bin/env node",
-  },
   external: [
     "@browserstack-client/core",
     "@browserstack-client/local-testing-binary",
@@ -26,6 +25,8 @@ export default defineConfig({
     "@browserstack-client/automate",
     "@browserstack-client/local-testing",
     "@browserstack-client/test-management",
+    "@browserstack-client/accessibility",
+    "@browserstack-client/test-reporting",
     "signal-exit",
   ],
 });

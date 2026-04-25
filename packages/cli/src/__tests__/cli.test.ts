@@ -3,6 +3,8 @@ import { env } from "@browserstack-client/core";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { cliContext } from "./setup.ts";
 
+const LONG_TIMEOUT = 30_000;
+
 describe("LocalCLI", () => {
   beforeAll(() => {
     env.BROWSERSTACK_LOCAL_BINARY_PATH = `${env.HOME}/.browserstack`;
@@ -86,4 +88,4 @@ describe("LocalCLI", () => {
       });
     });
   });
-}, 30_000);
+}, LONG_TIMEOUT);

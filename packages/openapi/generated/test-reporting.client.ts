@@ -51,10 +51,10 @@ export type ToggleTestReportingQualityGateProfileError = HttpError<unknown>;
 export type UploadTestReportingReportError = HttpError<unknown>;
 
 export class GeneratedTestReportingClient extends APIClient {
-getTestReportingProjects(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjects"]["responses"][200]["content"]["application/json"]>> {
+getTestReportingProjects(nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjects"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/projects",
-      params: undefined,
+      params: { query: { "next_page": nextPage } },
 
       requestCodec: "json",
       requestCodecConfig: {},
@@ -67,10 +67,10 @@ getTestReportingProjects(options?: ExecuteOptions): Promise<DeepCamelCase<operat
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingProjects"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingProjectBuilds(projectId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjectBuilds"]["responses"][200]["content"]["application/json"]>> {
+getTestReportingProjectBuilds(projectId: number, uniqueBuildNames?: string, buildTags?: string, buildStatus?: string, users?: string, frameworks?: string, isArchived?: string, dateRange?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjectBuilds"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/projects/{projectId}/builds",
-      params: { path: { projectId: projectId } },
+      params: { path: { projectId: projectId }, query: { "unique_build_names": uniqueBuildNames, "build_tags": buildTags, "build_status": buildStatus, "users": users, "frameworks": frameworks, "is_archived": isArchived, "date_range": dateRange, "next_page": nextPage } },
 
       requestCodec: "json",
       requestCodecConfig: {},
@@ -99,10 +99,10 @@ startTestReportingBuild(body: DeepCamelCase<operations["startTestReportingBuild"
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["startTestReportingBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingLatestBuild(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingLatestBuild"]["responses"][200]["content"]["application/json"]>> {
+getTestReportingLatestBuild(projectName?: string, buildName?: string, userName?: string, buildTags?: string, framework?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingLatestBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/latest",
-      params: undefined,
+      params: { query: { "project_name": projectName, "build_name": buildName, "user_name": userName, "build_tags": buildTags, "framework": framework } },
 
       requestCodec: "json",
       requestCodecConfig: {},
@@ -243,10 +243,10 @@ addTestReportingBuildLogs(buildHashedId: string, body: DeepCamelCase<operations[
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["addTestReportingBuildLogs"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingTestRuns(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingTestRuns"]["responses"][200]["content"]["application/json"]>> {
+getTestReportingTestRuns(buildId: string, reRuns?: string, testStatuses?: string, isFlaky?: string, isNewFailure?: string, sort?: string, order?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingTestRuns"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildId}/testRuns",
-      params: { path: { buildId: buildId } },
+      params: { path: { buildId: buildId }, query: { "re_runs": reRuns, "test_statuses": testStatuses, "is_flaky": isFlaky, "is_new_failure": isNewFailure, "sort": sort, "order": order, "next_page": nextPage } },
 
       requestCodec: "json",
       requestCodecConfig: {},

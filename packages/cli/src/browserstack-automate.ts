@@ -63,7 +63,7 @@ async function handleBuilds(
     }
     case "delete-many": {
       if (!args.length) throw new BrowserStackError("Missing build IDs");
-      const result = await client.deleteBuilds(args);
+      const result = await client.deleteAutomateBuilds(args);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -128,7 +128,7 @@ async function handleSessions(
     }
     case "delete-many": {
       if (!args.length) throw new BrowserStackError("Missing session IDs");
-      const result = await client.deleteSessions(args);
+      const result = await client.deleteAutomateSessions(args);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -328,6 +328,5 @@ export async function main(
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
   main();
 }

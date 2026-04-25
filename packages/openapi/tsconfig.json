@@ -1,7 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@browserstack-client/core": ["../core/src/index.ts"],
+      "@browserstack-client/openapi-transforms": ["../openapi-transforms/src/index.ts"]
+    }
   },
   "include": ["generated/**/*.ts"]
 }

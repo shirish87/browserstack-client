@@ -28,7 +28,7 @@ pnpm test -- --project automate -- src/__tests__/automate.test.ts
 pnpm test:watch
 
 # Type-check all packages
-pnpm typecheck
+pnpm check
 
 # Lint
 pnpm lint

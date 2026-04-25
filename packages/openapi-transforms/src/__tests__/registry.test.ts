@@ -1,17 +1,22 @@
 import { describe, expect, it } from "vitest";
-import { CodecRegistry, type ResponseCodec, type RequestCodec } from "../registry.js";
-import { registerBuiltinResponseCodecs } from "../codecs/index.js";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
+import { CodecRegistry, type ResponseCodec, type RequestCodec } from "../registry";
+import { registerBuiltinResponseCodecs } from "../codecs/index";
 
-const stubSchema = { "~standard": { version: 1, vendor: "stub", validate: (v: unknown) => ({ value: v }) } } as any;
+type EmptyConfig = Record<string, never>;
 
-const jsonResp: ResponseCodec<{}, unknown> = {
+const stubSchema: StandardSchemaV1<EmptyConfig> = {
+  "~standard": { version: 1, vendor: "stub", validate: () => ({ value: {} as EmptyConfig }) },
+};
+
+const jsonResp: ResponseCodec<EmptyConfig, unknown> = {
   name: "json",
   contentTypes: ["application/json"],
   configSchema: stubSchema,
   async decode(response) { return response.json(); },
 };
 
-const jsonReq: RequestCodec<unknown, {}> = {
+const jsonReq: RequestCodec<unknown, EmptyConfig> = {
   name: "json",
   contentType: "application/json",
   configSchema: stubSchema,

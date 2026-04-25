@@ -552,7 +552,7 @@ paths:
       x-response-transform:
         codec: json-unwrap
         config:
-          path: "$.test_case"
+          path: "$.data.test_case"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/FolderId' }
@@ -563,35 +563,38 @@ paths:
             schema:
               type: object
               properties:
-                name: { type: string }
-                template: { type: string }
-                description: { type: string }
-                owner: { type: string }
-                preconditions: { type: string }
-                test_case_steps:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      description: { type: string }
-                      result: { type: string }
-                issues:
-                  type: array
-                  items: { type: string }
-                issue_tracker:
+                test_case:
                   type: object
                   properties:
                     name: { type: string }
-                    host: { type: string }
-                tags:
-                  type: array
-                  items: { type: string }
-                case_type: { type: string }
-                priority: { type: string }
-                custom_fields: { type: object }
-                feature: { type: string }
-                scenario: { type: string }
-                background: { type: string }
+                    template: { type: string }
+                    description: { type: string }
+                    owner: { type: string }
+                    preconditions: { type: string }
+                    test_case_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          description: { type: string }
+                          result: { type: string }
+                    issues:
+                      type: array
+                      items: { type: string }
+                    issue_tracker:
+                      type: object
+                      properties:
+                        name: { type: string }
+                        host: { type: string }
+                    tags:
+                      type: array
+                      items: { type: string }
+                    case_type: { type: string }
+                    priority: { type: string }
+                    custom_fields: { type: object }
+                    feature: { type: string }
+                    scenario: { type: string }
+                    background: { type: string }
       responses:
         '200':
           description: Successful operation
@@ -601,7 +604,10 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean }
-                  test_case: { $ref: '#/components/schemas/TestCase' }
+                  data:
+                    type: object
+                    properties:
+                      test_case: { $ref: '#/components/schemas/TestCase' }
         '401': { $ref: '#/components/responses/Unauthorized' }
 
   /api/v2/projects/{projectId}/test-cases/{testCaseId}:
@@ -612,7 +618,7 @@ paths:
       x-response-transform:
         codec: json-unwrap
         config:
-          path: "$.test_case"
+          path: "$.data.test_case"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/TestCaseId' }
@@ -623,36 +629,39 @@ paths:
             schema:
               type: object
               properties:
-                name: { type: string }
-                case_type: { type: string }
-                priority: { type: string }
-                status: { type: string }
-                description: { type: string }
-                owner: { type: string }
-                preconditions: { type: string }
-                test_case_steps:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      description: { type: string }
-                      result: { type: string }
-                issues:
-                  type: array
-                  items: { type: string }
-                issue_tracker:
+                test_case:
                   type: object
                   properties:
                     name: { type: string }
-                    host: { type: string }
-                tags:
-                  type: array
-                  items: { type: string }
-                custom_fields: { type: object }
-                automation_status: { type: string }
-                feature: { type: string }
-                scenario: { type: string }
-                background: { type: string }
+                    case_type: { type: string }
+                    priority: { type: string }
+                    status: { type: string }
+                    description: { type: string }
+                    owner: { type: string }
+                    preconditions: { type: string }
+                    test_case_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          description: { type: string }
+                          result: { type: string }
+                    issues:
+                      type: array
+                      items: { type: string }
+                    issue_tracker:
+                      type: object
+                      properties:
+                        name: { type: string }
+                        host: { type: string }
+                    tags:
+                      type: array
+                      items: { type: string }
+                    custom_fields: { type: object }
+                    automation_status: { type: string }
+                    feature: { type: string }
+                    scenario: { type: string }
+                    background: { type: string }
       responses:
         '200':
           description: Successful operation
@@ -662,7 +671,10 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean }
-                  test_case: { $ref: '#/components/schemas/TestCase' }
+                  data:
+                    type: object
+                    properties:
+                      test_case: { $ref: '#/components/schemas/TestCase' }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
     delete:
@@ -692,7 +704,7 @@ paths:
       x-response-transform:
         codec: json-unwrap
         config:
-          path: "$.test_case"
+          path: "$.data.test_case"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/TestCaseId' }
@@ -705,7 +717,10 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean }
-                  test_case: { $ref: '#/components/schemas/TestCase' }
+                  data:
+                    type: object
+                    properties:
+                      test_case: { $ref: '#/components/schemas/TestCase' }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -717,7 +732,7 @@ paths:
       x-response-transform:
         codec: json-unwrap
         config:
-          path: "$.test_case"
+          path: "$.data.test_case"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/TestCaseId' }
@@ -730,7 +745,10 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean }
-                  test_case: { $ref: '#/components/schemas/TestCase' }
+                  data:
+                    type: object
+                    properties:
+                      test_case: { $ref: '#/components/schemas/TestCase' }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -742,7 +760,7 @@ paths:
       x-response-transform:
         codec: json-unwrap
         config:
-          path: "$.test_case"
+          path: "$.data.test_case"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/TestCaseId' }
@@ -764,7 +782,10 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean }
-                  test_case: { $ref: '#/components/schemas/TestCase' }
+                  data:
+                    type: object
+                    properties:
+                      test_case: { $ref: '#/components/schemas/TestCase' }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -927,7 +948,7 @@ paths:
       x-response-transform:
         codec: json-unwrap
         config:
-          path: "$.testrun"
+          path: "$.test_run"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
       requestBody:
@@ -947,7 +968,7 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean }
-                  testrun: { $ref: '#/components/schemas/TestRun' }
+                  test_run: { $ref: '#/components/schemas/TestRun' }
         '401': { $ref: '#/components/responses/Unauthorized' }
 
   /api/v2/projects/{projectId}/test-runs/{testRunId}:
@@ -1657,7 +1678,7 @@ paths:
       x-response-transform:
         codec: json-unwrap
         config:
-          path: "$.data.custom_field"
+          path: "$.custom_field"
       parameters:
         - { $ref: '#/components/parameters/CustomFieldId' }
       requestBody:

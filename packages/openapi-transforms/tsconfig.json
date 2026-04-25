@@ -4,8 +4,10 @@
     "outDir": "dist",
     "rootDir": "src",
     "noEmit": false,
+    "rewriteRelativeImportExtensions": true,
     "ignoreDeprecations": "6.0",
     "types": ["node"]
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/__tests__/fixtures/**/*.ts"]
 }

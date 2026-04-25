@@ -2,6 +2,7 @@
 import type { operations } from "./automate";
 import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
 import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
+import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
 
 export type GetAutomateBrowsersError = HttpError<
   | (operations["getAutomateBrowsers"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -33,6 +34,14 @@ export type GetAutomateProjectBadgeKeyError = HttpError<
   | (operations["getAutomateProjectBadgeKey"]["responses"][404] extends { content: { "application/json": infer E } } ? E : unknown)
   | (operations["getAutomateProjectBadgeKey"]["responses"][422] extends { content: { "application/json": infer E } } ? E : unknown)
   | (operations["getAutomateProjectBadgeKey"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
+>;
+
+export type UploadAutomateSessionTerminalLogsError = HttpError<
+  | (operations["uploadAutomateSessionTerminalLogs"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateSessionTerminalLogs"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateSessionTerminalLogs"]["responses"][404] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateSessionTerminalLogs"]["responses"][422] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateSessionTerminalLogs"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
 export type DeleteAutomateBuildsError = HttpError<
@@ -116,6 +125,14 @@ export type GetAutomateSessionLogsError = HttpError<
   | (operations["getAutomateSessionLogs"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
+export type UploadAutomateMediaFileError = HttpError<
+  | (operations["uploadAutomateMediaFile"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateMediaFile"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateMediaFile"]["responses"][404] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateMediaFile"]["responses"][422] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateMediaFile"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
+>;
+
 export type RecycleAutomateKeyError = HttpError<
   | (operations["recycleAutomateKey"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
   | (operations["recycleAutomateKey"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -162,6 +179,14 @@ export type GetAutomateSessionSeleniumLogsError = HttpError<
   | (operations["getAutomateSessionSeleniumLogs"]["responses"][404] extends { content: { "application/json": infer E } } ? E : unknown)
   | (operations["getAutomateSessionSeleniumLogs"]["responses"][422] extends { content: { "application/json": infer E } } ? E : unknown)
   | (operations["getAutomateSessionSeleniumLogs"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
+>;
+
+export type UploadAutomateBuildTerminalLogsError = HttpError<
+  | (operations["uploadAutomateBuildTerminalLogs"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateBuildTerminalLogs"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateBuildTerminalLogs"]["responses"][404] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateBuildTerminalLogs"]["responses"][422] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["uploadAutomateBuildTerminalLogs"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
 export type GetAutomateMediaFilesError = HttpError<
@@ -212,12 +237,12 @@ export type GetAutomateSessionNetworkLogsError = HttpError<
   | (operations["getAutomateSessionNetworkLogs"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
-export abstract class GeneratedAutomateClient extends APIClient {
-getAutomateBrowsers(options?: ExecuteOptions): Promise<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]> {
+export class GeneratedAutomateClient extends APIClient {
+getAutomateBrowsers(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/browsers.json",
       params: undefined,
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -226,14 +251,14 @@ getAutomateBrowsers(options?: ExecuteOptions): Promise<operations["getAutomateBr
       operationId: "getAutomateBrowsers",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomatePlan(options?: ExecuteOptions): Promise<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]> {
+getAutomatePlan(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/plan.json",
       params: undefined,
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -242,14 +267,14 @@ getAutomatePlan(options?: ExecuteOptions): Promise<operations["getAutomatePlan"]
       operationId: "getAutomatePlan",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSessionAppiumLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
+getAutomateSessionAppiumLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/appiumlogs",
       params: { path: { sessionId: sessionId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
@@ -258,14 +283,14 @@ getAutomateSessionAppiumLogs(sessionId: string, options?: ExecuteOptions): Promi
       operationId: "getAutomateSessionAppiumLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-getAutomateProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise<string> {
+getAutomateProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/projects/{projectId}/badge_key",
       params: { path: { projectId: projectId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
@@ -274,14 +299,30 @@ getAutomateProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise
       operationId: "getAutomateProjectBadgeKey",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-deleteAutomateBuilds(options?: ExecuteOptions): Promise<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]> {
+uploadAutomateSessionTerminalLogs(sessionId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+    return (this.execute({
+      path: "/automate/sessions/{sessionId}/terminallogs",
+      params: { path: { sessionId: sessionId } },
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
+      responseCodec: "text",
+      responseCodecConfig: {},
+      baseUrl: "sdkCloud" as const,
+      operationId: "uploadAutomateSessionTerminalLogs",
+      method: "POST" as const,
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
+  }
+
+deleteAutomateBuilds(buildId?: string[], options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/builds",
-      params: undefined,
-      
+      params: { query: { "buildId[]": buildId } },
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -290,14 +331,14 @@ deleteAutomateBuilds(options?: ExecuteOptions): Promise<operations["deleteAutoma
       operationId: "deleteAutomateBuilds",
       method: "DELETE" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<operations["getAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]> {
+getAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-unwrap",
@@ -306,10 +347,10 @@ getAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<operati
       operationId: "getAutomateSession",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>>;
   }
 
-updateAutomateSession(sessionId: string, body: operations["updateAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["updateAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]> {
+updateAutomateSession(sessionId: string, body: DeepCamelCase<operations["updateAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
@@ -322,14 +363,14 @@ updateAutomateSession(sessionId: string, body: operations["updateAutomateSession
       operationId: "updateAutomateSession",
       method: "PUT" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["updateAutomateSession"]["responses"][200]["content"]["application/json"]["automation_session"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["updateAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>>;
   }
 
-deleteAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]> {
+deleteAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -338,14 +379,14 @@ deleteAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<oper
       operationId: "deleteAutomateSession",
       method: "DELETE" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAutomateSessions(options?: ExecuteOptions): Promise<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]> {
+deleteAutomateSessions(sessionId?: string[], options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/sessions",
-      params: undefined,
-      
+      params: { query: { "sessionId[]": sessionId } },
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -354,14 +395,14 @@ deleteAutomateSessions(options?: ExecuteOptions): Promise<operations["deleteAuto
       operationId: "deleteAutomateSessions",
       method: "DELETE" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAutomateMediaFile(mediaId: string, options?: ExecuteOptions): Promise<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]> {
+deleteAutomateMediaFile(mediaId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/custom_media/delete/{mediaId}",
       params: { path: { mediaId: mediaId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -370,14 +411,14 @@ deleteAutomateMediaFile(mediaId: string, options?: ExecuteOptions): Promise<oper
       operationId: "deleteAutomateMediaFile",
       method: "DELETE" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<any> {
+getAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<unknown>> {
     return (this.execute({
       path: "/automate/builds/{buildId}.json",
       params: { path: { buildId: buildId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-compose",
@@ -386,10 +427,10 @@ getAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<any> {
       operationId: "getAutomateBuild",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<any>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<unknown>>;
   }
 
-updateAutomateBuild(buildId: string, body: operations["updateAutomateBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]> {
+updateAutomateBuild(buildId: string, body: DeepCamelCase<operations["updateAutomateBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/builds/{buildId}.json",
       params: { path: { buildId: buildId } },
@@ -402,14 +443,14 @@ updateAutomateBuild(buildId: string, body: operations["updateAutomateBuild"]["re
       operationId: "updateAutomateBuild",
       method: "PUT" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]> {
+deleteAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/builds/{buildId}.json",
       params: { path: { buildId: buildId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -418,14 +459,14 @@ deleteAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<operatio
       operationId: "deleteAutomateBuild",
       method: "DELETE" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSessionLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
+getAutomateSessionLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/logs",
       params: { path: { sessionId: sessionId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
@@ -434,10 +475,26 @@ getAutomateSessionLogs(sessionId: string, options?: ExecuteOptions): Promise<str
       operationId: "getAutomateSessionLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-recycleAutomateKey(body: operations["recycleAutomateKey"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]> {
+uploadAutomateMediaFile(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAutomateMediaFile"]["responses"][200]["content"]["application/json"]>> {
+    return (this.execute({
+      path: "/automate/upload-media",
+      params: undefined,
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
+      responseCodec: "json",
+      responseCodecConfig: {},
+      baseUrl: "sdk" as const,
+      operationId: "uploadAutomateMediaFile",
+      method: "POST" as const,
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["uploadAutomateMediaFile"]["responses"][200]["content"]["application/json"]>>;
+  }
+
+recycleAutomateKey(body: DeepCamelCase<operations["recycleAutomateKey"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/recycle_key.json",
       params: undefined,
@@ -450,14 +507,14 @@ recycleAutomateKey(body: operations["recycleAutomateKey"]["requestBody"] extends
       operationId: "recycleAutomateKey",
       method: "PUT" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSessions(buildId: string, options?: ExecuteOptions): Promise<Array<operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number]["automation_session"]>> {
+getAutomateSessions(buildId: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<Array<(operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number] & Record<"automation_session", unknown>)["automation_session"]>>> {
     return (this.execute({
       path: "/automate/builds/{buildId}/sessions.json",
-      params: { path: { buildId: buildId } },
-      
+      params: { path: { buildId: buildId }, query: { "limit": limit, "offset": offset, "status": status } },
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-unwrap",
@@ -466,14 +523,14 @@ getAutomateSessions(buildId: string, options?: ExecuteOptions): Promise<Array<op
       operationId: "getAutomateSessions",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<Array<operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number]["automation_session"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<Array<(operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number] & Record<"automation_session", unknown>)["automation_session"]>>>;
   }
 
-getAutomateProject(projectId: string, options?: ExecuteOptions): Promise<operations["getAutomateProject"]["responses"][200]["content"]["application/json"]["project"]> {
+getAutomateProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
     return (this.execute({
       path: "/automate/projects/{projectId}.json",
       params: { path: { projectId: projectId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-unwrap",
@@ -482,10 +539,10 @@ getAutomateProject(projectId: string, options?: ExecuteOptions): Promise<operati
       operationId: "getAutomateProject",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateProject"]["responses"][200]["content"]["application/json"]["project"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>>;
   }
 
-updateAutomateProject(projectId: string, body: operations["updateAutomateProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown, options?: ExecuteOptions): Promise<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]> {
+updateAutomateProject(projectId: string, body: DeepCamelCase<operations["updateAutomateProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/projects/{projectId}.json",
       params: { path: { projectId: projectId } },
@@ -498,14 +555,14 @@ updateAutomateProject(projectId: string, body: operations["updateAutomateProject
       operationId: "updateAutomateProject",
       method: "PUT" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAutomateProject(projectId: string, options?: ExecuteOptions): Promise<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]> {
+deleteAutomateProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/projects/{projectId}.json",
       params: { path: { projectId: projectId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -514,14 +571,14 @@ deleteAutomateProject(projectId: string, options?: ExecuteOptions): Promise<oper
       operationId: "deleteAutomateProject",
       method: "DELETE" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSessionSeleniumLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
+getAutomateSessionSeleniumLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/seleniumlogs",
       params: { path: { sessionId: sessionId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
@@ -530,14 +587,30 @@ getAutomateSessionSeleniumLogs(sessionId: string, options?: ExecuteOptions): Pro
       operationId: "getAutomateSessionSeleniumLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-getAutomateMediaFiles(options?: ExecuteOptions): Promise<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]> {
+uploadAutomateBuildTerminalLogs(buildId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+    return (this.execute({
+      path: "/automate/builds/{buildId}/terminallogs",
+      params: { path: { buildId: buildId } },
+      requestInput: toSnakeCase(body, undefined),
+      requestCodec: "multipart",
+      requestCodecConfig: {"fileField":"file","filenameFrom":"$.file_name"},
+      responseCodec: "text",
+      responseCodecConfig: {},
+      baseUrl: "sdk" as const,
+      operationId: "uploadAutomateBuildTerminalLogs",
+      method: "POST" as const,
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
+  }
+
+getAutomateMediaFiles(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/recent_media_files",
       params: undefined,
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -546,14 +619,14 @@ getAutomateMediaFiles(options?: ExecuteOptions): Promise<operations["getAutomate
       operationId: "getAutomateMediaFiles",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateProjects(options?: ExecuteOptions): Promise<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]> {
+getAutomateProjects(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/projects.json",
       params: undefined,
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -562,14 +635,14 @@ getAutomateProjects(options?: ExecuteOptions): Promise<operations["getAutomatePr
       operationId: "getAutomateProjects",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSessionConsoleLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
+getAutomateSessionConsoleLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/consolelogs",
       params: { path: { sessionId: sessionId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "text",
@@ -578,14 +651,14 @@ getAutomateSessionConsoleLogs(sessionId: string, options?: ExecuteOptions): Prom
       operationId: "getAutomateSessionConsoleLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-getAutomateSessionTelemetryLogs(sessionId: string, options?: ExecuteOptions): Promise<ArrayBuffer> {
+getAutomateSessionTelemetryLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<ArrayBuffer>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/telemetrylogs",
       params: { path: { sessionId: sessionId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "binary",
@@ -594,14 +667,14 @@ getAutomateSessionTelemetryLogs(sessionId: string, options?: ExecuteOptions): Pr
       operationId: "getAutomateSessionTelemetryLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<ArrayBuffer>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<ArrayBuffer>>;
   }
 
-getAutomateBuilds(options?: ExecuteOptions): Promise<Array<operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number]["automation_build"]>> {
+getAutomateBuilds(projectId?: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<Array<(operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>>> {
     return (this.execute({
       path: "/automate/builds.json",
-      params: undefined,
-      
+      params: { query: { "projectId": projectId, "limit": limit, "offset": offset, "status": status } },
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json-unwrap",
@@ -610,14 +683,14 @@ getAutomateBuilds(options?: ExecuteOptions): Promise<Array<operations["getAutoma
       operationId: "getAutomateBuilds",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<Array<operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number]["automation_build"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<Array<(operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>>>;
   }
 
-getAutomateSessionNetworkLogs(sessionId: string, options?: ExecuteOptions): Promise<operations["getAutomateSessionNetworkLogs"]["responses"][200]["content"]["application/json"]> {
+getAutomateSessionNetworkLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateSessionNetworkLogs"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/networklogs",
       params: { path: { sessionId: sessionId } },
-      
+
       requestCodec: "json",
       requestCodecConfig: {},
       responseCodec: "json",
@@ -626,6 +699,6 @@ getAutomateSessionNetworkLogs(sessionId: string, options?: ExecuteOptions): Prom
       operationId: "getAutomateSessionNetworkLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<operations["getAutomateSessionNetworkLogs"]["responses"][200]["content"]["application/json"]>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAutomateSessionNetworkLogs"]["responses"][200]["content"]["application/json"]>>;
   }
 }

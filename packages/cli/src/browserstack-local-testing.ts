@@ -67,6 +67,5 @@ export async function main(
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
   main();
 }

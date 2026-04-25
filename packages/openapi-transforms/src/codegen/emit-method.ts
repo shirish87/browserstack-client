@@ -7,7 +7,7 @@ export interface EmitMethodInput {
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
   pathParams: Array<{ name: string; tsType: string }>;
-  queryParams: Array<{ name: string; tsType: string; required: boolean }>;
+  queryParams: Array<{ name: string; baseName?: string; tsType: string; required: boolean }>;
   hasRequestBody: boolean;
   operationsKey: string;
   returnType: string;
@@ -17,27 +17,43 @@ export interface EmitMethodInput {
 }
 
 export function emitMethod(input: EmitMethodInput): string {
-  const camelParams = input.pathParams.map((p) => ({
+  const camelPathParams = input.pathParams.map((p) => ({
     ...p,
     camelName: camelize(p.name),
   }));
+  const camelQueryParams = input.queryParams.map((p) => ({
+    ...p,
+    camelName: camelize(p.baseName ?? p.name),
+  }));
 
   const params = [
-    ...camelParams.map((p) => `${p.camelName}: ${p.tsType}`),
+    ...camelPathParams.map((p) => `${p.camelName}: ${p.tsType}`),
     ...(input.hasRequestBody
       ? [
           input.annotations.requestCodec === "multipart"
-            ? `body: { file: Blob; fileName: string } & Record<string, unknown>`
-            : `body: operations["${input.operationsKey}"]["requestBody"] extends { content: { "application/json": infer B } } ? B : unknown`,
+            ? `body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>`
+            : `body: DeepCamelCase<operations["${input.operationsKey}"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>`,
         ]
       : []),
+    ...camelQueryParams.map((p) => `${p.camelName}?: ${p.tsType}`),
     `options?: ExecuteOptions`,
   ].join(", ");
 
-  const pathArg =
-    input.pathParams.length
-      ? `{ path: { ${input.pathParams.map((p, i) => `${p.name}: ${camelParams[i].camelName}`).join(", ")} } }`
-      : "undefined";
+  const hasPath = input.pathParams.length > 0;
+  const hasQuery = camelQueryParams.length > 0;
+
+  let paramsArg: string;
+  if (hasPath && hasQuery) {
+    const pathPart = input.pathParams.map((p, i) => `${p.name}: ${camelPathParams[i].camelName}`).join(", ");
+    const queryPart = camelQueryParams.map((p) => `"${p.name}": ${p.camelName}`).join(", ");
+    paramsArg = `{ path: { ${pathPart} }, query: { ${queryPart} } }`;
+  } else if (hasPath) {
+    paramsArg = `{ path: { ${input.pathParams.map((p, i) => `${p.name}: ${camelPathParams[i].camelName}`).join(", ")} } }`;
+  } else if (hasQuery) {
+    paramsArg = `{ query: { ${camelQueryParams.map((p) => `"${p.name}": ${p.camelName}`).join(", ")} } }`;
+  } else {
+    paramsArg = "undefined";
+  }
 
   const configLit = JSON.stringify(input.annotations.responseCodecConfig);
   const reqConfigLit = JSON.stringify(input.annotations.requestCodecConfig);
@@ -58,10 +74,10 @@ export function emitMethod(input: EmitMethodInput): string {
     : "undefined";
 
   return `
-  ${input.operationId}(${params}): Promise<${input.returnType}> {
+  ${input.operationId}(${params}): Promise<DeepCamelCase<${input.returnType}>> {
     return (this.execute({
       path: "${input.path}",
-      params: ${pathArg},
+      params: ${paramsArg},
       ${input.hasRequestBody ? `requestInput: ${requestInput},` : ""}
       requestCodec: "${input.annotations.requestCodec}",
       requestCodecConfig: ${reqConfigLit},
@@ -71,7 +87,6 @@ export function emitMethod(input: EmitMethodInput): string {
       operationId: "${input.operationId}",
       method: "${input.method}" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, ${respOverrideLit})) as Promise<${input.returnType}>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, ${respOverrideLit})) as Promise<DeepCamelCase<${input.returnType}>>;
   }`.trim();
 }
-

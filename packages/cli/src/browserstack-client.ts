@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 
 import process from "node:process";
+import { resolve } from "node:path";
 
 import { main as runLocal } from "./browserstack-local.ts";
 import { main as runAppAutomate } from "./browserstack-app-automate.ts";
 import { main as runAutomate } from "./browserstack-automate.ts";
 import { main as runLocalTesting } from "./browserstack-local-testing.ts";
 import { main as runTestManagement } from "./browserstack-test-management.ts";
+import { main as runAccessibility } from "./browserstack-accessibility.ts";
+import { main as runTestReporting } from "./browserstack-test-reporting.ts";
 
 const products: Record<string, (args: string[]) => Promise<void>> = {
   local: runLocal,
@@ -14,6 +17,8 @@ const products: Record<string, (args: string[]) => Promise<void>> = {
   automate: runAutomate,
   "local-testing": runLocalTesting,
   "test-management": runTestManagement,
+  accessibility: runAccessibility,
+  "test-reporting": runTestReporting,
 };
 
 export async function main(inputArgs: string[] = process.argv.slice(2)) {
@@ -30,5 +35,11 @@ export async function main(inputArgs: string[] = process.argv.slice(2)) {
   await products[product](inputArgs.slice(1));
 }
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-main();
+const isMain =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file://${resolve(process.argv[1])}` ||
+  (globalThis as Record<string, unknown>)["__BUILD_TARGET__"] === "binary";
+
+if (isMain) {
+  main();
+}

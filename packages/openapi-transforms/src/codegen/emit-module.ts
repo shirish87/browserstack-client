@@ -11,18 +11,24 @@ export interface EmitModuleInput {
 }
 
 export function emitModule(input: EmitModuleInput): string {
+  const needsSnakeCase = input.methods.some((m) => m.hasRequestBody);
+  const transformImports = needsSnakeCase
+    ? "toCamelCase, toSnakeCase"
+    : "toCamelCase";
   const header = `/* AUTO-GENERATED — do not edit */
 import type { operations } from "${input.typesImportPath}";
 import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
-import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
+import { HttpError, ${transformImports} } from "@browserstack-client/openapi-transforms";
+import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
 `;
   const methods = input.methods.map((m) => ({
     ...m,
     overrides: input.fieldOverrides[m.operationId],
   }));
   const aliases = input.errorAliases.map((a) => emitErrorAlias(a.operationId, a.errorStatuses)).join("\n\n");
-  const body = `export abstract class ${input.className} extends APIClient {
+  const body = `export class ${input.className} extends APIClient {
 ${methods.map(emitMethod).join("\n\n")}
 }`;
-  return `${header}\n${aliases}\n\n${body}\n`;
+  const out = `${header}\n${aliases}\n\n${body}\n`;
+  return out.split("\n").map((line) => line.trimEnd()).join("\n");
 }
