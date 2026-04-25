@@ -1,6 +1,6 @@
 import type { OperationAnnotations } from "./annotations";
 import type { OperationOverrides } from "./field-overrides";
-import { camelize } from "../transforms/case";
+import { camelize } from "../../transforms/case";
 
 export interface EmitMethodInput {
   operationId: string;

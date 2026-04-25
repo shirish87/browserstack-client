@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { generateClientModule } from "../../codegen/index";
+import { generateClientModule } from "../../codegen/typescript/index";
 import { CodecRegistry } from "../../registry";
 import { registerAllBuiltins } from "../../codecs/index";
 

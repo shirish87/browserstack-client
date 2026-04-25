@@ -1,5 +1,5 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
-import type { CodecRegistry } from "../registry";
+import type { CodecRegistry } from "../../registry";
 
 export interface OperationAnnotations {
   responseCodec: string;

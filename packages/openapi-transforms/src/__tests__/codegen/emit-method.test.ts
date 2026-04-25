@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { emitMethod } from "../../codegen/emit-method";
+import { emitMethod } from "../../codegen/typescript/emit-method";
 
 describe("emitMethod", () => {
   it("emits a GET method with path params and json-unwrap codec", () => {

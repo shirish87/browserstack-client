@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { deriveReturnType } from "../../codegen/derive-return-type";
-import type { OperationAnnotations } from "../../codegen/annotations";
+import { deriveReturnType } from "../../codegen/typescript/derive-return-type";
+import type { OperationAnnotations } from "../../codegen/typescript/annotations";
 
 function ann(responseCodec: string, responseCodecConfig: unknown = {}): OperationAnnotations {
   return {

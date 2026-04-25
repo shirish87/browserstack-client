@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readAnnotations } from "../../codegen/annotations";
+import { readAnnotations } from "../../codegen/typescript/annotations";
 import { CodecRegistry } from "../../registry";
 import { registerAllBuiltins } from "../../codecs/index";
 

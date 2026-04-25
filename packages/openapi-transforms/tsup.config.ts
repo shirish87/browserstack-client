@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts", "src/codegen/index.ts"],
+  entry: ["src/index.ts", "src/codegen/typescript/index.ts"],
   format: ["esm"],
   bundle: true,
   dts: true,

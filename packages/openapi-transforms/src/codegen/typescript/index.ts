@@ -1,6 +1,6 @@
 import yaml from "yaml";
 import fs from "node:fs/promises";
-import type { CodecRegistry } from "../registry";
+import type { CodecRegistry } from "../../registry";
 import { readAnnotations } from "./annotations";
 import { emitModule } from "./emit-module";
 import type { EmitMethodInput } from "./emit-method";

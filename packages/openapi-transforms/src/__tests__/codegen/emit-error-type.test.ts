@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { emitErrorAlias } from "../../codegen/emit-error-type";
+import { emitErrorAlias } from "../../codegen/typescript/emit-error-type";
 
 describe("emitErrorAlias", () => {
   it("builds union of error bodies from response schemas", () => {

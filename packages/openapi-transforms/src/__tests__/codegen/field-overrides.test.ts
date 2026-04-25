@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { loadFieldOverrides } from "../../codegen/field-overrides";
+import { loadFieldOverrides } from "../../codegen/typescript/field-overrides";
 import { writeFile, mkdtemp, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";

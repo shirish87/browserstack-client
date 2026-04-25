@@ -1,5 +1,5 @@
 import type { OperationAnnotations } from "./annotations";
-import { parsePath } from "../path/parser";
+import { parsePath } from "../../path/parser";
 
 function configAs(cfg: unknown, key: string): unknown {
   if (cfg !== null && typeof cfg === "object" && key in cfg) {
