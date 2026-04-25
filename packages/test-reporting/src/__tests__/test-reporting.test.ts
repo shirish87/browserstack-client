@@ -40,7 +40,7 @@ describe("TestReportingClient", () => {
       const projects = (resp as { projects?: Array<{ name: string; id: number }> })?.projects ?? (resp as Array<{ name: string; id: number }>);
       const project = projects.find((p) => p.id === projectId);
       expect(project?.name).toBeDefined();
-      const build = await client.getTestReportingLatestBuild({ projectName: project!.name });
+      const build = await client.getTestReportingLatestBuild({ projectName: project!.name } as any);
       expect(build).toBeDefined();
     }, TIMEOUT);
 
