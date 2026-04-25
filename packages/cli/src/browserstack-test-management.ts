@@ -102,9 +102,24 @@ async function handleFolders(
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
+    case "update": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <folderId>");
+      if (!args[2]) throw new BrowserStackError("Missing <name>");
+      const result = await client.updateTestManagementFolder(args[0], Number(args[1]), { folder: { name: args[2] } });
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
+    case "move": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <folderId>");
+      const result = await client.moveTestManagementFolder(args[0], Number(args[1]), { parentId: args[2] ? Number(args[2]) : undefined });
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
     default:
       throw new BrowserStackError(
-        `Invalid folders action: ${action} (valid: list, get, create, delete)`
+        `Invalid folders action: ${action} (valid: list, get, create, update, delete, move)`
       );
   }
 }
@@ -131,7 +146,7 @@ async function handleTestCases(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <folderId>");
       if (!args[2]) throw new BrowserStackError("Missing <name>");
-      const result = await client.createTestManagementTestCase(args[0], Number(args[1]), { name: args[2] });
+      const result = await client.createTestManagementTestCase(args[0], Number(args[1]), { testCase: { name: args[2] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -139,7 +154,7 @@ async function handleTestCases(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testCaseId>");
       if (!args[2]) throw new BrowserStackError("Missing <name>");
-      const result = await client.updateTestManagementTestCase(args[0], args[1], { name: args[2] });
+      const result = await client.updateTestManagementTestCase(args[0], args[1], { testCase: { name: args[2] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -259,9 +274,63 @@ async function handleTestRuns(
       logger.info(JSON.stringify(results, null, 2));
       break;
     }
+    case "update": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
+      if (!args[2]) throw new BrowserStackError("Missing <name>");
+      const result = await client.updateTestManagementTestRun(args[0], args[1], { testRun: { name: args[2] } });
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
+    case "patch": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
+      if (!args[2]) throw new BrowserStackError("Missing <name>");
+      const result = await client.patchTestManagementTestRun(args[0], args[1], { testRun: { name: args[2] } });
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
+    case "test-cases": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
+      const cases = await client.getTestManagementTestRunTestCases(args[0], args[1]);
+      logger.info(JSON.stringify(cases, null, 2));
+      break;
+    }
+    case "assign": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
+      if (!args[2]) throw new BrowserStackError("Missing <testCaseId>");
+      if (!args[3]) throw new BrowserStackError("Missing <assignee>");
+      const result = await client.assignTestManagementTestRunTestCases(args[0], args[1], {
+        assignTo: [{ testCaseId: args[2], assignee: args[3] }],
+      });
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
+    case "add-result": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
+      if (!args[2]) throw new BrowserStackError("Missing <testCaseId>");
+      if (!args[3]) throw new BrowserStackError("Missing <status> (passed|failed|skipped)");
+      const result = await client.addTestManagementTestRunResults(args[0], args[1], {
+        testResult: { status: args[3] as never },
+        testCaseId: args[2],
+      });
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
+    case "test-case-results": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
+      if (!args[2]) throw new BrowserStackError("Missing <testCaseId>");
+      const results = await client.getTestManagementTestRunTestCaseResults(args[0], args[1], args[2]);
+      logger.info(JSON.stringify(results, null, 2));
+      break;
+    }
     default:
       throw new BrowserStackError(
-        `Invalid test-runs action: ${action} (valid: list, get, create, close, delete, results)`
+        `Invalid test-runs action: ${action} (valid: list, get, create, update, patch, close, delete, results, add-result, test-cases, assign, test-case-results)`
       );
   }
 }
@@ -298,9 +367,24 @@ async function handleTestPlans(
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
+    case "update": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testPlanId>");
+      if (!args[2]) throw new BrowserStackError("Missing <name>");
+      const result = await client.updateTestManagementTestPlan(args[0], args[1], { testPlan: { name: args[2] } });
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
+    case "test-runs": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testPlanId>");
+      const runs = await client.getTestManagementTestPlanTestRuns(args[0], args[1]);
+      logger.info(JSON.stringify(runs, null, 2));
+      break;
+    }
     default:
       throw new BrowserStackError(
-        `Invalid test-plans action: ${action} (valid: list, get, create)`
+        `Invalid test-plans action: ${action} (valid: list, get, create, update, test-runs)`
       );
   }
 }
@@ -345,7 +429,7 @@ async function handleConfigurations(
 
 async function handleCustomFields(
   action: string,
-  _args: string[],
+  args: string[],
   opts: ClientOptions,
   logger: Logger
 ) {
@@ -358,9 +442,80 @@ async function handleCustomFields(
       list.forEach((f) => logger.info(f.id ?? "", f.fieldName ?? "", f.fieldType ?? ""));
       break;
     }
+    case "create": {
+      if (!args[0]) throw new BrowserStackError("Missing <fieldName>");
+      if (!args[1]) throw new BrowserStackError("Missing <fieldType>");
+      if (!args[2]) throw new BrowserStackError("Missing <fieldEntityType>");
+      const result = await client.createTestManagementCustomField({
+        fieldName: args[0],
+        fieldType: args[1] as never,
+        fieldEntityType: args[2] as never,
+      });
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
+    case "update": {
+      if (!args[0]) throw new BrowserStackError("Missing <customFieldId>");
+      if (!args[1]) throw new BrowserStackError("Missing <fieldName>");
+      const result = await client.updateTestManagementCustomField(args[0], { fieldName: args[1] });
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
+    case "delete": {
+      if (!args[0]) throw new BrowserStackError("Missing <customFieldId>");
+      const result = await client.deleteTestManagementCustomField(args[0]);
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
     default:
       throw new BrowserStackError(
-        `Invalid custom-fields action: ${action} (valid: list)`
+        `Invalid custom-fields action: ${action} (valid: list, create, update, delete)`
+      );
+  }
+}
+
+// ── test-results ──────────────────────────────────────────────────────────────
+
+async function handleTestResults(
+  action: string,
+  args: string[],
+  opts: ClientOptions,
+  logger: Logger
+) {
+  const client = new TestManagementClient(opts);
+
+  switch (action) {
+    case "attachments": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testResultId>");
+      const attachments = await client.getTestManagementTestResultAttachments(args[0], Number(args[1]));
+      logger.info(JSON.stringify(attachments, null, 2));
+      break;
+    }
+    case "attach": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testResultId>");
+      if (!args[2]) throw new BrowserStackError("Missing <file-path>");
+      const filePath = resolve(args[2]);
+      const filename = basename(filePath);
+      const result = await client.addTestManagementTestResultAttachment(args[0], Number(args[1]), {
+        file: new Blob([await readFile(filePath)]),
+        fileName: filename,
+      });
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
+    case "delete-attachment": {
+      if (!args[0]) throw new BrowserStackError("Missing <projectId>");
+      if (!args[1]) throw new BrowserStackError("Missing <testResultId>");
+      if (!args[2]) throw new BrowserStackError("Missing <attachmentId>");
+      const result = await client.deleteTestManagementTestResultAttachment(args[0], Number(args[1]), Number(args[2]));
+      logger.info(JSON.stringify(result, null, 2));
+      break;
+    }
+    default:
+      throw new BrowserStackError(
+        `Invalid test-results action: ${action} (valid: attachments, attach, delete-attachment)`
       );
   }
 }
@@ -402,6 +557,10 @@ export async function main(
         if (!action) throw new BrowserStackError("Missing action for test-plans");
         await handleTestPlans(action, rest, opts, logger);
         break;
+      case "test-results":
+        if (!action) throw new BrowserStackError("Missing action for test-results");
+        await handleTestResults(action, rest, opts, logger);
+        break;
       case "configurations":
         if (!action) throw new BrowserStackError("Missing action for configurations");
         await handleConfigurations(action, rest, opts, logger);
@@ -412,7 +571,7 @@ export async function main(
         break;
       default:
         process.stderr.write(
-          `Invalid or missing resource: ${resource ?? "(none)"} (valid: projects, folders, test-cases, test-runs, test-plans, configurations, custom-fields)\n`
+          `Invalid or missing resource: ${resource ?? "(none)"} (valid: projects, folders, test-cases, test-runs, test-plans, test-results, configurations, custom-fields)\n`
         );
         process.exit(1);
     }
@@ -422,6 +581,11 @@ export async function main(
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+const isMain =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file://${resolve(process.argv[1])}` ||
+  (globalThis as any).__BUILD_TARGET__ === "binary";
+
+if (isMain) {
   main();
 }
