@@ -14,9 +14,12 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   splitting: false,
-  external: [
+  noExternal: [
     "@browserstack-client/core",
     "@browserstack-client/openapi",
+    "@browserstack-client/openapi-transforms",
+  ],
+  external: [
     "vitest",
     "zod",
   ],
