@@ -13,22 +13,31 @@ export interface GoMethodInput {
   requestBodyType?: string;
 }
 
-function buildUrlExpr(path: string, pathParams: Array<{ name: string }>): string {
+function toStringExpr(name: string, goType: string): string {
+  return goType === "int" ? `strconv.Itoa(${name})` : name;
+}
+
+function buildUrlExpr(path: string, pathParams: Array<{ name: string; goType: string }>): string {
   if (!pathParams.length) return `"${path}"`;
+  const paramMap = Object.fromEntries(pathParams.map((p) => [p.name, p.goType]));
   const parts = path.split(/(\{[^}]+\})/);
   return parts
     .filter((part) => part.length > 0)
     .map((part) => {
       const match = part.match(/^\{([^}]+)\}$/);
-      if (match) return match[1];
+      if (match) {
+        const name = match[1];
+        const goType = paramMap[name] ?? "string";
+        return toStringExpr(name, goType);
+      }
       return `"${part}"`;
     })
     .join(" + ");
 }
 
-function buildQueryExpr(queryParams: Array<{ name: string }>): string {
+function buildQueryExpr(queryParams: Array<{ name: string; goType: string }>): string {
   if (!queryParams.length) return "nil";
-  const entries = queryParams.map((p) => `"${p.name}": ${p.name}`).join(", ");
+  const entries = queryParams.map((p) => `"${p.name}": ${toStringExpr(p.name, p.goType)}`).join(", ");
   return `map[string]string{${entries}}`;
 }
 

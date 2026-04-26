@@ -10,6 +10,8 @@ interface SchemaObject {
   type?: string;
   properties?: Record<string, SchemaProperty>;
   required?: string[];
+  allOf?: Array<{ $ref?: string; type?: string; properties?: Record<string, SchemaProperty>; required?: string[] }>;
+  items?: { type?: string; $ref?: string };
 }
 
 type Schemas = Record<string, SchemaObject>;
@@ -39,7 +41,24 @@ function goType(prop: SchemaProperty, required: boolean): string {
   }
 }
 
-function emitStruct(name: string, schema: SchemaObject): string {
+function mergeAllOf(schema: SchemaObject): SchemaObject {
+  if (!schema.allOf) return schema;
+  const merged: SchemaObject = { type: "object", properties: {}, required: [] };
+  for (const part of schema.allOf) {
+    if (part.properties) {
+      Object.assign(merged.properties!, part.properties);
+    }
+    if (part.required) {
+      merged.required!.push(...part.required);
+    }
+  }
+  if (schema.properties) Object.assign(merged.properties!, schema.properties);
+  if (schema.required) merged.required!.push(...schema.required);
+  return merged;
+}
+
+function emitStruct(name: string, rawSchema: SchemaObject): string {
+  const schema = mergeAllOf(rawSchema);
   const required = new Set(schema.required ?? []);
   const fields = Object.entries(schema.properties ?? {}).map(([fieldName, prop]) => {
     const goName = toPascalCase(fieldName);
@@ -50,11 +69,29 @@ function emitStruct(name: string, schema: SchemaObject): string {
   return `type ${toPascalCase(name)} struct {\n${fields.join("\n")}\n}`;
 }
 
+function emitArrayAlias(name: string, schema: SchemaObject): string {
+  const itemSchema = schema.items;
+  let elemType = "any";
+  if (itemSchema?.$ref) {
+    elemType = toPascalCase(itemSchema.$ref.replace(/^.*\//, ""));
+  } else if (itemSchema?.type) {
+    elemType = itemSchema.type === "string" ? "string"
+      : itemSchema.type === "integer" ? "int"
+      : itemSchema.type === "number" ? "float64"
+      : itemSchema.type === "boolean" ? "bool"
+      : "any";
+  }
+  return `type ${toPascalCase(name)} []${elemType}`;
+}
+
 export function emitGoTypes(product: string, schemas: Schemas): string {
   const pkg = toGoPackageName(product);
-  const structs = Object.entries(schemas)
-    .filter(([, s]) => s.type === "object" || s.properties !== undefined)
-    .map(([name, schema]) => emitStruct(name, schema))
+  const decls = Object.entries(schemas)
+    .filter(([, s]) => s.type === "object" || s.properties !== undefined || s.allOf !== undefined || s.type === "array")
+    .map(([name, schema]) => {
+      if (schema.type === "array") return emitArrayAlias(name, schema);
+      return emitStruct(name, schema);
+    })
     .join("\n\n");
-  return `package ${pkg}\n\n${structs}\n`;
+  return `package ${pkg}\n\n${decls}\n`;
 }

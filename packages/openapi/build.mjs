@@ -191,7 +191,7 @@ function toPascal(s) { return s.split(/[-_]/).map(w => w[0].toUpperCase() + w.sl
 console.log("Generating Go client modules...");
 
 async function generateGoModules() {
-  const goOutBase = path.join(__dirname, "../../cli/golang/generated");
+  const goOutBase = path.join(__dirname, "../cli/golang/generated");
   for (const { product } of productSpecs) {
     const specFile = path.join(__dirname, "specs", `${product}.yml`);
     try {

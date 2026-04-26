@@ -2,6 +2,7 @@ package automate
 
 import (
 	"context"
+	"strconv"
 
 	bshttp "github.com/browserstack/browserstack-client/internal/http"
 )
@@ -14,9 +15,9 @@ func New(c *bshttp.Client) *AutomateClient {
 	return &AutomateClient{http: c}
 }
 
-func (c *AutomateClient) GetProject(ctx context.Context, projectId int) (*GetProjectResponse, error) {
-	var out GetProjectResponse
-	if err := c.http.Get(ctx, "/projects/" + projectId, nil, &out); err != nil {
+func (c *AutomateClient) GetProject(ctx context.Context, projectId int) (*Envelope, error) {
+	var out Envelope
+	if err := c.http.Get(ctx, "/projects/" + strconv.Itoa(projectId), nil, &out); err != nil {
 		return nil, err
 	}
 	return &out, nil

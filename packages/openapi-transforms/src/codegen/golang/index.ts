@@ -18,11 +18,21 @@ interface SpecParam {
   $ref?: string;
 }
 
+interface SpecResponseSchema {
+  $ref?: string;
+  type?: string;
+  title?: string;
+  properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string } }>;
+  required?: string[];
+  oneOf?: unknown[];
+  anyOf?: unknown[];
+}
+
 interface SpecOp {
   operationId?: string;
   parameters?: Array<SpecParam>;
-  requestBody?: unknown;
-  responses?: Record<string, { content?: Record<string, unknown> }>;
+  requestBody?: { content?: Record<string, { schema?: SpecResponseSchema }> };
+  responses?: Record<string, { content?: Record<string, { schema?: SpecResponseSchema }> }>;
   "x-response-transform"?: { codec: string; config?: unknown } | string;
   "x-request-transform"?: { codec: string; config?: unknown } | string;
   "x-response-custom"?: boolean;
@@ -52,14 +62,52 @@ function resolveRequestCodec(op: SpecOp): string {
   return rt.codec;
 }
 
-function responseType(op: SpecOp, operationId: string): string {
+function responseType(op: SpecOp, operationId: string, knownSchemas: Set<string>): string {
   const responseCodec = resolveResponseCodec(op);
   if (responseCodec === "text") return "string";
-  const content200 = op.responses?.["200"]?.content;
-  if (content200?.["application/json"]) {
-    return toPascalCase(operationId) + "Response";
+  const schema = op.responses?.["200"]?.content?.["application/json"]?.schema;
+  if (!schema) return "map[string]any";
+  if (schema.$ref) {
+    const refName = schema.$ref.replace(/^.*\//, "");
+    const goName = toPascalCase(refName);
+    return knownSchemas.has(goName) ? goName : "map[string]any";
+  }
+  if (schema.type === "object" || schema.properties) {
+    const name = schema.title ?? (toPascalCase(operationId) + "Response");
+    return toPascalCase(name);
   }
   return "map[string]any";
+}
+
+type InlineSchemas = Record<string, { type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string } }>; required?: string[] }>;
+
+function collectInlineSchemas(
+  paths: Record<string, Record<string, SpecOp | undefined>>
+): InlineSchemas {
+  const extra: InlineSchemas = {};
+  for (const pathItem of Object.values(paths)) {
+    for (const method of ["get", "post", "put", "patch", "delete"] as const) {
+      const op = pathItem[method];
+      if (!op?.operationId) continue;
+      if (op["x-response-custom"] || op["x-request-custom"]) continue;
+
+      const responseCodec = resolveResponseCodec(op);
+      if (responseCodec !== "text") {
+        const respSchema = op.responses?.["200"]?.content?.["application/json"]?.schema;
+        if (respSchema && !respSchema.$ref && (respSchema.type === "object" || respSchema.properties)) {
+          const name = respSchema.title ?? (toPascalCase(op.operationId) + "Response");
+          extra[toPascalCase(name)] = { type: "object", properties: respSchema.properties, required: respSchema.required };
+        }
+      }
+
+      const bodySchema = op.requestBody?.content?.["application/json"]?.schema;
+      if (bodySchema && !bodySchema.$ref) {
+        const name = bodySchema.title ?? (toPascalCase(op.operationId) + "Request");
+        extra[toPascalCase(name)] = { type: "object", properties: bodySchema.properties, required: bodySchema.required };
+      }
+    }
+  }
+  return extra;
 }
 
 export async function generateGoModule(
@@ -71,10 +119,13 @@ export async function generateGoModule(
   const doc = yaml.parse(raw) as SpecDoc;
 
   const className = toPascalCase(opts.product) + "Client";
-  const schemas = (doc.components?.schemas ?? {}) as Record<
+  const componentSchemas = (doc.components?.schemas ?? {}) as Record<
     string,
-    { type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string } }>; required?: string[] }
+    { type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string } }>; required?: string[]; allOf?: Array<{ $ref?: string; type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string } }>; required?: string[] }>; items?: { type?: string; $ref?: string } }
   >;
+  const knownSchemas = new Set(Object.keys(componentSchemas).map(toPascalCase));
+  const inlineSchemas = collectInlineSchemas(doc.paths ?? {});
+  const schemas = { ...componentSchemas, ...inlineSchemas };
 
   const methods: string[] = [];
 
@@ -102,14 +153,17 @@ export async function generateGoModule(
       const queryParams = resolvedParams
         .filter((p) => p.in === "query")
         .map((p) => ({
-          name: p.name,
+          name: p.name.replace(/\[\]$/, ""),
           goType: p.schema?.type === "integer" ? "int" : "string",
         }));
 
       const requestCodec = resolveRequestCodec(op);
-      const respType = responseType(op, op.operationId);
+      const respType = responseType(op, op.operationId, knownSchemas);
+      const bodySchema = op.requestBody?.content?.["application/json"]?.schema;
       const requestBodyType = op.requestBody
-        ? toPascalCase(op.operationId) + "Request"
+        ? bodySchema?.$ref
+          ? (() => { const n = toPascalCase(bodySchema.$ref.replace(/^.*\//, "")); return knownSchemas.has(n) ? n : undefined; })()
+          : toPascalCase(op.operationId) + "Request"
         : undefined;
 
       const input: GoMethodInput = {
@@ -118,7 +172,7 @@ export async function generateGoModule(
         path,
         pathParams,
         queryParams,
-        hasRequestBody: Boolean(op.requestBody),
+        hasRequestBody: Boolean(op.requestBody) && requestBodyType !== undefined,
         requestCodec,
         responseType: respType,
         className,
@@ -129,7 +183,8 @@ export async function generateGoModule(
     }
   }
 
-  const fileHeader = emitGoFile(opts.product, className, modulePath);
+  const needsStrconv = methods.some((m) => m.includes("strconv.Itoa("));
+  const fileHeader = emitGoFile(opts.product, className, modulePath, needsStrconv);
   const clientGo = fileHeader + "\n" + methods.join("\n\n") + "\n";
   const typesGo = emitGoTypes(opts.product, schemas);
 
