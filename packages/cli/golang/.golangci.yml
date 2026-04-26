@@ -1,0 +1,31 @@
+run:
+  timeout: 5m
+  issues-exit-code: 1
+  tests: true
+
+linters:
+  disable-all: true
+  enable:
+    - gofmt       # Checks whether code was gofmt-ed
+    - govet       # Examines Go source code and reports suspicious constructs
+    - staticcheck # Drop-in replacement for go vet
+    - errcheck    # Checks for unchecked errors
+    - ineffassign # Detects when assignments to existing variables are not used
+    - gosimple    # Simplifies code
+    - typecheck   # Like the front-end of a Go compiler, parses and type-checks Go code
+    - revive      # Fast, configurable, extensible, flexible, and beautiful linter for Go
+    - gosec       # Inspects source code for security problems
+    - unconvert   # Removes unnecessary type conversions
+    - unused      # Checks for unused constants, variables, functions and types
+
+issues:
+  exclude-dirs:
+    - generated
+  exclude-files:
+    - ".*\\.generated\\.go$"
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gosec
+

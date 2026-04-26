@@ -15,7 +15,8 @@ export interface GoMethodInput {
 }
 
 function toStringExpr(name: string, goType: string): string {
-  return goType === "int" ? `strconv.Itoa(${name})` : name;
+  if (goType === "int") return `strconv.Itoa(${name})`;
+  return name;
 }
 
 function buildUrlExpr(path: string, pathParams: Array<{ name: string; goType: string }>): string {
@@ -29,7 +30,7 @@ function buildUrlExpr(path: string, pathParams: Array<{ name: string; goType: st
       if (match) {
         const name = match[1];
         const goType = paramMap[name] ?? "string";
-        return toStringExpr(name, goType);
+        return `url.PathEscape(${toStringExpr(name, goType)})`;
       }
       return `"${part}"`;
     })

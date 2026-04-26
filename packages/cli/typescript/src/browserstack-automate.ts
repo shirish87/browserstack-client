@@ -2,7 +2,8 @@
 
 import { ensureAccessKeyExists, ensureUsernameExists, formatError } from "./utils.ts";
 import { BrowserStackError } from "@browserstack-client/core";
-import { AutomateClient, BrowserStackOptions } from "@browserstack-client/automate";
+import { AutomateClient } from "@browserstack-client/automate";
+import { BrowserStackOptions } from "@browserstack-client/core";
 import { readFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 import process from "node:process";

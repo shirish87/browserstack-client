@@ -70,6 +70,6 @@ describe("emitGoTypes", () => {
 
   it("emits correct package declaration", () => {
     const result = emitGoTypes("test-management", {});
-    expect(result.trimStart()).toMatch(/^package management/);
+    expect(result.trimStart()).toMatch(/^package testmanagement/);
   });
 });

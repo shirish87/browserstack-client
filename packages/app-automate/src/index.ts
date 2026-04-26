@@ -13,7 +13,7 @@ export class AppAutomateClient extends GeneratedAppAutomateClient {
       options?.baseUrl ?? "https://api.browserstack.com",
       "https://api-cloud.browserstack.com",
       "@browserstack-client/app-automate",
-      "6.0.0"
+      __PKG_VERSION__
     );
   }
 }

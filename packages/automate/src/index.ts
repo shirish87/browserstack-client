@@ -8,7 +8,7 @@ export class AutomateClient extends GeneratedAutomateClient {
       options?.baseUrl ?? "https://api.browserstack.com",
       "https://api-cloud.browserstack.com",
       "@browserstack-client/automate",
-      "6.0.0"
+      __PKG_VERSION__
     );
   }
 }

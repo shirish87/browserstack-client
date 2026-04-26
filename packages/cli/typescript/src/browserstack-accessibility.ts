@@ -2,7 +2,8 @@
 
 import { ensureAccessKeyExists, ensureUsernameExists } from "./utils.ts";
 import { BrowserStackError } from "@browserstack-client/core";
-import { AccessibilityClient, BrowserStackOptions } from "@browserstack-client/accessibility";
+import { AccessibilityClient } from "@browserstack-client/accessibility";
+import { BrowserStackOptions } from "@browserstack-client/core";
 import process from "node:process";
 import { Accessibility } from "./constants.generated.ts";
 import { AccessibilitySchemas } from "./schemas.generated.ts";

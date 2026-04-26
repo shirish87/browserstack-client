@@ -70,6 +70,7 @@
     "@browserstack-client/local-testing": "workspace:*",
     "@browserstack-client/local-testing-binary": "workspace:*",
     "@browserstack-client/openapi-transforms": "workspace:*",
+    "@browserstack-client/screenshots": "workspace:*",
     "@browserstack-client/test-management": "workspace:*",
     "@browserstack-client/test-reporting": "workspace:*",
     "signal-exit": "^4.1.0",

@@ -61,7 +61,7 @@ function emitStruct(name: string, rawSchema: SchemaObject): string {
   const schema = mergeAllOf(rawSchema);
   const required = new Set(schema.required ?? []);
   const fields = Object.entries(schema.properties ?? {}).map(([fieldName, prop]) => {
-    const goName = toPascalCase(fieldName);
+    const goName = toPascalCase(fieldName).replace(/[^a-zA-Z0-9_]/g, "");
     const isRequired = required.has(fieldName);
     const typ = goType(prop, isRequired);
     return `\t${goName} ${typ} \`json:"${fieldName}"\``;
@@ -86,12 +86,19 @@ function emitArrayAlias(name: string, schema: SchemaObject): string {
 
 export function emitGoTypes(product: string, schemas: Schemas): string {
   const pkg = toGoPackageName(product);
+  const seenDecls = new Set<string>();
   const decls = Object.entries(schemas)
     .filter(([, s]) => s.type === "object" || s.properties !== undefined || s.allOf !== undefined || s.type === "array")
     .map(([name, schema]) => {
+      const goName = toPascalCase(name);
+      if (seenDecls.has(goName)) {
+        return "";
+      }
+      seenDecls.add(goName);
       if (schema.type === "array") return emitArrayAlias(name, schema);
       return emitStruct(name, schema);
     })
+    .filter(decl => decl !== "")
     .join("\n\n");
   return `package ${pkg}\n\n${decls}\n`;
 }

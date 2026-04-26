@@ -13,40 +13,23 @@ func runLocalTesting(c *browserstackhttp.Client, action string, args []string) e
 	client := localtesting.New(c)
 	ctx := context.Background()
 
-	const usage = "Valid actions:\n" +
-		"  get-instances, get-instance, disconnect-instance"
+	const usage = "Usage: local-testing <action> [args...]"
 
-	switch action {
-	case "help":
-		fmt.Println("Usage: local-testing <action> [args...]")
+	if action == "help" {
 		fmt.Println(usage)
 		return nil
-
-	case localtesting.ActionListInstances:
-		result, err := client.GetInstances(ctx, "", "", "")
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case localtesting.ActionGetInstance:
-		if len(args) < 1 {
-			return fmt.Errorf("usage: local-testing get-instance <instanceId>")
-		}
-		result, err := client.GetInstance(ctx, args[0], "")
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case localtesting.ActionDisconnectInstance:
-		if len(args) < 1 {
-			return fmt.Errorf("usage: local-testing disconnect-instance <instanceId>")
-		}
-		result, err := client.DisconnectInstance(ctx, args[0], "")
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	default:
-		return fmt.Errorf("unknown action: %s\n\n%s", action, usage)
 	}
+
+	result, err := localtesting.Dispatch(client, ctx, action, args)
+	if err != nil {
+		return err
+	}
+
+	// Handle string output directly, otherwise print as JSON
+	if strResult, ok := result.(string); ok {
+		fmt.Println(strResult)
+		return nil
+	}
+
+	return output.Print(result)
 }

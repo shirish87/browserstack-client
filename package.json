@@ -1,5 +1,5 @@
 {
-  "name": "browserstack-client-monorepo",
+  "name": "browserstack-client",
   "private": true,
   "type": "module",
   "version": "6.0.0",
@@ -19,7 +19,7 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint packages --ext .ts",
-    "check": "tsc --build packages/*/tsconfig.json packages/cli/typescript/tsconfig.json",
+    "check": "tsc --build --noEmit packages/*/tsconfig.json packages/cli/typescript/tsconfig.json",
     "clean": "pnpm -r exec rimraf dist && rimraf node_modules",
     "docs:build": "typedoc && vitepress build docs"
   },
@@ -43,6 +43,13 @@
     "typedoc-plugin-markdown": "^4.11.0",
     "typedoc-vitepress-theme": "^1.1.2",
     "vitepress": "^1.6.4"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "openapi-typescript>typescript": "6"
+      }
+    }
   },
   "repository": {
     "type": "git",

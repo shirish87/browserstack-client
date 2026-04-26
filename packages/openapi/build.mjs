@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { CodecRegistry, registerAllBuiltins } from "@browserstack-client/openapi-transforms";
 import { generateClientModule } from "@browserstack-client/openapi-transforms/codegen/typescript";
 import { generateGoModule } from "@browserstack-client/openapi-transforms/codegen/golang";
-import { extractCLIMetadata, generateTSConstants, generateTSSchemas, generateGoConstants } from "@browserstack-client/openapi-transforms/codegen/cli";
+import { extractCLIMetadata, generateTSConstants, generateTSSchemas, generateGoConstants, generateGoDispatch } from "@browserstack-client/openapi-transforms/codegen/cli";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -233,10 +233,15 @@ const tsSchemas = generateTSSchemas(cliMetadata);
 await fs.writeFile(path.join(__dirname, "../cli/typescript/src/schemas.generated.ts"), tsSchemas);
 console.log("  ✓ schemas.generated.ts (TS)");
 
-console.log("Generating Go CLI constants...");
+console.log("Generating Go CLI constants and dispatcher...");
 for (const m of cliMetadata) {
   const goConstants = generateGoConstants(m);
-  const outPath = path.join(__dirname, `../cli/golang/generated/${m.product}/constants.generated.go`);
-  await fs.writeFile(outPath, goConstants);
+  const constantsOutPath = path.join(__dirname, `../cli/golang/generated/${m.product}/constants.generated.go`);
+  await fs.writeFile(constantsOutPath, goConstants);
   console.log(`  ✓ ${m.product}/constants.generated.go (Go)`);
+
+  const goDispatch = generateGoDispatch(m);
+  const dispatchOutPath = path.join(__dirname, `../cli/golang/generated/${m.product}/cli_dispatch.generated.go`);
+  await fs.writeFile(dispatchOutPath, goDispatch);
+  console.log(`  ✓ ${m.product}/cli_dispatch.generated.go (Go)`);
 }

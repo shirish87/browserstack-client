@@ -2,7 +2,8 @@
 
 import { ensureAccessKeyExists, ensureUsernameExists } from "./utils.ts";
 import { BrowserStackError } from "@browserstack-client/core";
-import { TestReportingClient, BrowserStackOptions } from "@browserstack-client/test-reporting";
+import { TestReportingClient } from "@browserstack-client/test-reporting";
+import { BrowserStackOptions } from "@browserstack-client/core";
 import { readFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 import process from "node:process";

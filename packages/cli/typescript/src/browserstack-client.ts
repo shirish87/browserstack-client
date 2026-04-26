@@ -10,6 +10,7 @@ import { main as runLocalTesting } from "./browserstack-local-testing.ts";
 import { main as runTestManagement } from "./browserstack-test-management.ts";
 import { main as runAccessibility } from "./browserstack-accessibility.ts";
 import { main as runTestReporting } from "./browserstack-test-reporting.ts";
+import { main as runScreenshots } from "./browserstack-screenshots.ts";
 
 import { Product } from "./constants.generated.ts";
 
@@ -21,6 +22,7 @@ const products: Record<string, (args: string[]) => Promise<void>> = {
   [Product.TestManagement]: runTestManagement,
   [Product.Accessibility]: runAccessibility,
   [Product.TestReporting]: runTestReporting,
+  [Product.Screenshots]: runScreenshots,
 };
 
 export async function main(inputArgs: string[] = process.argv.slice(2)) {

@@ -13,34 +13,23 @@ func runScreenshots(c *browserstackhttp.Client, action string, args []string) er
 	client := screenshots.New(c)
 	ctx := context.Background()
 
-	const usage = "Valid actions:\n" +
-		"  get-job, create-job, get-browsers"
+	const usage = "Usage: screenshots <action> [args...]"
 
-	switch action {
-	case "help":
-		fmt.Println("Usage: screenshots <action> [args...]")
+	if action == "help" {
 		fmt.Println(usage)
 		return nil
-
-	case screenshots.ActionListBrowsers:
-		result, err := client.GetBrowsers(ctx)
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case screenshots.ActionGetJob:
-		if len(args) < 1 {
-			return fmt.Errorf("usage: screenshots get-job <jobId>")
-		}
-		result, err := client.GetJob(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case screenshots.ActionCreateJob:
-		// Need to implement job creation logic/args
-		return fmt.Errorf("create-job not implemented in CLI yet")
-	default:
-		return fmt.Errorf("unknown action: %s\n\n%s", action, usage)
 	}
+
+	result, err := screenshots.Dispatch(client, ctx, action, args)
+	if err != nil {
+		return err
+	}
+
+	// Handle string output directly, otherwise print as JSON
+	if strResult, ok := result.(string); ok {
+		fmt.Println(strResult)
+		return nil
+	}
+
+	return output.Print(result)
 }

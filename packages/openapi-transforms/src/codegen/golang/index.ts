@@ -148,14 +148,14 @@ export async function generateGoModule(
         .filter((p) => p.in === "path")
         .map((p) => ({
           name: p.name,
-          goType: p.schema?.type === "integer" ? "int" : "string",
+          goType: "string", // Always treat URL parameters as strings in Go
         }));
 
       const queryParams = resolvedParams
         .filter((p) => p.in === "query")
         .map((p) => ({
           name: p.name.replace(/\[\]$/, ""),
-          goType: p.schema?.type === "integer" ? "int" : "string",
+          goType: "string", // Always treat URL parameters as strings in Go
         }));
 
       const requestCodec = resolveRequestCodec(op);
@@ -186,7 +186,8 @@ export async function generateGoModule(
   }
 
   const needsStrconv = methods.some((m) => m.includes("strconv.Itoa("));
-  const fileHeader = emitGoFile(opts.product, className, modulePath, needsStrconv);
+  const needsUrl = methods.some((m) => m.includes("url.PathEscape("));
+  const fileHeader = emitGoFile(opts.product, className, modulePath, needsStrconv, needsUrl);
   const clientGo = fileHeader + "\n" + methods.join("\n\n") + "\n";
   const typesGo = emitGoTypes(opts.product, schemas);
 

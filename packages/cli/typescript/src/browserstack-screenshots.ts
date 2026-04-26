@@ -2,11 +2,12 @@
 
 import { ensureAccessKeyExists, ensureUsernameExists, formatError } from "./utils.ts";
 import { BrowserStackError } from "@browserstack-client/core";
-import { TestManagementClient } from "@browserstack-client/test-management";
+import { ScreenshotsClient } from "@browserstack-client/screenshots";
 import { BrowserStackOptions } from "@browserstack-client/core";
 import { resolve } from "node:path";
 import process from "node:process";
-import { TestManagementSchemas } from "./schemas.generated.ts";
+import { Screenshots } from "./constants.generated.ts";
+import { ScreenshotsSchemas } from "./schemas.generated.ts";
 import { parseArgs } from "./parser.ts";
 
 interface Logger {
@@ -14,22 +15,10 @@ interface Logger {
   error(message: string, ...params: unknown[]): void;
 }
 
-type TestManagementClientOptions = Partial<BrowserStackOptions>;
+type ClientOptions = Partial<BrowserStackOptions>;
 
-const ACTION_SCHEMA_MAP = {
-  ...TestManagementSchemas.ProjectsActionSchemaMap,
-  ...TestManagementSchemas.FoldersActionSchemaMap,
-  ...TestManagementSchemas.TestCasesActionSchemaMap,
-  ...TestManagementSchemas.AttachmentsActionSchemaMap,
-  ...TestManagementSchemas.TestResultsActionSchemaMap,
-  ...TestManagementSchemas.TestRunsActionSchemaMap,
-  ...TestManagementSchemas.TestPlansActionSchemaMap,
-  ...TestManagementSchemas.ConfigurationsActionSchemaMap,
-  ...TestManagementSchemas.CustomFieldsActionSchemaMap,
-};
-
-const USAGE = `Usage: test-management <action> [args...]
-Actions: ${Object.keys(ACTION_SCHEMA_MAP).join(", ")}`;
+const USAGE = `Usage: screenshots <action> [args...]
+Actions: ${Object.values(Screenshots.Action).join(", ")}`;
 
 export async function main(
   inputArgs: string[] = process.argv.slice(2),
@@ -42,24 +31,28 @@ export async function main(
     const args = inputArgs.map((a) => a.trim());
     const actionInput = args[0]?.toLowerCase();
     const rest = args.slice(1);
-    const opts: TestManagementClientOptions = {};
-    const client = new TestManagementClient(opts);
+    const opts: ClientOptions = {};
+    const client = new ScreenshotsClient(opts);
 
     if (!actionInput || actionInput === "help") {
       logger.info(USAGE);
       return;
     }
 
-    const schemaConfig = ACTION_SCHEMA_MAP[actionInput];
-    if (!schemaConfig) {
+    const action = Object.values(Screenshots.Action).find((a: string) => a.toLowerCase() === actionInput);
+    if (!action) {
       throw new BrowserStackError(`Invalid action: ${actionInput}\n${USAGE}`);
+    }
+
+    const schemaConfig = ScreenshotsSchemas.ActionSchemaMap[action];
+    if (!schemaConfig) {
+      throw new BrowserStackError(`No schema found for action: ${action}`);
     }
 
     const parsed = parseArgs(schemaConfig.schema, rest);
     const result = await schemaConfig.call(client, parsed);
 
     logger.info(JSON.stringify(result, null, 2));
-
   } catch (err) {
     logger.error(formatError(err));
     process.exit(1);

@@ -8,7 +8,7 @@ export class AccessibilityClient extends GeneratedAccessibilityClient {
       options?.baseUrl ?? "https://api-accessibility.browserstack.com",
       "https://api-accessibility.browserstack.com",
       "@browserstack-client/accessibility",
-      "6.0.0"
+      __PKG_VERSION__
     );
   }
 }

@@ -8,7 +8,7 @@ export class TestReportingClient extends GeneratedTestReportingClient {
       options?.baseUrl ?? "https://api-automation.browserstack.com/ext/v1",
       options?.uploadBaseUrl ?? "https://upload-automation.browserstack.com",
       "@browserstack-client/test-reporting",
-      "6.0.0"
+      __PKG_VERSION__
     );
   }
 }

@@ -27,13 +27,14 @@ This package provides the core transformation engine that processes OpenAPI spec
 
 The TypeScript CLI is built using Node.js.
 - **Modular Structure**: Each product has its own command definition file (e.g., `browserstack-automate.ts`).
-- **Generated Validation**: Uses Zod schemas generated from OpenAPI to validate input flags and arguments at runtime.
-- **Consistent Interface**: Command names and flags are derived from OpenAPI metadata, ensuring consistency across all BrowserStack products.
+- **Generated Dispatch & Validation**: Uses a centralized routing map (`ActionSchemaMap`) and Zod schemas generated from OpenAPI metadata (`packages/openapi-transforms/src/codegen/cli/typescript.ts`) to validate input flags and arguments at runtime before seamlessly dispatching the call to the corresponding client method.
+- **Consistent Interface**: Command names and flags are derived directly from OpenAPI metadata, ensuring consistency across all BrowserStack products without manual `switch` statement boilerplate.
 
 ## Golang CLI (`packages/cli/golang`)
 
 The Golang CLI provides a native binary experience.
-- **Generated Core**: The core API client and types are generated from OpenAPI into `cli/golang/generated/`.
+- **Generated Core & Dispatch**: The core API client, types, constants, and the command dispatcher (`cli_dispatch.generated.go`) are generated from OpenAPI into `cli/golang/generated/`.
+- **Automated Argument Mapping**: The generated `Dispatch` function automatically handles positional and query argument parsing (including `strconv` type conversions and multipart payloads) and routes the CLI inputs to the correct client method. This completely eliminates manual `if len(args)` and `switch` routing ladders.
 - **Performance**: Designed for environments where a standalone binary is preferred or where Node.js is not available.
 
 ## Build Pipeline

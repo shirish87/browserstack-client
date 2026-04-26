@@ -35,7 +35,7 @@ describe("emitGoMethod", () => {
     };
     const result = emitGoMethod(input);
     expect(result).toContain("func (c *AutomateClient) GetAutomateBuild(ctx context.Context, buildId string) (*Build, error)");
-    expect(result).toContain(`"/automate/builds/" + buildId + ".json"`);
+    expect(result).toContain(`"/automate/builds/" + url.PathEscape(buildId) + ".json"`);
   });
 
   it("emits a GET with query params", () => {

@@ -22,14 +22,14 @@ describe("toPascalCase", () => {
 describe("toGoPackageName", () => {
   it("uses last segment for normal products", () => {
     expect(toGoPackageName("automate")).toBe("automate");
-    expect(toGoPackageName("test-management")).toBe("management");
-    expect(toGoPackageName("test-reporting")).toBe("reporting");
+    expect(toGoPackageName("test-management")).toBe("testmanagement");
+    expect(toGoPackageName("test-reporting")).toBe("testreporting");
     expect(toGoPackageName("screenshots")).toBe("screenshots");
     expect(toGoPackageName("accessibility")).toBe("accessibility");
   });
   it("uses exception map for stdlib conflicts", () => {
     expect(toGoPackageName("local-testing")).toBe("localtesting");
-    expect(toGoPackageName("local-testing-binary")).toBe("localbinary");
+    expect(toGoPackageName("local-testing-binary")).toBe("localtestingbinary");
     expect(toGoPackageName("app-automate")).toBe("appautomate");
   });
 });

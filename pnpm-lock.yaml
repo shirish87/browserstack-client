@@ -173,6 +173,9 @@ importers:
       '@browserstack-client/openapi-transforms':
         specifier: workspace:*
         version: link:../../openapi-transforms
+      '@browserstack-client/screenshots':
+        specifier: workspace:*
+        version: link:../../screenshots
       '@browserstack-client/test-management':
         specifier: workspace:*
         version: link:../../test-management

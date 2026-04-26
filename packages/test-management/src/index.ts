@@ -8,7 +8,7 @@ export class TestManagementClient extends GeneratedTestManagementClient {
       options?.baseUrl ?? "https://test-management.browserstack.com",
       "https://test-management.browserstack.com",
       "@browserstack-client/test-management",
-      "6.0.0"
+      __PKG_VERSION__
     );
   }
 }
