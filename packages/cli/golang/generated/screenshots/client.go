@@ -2,18 +2,18 @@ package screenshots
 
 import (
 	"context"
-	bshttp "github.com/browserstack/browserstack-client/internal/http"
+	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 )
 
 type ScreenshotsClient struct {
-	http *bshttp.Client
+	http *browserstackhttp.Client
 }
 
-func New(c *bshttp.Client) *ScreenshotsClient {
+func New(c *browserstackhttp.Client) *ScreenshotsClient {
 	return &ScreenshotsClient{http: c}
 }
 
-func (c *ScreenshotsClient) GetScreenshotsJob(ctx context.Context, jobId string) (*ScreenshotsJob, error) {
+func (c *ScreenshotsClient) GetJob(ctx context.Context, jobId string) (*ScreenshotsJob, error) {
 	var out ScreenshotsJob
 	if err := c.http.Get(ctx, "/screenshots/" + jobId + ".json", nil, &out); err != nil {
 		return nil, err
@@ -21,7 +21,7 @@ func (c *ScreenshotsClient) GetScreenshotsJob(ctx context.Context, jobId string)
 	return &out, nil
 }
 
-func (c *ScreenshotsClient) CreateScreenshotsJob(ctx context.Context, body *NewScreenshot) (*NewScreenshotsJob, error) {
+func (c *ScreenshotsClient) CreateJob(ctx context.Context, body *NewScreenshot) (*NewScreenshotsJob, error) {
 	var out NewScreenshotsJob
 	if err := c.http.Post(ctx, "/screenshots", body, &out); err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func (c *ScreenshotsClient) CreateScreenshotsJob(ctx context.Context, body *NewS
 	return &out, nil
 }
 
-func (c *ScreenshotsClient) GetScreenshotsBrowsers(ctx context.Context) (*BrowserList, error) {
+func (c *ScreenshotsClient) GetBrowsers(ctx context.Context) (*BrowserList, error) {
 	var out BrowserList
 	if err := c.http.Get(ctx, "/screenshots/browsers.json", nil, &out); err != nil {
 		return nil, err

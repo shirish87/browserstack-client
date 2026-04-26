@@ -1,4 +1,4 @@
-package bshttp
+package browserstackhttp
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package bshttp_test
+package browserstackhttp_test
 
 import (
 	"context"
@@ -8,11 +8,11 @@ import (
 	"strings"
 	"testing"
 
-	bshttp "github.com/browserstack/browserstack-client/internal/http"
+	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 )
 
-func newTestClient(srv *httptest.Server) *bshttp.Client {
-	return bshttp.NewWithHTTPClient(srv.URL, "user", "key", srv.Client())
+func newTestClient(srv *httptest.Server) *browserstackhttp.Client {
+	return browserstackhttp.NewWithHTTPClient(srv.URL, "user", "key", srv.Client())
 }
 
 func TestGet(t *testing.T) {
@@ -71,7 +71,7 @@ func TestGet_NonOK(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for 404, got nil")
 	}
-	apiErr, ok := err.(*bshttp.APIError)
+	apiErr, ok := err.(*browserstackhttp.APIError)
 	if !ok {
 		t.Fatalf("expected *APIError, got %T: %v", err, err)
 	}
