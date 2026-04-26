@@ -248,7 +248,8 @@ export type DeleteTestManagementCustomFieldError = HttpError<
 >;
 
 export class GeneratedTestManagementClient extends APIClient {
-getTestManagementProjects(p?: number, pageSize?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementProjects"]["responses"][200]["content"]["application/json"] & Record<"projects", unknown>)["projects"]>> {
+/** Get list of projects */
+  getProjects(p?: number, pageSize?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementProjects"]["responses"][200]["content"]["application/json"] & Record<"projects", unknown>)["projects"]>> {
     return (this.execute({
       path: "/api/v2/projects",
       params: { query: { "p": p, "page_size": pageSize } },
@@ -264,7 +265,8 @@ getTestManagementProjects(p?: number, pageSize?: number, options?: ExecuteOption
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementProjects"]["responses"][200]["content"]["application/json"] & Record<"projects", unknown>)["projects"]>>;
   }
 
-createTestManagementProject(body: DeepCamelCase<operations["createTestManagementProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createTestManagementProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
+/** Create a project */
+  createProject(body: DeepCamelCase<operations["createTestManagementProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createTestManagementProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
     return (this.execute({
       path: "/api/v2/projects",
       params: undefined,
@@ -280,7 +282,8 @@ createTestManagementProject(body: DeepCamelCase<operations["createTestManagement
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["createTestManagementProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>>;
   }
 
-getTestManagementProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
+/** Get project details */
+  getProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}",
       params: { path: { projectId: projectId } },
@@ -296,7 +299,8 @@ getTestManagementProject(projectId: string, options?: ExecuteOptions): Promise<D
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>>;
   }
 
-updateTestManagementProject(projectId: string, body: DeepCamelCase<operations["updateTestManagementProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateTestManagementProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
+/** Update a project */
+  updateProject(projectId: string, body: DeepCamelCase<operations["updateTestManagementProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateTestManagementProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}",
       params: { path: { projectId: projectId } },
@@ -312,7 +316,8 @@ updateTestManagementProject(projectId: string, body: DeepCamelCase<operations["u
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["updateTestManagementProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>>;
   }
 
-deleteTestManagementProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementProject"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a project */
+  deleteProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementProject"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}",
       params: { path: { projectId: projectId } },
@@ -328,7 +333,8 @@ deleteTestManagementProject(projectId: string, options?: ExecuteOptions): Promis
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteTestManagementProject"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestManagementFolders(projectId: string, p?: number, pageSize?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementFolders"]["responses"][200]["content"]["application/json"] & Record<"folders", unknown>)["folders"]>> {
+/** Get list of folders in a project */
+  getFolders(projectId: string, p?: number, pageSize?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementFolders"]["responses"][200]["content"]["application/json"] & Record<"folders", unknown>)["folders"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/folders",
       params: { path: { projectId: projectId }, query: { "p": p, "page_size": pageSize } },
@@ -344,7 +350,8 @@ getTestManagementFolders(projectId: string, p?: number, pageSize?: number, optio
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementFolders"]["responses"][200]["content"]["application/json"] & Record<"folders", unknown>)["folders"]>>;
   }
 
-createTestManagementFolder(projectId: string, body: DeepCamelCase<operations["createTestManagementFolder"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>> {
+/** Create a folder */
+  createFolder(projectId: string, body: DeepCamelCase<operations["createTestManagementFolder"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/folders",
       params: { path: { projectId: projectId } },
@@ -360,7 +367,8 @@ createTestManagementFolder(projectId: string, body: DeepCamelCase<operations["cr
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["createTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>>;
   }
 
-getTestManagementFolder(projectId: string, folderId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>> {
+/** Get folder details */
+  getFolder(projectId: string, folderId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/folders/{folderId}",
       params: { path: { projectId: projectId, folderId: folderId } },
@@ -376,7 +384,8 @@ getTestManagementFolder(projectId: string, folderId: number, options?: ExecuteOp
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>>;
   }
 
-updateTestManagementFolder(projectId: string, folderId: number, body: DeepCamelCase<operations["updateTestManagementFolder"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>> {
+/** Update a folder */
+  updateFolder(projectId: string, folderId: number, body: DeepCamelCase<operations["updateTestManagementFolder"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/folders/{folderId}",
       params: { path: { projectId: projectId, folderId: folderId } },
@@ -392,7 +401,8 @@ updateTestManagementFolder(projectId: string, folderId: number, body: DeepCamelC
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["updateTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>>;
   }
 
-deleteTestManagementFolder(projectId: string, folderId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementFolder"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a folder */
+  deleteFolder(projectId: string, folderId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementFolder"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/folders/{folderId}",
       params: { path: { projectId: projectId, folderId: folderId } },
@@ -408,7 +418,8 @@ deleteTestManagementFolder(projectId: string, folderId: number, options?: Execut
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteTestManagementFolder"]["responses"][200]["content"]["application/json"]>>;
   }
 
-moveTestManagementFolder(projectId: string, folderId: number, body: DeepCamelCase<operations["moveTestManagementFolder"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["moveTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>> {
+/** Move a folder */
+  moveFolder(projectId: string, folderId: number, body: DeepCamelCase<operations["moveTestManagementFolder"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["moveTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/folders/{folderId}/move",
       params: { path: { projectId: projectId, folderId: folderId } },
@@ -424,7 +435,8 @@ moveTestManagementFolder(projectId: string, folderId: number, body: DeepCamelCas
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["moveTestManagementFolder"]["responses"][200]["content"]["application/json"] & Record<"folder", unknown>)["folder"]>>;
   }
 
-getTestManagementTestCases(projectId: string, p?: number, pageSize?: number, updatedAfter?: string, updatedBefore?: string, archived?: string, minify?: string, id?: string, status?: string, priority?: string, owner?: string, caseType?: string, folderId?: number, tags?: string, issueIds?: string, issueType?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestCases"]["responses"][200]["content"]["application/json"] & Record<"test_cases", unknown>)["test_cases"]>> {
+/** Get list of test cases */
+  getTestCases(projectId: string, p?: number, pageSize?: number, updatedAfter?: string, updatedBefore?: string, archived?: string, minify?: string, id?: string, status?: string, priority?: string, owner?: string, caseType?: string, folderId?: number, tags?: string, issueIds?: string, issueType?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestCases"]["responses"][200]["content"]["application/json"] & Record<"test_cases", unknown>)["test_cases"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases",
       params: { path: { projectId: projectId }, query: { "p": p, "page_size": pageSize, "updated_after": updatedAfter, "updated_before": updatedBefore, "archived": archived, "minify": minify, "id": id, "status": status, "priority": priority, "owner": owner, "case_type": caseType, "folder_id": folderId, "tags": tags, "issue_ids": issueIds, "issue_type": issueType } },
@@ -440,7 +452,8 @@ getTestManagementTestCases(projectId: string, p?: number, pageSize?: number, upd
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestCases"]["responses"][200]["content"]["application/json"] & Record<"test_cases", unknown>)["test_cases"]>>;
   }
 
-bulkEditTestManagementTestCases(projectId: string, body: DeepCamelCase<operations["bulkEditTestManagementTestCases"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["bulkEditTestManagementTestCases"]["responses"][200]["content"]["application/json"]>> {
+/** Bulk edit test cases */
+  bulkEditTestCases(projectId: string, body: DeepCamelCase<operations["bulkEditTestManagementTestCases"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["bulkEditTestManagementTestCases"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases",
       params: { path: { projectId: projectId } },
@@ -456,7 +469,8 @@ bulkEditTestManagementTestCases(projectId: string, body: DeepCamelCase<operation
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["bulkEditTestManagementTestCases"]["responses"][200]["content"]["application/json"]>>;
   }
 
-bulkDeleteTestManagementTestCases(projectId: string, body: DeepCamelCase<operations["bulkDeleteTestManagementTestCases"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["bulkDeleteTestManagementTestCases"]["responses"][200]["content"]["application/json"]>> {
+/** Bulk delete test cases */
+  bulkDeleteTestCases(projectId: string, body: DeepCamelCase<operations["bulkDeleteTestManagementTestCases"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["bulkDeleteTestManagementTestCases"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases",
       params: { path: { projectId: projectId } },
@@ -472,7 +486,8 @@ bulkDeleteTestManagementTestCases(projectId: string, body: DeepCamelCase<operati
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["bulkDeleteTestManagementTestCases"]["responses"][200]["content"]["application/json"]>>;
   }
 
-bulkArchiveTestManagementTestCases(projectId: string, body: DeepCamelCase<operations["bulkArchiveTestManagementTestCases"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["bulkArchiveTestManagementTestCases"]["responses"][200]["content"]["application/json"]>> {
+/** Bulk archive test cases */
+  bulkArchiveTestCases(projectId: string, body: DeepCamelCase<operations["bulkArchiveTestManagementTestCases"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["bulkArchiveTestManagementTestCases"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/archive",
       params: { path: { projectId: projectId } },
@@ -488,7 +503,8 @@ bulkArchiveTestManagementTestCases(projectId: string, body: DeepCamelCase<operat
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["bulkArchiveTestManagementTestCases"]["responses"][200]["content"]["application/json"]>>;
   }
 
-bulkUnarchiveTestManagementTestCases(projectId: string, body: DeepCamelCase<operations["bulkUnarchiveTestManagementTestCases"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["bulkUnarchiveTestManagementTestCases"]["responses"][200]["content"]["application/json"]>> {
+/** Bulk unarchive test cases */
+  bulkUnarchiveTestCases(projectId: string, body: DeepCamelCase<operations["bulkUnarchiveTestManagementTestCases"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["bulkUnarchiveTestManagementTestCases"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/unarchive",
       params: { path: { projectId: projectId } },
@@ -504,7 +520,8 @@ bulkUnarchiveTestManagementTestCases(projectId: string, body: DeepCamelCase<oper
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["bulkUnarchiveTestManagementTestCases"]["responses"][200]["content"]["application/json"]>>;
   }
 
-bulkEditTestManagementTestCasesWithOperations(projectId: string, body: DeepCamelCase<operations["bulkEditTestManagementTestCasesWithOperations"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["bulkEditTestManagementTestCasesWithOperations"]["responses"][200]["content"]["application/json"]>> {
+/** Bulk edit test cases with operations */
+  bulkEditTestCasesWithOperations(projectId: string, body: DeepCamelCase<operations["bulkEditTestManagementTestCasesWithOperations"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["bulkEditTestManagementTestCasesWithOperations"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/with-operations",
       params: { path: { projectId: projectId } },
@@ -520,7 +537,8 @@ bulkEditTestManagementTestCasesWithOperations(projectId: string, body: DeepCamel
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["bulkEditTestManagementTestCasesWithOperations"]["responses"][200]["content"]["application/json"]>>;
   }
 
-createTestManagementTestCase(projectId: string, folderId: number, body: DeepCamelCase<operations["createTestManagementTestCase"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<((operations["createTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>> {
+/** Create a test case */
+  createTestCase(projectId: string, folderId: number, body: DeepCamelCase<operations["createTestManagementTestCase"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<((operations["createTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/folders/{folderId}/test-cases",
       params: { path: { projectId: projectId, folderId: folderId } },
@@ -536,7 +554,8 @@ createTestManagementTestCase(projectId: string, folderId: number, body: DeepCame
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<((operations["createTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>>;
   }
 
-updateTestManagementTestCase(projectId: string, testCaseId: string, body: DeepCamelCase<operations["updateTestManagementTestCase"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<((operations["updateTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>> {
+/** Update a test case */
+  updateTestCase(projectId: string, testCaseId: string, body: DeepCamelCase<operations["updateTestManagementTestCase"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<((operations["updateTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/{testCaseId}",
       params: { path: { projectId: projectId, testCaseId: testCaseId } },
@@ -552,7 +571,8 @@ updateTestManagementTestCase(projectId: string, testCaseId: string, body: DeepCa
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<((operations["updateTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>>;
   }
 
-deleteTestManagementTestCase(projectId: string, testCaseId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementTestCase"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a test case */
+  deleteTestCase(projectId: string, testCaseId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementTestCase"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/{testCaseId}",
       params: { path: { projectId: projectId, testCaseId: testCaseId } },
@@ -568,7 +588,8 @@ deleteTestManagementTestCase(projectId: string, testCaseId: string, options?: Ex
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteTestManagementTestCase"]["responses"][200]["content"]["application/json"]>>;
   }
 
-archiveTestManagementTestCase(projectId: string, testCaseId: string, options?: ExecuteOptions): Promise<DeepCamelCase<((operations["archiveTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>> {
+/** Archive a test case */
+  archiveTestCase(projectId: string, testCaseId: string, options?: ExecuteOptions): Promise<DeepCamelCase<((operations["archiveTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/{testCaseId}/archive",
       params: { path: { projectId: projectId, testCaseId: testCaseId } },
@@ -584,7 +605,8 @@ archiveTestManagementTestCase(projectId: string, testCaseId: string, options?: E
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<((operations["archiveTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>>;
   }
 
-unarchiveTestManagementTestCase(projectId: string, testCaseId: string, options?: ExecuteOptions): Promise<DeepCamelCase<((operations["unarchiveTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>> {
+/** Unarchive a test case */
+  unarchiveTestCase(projectId: string, testCaseId: string, options?: ExecuteOptions): Promise<DeepCamelCase<((operations["unarchiveTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/{testCaseId}/unarchive",
       params: { path: { projectId: projectId, testCaseId: testCaseId } },
@@ -600,7 +622,8 @@ unarchiveTestManagementTestCase(projectId: string, testCaseId: string, options?:
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<((operations["unarchiveTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>>;
   }
 
-moveTestManagementTestCase(projectId: string, testCaseId: string, body: DeepCamelCase<operations["moveTestManagementTestCase"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<((operations["moveTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>> {
+/** Move a test case to a different folder */
+  moveTestCase(projectId: string, testCaseId: string, body: DeepCamelCase<operations["moveTestManagementTestCase"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<((operations["moveTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/{testCaseId}/move",
       params: { path: { projectId: projectId, testCaseId: testCaseId } },
@@ -616,7 +639,8 @@ moveTestManagementTestCase(projectId: string, testCaseId: string, body: DeepCame
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<((operations["moveTestManagementTestCase"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"test_case", unknown>)["test_case"]>>;
   }
 
-getTestManagementTestCaseAttachments(projectId: string, testCaseId: string, p?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestCaseAttachments"]["responses"][200]["content"]["application/json"] & Record<"attachments", unknown>)["attachments"]>> {
+/** Get attachments for a test case */
+  getTestCaseAttachments(projectId: string, testCaseId: string, p?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestCaseAttachments"]["responses"][200]["content"]["application/json"] & Record<"attachments", unknown>)["attachments"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/{testCaseId}/attachments",
       params: { path: { projectId: projectId, testCaseId: testCaseId }, query: { "p": p } },
@@ -632,7 +656,8 @@ getTestManagementTestCaseAttachments(projectId: string, testCaseId: string, p?: 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestCaseAttachments"]["responses"][200]["content"]["application/json"] & Record<"attachments", unknown>)["attachments"]>>;
   }
 
-addTestManagementTestCaseAttachment(projectId: string, testCaseId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, inline?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["addTestManagementTestCaseAttachment"]["responses"][200]["content"]["application/json"] & Record<"attachment", unknown>)["attachment"]>> {
+/** Add attachment to a test case */
+  addTestCaseAttachment(projectId: string, testCaseId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, inline?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["addTestManagementTestCaseAttachment"]["responses"][200]["content"]["application/json"] & Record<"attachment", unknown>)["attachment"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/{testCaseId}/attachments",
       params: { path: { projectId: projectId, testCaseId: testCaseId }, query: { "inline": inline } },
@@ -648,7 +673,8 @@ addTestManagementTestCaseAttachment(projectId: string, testCaseId: string, body:
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["addTestManagementTestCaseAttachment"]["responses"][200]["content"]["application/json"] & Record<"attachment", unknown>)["attachment"]>>;
   }
 
-deleteTestManagementTestCaseAttachment(projectId: string, testCaseId: string, attachmentId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementTestCaseAttachment"]["responses"][200]["content"]["application/json"]>> {
+/** Delete attachment from a test case */
+  deleteTestCaseAttachment(projectId: string, testCaseId: string, attachmentId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementTestCaseAttachment"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/{testCaseId}/attachments/{attachmentId}",
       params: { path: { projectId: projectId, testCaseId: testCaseId, attachmentId: attachmentId } },
@@ -664,7 +690,8 @@ deleteTestManagementTestCaseAttachment(projectId: string, testCaseId: string, at
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteTestManagementTestCaseAttachment"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestManagementTestCaseResults(projectId: string, testCaseId: string, p?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestCaseResults"]["responses"][200]["content"]["application/json"] & Record<"test_results", unknown>)["test_results"]>> {
+/** Get test results for a test case across all test runs */
+  getTestCaseResults(projectId: string, testCaseId: string, p?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestCaseResults"]["responses"][200]["content"]["application/json"] & Record<"test_results", unknown>)["test_results"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-cases/{testCaseId}/results",
       params: { path: { projectId: projectId, testCaseId: testCaseId }, query: { "p": p } },
@@ -680,7 +707,8 @@ getTestManagementTestCaseResults(projectId: string, testCaseId: string, p?: numb
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestCaseResults"]["responses"][200]["content"]["application/json"] & Record<"test_results", unknown>)["test_results"]>>;
   }
 
-getTestManagementTestRuns(projectId: string, closedBefore?: string, closedAfter?: string, createdBefore?: string, createdAfter?: string, testPlanId?: string, assignee?: string, includeClosed?: string, runState?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestRuns"]["responses"][200]["content"]["application/json"] & Record<"test_runs", unknown>)["test_runs"]>> {
+/** Get list of test runs */
+  getTestRuns(projectId: string, closedBefore?: string, closedAfter?: string, createdBefore?: string, createdAfter?: string, testPlanId?: string, assignee?: string, includeClosed?: string, runState?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestRuns"]["responses"][200]["content"]["application/json"] & Record<"test_runs", unknown>)["test_runs"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs",
       params: { path: { projectId: projectId }, query: { "closed_before": closedBefore, "closed_after": closedAfter, "created_before": createdBefore, "created_after": createdAfter, "test_plan_id": testPlanId, "assignee": assignee, "include_closed": includeClosed, "run_state": runState } },
@@ -696,7 +724,8 @@ getTestManagementTestRuns(projectId: string, closedBefore?: string, closedAfter?
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestRuns"]["responses"][200]["content"]["application/json"] & Record<"test_runs", unknown>)["test_runs"]>>;
   }
 
-createTestManagementTestRun(projectId: string, body: DeepCamelCase<operations["createTestManagementTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"test_run", unknown>)["test_run"]>> {
+/** Create a test run */
+  createTestRun(projectId: string, body: DeepCamelCase<operations["createTestManagementTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"test_run", unknown>)["test_run"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs",
       params: { path: { projectId: projectId } },
@@ -712,7 +741,8 @@ createTestManagementTestRun(projectId: string, body: DeepCamelCase<operations["c
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["createTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"test_run", unknown>)["test_run"]>>;
   }
 
-getTestManagementTestRun(projectId: string, testRunId: string, minify?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"test_run", unknown>)["test_run"]>> {
+/** Get test run details */
+  getTestRun(projectId: string, testRunId: string, minify?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"test_run", unknown>)["test_run"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs/{testRunId}",
       params: { path: { projectId: projectId, testRunId: testRunId }, query: { "minify": minify } },
@@ -728,7 +758,8 @@ getTestManagementTestRun(projectId: string, testRunId: string, minify?: string, 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"test_run", unknown>)["test_run"]>>;
   }
 
-getTestManagementTestRunTestCases(projectId: string, testRunId: string, p?: number, fetchSteps?: string, minify?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestRunTestCases"]["responses"][200]["content"]["application/json"] & Record<"test_cases", unknown>)["test_cases"]>> {
+/** Get test cases of a test run */
+  getTestRunTestCases(projectId: string, testRunId: string, p?: number, fetchSteps?: string, minify?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestRunTestCases"]["responses"][200]["content"]["application/json"] & Record<"test_cases", unknown>)["test_cases"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs/{testRunId}/test-cases",
       params: { path: { projectId: projectId, testRunId: testRunId }, query: { "p": p, "fetch_steps": fetchSteps, "minify": minify } },
@@ -744,7 +775,8 @@ getTestManagementTestRunTestCases(projectId: string, testRunId: string, p?: numb
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestRunTestCases"]["responses"][200]["content"]["application/json"] & Record<"test_cases", unknown>)["test_cases"]>>;
   }
 
-updateTestManagementTestRun(projectId: string, testRunId: string, body: DeepCamelCase<operations["updateTestManagementTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"testrun", unknown>)["testrun"]>> {
+/** Fully update a test run (replaces test cases) */
+  updateTestRun(projectId: string, testRunId: string, body: DeepCamelCase<operations["updateTestManagementTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"testrun", unknown>)["testrun"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs/{testRunId}/update",
       params: { path: { projectId: projectId, testRunId: testRunId } },
@@ -760,7 +792,8 @@ updateTestManagementTestRun(projectId: string, testRunId: string, body: DeepCame
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["updateTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"testrun", unknown>)["testrun"]>>;
   }
 
-patchTestManagementTestRun(projectId: string, testRunId: string, body: DeepCamelCase<operations["patchTestManagementTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["patchTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"testrun", unknown>)["testrun"]>> {
+/** Partially update a test run */
+  patchTestRun(projectId: string, testRunId: string, body: DeepCamelCase<operations["patchTestManagementTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["patchTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"testrun", unknown>)["testrun"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs/{testRunId}/update",
       params: { path: { projectId: projectId, testRunId: testRunId } },
@@ -776,7 +809,8 @@ patchTestManagementTestRun(projectId: string, testRunId: string, body: DeepCamel
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["patchTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"testrun", unknown>)["testrun"]>>;
   }
 
-assignTestManagementTestRunTestCases(projectId: string, testRunId: string, body: DeepCamelCase<operations["assignTestManagementTestRunTestCases"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["assignTestManagementTestRunTestCases"]["responses"][200]["content"]["application/json"]>> {
+/** Update assignees of test cases within a test run */
+  assignTestRunTestCases(projectId: string, testRunId: string, body: DeepCamelCase<operations["assignTestManagementTestRunTestCases"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["assignTestManagementTestRunTestCases"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs/{testRunId}/assign",
       params: { path: { projectId: projectId, testRunId: testRunId } },
@@ -792,7 +826,8 @@ assignTestManagementTestRunTestCases(projectId: string, testRunId: string, body:
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["assignTestManagementTestRunTestCases"]["responses"][200]["content"]["application/json"]>>;
   }
 
-closeTestManagementTestRun(projectId: string, testRunId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["closeTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"testrun", unknown>)["testrun"]>> {
+/** Close a test run */
+  closeTestRun(projectId: string, testRunId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["closeTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"testrun", unknown>)["testrun"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs/{testRunId}/close",
       params: { path: { projectId: projectId, testRunId: testRunId } },
@@ -808,7 +843,8 @@ closeTestManagementTestRun(projectId: string, testRunId: string, options?: Execu
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["closeTestManagementTestRun"]["responses"][200]["content"]["application/json"] & Record<"testrun", unknown>)["testrun"]>>;
   }
 
-deleteTestManagementTestRun(projectId: string, testRunId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementTestRun"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a test run */
+  deleteTestRun(projectId: string, testRunId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementTestRun"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs/{testRunId}/delete",
       params: { path: { projectId: projectId, testRunId: testRunId } },
@@ -824,7 +860,8 @@ deleteTestManagementTestRun(projectId: string, testRunId: string, options?: Exec
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteTestManagementTestRun"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestManagementTestRunResults(projectId: string, testRunId: string, p?: number, validateTc?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestRunResults"]["responses"][200]["content"]["application/json"] & Record<"test_results", unknown>)["test_results"]>> {
+/** Get all test results for a test run */
+  getTestRunResults(projectId: string, testRunId: string, p?: number, validateTc?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestRunResults"]["responses"][200]["content"]["application/json"] & Record<"test_results", unknown>)["test_results"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs/{testRunId}/results",
       params: { path: { projectId: projectId, testRunId: testRunId }, query: { "p": p, "validate_tc": validateTc } },
@@ -840,7 +877,8 @@ getTestManagementTestRunResults(projectId: string, testRunId: string, p?: number
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestRunResults"]["responses"][200]["content"]["application/json"] & Record<"test_results", unknown>)["test_results"]>>;
   }
 
-addTestManagementTestRunResults(projectId: string, testRunId: string, body: DeepCamelCase<operations["addTestManagementTestRunResults"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["addTestManagementTestRunResults"]["responses"][200]["content"]["application/json"]>> {
+/** Add test result(s) to a test run */
+  addTestRunResults(projectId: string, testRunId: string, body: DeepCamelCase<operations["addTestManagementTestRunResults"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["addTestManagementTestRunResults"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs/{testRunId}/results",
       params: { path: { projectId: projectId, testRunId: testRunId } },
@@ -856,7 +894,8 @@ addTestManagementTestRunResults(projectId: string, testRunId: string, body: Deep
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["addTestManagementTestRunResults"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestManagementTestRunTestCaseResults(projectId: string, testRunId: string, testCaseId: string, p?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestRunTestCaseResults"]["responses"][200]["content"]["application/json"] & Record<"test_results", unknown>)["test_results"]>> {
+/** Get test results for a specific test case in a test run */
+  getTestRunTestCaseResults(projectId: string, testRunId: string, testCaseId: string, p?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestRunTestCaseResults"]["responses"][200]["content"]["application/json"] & Record<"test_results", unknown>)["test_results"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-runs/{testRunId}/test-cases/{testCaseId}/results",
       params: { path: { projectId: projectId, testRunId: testRunId, testCaseId: testCaseId }, query: { "p": p } },
@@ -872,7 +911,8 @@ getTestManagementTestRunTestCaseResults(projectId: string, testRunId: string, te
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestRunTestCaseResults"]["responses"][200]["content"]["application/json"] & Record<"test_results", unknown>)["test_results"]>>;
   }
 
-getTestManagementTestResultAttachments(projectId: string, testResultId: number, p?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestResultAttachments"]["responses"][200]["content"]["application/json"] & Record<"attachments", unknown>)["attachments"]>> {
+/** Get attachments for a test result */
+  getTestResultAttachments(projectId: string, testResultId: number, p?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestResultAttachments"]["responses"][200]["content"]["application/json"] & Record<"attachments", unknown>)["attachments"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-results/{testResultId}/attachments",
       params: { path: { projectId: projectId, testResultId: testResultId }, query: { "p": p } },
@@ -888,7 +928,8 @@ getTestManagementTestResultAttachments(projectId: string, testResultId: number, 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestResultAttachments"]["responses"][200]["content"]["application/json"] & Record<"attachments", unknown>)["attachments"]>>;
   }
 
-addTestManagementTestResultAttachment(projectId: string, testResultId: number, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["addTestManagementTestResultAttachment"]["responses"][200]["content"]["application/json"] & Record<"attachment", unknown>)["attachment"]>> {
+/** Add attachment to a test result */
+  addTestResultAttachment(projectId: string, testResultId: number, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["addTestManagementTestResultAttachment"]["responses"][200]["content"]["application/json"] & Record<"attachment", unknown>)["attachment"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-results/{testResultId}/attachments",
       params: { path: { projectId: projectId, testResultId: testResultId } },
@@ -904,7 +945,8 @@ addTestManagementTestResultAttachment(projectId: string, testResultId: number, b
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["addTestManagementTestResultAttachment"]["responses"][200]["content"]["application/json"] & Record<"attachment", unknown>)["attachment"]>>;
   }
 
-deleteTestManagementTestResultAttachment(projectId: string, testResultId: number, attachmentId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementTestResultAttachment"]["responses"][200]["content"]["application/json"]>> {
+/** Delete attachment from a test result */
+  deleteTestResultAttachment(projectId: string, testResultId: number, attachmentId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementTestResultAttachment"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-results/{testResultId}/attachments/{attachmentId}",
       params: { path: { projectId: projectId, testResultId: testResultId, attachmentId: attachmentId } },
@@ -920,7 +962,8 @@ deleteTestManagementTestResultAttachment(projectId: string, testResultId: number
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteTestManagementTestResultAttachment"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestManagementTestPlans(projectId: string, p?: number, pageSize?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestPlans"]["responses"][200]["content"]["application/json"] & Record<"test_plans", unknown>)["test_plans"]>> {
+/** Get list of test plans */
+  getTestPlans(projectId: string, p?: number, pageSize?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestPlans"]["responses"][200]["content"]["application/json"] & Record<"test_plans", unknown>)["test_plans"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-plans",
       params: { path: { projectId: projectId }, query: { "p": p, "page_size": pageSize } },
@@ -936,7 +979,8 @@ getTestManagementTestPlans(projectId: string, p?: number, pageSize?: number, opt
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestPlans"]["responses"][200]["content"]["application/json"] & Record<"test_plans", unknown>)["test_plans"]>>;
   }
 
-createTestManagementTestPlan(projectId: string, body: DeepCamelCase<operations["createTestManagementTestPlan"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createTestManagementTestPlan"]["responses"][200]["content"]["application/json"] & Record<"test_plan", unknown>)["test_plan"]>> {
+/** Create a test plan */
+  createTestPlan(projectId: string, body: DeepCamelCase<operations["createTestManagementTestPlan"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createTestManagementTestPlan"]["responses"][200]["content"]["application/json"] & Record<"test_plan", unknown>)["test_plan"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-plans",
       params: { path: { projectId: projectId } },
@@ -952,7 +996,8 @@ createTestManagementTestPlan(projectId: string, body: DeepCamelCase<operations["
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["createTestManagementTestPlan"]["responses"][200]["content"]["application/json"] & Record<"test_plan", unknown>)["test_plan"]>>;
   }
 
-getTestManagementTestPlan(projectId: string, testPlanId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestPlan"]["responses"][200]["content"]["application/json"] & Record<"test_plan", unknown>)["test_plan"]>> {
+/** Get test plan details */
+  getTestPlan(projectId: string, testPlanId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestPlan"]["responses"][200]["content"]["application/json"] & Record<"test_plan", unknown>)["test_plan"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-plans/{testPlanId}",
       params: { path: { projectId: projectId, testPlanId: testPlanId } },
@@ -968,7 +1013,8 @@ getTestManagementTestPlan(projectId: string, testPlanId: string, options?: Execu
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestPlan"]["responses"][200]["content"]["application/json"] & Record<"test_plan", unknown>)["test_plan"]>>;
   }
 
-updateTestManagementTestPlan(projectId: string, testPlanId: string, body: DeepCamelCase<operations["updateTestManagementTestPlan"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateTestManagementTestPlan"]["responses"][200]["content"]["application/json"] & Record<"test_plan", unknown>)["test_plan"]>> {
+/** Update a test plan */
+  updateTestPlan(projectId: string, testPlanId: string, body: DeepCamelCase<operations["updateTestManagementTestPlan"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateTestManagementTestPlan"]["responses"][200]["content"]["application/json"] & Record<"test_plan", unknown>)["test_plan"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-plans/{testPlanId}/update",
       params: { path: { projectId: projectId, testPlanId: testPlanId } },
@@ -984,7 +1030,8 @@ updateTestManagementTestPlan(projectId: string, testPlanId: string, body: DeepCa
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["updateTestManagementTestPlan"]["responses"][200]["content"]["application/json"] & Record<"test_plan", unknown>)["test_plan"]>>;
   }
 
-getTestManagementTestPlanTestRuns(projectId: string, testPlanId: string, p?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestPlanTestRuns"]["responses"][200]["content"]["application/json"] & Record<"test_runs", unknown>)["test_runs"]>> {
+/** Get test runs linked to a test plan */
+  getTestPlanTestRuns(projectId: string, testPlanId: string, p?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementTestPlanTestRuns"]["responses"][200]["content"]["application/json"] & Record<"test_runs", unknown>)["test_runs"]>> {
     return (this.execute({
       path: "/api/v2/projects/{projectId}/test-plans/{testPlanId}/test-runs",
       params: { path: { projectId: projectId, testPlanId: testPlanId }, query: { "p": p } },
@@ -1000,7 +1047,8 @@ getTestManagementTestPlanTestRuns(projectId: string, testPlanId: string, p?: num
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementTestPlanTestRuns"]["responses"][200]["content"]["application/json"] & Record<"test_runs", unknown>)["test_runs"]>>;
   }
 
-getTestManagementConfigurations(p?: number, pageSize?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementConfigurations"]["responses"][200]["content"]["application/json"] & Record<"configurations", unknown>)["configurations"]>> {
+/** Get all configurations */
+  getConfigurations(p?: number, pageSize?: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementConfigurations"]["responses"][200]["content"]["application/json"] & Record<"configurations", unknown>)["configurations"]>> {
     return (this.execute({
       path: "/api/v2/configurations",
       params: { query: { "p": p, "page_size": pageSize } },
@@ -1016,7 +1064,8 @@ getTestManagementConfigurations(p?: number, pageSize?: number, options?: Execute
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementConfigurations"]["responses"][200]["content"]["application/json"] & Record<"configurations", unknown>)["configurations"]>>;
   }
 
-createTestManagementConfiguration(body: DeepCamelCase<operations["createTestManagementConfiguration"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["createTestManagementConfiguration"]["responses"][200]["content"]["application/json"]>> {
+/** Add a custom configuration */
+  createConfiguration(body: DeepCamelCase<operations["createTestManagementConfiguration"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["createTestManagementConfiguration"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/configurations",
       params: undefined,
@@ -1032,7 +1081,8 @@ createTestManagementConfiguration(body: DeepCamelCase<operations["createTestMana
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["createTestManagementConfiguration"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestManagementConfiguration(configurationId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementConfiguration"]["responses"][200]["content"]["application/json"] & Record<"configuration", unknown>)["configuration"]>> {
+/** Get configuration by ID */
+  getConfiguration(configurationId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementConfiguration"]["responses"][200]["content"]["application/json"] & Record<"configuration", unknown>)["configuration"]>> {
     return (this.execute({
       path: "/api/v2/configurations/{configurationId}",
       params: { path: { configurationId: configurationId } },
@@ -1048,7 +1098,8 @@ getTestManagementConfiguration(configurationId: string, options?: ExecuteOptions
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementConfiguration"]["responses"][200]["content"]["application/json"] & Record<"configuration", unknown>)["configuration"]>>;
   }
 
-getTestManagementCustomFields(options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementCustomFields"]["responses"][200]["content"]["application/json"] & Record<"custom_fields", unknown>)["custom_fields"]>> {
+/** Get all custom fields */
+  getCustomFields(options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getTestManagementCustomFields"]["responses"][200]["content"]["application/json"] & Record<"custom_fields", unknown>)["custom_fields"]>> {
     return (this.execute({
       path: "/api/v2/custom-fields",
       params: undefined,
@@ -1064,7 +1115,8 @@ getTestManagementCustomFields(options?: ExecuteOptions): Promise<DeepCamelCase<(
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getTestManagementCustomFields"]["responses"][200]["content"]["application/json"] & Record<"custom_fields", unknown>)["custom_fields"]>>;
   }
 
-createTestManagementCustomField(body: DeepCamelCase<operations["createTestManagementCustomField"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createTestManagementCustomField"]["responses"][200]["content"]["application/json"] & Record<"custom_field", unknown>)["custom_field"]>> {
+/** Create a custom field */
+  createCustomField(body: DeepCamelCase<operations["createTestManagementCustomField"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createTestManagementCustomField"]["responses"][200]["content"]["application/json"] & Record<"custom_field", unknown>)["custom_field"]>> {
     return (this.execute({
       path: "/api/v2/custom-fields",
       params: undefined,
@@ -1080,7 +1132,8 @@ createTestManagementCustomField(body: DeepCamelCase<operations["createTestManage
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["createTestManagementCustomField"]["responses"][200]["content"]["application/json"] & Record<"custom_field", unknown>)["custom_field"]>>;
   }
 
-updateTestManagementCustomField(customFieldId: string, body: DeepCamelCase<operations["updateTestManagementCustomField"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateTestManagementCustomField"]["responses"][200]["content"]["application/json"] & Record<"custom_field", unknown>)["custom_field"]>> {
+/** Update a custom field */
+  updateCustomField(customFieldId: string, body: DeepCamelCase<operations["updateTestManagementCustomField"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateTestManagementCustomField"]["responses"][200]["content"]["application/json"] & Record<"custom_field", unknown>)["custom_field"]>> {
     return (this.execute({
       path: "/api/v2/custom-fields/{customFieldId}",
       params: { path: { customFieldId: customFieldId } },
@@ -1096,7 +1149,8 @@ updateTestManagementCustomField(customFieldId: string, body: DeepCamelCase<opera
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["updateTestManagementCustomField"]["responses"][200]["content"]["application/json"] & Record<"custom_field", unknown>)["custom_field"]>>;
   }
 
-deleteTestManagementCustomField(customFieldId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementCustomField"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a custom field */
+  deleteCustomField(customFieldId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestManagementCustomField"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/v2/custom-fields/{customFieldId}",
       params: { path: { customFieldId: customFieldId } },

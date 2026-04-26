@@ -14,6 +14,8 @@ security:
 paths:
   /api/workflow-analyzer/v1/reports:
     get:
+      summary: List Workflow Analyzer reports
+      description: Returns a paginated list of all Workflow Analyzer accessibility reports for your account.
       operationId: getAccessibilityWorkflowAnalyzerReports
       responses:
         '200':
@@ -24,6 +26,8 @@ paths:
                 $ref: '#/components/schemas/WorkflowAnalyzerReportList'
   /api/workflow-analyzer/v1/reports/{report_id}:
     get:
+      summary: Get Workflow Analyzer report summary
+      description: Returns the summary for a specific Workflow Analyzer report, including score, issue counts, and scan metadata.
       operationId: getAccessibilityWorkflowAnalyzerReportSummary
       parameters:
         - name: report_id
@@ -40,6 +44,8 @@ paths:
                 $ref: '#/components/schemas/WorkflowAnalyzerReportSummary'
   /api/workflow-analyzer/v1/reports/issues:
     get:
+      summary: Get Workflow Analyzer report issues
+      description: Returns the paginated list of accessibility issues for a specific Workflow Analyzer report, optionally filtered by task.
       operationId: getAccessibilityWorkflowAnalyzerReportIssues
       parameters:
         - name: report_id
@@ -63,6 +69,8 @@ paths:
                 $ref: '#/components/schemas/WorkflowAnalyzerReportIssues'
   /api/assisted-test/v1/reports:
     get:
+      summary: List Assisted Test reports
+      description: Returns a paginated list of all Assisted Test accessibility reports for your account.
       operationId: getAccessibilityAssistedTestReports
       responses:
         '200':
@@ -73,6 +81,8 @@ paths:
                 $ref: '#/components/schemas/AssistedTestReportList'
   /api/assisted-test/v1/reports/{report_id}:
     get:
+      summary: Get Assisted Test report summary
+      description: Returns the summary for a specific Assisted Test report, including score, issue counts, and scan metadata.
       operationId: getAccessibilityAssistedTestReportSummary
       parameters:
         - name: report_id
@@ -89,6 +99,8 @@ paths:
                 $ref: '#/components/schemas/AssistedTestReportSummary'
   /api/assisted-test/v1/reports/issues:
     get:
+      summary: Get Assisted Test report issues
+      description: Returns the paginated list of accessibility issues for a specific Assisted Test report, optionally filtered by task.
       operationId: getAccessibilityAssistedTestReportIssues
       parameters:
         - name: report_id
@@ -112,6 +124,8 @@ paths:
                 $ref: '#/components/schemas/AssistedTestReportIssues'
   /api/website-scanner/v1/auth_configs:
     get:
+      summary: List Website Scanner auth configs
+      description: Returns all saved authentication configurations used by the Website Scanner for login-protected pages.
       operationId: getAccessibilityWebsiteScannerAuthConfigs
       x-response-transform:
         codec: json-unwrap
@@ -127,6 +141,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/AuthConfig'
     post:
+      summary: Create Website Scanner auth config
+      description: Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans.
       operationId: createAccessibilityWebsiteScannerAuthConfig
       x-response-transform:
         codec: json-unwrap
@@ -159,6 +175,8 @@ paths:
                 $ref: '#/components/schemas/AuthConfig'
   /api/website-scanner/v1/scans:
     get:
+      summary: List Website Scanner scans
+      description: Returns a paginated list of all configured Website Scanner scans for your account.
       operationId: getAccessibilityWebsiteScannerScans
       responses:
         '200':
@@ -168,6 +186,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebsiteScannerScanList'
     post:
+      summary: Create Website Scanner scan
+      description: Creates and triggers a new Website Scanner accessibility scan for the specified URL.
       operationId: createAccessibilityWebsiteScannerScan
       x-response-transform:
         codec: json-unwrap
@@ -190,6 +210,8 @@ paths:
                 $ref: '#/components/schemas/WebsiteScannerScanCreated'
   /api/website-scanner/v1/scans/{scan_id}/overview:
     get:
+      summary: Get Website Scanner scan overview
+      description: Returns the configuration overview for a specific Website Scanner scan, including URL list and scan settings.
       operationId: getAccessibilityWebsiteScannerScanOverview
       x-response-transform:
         codec: json-unwrap
@@ -210,6 +232,8 @@ paths:
                 $ref: '#/components/schemas/WebsiteScannerScanOverview'
   /api/website-scanner/v1/scans/{scan_id}/scan_runs:
     get:
+      summary: List Website Scanner scan runs
+      description: Returns a paginated list of all scan runs for a specific Website Scanner scan, including status and issue counts.
       operationId: getAccessibilityWebsiteScannerScanRuns
       parameters:
         - name: scan_id
@@ -234,6 +258,8 @@ paths:
                 $ref: '#/components/schemas/WebsiteScannerScanRunList'
   /api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}:
     get:
+      summary: Get Website Scanner scan run summary
+      description: Returns a detailed summary for a specific scan run, including score, issue counts, and changes since the last run.
       operationId: getAccessibilityWebsiteScannerScanRunSummary
       parameters:
         - name: scan_id
@@ -255,6 +281,8 @@ paths:
                 $ref: '#/components/schemas/WebsiteScannerScanRunSummary'
   /api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}/status:
     get:
+      summary: Get Website Scanner scan run status
+      description: Returns the current execution status of a specific Website Scanner scan run.
       operationId: getAccessibilityWebsiteScannerScanRunStatus
       x-response-transform:
         codec: json-unwrap
@@ -280,6 +308,8 @@ paths:
                 $ref: '#/components/schemas/WebsiteScannerScanRunStatus'
   /api/website-scanner/v1/scans/{scan_id}/scan_runs/issues:
     get:
+      summary: Get Website Scanner scan run issues
+      description: Returns paginated accessibility issues found during a specific Website Scanner scan run, optionally filtered by task.
       operationId: getAccessibilityWebsiteScannerScanRunIssues
       parameters:
         - name: scan_id
@@ -308,6 +338,8 @@ paths:
                 $ref: '#/components/schemas/WebsiteScannerScanRunIssues'
   /api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}/scan_logs:
     get:
+      summary: Get Website Scanner scan run logs
+      description: Returns the crawl logs for a specific Website Scanner scan run, including per-URL status, redirects, and errors.
       operationId: getAccessibilityWebsiteScannerScanRunLogs
       x-response-transform:
         codec: json-unwrap
@@ -333,6 +365,8 @@ paths:
                 $ref: '#/components/schemas/WebsiteScannerScanRunLogs'
   /api/automated-tests/v1/projects:
     get:
+      summary: List Automated Test projects
+      description: Returns a paginated list of all Automated Test accessibility projects for your account.
       operationId: getAccessibilityAutomatedTestProjects
       parameters:
         - name: next_page
@@ -348,6 +382,8 @@ paths:
                 $ref: '#/components/schemas/AutomatedTestsProjectList'
   /api/automated-tests/v1/builds:
     get:
+      summary: List Automated Test builds
+      description: Returns a paginated list of Automated Test accessibility builds, optionally filtered by project.
       operationId: getAccessibilityAutomatedTestBuilds
       parameters:
         - name: next_page
@@ -367,6 +403,8 @@ paths:
                 $ref: '#/components/schemas/AutomatedTestsBuildList'
   /api/automated-tests/v1/builds/{thBuildId}/test-cases:
     get:
+      summary: List test cases for an Automated Test build
+      description: Returns the paginated list of test cases and their accessibility results for a specific Automated Test build.
       operationId: getAccessibilityAutomatedTestBuildTestCases
       x-response-transform:
         codec: json-unwrap
@@ -391,6 +429,8 @@ paths:
                 $ref: '#/components/schemas/AutomatedTestsBuildTestCases'
   /api/automated-tests/v1/builds/{thBuildId}:
     get:
+      summary: Get Automated Test build summary
+      description: Returns the summary for a specific Automated Test build, including score, health stats, and issue counts.
       operationId: getAccessibilityAutomatedTestBuildSummary
       x-response-transform:
         codec: json-unwrap
@@ -415,6 +455,8 @@ paths:
                 $ref: '#/components/schemas/AutomatedTestsBuildSummary'
   /api/automated-tests/v1/builds/issues:
     get:
+      summary: Get Automated Test build issues
+      description: Returns paginated accessibility issues for a specific Automated Test build, optionally filtered by task.
       operationId: getAccessibilityAutomatedTestBuildIssues
       parameters:
         - name: build_id
@@ -438,6 +480,8 @@ paths:
                 $ref: '#/components/schemas/AutomatedTestsBuildIssues'
   /api/automated-tests/v1/builds/{thBuildId}/test-cases/{test_case_id}:
     get:
+      summary: Get Automated Test case summary
+      description: Returns the accessibility summary for a specific test case within an Automated Test build.
       operationId: getAccessibilityAutomatedTestBuildTestCaseSummary
       x-response-transform:
         codec: json-unwrap
@@ -467,6 +511,8 @@ paths:
                 $ref: '#/components/schemas/AutomatedTestsTestCaseSummary'
   /api/automated-tests/v1/builds/{thBuildId}/issues:
     get:
+      summary: Get Automated Test case issues
+      description: Returns paginated accessibility issues for a specific test case within an Automated Test build.
       operationId: getAccessibilityAutomatedTestBuildTestCaseIssues
       parameters:
         - name: thBuildId

@@ -172,6 +172,7 @@ for (const { product, baseUrl } of productSpecs) {
   try {
     const src = await generateClientModule({
       specPath,
+      product,
       className: `Generated${toPascal(product)}Client`,
       typesImportPath: `./${product}`,
       registry,

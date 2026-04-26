@@ -406,7 +406,8 @@ export type GetAppAutomateProjectBadgeKeyError = HttpError<
 >;
 
 export class GeneratedAppAutomateClient extends APIClient {
-getAppAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateBuild"]["responses"][200]["content"]["application/json"] & Record<"build", unknown>)["build"]>> {
+/** Fetches a build */
+  getBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateBuild"]["responses"][200]["content"]["application/json"] & Record<"build", unknown>)["build"]>> {
     return (this.execute({
       path: "/app-automate/builds/{buildId}.json",
       params: { path: { buildId: buildId } },
@@ -422,7 +423,8 @@ getAppAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCame
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateBuild"]["responses"][200]["content"]["application/json"] & Record<"build", unknown>)["build"]>>;
   }
 
-updateAppAutomateBuild(buildId: string, body: DeepCamelCase<operations["updateAppAutomateBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateAppAutomateBuild"]["responses"][200]["content"]["application/json"]>> {
+/** Update the tag of your build after the build is complete. To delete a build tag, simply pass an empty string as value for build_tag. */
+  updateBuild(buildId: string, body: DeepCamelCase<operations["updateAppAutomateBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateAppAutomateBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/builds/{buildId}.json",
       params: { path: { buildId: buildId } },
@@ -438,7 +440,8 @@ updateAppAutomateBuild(buildId: string, body: DeepCamelCase<operations["updateAp
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateAppAutomateBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAppAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateBuild"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a build on the server. Please note that deleting a build will delete all the sessions contained within it. Builds once deleted cannot be recovered */
+  deleteBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/builds/{buildId}.json",
       params: { path: { buildId: buildId } },
@@ -454,7 +457,8 @@ deleteAppAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<DeepC
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAppAutomateBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateMediaFilesByCustomId(customId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateMediaFilesByCustomId"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of recently uploaded media files by custom ID */
+  getMediaFilesByCustomId(customId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateMediaFilesByCustomId"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/recent_media_files/{customId}",
       params: { path: { customId: customId } },
@@ -470,7 +474,8 @@ getAppAutomateMediaFilesByCustomId(customId: string, options?: ExecuteOptions): 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateMediaFilesByCustomId"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateSessionLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Access the logs for the session in textual format. It includes information about the test session’s desired capabilities and detailed information about every request and response. You can view all the steps executed in the test and troubleshoot errors for any failed steps. */
+  getSessionLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/logs",
       params: { path: { buildId: buildId, sessionId: sessionId } },
@@ -486,7 +491,8 @@ getAppAutomateSessionLogs(buildId: string, sessionId: string, options?: ExecuteO
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-getAppAutomateApps(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateApps"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of recently uploaded apps */
+  getApps(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateApps"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/recent_apps",
       params: undefined,
@@ -502,7 +508,8 @@ getAppAutomateApps(options?: ExecuteOptions): Promise<DeepCamelCase<operations["
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateApps"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateGroupMediaFiles(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateGroupMediaFiles"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of recently uploaded media files for the entire group */
+  getGroupMediaFiles(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateGroupMediaFiles"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/recent_group_media",
       params: undefined,
@@ -518,7 +525,8 @@ getAppAutomateGroupMediaFiles(options?: ExecuteOptions): Promise<DeepCamelCase<o
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateGroupMediaFiles"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateXCUITestApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"] & Record<"app", unknown>)["app"]>> {
+/** Get details of an uploaded XCUITest app */
+  getXCUITestApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"] & Record<"app", unknown>)["app"]>> {
     return (this.execute({
       path: "/app-automate/xcuitest/v2/apps/{appId}",
       params: { path: { appId: appId } },
@@ -534,7 +542,8 @@ getAppAutomateXCUITestApp(appId: string, options?: ExecuteOptions): Promise<Deep
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"] & Record<"app", unknown>)["app"]>>;
   }
 
-deleteAppAutomateXCUITestApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>> {
+/** Delete an app that was previously uploaded to BrowserStack. Note that apps once deleted cannot be recovered. */
+  deleteXCUITestApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/xcuitest/v2/apps/{appId}",
       params: { path: { appId: appId } },
@@ -550,7 +559,8 @@ deleteAppAutomateXCUITestApp(appId: string, options?: ExecuteOptions): Promise<D
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateNetworkLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateNetworkLogs"]["responses"][200]["content"]["application/json"]>> {
+/** Access the network logs for your session. These logs capture network data such as network traffic, latency, HTTP requests/responses in the HAR (HTTP Archive) format. You can identify any performance bottlenecks or debug failed REST API responses. Network logs are disabled by default. */
+  getNetworkLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateNetworkLogs"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/networklogs",
       params: { path: { buildId: buildId, sessionId: sessionId } },
@@ -566,7 +576,8 @@ getAppAutomateNetworkLogs(buildId: string, sessionId: string, options?: ExecuteO
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateNetworkLogs"]["responses"][200]["content"]["application/json"]>>;
   }
 
-uploadAppAutomateBuildTerminalLogs(buildId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Upload terminal logs for your build. */
+  uploadBuildTerminalLogs(buildId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/app-automate/builds/{buildId}/terminallogs",
       params: { path: { buildId: buildId } },
@@ -582,7 +593,8 @@ uploadAppAutomateBuildTerminalLogs(buildId: string, body: ({ file: Blob } | { ur
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-uploadAppAutomateFlutterAndroidApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>> {
+/** Upload the application under test (AUT) for Flutter testing. */
+  uploadFlutterAndroidApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/android/app",
       params: undefined,
@@ -598,7 +610,8 @@ uploadAppAutomateFlutterAndroidApp(body: ({ file: Blob } | { url: string }) & { 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["uploadAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-uploadAppAutomateDetoxAndroidApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateDetoxAndroidApp"]["responses"][200]["content"]["application/json"]>> {
+/** Upload the application under test (AUT) for Detox Android testing. */
+  uploadDetoxAndroidApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateDetoxAndroidApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/detox/v2/android/app",
       params: undefined,
@@ -614,7 +627,8 @@ uploadAppAutomateDetoxAndroidApp(body: ({ file: Blob } | { url: string }) & { fi
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["uploadAppAutomateDetoxAndroidApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateXCUITestApps(scope?: string, customId?: string, limit?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateXCUITestApps"]["responses"][200]["content"]["application/json"] & Record<"apps", unknown>)["apps"]>> {
+/** Fetches list of recently uploaded XCUITest apps */
+  getXCUITestApps(scope?: string, customId?: string, limit?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateXCUITestApps"]["responses"][200]["content"]["application/json"] & Record<"apps", unknown>)["apps"]>> {
     return (this.execute({
       path: "/app-automate/xcuitest/v2/apps",
       params: { query: { "scope": scope, "custom_id": customId, "limit": limit } },
@@ -630,7 +644,8 @@ getAppAutomateXCUITestApps(scope?: string, customId?: string, limit?: string, op
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateXCUITestApps"]["responses"][200]["content"]["application/json"] & Record<"apps", unknown>)["apps"]>>;
   }
 
-uploadAppAutomateSessionTerminalLogs(sessionId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Upload terminal logs for your session. */
+  uploadSessionTerminalLogs(sessionId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/app-automate/sessions/{sessionId}/terminallogs",
       params: { path: { sessionId: sessionId } },
@@ -646,7 +661,8 @@ uploadAppAutomateSessionTerminalLogs(sessionId: string, body: ({ file: Blob } | 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-getAppAutomatePlan(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomatePlan"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches App Automate plan details */
+  getPlan(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomatePlan"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/plan.json",
       params: undefined,
@@ -662,7 +678,8 @@ getAppAutomatePlan(options?: ExecuteOptions): Promise<DeepCamelCase<operations["
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomatePlan"]["responses"][200]["content"]["application/json"]>>;
   }
 
-uploadAppAutomateFlutteriOSApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>> {
+/** Upload the application under test (AUT) for Flutter iOS testing in .zip format. */
+  uploadFlutteriOSApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/ios/test-package",
       params: undefined,
@@ -678,7 +695,8 @@ uploadAppAutomateFlutteriOSApp(body: ({ file: Blob } | { url: string }) & { file
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["uploadAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-uploadAppAutomateDetoxAndroidAppClient(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateDetoxAndroidAppClient"]["responses"][200]["content"]["application/json"]>> {
+/** Upload the app client under test for Detox Android testing. */
+  uploadDetoxAndroidAppClient(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateDetoxAndroidAppClient"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/detox/v2/android/app-client",
       params: undefined,
@@ -694,7 +712,8 @@ uploadAppAutomateDetoxAndroidAppClient(body: ({ file: Blob } | { url: string }) 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["uploadAppAutomateDetoxAndroidAppClient"]["responses"][200]["content"]["application/json"]>>;
   }
 
-uploadAppAutomateXCUITestApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>> {
+/** Upload the application under test (AUT) for XCUITest testing. */
+  uploadXCUITestApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/xcuitest/v2/app",
       params: undefined,
@@ -710,7 +729,8 @@ uploadAppAutomateXCUITestApp(body: ({ file: Blob } | { url: string }) & { fileNa
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["uploadAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
+/** Specific information about a particular project can be queried using the project ID */
+  getProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
     return (this.execute({
       path: "/app-automate/projects/{projectId}.json",
       params: { path: { projectId: projectId } },
@@ -726,7 +746,8 @@ getAppAutomateProject(projectId: string, options?: ExecuteOptions): Promise<Deep
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>>;
   }
 
-updateAppAutomateProject(projectId: string, body: DeepCamelCase<operations["updateAppAutomateProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateAppAutomateProject"]["responses"][200]["content"]["application/json"]>> {
+/** Update the name of your project after the project is complete */
+  updateProject(projectId: string, body: DeepCamelCase<operations["updateAppAutomateProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateAppAutomateProject"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/projects/{projectId}.json",
       params: { path: { projectId: projectId } },
@@ -742,7 +763,8 @@ updateAppAutomateProject(projectId: string, body: DeepCamelCase<operations["upda
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateAppAutomateProject"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAppAutomateProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateProject"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a project on the server using the DELETE method. Please note that to delete a project, it needs to be empty of builds and sessions, and projects once deleted cannot be recovered */
+  deleteProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateProject"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/projects/{projectId}.json",
       params: { path: { projectId: projectId } },
@@ -758,7 +780,8 @@ deleteAppAutomateProject(projectId: string, options?: ExecuteOptions): Promise<D
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAppAutomateProject"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateDevices(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateDevices"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of devices supported by App Automate */
+  getDevices(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateDevices"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/devices.json",
       params: undefined,
@@ -774,7 +797,8 @@ getAppAutomateDevices(options?: ExecuteOptions): Promise<DeepCamelCase<operation
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateDevices"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateAppiumLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Access the Appium logs for your session. These are logs generated by the Appium server and contain the details about your each Appium command execution in the test session. You can troubleshoot any errors in case your test session failed. */
+  getAppiumLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/appiumlogs",
       params: { path: { buildId: buildId, sessionId: sessionId } },
@@ -790,7 +814,8 @@ getAppAutomateAppiumLogs(buildId: string, sessionId: string, options?: ExecuteOp
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-deleteAppAutomateApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateApp"]["responses"][200]["content"]["application/json"]>> {
+/** Delete an app that was previously uploaded to BrowserStack. Note that apps once deleted cannot be recovered. */
+  deleteApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/app/delete/{appId}",
       params: { path: { appId: appId } },
@@ -806,7 +831,8 @@ deleteAppAutomateApp(appId: string, options?: ExecuteOptions): Promise<DeepCamel
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAppAutomateApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateFlutterAndroidApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"] & Record<"app", unknown>)["app"]>> {
+/** Get details of an uploaded Flutter app */
+  getFlutterAndroidApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"] & Record<"app", unknown>)["app"]>> {
     return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/android/apps/{appId}",
       params: { path: { appId: appId } },
@@ -822,7 +848,8 @@ getAppAutomateFlutterAndroidApp(appId: string, options?: ExecuteOptions): Promis
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"] & Record<"app", unknown>)["app"]>>;
   }
 
-deleteAppAutomateFlutterAndroidApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>> {
+/** Delete an app that was previously uploaded to BrowserStack. Note that apps once deleted cannot be recovered. */
+  deleteFlutterAndroidApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/android/apps/{appId}",
       params: { path: { appId: appId } },
@@ -838,7 +865,8 @@ deleteAppAutomateFlutterAndroidApp(appId: string, options?: ExecuteOptions): Pro
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAppAutomateFlutterAndroidApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-uploadAppAutomateMediaFile(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]>> {
+/** Upload a media file you want to use in your tests */
+  uploadMediaFile(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/upload-media",
       params: undefined,
@@ -854,7 +882,8 @@ uploadAppAutomateMediaFile(body: ({ file: Blob } | { url: string }) & { fileName
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["uploadAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateEspressoApps(scope?: string, customId?: string, limit?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateEspressoApps"]["responses"][200]["content"]["application/json"] & Record<"apps", unknown>)["apps"]>> {
+/** Fetches list of recently uploaded Espresso apps */
+  getEspressoApps(scope?: string, customId?: string, limit?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateEspressoApps"]["responses"][200]["content"]["application/json"] & Record<"apps", unknown>)["apps"]>> {
     return (this.execute({
       path: "/app-automate/espresso/v2/apps",
       params: { query: { "scope": scope, "custom_id": customId, "limit": limit } },
@@ -870,7 +899,8 @@ getAppAutomateEspressoApps(scope?: string, customId?: string, limit?: string, op
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateEspressoApps"]["responses"][200]["content"]["application/json"] & Record<"apps", unknown>)["apps"]>>;
   }
 
-getAppAutomateAppProfilingDataV2(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateAppProfilingDataV2"]["responses"][200]["content"]["application/json"]>> {
+/** Access the detailed app profling metrics such as installed app size, UI rendering metrics, resource consumption metrics, etc. */
+  getAppProfilingDataV2(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateAppProfilingDataV2"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling/v2",
       params: { path: { buildId: buildId, sessionId: sessionId } },
@@ -886,7 +916,8 @@ getAppAutomateAppProfilingDataV2(buildId: string, sessionId: string, options?: E
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateAppProfilingDataV2"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
+/** Get details of a test session including its status and debugging information such as Appium logs and test video recording */
+  getSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
     return (this.execute({
       path: "/app-automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
@@ -902,7 +933,8 @@ getAppAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<Deep
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>>;
   }
 
-updateAppAutomateSession(sessionId: string, body: DeepCamelCase<operations["updateAppAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateAppAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
+/** Set the status for a session. You can mark test status as passed or failed along with a reason. */
+  updateSession(sessionId: string, body: DeepCamelCase<operations["updateAppAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateAppAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
     return (this.execute({
       path: "/app-automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
@@ -918,7 +950,8 @@ updateAppAutomateSession(sessionId: string, body: DeepCamelCase<operations["upda
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["updateAppAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>>;
   }
 
-deleteAppAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateSession"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a session on the server. Sessions once deleted cannot be recovered */
+  deleteSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateSession"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
@@ -934,7 +967,8 @@ deleteAppAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<D
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAppAutomateSession"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateProjects(limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateProjects"]["responses"][200]["content"]["application/json"]>> {
+/** Fetch the last 10 projects or your BrowserStack group. You can also limit the number of projects and paginate through your data */
+  getProjects(limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateProjects"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/projects.json",
       params: { query: { "limit": limit, "offset": offset, "status": status } },
@@ -950,7 +984,8 @@ getAppAutomateProjects(limit?: string, offset?: string, status?: string, options
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateProjects"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAppAutomateMediaFile(mediaId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of recently uploaded media files for the entire group */
+  deleteMediaFile(mediaId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/custom_media/delete/{mediaId}",
       params: { path: { mediaId: mediaId } },
@@ -966,7 +1001,8 @@ deleteAppAutomateMediaFile(mediaId: string, options?: ExecuteOptions): Promise<D
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAppAutomateMediaFile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateEspressoApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"] & Record<"app", unknown>)["app"]>> {
+/** Get details of an uploaded Espresso app */
+  getEspressoApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"] & Record<"app", unknown>)["app"]>> {
     return (this.execute({
       path: "/app-automate/espresso/v2/apps/{appId}",
       params: { path: { appId: appId } },
@@ -982,7 +1018,8 @@ getAppAutomateEspressoApp(appId: string, options?: ExecuteOptions): Promise<Deep
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"] & Record<"app", unknown>)["app"]>>;
   }
 
-deleteAppAutomateEspressoApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>> {
+/** Delete an app that was previously uploaded to BrowserStack. Note that apps once deleted cannot be recovered. */
+  deleteEspressoApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/espresso/v2/apps/{appId}",
       params: { path: { appId: appId } },
@@ -998,7 +1035,8 @@ deleteAppAutomateEspressoApp(appId: string, options?: ExecuteOptions): Promise<D
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateMediaFiles(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of recently uploaded media files */
+  getMediaFiles(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/recent_media_files",
       params: undefined,
@@ -1014,7 +1052,8 @@ getAppAutomateMediaFiles(options?: ExecuteOptions): Promise<DeepCamelCase<operat
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateFlutteriOSApps(scope?: string, customId?: string, limit?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateFlutteriOSApps"]["responses"][200]["content"]["application/json"] & Record<"test_packages", unknown>)["test_packages"]>> {
+/** Fetches list of recently uploaded Flutter iOS test packages */
+  getFlutteriOSApps(scope?: string, customId?: string, limit?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateFlutteriOSApps"]["responses"][200]["content"]["application/json"] & Record<"test_packages", unknown>)["test_packages"]>> {
     return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/ios/test-packages",
       params: { query: { "scope": scope, "custom_id": customId, "limit": limit } },
@@ -1030,7 +1069,8 @@ getAppAutomateFlutteriOSApps(scope?: string, customId?: string, limit?: string, 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateFlutteriOSApps"]["responses"][200]["content"]["application/json"] & Record<"test_packages", unknown>)["test_packages"]>>;
   }
 
-uploadAppAutomateApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateApp"]["responses"][200]["content"]["application/json"]>> {
+/** Upload the application under test (AUT) for Appium testing. */
+  uploadApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/upload",
       params: undefined,
@@ -1046,7 +1086,8 @@ uploadAppAutomateApp(body: ({ file: Blob } | { url: string }) & { fileName: stri
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["uploadAppAutomateApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateGroupApps(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateGroupApps"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of recently uploaded apps for the entire group */
+  getGroupApps(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateGroupApps"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/recent_group_apps",
       params: undefined,
@@ -1062,7 +1103,8 @@ getAppAutomateGroupApps(options?: ExecuteOptions): Promise<DeepCamelCase<operati
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateGroupApps"]["responses"][200]["content"]["application/json"]>>;
   }
 
-uploadAppAutomateEspressoApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>> {
+/** Upload the application under test (AUT) for Espresso testing. */
+  uploadEspressoApp(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/espresso/v2/app",
       params: undefined,
@@ -1078,7 +1120,8 @@ uploadAppAutomateEspressoApp(body: ({ file: Blob } | { url: string }) & { fileNa
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["uploadAppAutomateEspressoApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateAppsByCustomId(customId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateAppsByCustomId"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of uploaded apps by custom ID */
+  getAppsByCustomId(customId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateAppsByCustomId"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/recent_apps/{customId}",
       params: { path: { customId: customId } },
@@ -1094,7 +1137,8 @@ getAppAutomateAppsByCustomId(customId: string, options?: ExecuteOptions): Promis
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateAppsByCustomId"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateFlutterAndroidApps(scope?: string, customId?: string, limit?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateFlutterAndroidApps"]["responses"][200]["content"]["application/json"] & Record<"apps", unknown>)["apps"]>> {
+/** Fetches list of recently uploaded Flutter apps */
+  getFlutterAndroidApps(scope?: string, customId?: string, limit?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateFlutterAndroidApps"]["responses"][200]["content"]["application/json"] & Record<"apps", unknown>)["apps"]>> {
     return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/android/apps",
       params: { query: { "scope": scope, "custom_id": customId, "limit": limit } },
@@ -1110,7 +1154,8 @@ getAppAutomateFlutterAndroidApps(scope?: string, customId?: string, limit?: stri
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateFlutterAndroidApps"]["responses"][200]["content"]["application/json"] & Record<"apps", unknown>)["apps"]>>;
   }
 
-getAppAutomateDeviceLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Access the device logs for your session. These are system logs specific to your application generated by the OS(Android/iOS) and can be helpful for debugging any application crashes during test execution. */
+  getDeviceLogs(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/devicelogs",
       params: { path: { buildId: buildId, sessionId: sessionId } },
@@ -1126,7 +1171,8 @@ getAppAutomateDeviceLogs(buildId: string, sessionId: string, options?: ExecuteOp
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-getAppAutomateAppProfilingDataV1(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateAppProfilingDataV1"]["responses"][200]["content"]["application/json"]>> {
+/** Access the app profiling logs to view the resource consumption (CPU, memory, battery, and network) by your app on the device. The logs are only available for Android. */
+  getAppProfilingDataV1(buildId: string, sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAppAutomateAppProfilingDataV1"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling",
       params: { path: { buildId: buildId, sessionId: sessionId } },
@@ -1142,7 +1188,8 @@ getAppAutomateAppProfilingDataV1(buildId: string, sessionId: string, options?: E
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateAppProfilingDataV1"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateBuilds(projectId?: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<Array<(operations["getAppAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>>> {
+/** Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number of builds and paginate through your data */
+  getBuilds(projectId?: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<Array<(operations["getAppAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>>> {
     return (this.execute({
       path: "/app-automate/builds.json",
       params: { query: { "projectId": projectId, "limit": limit, "offset": offset, "status": status } },
@@ -1158,7 +1205,8 @@ getAppAutomateBuilds(projectId?: string, limit?: string, offset?: string, status
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<Array<(operations["getAppAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>>>;
   }
 
-getAppAutomateFlutteriOSApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"] & Record<"test_package", unknown>)["test_package"]>> {
+/** Get details of an uploaded Flutter iOS test package */
+  getFlutteriOSApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"] & Record<"test_package", unknown>)["test_package"]>> {
     return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/ios/test-package/{appId}",
       params: { path: { appId: appId } },
@@ -1174,7 +1222,8 @@ getAppAutomateFlutteriOSApp(appId: string, options?: ExecuteOptions): Promise<De
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"] & Record<"test_package", unknown>)["test_package"]>>;
   }
 
-deleteAppAutomateFlutteriOSApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a Flutter iOS test package that was previously uploaded to BrowserStack. Note that apps once deleted cannot be recovered. */
+  deleteFlutteriOSApp(appId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/app-automate/flutter-integration-tests/v2/ios/test-package/{appId}",
       params: { path: { appId: appId } },
@@ -1190,7 +1239,8 @@ deleteAppAutomateFlutteriOSApp(appId: string, options?: ExecuteOptions): Promise
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAppAutomateProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Fetches the badge key for sharing a public link for the Automate dashboard to view the latest build and sessions for that project */
+  getProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/app-automate/projects/{projectId}/badge_key",
       params: { path: { projectId: projectId } },

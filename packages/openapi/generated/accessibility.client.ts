@@ -51,7 +51,8 @@ export type GetAccessibilityAutomatedTestBuildTestCaseSummaryError = HttpError<u
 export type GetAccessibilityAutomatedTestBuildTestCaseIssuesError = HttpError<unknown>;
 
 export class GeneratedAccessibilityClient extends APIClient {
-getAccessibilityWorkflowAnalyzerReports(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReports"]["responses"][200]["content"]["application/json"]>> {
+/** Returns a paginated list of all Workflow Analyzer accessibility reports for your account. */
+  getWorkflowAnalyzerReports(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReports"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/workflow-analyzer/v1/reports",
       params: undefined,
@@ -67,7 +68,8 @@ getAccessibilityWorkflowAnalyzerReports(options?: ExecuteOptions): Promise<DeepC
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReports"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityWorkflowAnalyzerReportSummary(reportId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReportSummary"]["responses"][200]["content"]["application/json"]>> {
+/** Returns the summary for a specific Workflow Analyzer report, including score, issue counts, and scan metadata. */
+  getWorkflowAnalyzerReportSummary(reportId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReportSummary"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/workflow-analyzer/v1/reports/{report_id}",
       params: { path: { report_id: reportId } },
@@ -83,7 +85,8 @@ getAccessibilityWorkflowAnalyzerReportSummary(reportId: number, options?: Execut
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReportSummary"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityWorkflowAnalyzerReportIssues(reportId?: number, taskId?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReportIssues"]["responses"][200]["content"]["application/json"]>> {
+/** Returns the paginated list of accessibility issues for a specific Workflow Analyzer report, optionally filtered by task. */
+  getWorkflowAnalyzerReportIssues(reportId?: number, taskId?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReportIssues"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/workflow-analyzer/v1/reports/issues",
       params: { query: { "report_id": reportId, "task_id": taskId, "next_page": nextPage } },
@@ -99,7 +102,8 @@ getAccessibilityWorkflowAnalyzerReportIssues(reportId?: number, taskId?: string,
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReportIssues"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityAssistedTestReports(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAssistedTestReports"]["responses"][200]["content"]["application/json"]>> {
+/** Returns a paginated list of all Assisted Test accessibility reports for your account. */
+  getAssistedTestReports(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAssistedTestReports"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/assisted-test/v1/reports",
       params: undefined,
@@ -115,7 +119,8 @@ getAccessibilityAssistedTestReports(options?: ExecuteOptions): Promise<DeepCamel
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityAssistedTestReports"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityAssistedTestReportSummary(reportId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAssistedTestReportSummary"]["responses"][200]["content"]["application/json"]>> {
+/** Returns the summary for a specific Assisted Test report, including score, issue counts, and scan metadata. */
+  getAssistedTestReportSummary(reportId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAssistedTestReportSummary"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/assisted-test/v1/reports/{report_id}",
       params: { path: { report_id: reportId } },
@@ -131,7 +136,8 @@ getAccessibilityAssistedTestReportSummary(reportId: number, options?: ExecuteOpt
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityAssistedTestReportSummary"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityAssistedTestReportIssues(reportId?: number, taskId?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAssistedTestReportIssues"]["responses"][200]["content"]["application/json"]>> {
+/** Returns the paginated list of accessibility issues for a specific Assisted Test report, optionally filtered by task. */
+  getAssistedTestReportIssues(reportId?: number, taskId?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAssistedTestReportIssues"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/assisted-test/v1/reports/issues",
       params: { query: { "report_id": reportId, "task_id": taskId, "next_page": nextPage } },
@@ -147,7 +153,8 @@ getAccessibilityAssistedTestReportIssues(reportId?: number, taskId?: string, nex
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityAssistedTestReportIssues"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityWebsiteScannerAuthConfigs(options?: ExecuteOptions): Promise<DeepCamelCase<((operations["getAccessibilityWebsiteScannerAuthConfigs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"authConfigs", unknown>)["authConfigs"]>> {
+/** Returns all saved authentication configurations used by the Website Scanner for login-protected pages. */
+  getWebsiteScannerAuthConfigs(options?: ExecuteOptions): Promise<DeepCamelCase<((operations["getAccessibilityWebsiteScannerAuthConfigs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"authConfigs", unknown>)["authConfigs"]>> {
     return (this.execute({
       path: "/api/website-scanner/v1/auth_configs",
       params: undefined,
@@ -163,7 +170,8 @@ getAccessibilityWebsiteScannerAuthConfigs(options?: ExecuteOptions): Promise<Dee
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<((operations["getAccessibilityWebsiteScannerAuthConfigs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"authConfigs", unknown>)["authConfigs"]>>;
   }
 
-createAccessibilityWebsiteScannerAuthConfig(body: DeepCamelCase<operations["createAccessibilityWebsiteScannerAuthConfig"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createAccessibilityWebsiteScannerAuthConfig"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+/** Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans. */
+  createWebsiteScannerAuthConfig(body: DeepCamelCase<operations["createAccessibilityWebsiteScannerAuthConfig"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createAccessibilityWebsiteScannerAuthConfig"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
     return (this.execute({
       path: "/api/website-scanner/v1/auth_configs",
       params: undefined,
@@ -179,7 +187,8 @@ createAccessibilityWebsiteScannerAuthConfig(body: DeepCamelCase<operations["crea
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["createAccessibilityWebsiteScannerAuthConfig"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
   }
 
-getAccessibilityWebsiteScannerScans(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScans"]["responses"][200]["content"]["application/json"]>> {
+/** Returns a paginated list of all configured Website Scanner scans for your account. */
+  getWebsiteScannerScans(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScans"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans",
       params: undefined,
@@ -195,7 +204,8 @@ getAccessibilityWebsiteScannerScans(options?: ExecuteOptions): Promise<DeepCamel
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScans"]["responses"][200]["content"]["application/json"]>>;
   }
 
-createAccessibilityWebsiteScannerScan(body: DeepCamelCase<operations["createAccessibilityWebsiteScannerScan"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createAccessibilityWebsiteScannerScan"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+/** Creates and triggers a new Website Scanner accessibility scan for the specified URL. */
+  createWebsiteScannerScan(body: DeepCamelCase<operations["createAccessibilityWebsiteScannerScan"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createAccessibilityWebsiteScannerScan"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans",
       params: undefined,
@@ -211,7 +221,8 @@ createAccessibilityWebsiteScannerScan(body: DeepCamelCase<operations["createAcce
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["createAccessibilityWebsiteScannerScan"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
   }
 
-getAccessibilityWebsiteScannerScanOverview(scanId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanOverview"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+/** Returns the configuration overview for a specific Website Scanner scan, including URL list and scan settings. */
+  getWebsiteScannerScanOverview(scanId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanOverview"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans/{scan_id}/overview",
       params: { path: { scan_id: scanId } },
@@ -227,7 +238,8 @@ getAccessibilityWebsiteScannerScanOverview(scanId: number, options?: ExecuteOpti
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanOverview"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
   }
 
-getAccessibilityWebsiteScannerScanRuns(scanId: number, page?: number, pageSize?: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScanRuns"]["responses"][200]["content"]["application/json"]>> {
+/** Returns a paginated list of all scan runs for a specific Website Scanner scan, including status and issue counts. */
+  getWebsiteScannerScanRuns(scanId: number, page?: number, pageSize?: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScanRuns"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans/{scan_id}/scan_runs",
       params: { path: { scan_id: scanId }, query: { "page": page, "page_size": pageSize } },
@@ -243,7 +255,8 @@ getAccessibilityWebsiteScannerScanRuns(scanId: number, page?: number, pageSize?:
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScanRuns"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityWebsiteScannerScanRunSummary(scanId: number, scanRunId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScanRunSummary"]["responses"][200]["content"]["application/json"]>> {
+/** Returns a detailed summary for a specific scan run, including score, issue counts, and changes since the last run. */
+  getWebsiteScannerScanRunSummary(scanId: number, scanRunId: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScanRunSummary"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}",
       params: { path: { scan_id: scanId, scan_run_id: scanRunId } },
@@ -259,7 +272,8 @@ getAccessibilityWebsiteScannerScanRunSummary(scanId: number, scanRunId: number, 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScanRunSummary"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityWebsiteScannerScanRunStatus(scanId: number, scanRunId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunStatus"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+/** Returns the current execution status of a specific Website Scanner scan run. */
+  getWebsiteScannerScanRunStatus(scanId: number, scanRunId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunStatus"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}/status",
       params: { path: { scan_id: scanId, scan_run_id: scanRunId } },
@@ -275,7 +289,8 @@ getAccessibilityWebsiteScannerScanRunStatus(scanId: number, scanRunId: number, o
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunStatus"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
   }
 
-getAccessibilityWebsiteScannerScanRunIssues(scanId: number, scanRunId?: number, taskId?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScanRunIssues"]["responses"][200]["content"]["application/json"]>> {
+/** Returns paginated accessibility issues found during a specific Website Scanner scan run, optionally filtered by task. */
+  getWebsiteScannerScanRunIssues(scanId: number, scanRunId?: number, taskId?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScanRunIssues"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans/{scan_id}/scan_runs/issues",
       params: { path: { scan_id: scanId }, query: { "scan_run_id": scanRunId, "task_id": taskId, "next_page": nextPage } },
@@ -291,7 +306,8 @@ getAccessibilityWebsiteScannerScanRunIssues(scanId: number, scanRunId?: number, 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityWebsiteScannerScanRunIssues"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityWebsiteScannerScanRunLogs(scanId: number, scanRunId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunLogs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+/** Returns the crawl logs for a specific Website Scanner scan run, including per-URL status, redirects, and errors. */
+  getWebsiteScannerScanRunLogs(scanId: number, scanRunId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunLogs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}/scan_logs",
       params: { path: { scan_id: scanId, scan_run_id: scanRunId } },
@@ -307,7 +323,8 @@ getAccessibilityWebsiteScannerScanRunLogs(scanId: number, scanRunId: number, opt
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunLogs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
   }
 
-getAccessibilityAutomatedTestProjects(nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestProjects"]["responses"][200]["content"]["application/json"]>> {
+/** Returns a paginated list of all Automated Test accessibility projects for your account. */
+  getAutomatedTestProjects(nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestProjects"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/automated-tests/v1/projects",
       params: { query: { "next_page": nextPage } },
@@ -323,7 +340,8 @@ getAccessibilityAutomatedTestProjects(nextPage?: string, options?: ExecuteOption
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestProjects"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityAutomatedTestBuilds(nextPage?: string, projectId?: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestBuilds"]["responses"][200]["content"]["application/json"]>> {
+/** Returns a paginated list of Automated Test accessibility builds, optionally filtered by project. */
+  getAutomatedTestBuilds(nextPage?: string, projectId?: number, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestBuilds"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/automated-tests/v1/builds",
       params: { query: { "next_page": nextPage, "projectId": projectId } },
@@ -339,7 +357,8 @@ getAccessibilityAutomatedTestBuilds(nextPage?: string, projectId?: number, optio
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestBuilds"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityAutomatedTestBuildTestCases(thBuildId: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCases"]["responses"][200]["content"]["application/json"] & Record<"testCases", unknown>)["testCases"]>> {
+/** Returns the paginated list of test cases and their accessibility results for a specific Automated Test build. */
+  getAutomatedTestBuildTestCases(thBuildId: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCases"]["responses"][200]["content"]["application/json"] & Record<"testCases", unknown>)["testCases"]>> {
     return (this.execute({
       path: "/api/automated-tests/v1/builds/{thBuildId}/test-cases",
       params: { path: { thBuildId: thBuildId }, query: { "next_page": nextPage } },
@@ -355,7 +374,8 @@ getAccessibilityAutomatedTestBuildTestCases(thBuildId: string, nextPage?: string
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCases"]["responses"][200]["content"]["application/json"] & Record<"testCases", unknown>)["testCases"]>>;
   }
 
-getAccessibilityAutomatedTestBuildSummary(thBuildId: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+/** Returns the summary for a specific Automated Test build, including score, health stats, and issue counts. */
+  getAutomatedTestBuildSummary(thBuildId: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
     return (this.execute({
       path: "/api/automated-tests/v1/builds/{thBuildId}",
       params: { path: { thBuildId: thBuildId }, query: { "next_page": nextPage } },
@@ -371,7 +391,8 @@ getAccessibilityAutomatedTestBuildSummary(thBuildId: string, nextPage?: string, 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
   }
 
-getAccessibilityAutomatedTestBuildIssues(buildId?: string, taskId?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestBuildIssues"]["responses"][200]["content"]["application/json"]>> {
+/** Returns paginated accessibility issues for a specific Automated Test build, optionally filtered by task. */
+  getAutomatedTestBuildIssues(buildId?: string, taskId?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestBuildIssues"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/automated-tests/v1/builds/issues",
       params: { query: { "build_id": buildId, "task_id": taskId, "next_page": nextPage } },
@@ -387,7 +408,8 @@ getAccessibilityAutomatedTestBuildIssues(buildId?: string, taskId?: string, next
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestBuildIssues"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAccessibilityAutomatedTestBuildTestCaseSummary(thBuildId: string, testCaseId: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCaseSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+/** Returns the accessibility summary for a specific test case within an Automated Test build. */
+  getAutomatedTestBuildTestCaseSummary(thBuildId: string, testCaseId: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCaseSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
     return (this.execute({
       path: "/api/automated-tests/v1/builds/{thBuildId}/test-cases/{test_case_id}",
       params: { path: { thBuildId: thBuildId, test_case_id: testCaseId }, query: { "next_page": nextPage } },
@@ -403,7 +425,8 @@ getAccessibilityAutomatedTestBuildTestCaseSummary(thBuildId: string, testCaseId:
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCaseSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
   }
 
-getAccessibilityAutomatedTestBuildTestCaseIssues(thBuildId: string, testCase?: string, taskId?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestBuildTestCaseIssues"]["responses"][200]["content"]["application/json"]>> {
+/** Returns paginated accessibility issues for a specific test case within an Automated Test build. */
+  getAutomatedTestBuildTestCaseIssues(thBuildId: string, testCase?: string, taskId?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityAutomatedTestBuildTestCaseIssues"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/api/automated-tests/v1/builds/{thBuildId}/issues",
       params: { path: { thBuildId: thBuildId }, query: { "test_case": testCase, "task_id": taskId, "next_page": nextPage } },

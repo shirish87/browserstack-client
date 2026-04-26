@@ -6,6 +6,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * List Workflow Analyzer reports
+         * @description Returns a paginated list of all Workflow Analyzer accessibility reports for your account.
+         */
         get: operations["getAccessibilityWorkflowAnalyzerReports"];
         put?: never;
         post?: never;
@@ -22,6 +26,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Workflow Analyzer report summary
+         * @description Returns the summary for a specific Workflow Analyzer report, including score, issue counts, and scan metadata.
+         */
         get: operations["getAccessibilityWorkflowAnalyzerReportSummary"];
         put?: never;
         post?: never;
@@ -38,6 +46,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Workflow Analyzer report issues
+         * @description Returns the paginated list of accessibility issues for a specific Workflow Analyzer report, optionally filtered by task.
+         */
         get: operations["getAccessibilityWorkflowAnalyzerReportIssues"];
         put?: never;
         post?: never;
@@ -54,6 +66,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * List Assisted Test reports
+         * @description Returns a paginated list of all Assisted Test accessibility reports for your account.
+         */
         get: operations["getAccessibilityAssistedTestReports"];
         put?: never;
         post?: never;
@@ -70,6 +86,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Assisted Test report summary
+         * @description Returns the summary for a specific Assisted Test report, including score, issue counts, and scan metadata.
+         */
         get: operations["getAccessibilityAssistedTestReportSummary"];
         put?: never;
         post?: never;
@@ -86,6 +106,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Assisted Test report issues
+         * @description Returns the paginated list of accessibility issues for a specific Assisted Test report, optionally filtered by task.
+         */
         get: operations["getAccessibilityAssistedTestReportIssues"];
         put?: never;
         post?: never;
@@ -102,8 +126,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * List Website Scanner auth configs
+         * @description Returns all saved authentication configurations used by the Website Scanner for login-protected pages.
+         */
         get: operations["getAccessibilityWebsiteScannerAuthConfigs"];
         put?: never;
+        /**
+         * Create Website Scanner auth config
+         * @description Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans.
+         */
         post: operations["createAccessibilityWebsiteScannerAuthConfig"];
         delete?: never;
         options?: never;
@@ -118,8 +150,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * List Website Scanner scans
+         * @description Returns a paginated list of all configured Website Scanner scans for your account.
+         */
         get: operations["getAccessibilityWebsiteScannerScans"];
         put?: never;
+        /**
+         * Create Website Scanner scan
+         * @description Creates and triggers a new Website Scanner accessibility scan for the specified URL.
+         */
         post: operations["createAccessibilityWebsiteScannerScan"];
         delete?: never;
         options?: never;
@@ -134,6 +174,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Website Scanner scan overview
+         * @description Returns the configuration overview for a specific Website Scanner scan, including URL list and scan settings.
+         */
         get: operations["getAccessibilityWebsiteScannerScanOverview"];
         put?: never;
         post?: never;
@@ -150,6 +194,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * List Website Scanner scan runs
+         * @description Returns a paginated list of all scan runs for a specific Website Scanner scan, including status and issue counts.
+         */
         get: operations["getAccessibilityWebsiteScannerScanRuns"];
         put?: never;
         post?: never;
@@ -166,6 +214,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Website Scanner scan run summary
+         * @description Returns a detailed summary for a specific scan run, including score, issue counts, and changes since the last run.
+         */
         get: operations["getAccessibilityWebsiteScannerScanRunSummary"];
         put?: never;
         post?: never;
@@ -182,6 +234,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Website Scanner scan run status
+         * @description Returns the current execution status of a specific Website Scanner scan run.
+         */
         get: operations["getAccessibilityWebsiteScannerScanRunStatus"];
         put?: never;
         post?: never;
@@ -198,6 +254,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Website Scanner scan run issues
+         * @description Returns paginated accessibility issues found during a specific Website Scanner scan run, optionally filtered by task.
+         */
         get: operations["getAccessibilityWebsiteScannerScanRunIssues"];
         put?: never;
         post?: never;
@@ -214,6 +274,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Website Scanner scan run logs
+         * @description Returns the crawl logs for a specific Website Scanner scan run, including per-URL status, redirects, and errors.
+         */
         get: operations["getAccessibilityWebsiteScannerScanRunLogs"];
         put?: never;
         post?: never;
@@ -230,6 +294,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * List Automated Test projects
+         * @description Returns a paginated list of all Automated Test accessibility projects for your account.
+         */
         get: operations["getAccessibilityAutomatedTestProjects"];
         put?: never;
         post?: never;
@@ -246,6 +314,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * List Automated Test builds
+         * @description Returns a paginated list of Automated Test accessibility builds, optionally filtered by project.
+         */
         get: operations["getAccessibilityAutomatedTestBuilds"];
         put?: never;
         post?: never;
@@ -262,6 +334,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * List test cases for an Automated Test build
+         * @description Returns the paginated list of test cases and their accessibility results for a specific Automated Test build.
+         */
         get: operations["getAccessibilityAutomatedTestBuildTestCases"];
         put?: never;
         post?: never;
@@ -278,6 +354,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Automated Test build summary
+         * @description Returns the summary for a specific Automated Test build, including score, health stats, and issue counts.
+         */
         get: operations["getAccessibilityAutomatedTestBuildSummary"];
         put?: never;
         post?: never;
@@ -294,6 +374,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Automated Test build issues
+         * @description Returns paginated accessibility issues for a specific Automated Test build, optionally filtered by task.
+         */
         get: operations["getAccessibilityAutomatedTestBuildIssues"];
         put?: never;
         post?: never;
@@ -310,6 +394,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Automated Test case summary
+         * @description Returns the accessibility summary for a specific test case within an Automated Test build.
+         */
         get: operations["getAccessibilityAutomatedTestBuildTestCaseSummary"];
         put?: never;
         post?: never;
@@ -326,6 +414,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * Get Automated Test case issues
+         * @description Returns paginated accessibility issues for a specific test case within an Automated Test build.
+         */
         get: operations["getAccessibilityAutomatedTestBuildTestCaseIssues"];
         put?: never;
         post?: never;

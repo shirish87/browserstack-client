@@ -51,7 +51,8 @@ export type ToggleTestReportingQualityGateProfileError = HttpError<unknown>;
 export type UploadTestReportingReportError = HttpError<unknown>;
 
 export class GeneratedTestReportingClient extends APIClient {
-getTestReportingProjects(nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjects"]["responses"][200]["content"]["application/json"]>> {
+/** Get Project List */
+  getProjects(nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjects"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/projects",
       params: { query: { "next_page": nextPage } },
@@ -67,7 +68,8 @@ getTestReportingProjects(nextPage?: string, options?: ExecuteOptions): Promise<D
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingProjects"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingProjectBuilds(projectId: number, uniqueBuildNames?: string, buildTags?: string, buildStatus?: string, users?: string, frameworks?: string, isArchived?: string, dateRange?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjectBuilds"]["responses"][200]["content"]["application/json"]>> {
+/** Get Build List for Project */
+  getProjectBuilds(projectId: number, uniqueBuildNames?: string, buildTags?: string, buildStatus?: string, users?: string, frameworks?: string, isArchived?: string, dateRange?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjectBuilds"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/projects/{projectId}/builds",
       params: { path: { projectId: projectId }, query: { "unique_build_names": uniqueBuildNames, "build_tags": buildTags, "build_status": buildStatus, "users": users, "frameworks": frameworks, "is_archived": isArchived, "date_range": dateRange, "next_page": nextPage } },
@@ -83,7 +85,8 @@ getTestReportingProjectBuilds(projectId: number, uniqueBuildNames?: string, buil
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingProjectBuilds"]["responses"][200]["content"]["application/json"]>>;
   }
 
-startTestReportingBuild(body: DeepCamelCase<operations["startTestReportingBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["startTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
+/** Start Build (ingestion) */
+  startBuild(body: DeepCamelCase<operations["startTestReportingBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["startTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/start",
       params: undefined,
@@ -99,7 +102,8 @@ startTestReportingBuild(body: DeepCamelCase<operations["startTestReportingBuild"
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["startTestReportingBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingLatestBuild(projectName?: string, buildName?: string, userName?: string, buildTags?: string, framework?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingLatestBuild"]["responses"][200]["content"]["application/json"]>> {
+/** Get Latest Build */
+  getLatestBuild(projectName?: string, buildName?: string, userName?: string, buildTags?: string, framework?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingLatestBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/latest",
       params: { query: { "project_name": projectName, "build_name": buildName, "user_name": userName, "build_tags": buildTags, "framework": framework } },
@@ -115,7 +119,8 @@ getTestReportingLatestBuild(projectName?: string, buildName?: string, userName?:
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingLatestBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
+/** Get Build Details */
+  getBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildId}",
       params: { path: { buildId: buildId } },
@@ -131,7 +136,8 @@ getTestReportingBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCa
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-updateTestReportingBuild(buildId: string, body: DeepCamelCase<operations["updateTestReportingBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
+/** Update Build Metadata */
+  updateBuild(buildId: string, body: DeepCamelCase<operations["updateTestReportingBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildId}",
       params: { path: { buildId: buildId } },
@@ -147,7 +153,8 @@ updateTestReportingBuild(buildId: string, body: DeepCamelCase<operations["update
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateTestReportingBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-finishTestReportingBuild(buildHashedId: string, body: DeepCamelCase<operations["finishTestReportingBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["finishTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
+/** Finish Build (ingestion) */
+  finishBuild(buildHashedId: string, body: DeepCamelCase<operations["finishTestReportingBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["finishTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/finish",
       params: { path: { buildHashedId: buildHashedId } },
@@ -163,7 +170,8 @@ finishTestReportingBuild(buildHashedId: string, body: DeepCamelCase<operations["
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["finishTestReportingBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-startTestReportingTestRun(buildHashedId: string, body: DeepCamelCase<operations["startTestReportingTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["startTestReportingTestRun"]["responses"][200]["content"]["application/json"]>> {
+/** Start Test Run (ingestion) */
+  startTestRun(buildHashedId: string, body: DeepCamelCase<operations["startTestReportingTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["startTestReportingTestRun"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/tests/start",
       params: { path: { buildHashedId: buildHashedId } },
@@ -179,7 +187,8 @@ startTestReportingTestRun(buildHashedId: string, body: DeepCamelCase<operations[
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["startTestReportingTestRun"]["responses"][200]["content"]["application/json"]>>;
   }
 
-finishTestReportingTestRun(buildHashedId: string, testRunUuid: string, body: DeepCamelCase<operations["finishTestReportingTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["finishTestReportingTestRun"]["responses"][200]["content"]["application/json"]>> {
+/** Finish Test Run (ingestion) */
+  finishTestRun(buildHashedId: string, testRunUuid: string, body: DeepCamelCase<operations["finishTestReportingTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["finishTestReportingTestRun"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/tests/{testRunUuid}/finish",
       params: { path: { buildHashedId: buildHashedId, testRunUuid: testRunUuid } },
@@ -195,7 +204,8 @@ finishTestReportingTestRun(buildHashedId: string, testRunUuid: string, body: Dee
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["finishTestReportingTestRun"]["responses"][200]["content"]["application/json"]>>;
   }
 
-startTestReportingHookRun(buildHashedId: string, body: DeepCamelCase<operations["startTestReportingHookRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["startTestReportingHookRun"]["responses"][200]["content"]["application/json"]>> {
+/** Start Hook Run (ingestion) */
+  startHookRun(buildHashedId: string, body: DeepCamelCase<operations["startTestReportingHookRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["startTestReportingHookRun"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/hooks/start",
       params: { path: { buildHashedId: buildHashedId } },
@@ -211,7 +221,8 @@ startTestReportingHookRun(buildHashedId: string, body: DeepCamelCase<operations[
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["startTestReportingHookRun"]["responses"][200]["content"]["application/json"]>>;
   }
 
-finishTestReportingHookRun(buildHashedId: string, hookRunUuid: string, body: DeepCamelCase<operations["finishTestReportingHookRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["finishTestReportingHookRun"]["responses"][200]["content"]["application/json"]>> {
+/** Finish Hook Run (ingestion) */
+  finishHookRun(buildHashedId: string, hookRunUuid: string, body: DeepCamelCase<operations["finishTestReportingHookRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["finishTestReportingHookRun"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/hooks/{hookRunUuid}/finish",
       params: { path: { buildHashedId: buildHashedId, hookRunUuid: hookRunUuid } },
@@ -227,7 +238,8 @@ finishTestReportingHookRun(buildHashedId: string, hookRunUuid: string, body: Dee
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["finishTestReportingHookRun"]["responses"][200]["content"]["application/json"]>>;
   }
 
-addTestReportingBuildLogs(buildHashedId: string, body: DeepCamelCase<operations["addTestReportingBuildLogs"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["addTestReportingBuildLogs"]["responses"][200]["content"]["application/json"]>> {
+/** Add Build Logs (ingestion) */
+  addBuildLogs(buildHashedId: string, body: DeepCamelCase<operations["addTestReportingBuildLogs"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["addTestReportingBuildLogs"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/logs",
       params: { path: { buildHashedId: buildHashedId } },
@@ -243,7 +255,8 @@ addTestReportingBuildLogs(buildHashedId: string, body: DeepCamelCase<operations[
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["addTestReportingBuildLogs"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingTestRuns(buildId: string, reRuns?: string, testStatuses?: string, isFlaky?: string, isNewFailure?: string, sort?: string, order?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingTestRuns"]["responses"][200]["content"]["application/json"]>> {
+/** Get Test List */
+  getTestRuns(buildId: string, reRuns?: string, testStatuses?: string, isFlaky?: string, isNewFailure?: string, sort?: string, order?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingTestRuns"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildId}/testRuns",
       params: { path: { buildId: buildId }, query: { "re_runs": reRuns, "test_statuses": testStatuses, "is_flaky": isFlaky, "is_new_failure": isNewFailure, "sort": sort, "order": order, "next_page": nextPage } },
@@ -259,7 +272,8 @@ getTestReportingTestRuns(buildId: string, reRuns?: string, testStatuses?: string
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingTestRuns"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingSelfHealingReport(buildUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingSelfHealingReport"]["responses"][200]["content"]["application/json"]>> {
+/** Get Self-Healing Report */
+  getSelfHealingReport(buildUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingSelfHealingReport"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildUuid}/selfHealingReport",
       params: { path: { buildUuid: buildUuid } },
@@ -275,7 +289,8 @@ getTestReportingSelfHealingReport(buildUuid: string, options?: ExecuteOptions): 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingSelfHealingReport"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingQualityGateStatus(buildUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingQualityGateStatus"]["responses"][200]["content"]["application/json"]>> {
+/** Get Quality Gate Status */
+  getQualityGateStatus(buildUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingQualityGateStatus"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{buildUuid}",
       params: { path: { buildUuid: buildUuid } },
@@ -291,7 +306,8 @@ getTestReportingQualityGateStatus(buildUuid: string, options?: ExecuteOptions): 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingQualityGateStatus"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingQualityGateSettings(projectName: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingQualityGateSettings"]["responses"][200]["content"]["application/json"]>> {
+/** Get Quality Gate Settings */
+  getQualityGateSettings(projectName: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingQualityGateSettings"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/settings",
       params: { path: { projectName: projectName } },
@@ -307,7 +323,8 @@ getTestReportingQualityGateSettings(projectName: string, options?: ExecuteOption
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingQualityGateSettings"]["responses"][200]["content"]["application/json"]>>;
   }
 
-updateTestReportingQualityGateSettings(projectName: string, body: DeepCamelCase<operations["updateTestReportingQualityGateSettings"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateTestReportingQualityGateSettings"]["responses"][200]["content"]["application/json"]>> {
+/** Update Quality Gate Settings */
+  updateQualityGateSettings(projectName: string, body: DeepCamelCase<operations["updateTestReportingQualityGateSettings"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateTestReportingQualityGateSettings"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/settings",
       params: { path: { projectName: projectName } },
@@ -323,7 +340,8 @@ updateTestReportingQualityGateSettings(projectName: string, body: DeepCamelCase<
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateTestReportingQualityGateSettings"]["responses"][200]["content"]["application/json"]>>;
   }
 
-createTestReportingQualityGateProfile(projectName: string, body: DeepCamelCase<operations["createTestReportingQualityGateProfile"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["createTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
+/** Create Quality Gate Profile */
+  createQualityGateProfile(projectName: string, body: DeepCamelCase<operations["createTestReportingQualityGateProfile"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["createTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/profiles",
       params: { path: { projectName: projectName } },
@@ -339,7 +357,8 @@ createTestReportingQualityGateProfile(projectName: string, body: DeepCamelCase<o
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["createTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getTestReportingQualityGateProfile(projectName: string, profileUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
+/** Get Quality Gate Profile */
+  getQualityGateProfile(projectName: string, profileUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/profiles/{profileUuid}",
       params: { path: { projectName: projectName, profileUuid: profileUuid } },
@@ -355,7 +374,8 @@ getTestReportingQualityGateProfile(projectName: string, profileUuid: string, opt
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-updateTestReportingQualityGateProfile(projectName: string, profileUuid: string, body: DeepCamelCase<operations["updateTestReportingQualityGateProfile"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
+/** Update Quality Gate Profile */
+  updateQualityGateProfile(projectName: string, profileUuid: string, body: DeepCamelCase<operations["updateTestReportingQualityGateProfile"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/profiles/{profileUuid}",
       params: { path: { projectName: projectName, profileUuid: profileUuid } },
@@ -371,7 +391,8 @@ updateTestReportingQualityGateProfile(projectName: string, profileUuid: string, 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteTestReportingQualityGateProfile(projectName: string, profileUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
+/** Delete Quality Gate Profile */
+  deleteQualityGateProfile(projectName: string, profileUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/profiles/{profileUuid}",
       params: { path: { projectName: projectName, profileUuid: profileUuid } },
@@ -387,7 +408,8 @@ deleteTestReportingQualityGateProfile(projectName: string, profileUuid: string, 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-toggleTestReportingQualityGateProfile(projectName: string, profileUuid: string, body: DeepCamelCase<operations["toggleTestReportingQualityGateProfile"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["toggleTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
+/** Toggle Quality Gate Profile */
+  toggleQualityGateProfile(projectName: string, profileUuid: string, body: DeepCamelCase<operations["toggleTestReportingQualityGateProfile"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["toggleTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/profiles/{profileUuid}/toggle",
       params: { path: { projectName: projectName, profileUuid: profileUuid } },
@@ -403,7 +425,8 @@ toggleTestReportingQualityGateProfile(projectName: string, profileUuid: string, 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["toggleTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-uploadTestReportingReport(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadTestReportingReport"]["responses"][200]["content"]["application/json"]>> {
+/** Upload Test Reports (JUnit or Allure) */
+  uploadReport(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadTestReportingReport"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/upload",
       params: undefined,

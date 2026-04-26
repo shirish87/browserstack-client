@@ -29,7 +29,8 @@ export type GetScreenshotsBrowsersError = HttpError<
 >;
 
 export class GeneratedScreenshotsClient extends APIClient {
-getScreenshotsJob(jobId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getScreenshotsJob"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches a screenshot job */
+  getJob(jobId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getScreenshotsJob"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/screenshots/{jobId}.json",
       params: { path: { jobId: jobId } },
@@ -45,7 +46,8 @@ getScreenshotsJob(jobId: string, options?: ExecuteOptions): Promise<DeepCamelCas
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getScreenshotsJob"]["responses"][200]["content"]["application/json"]>>;
   }
 
-createScreenshotsJob(body: DeepCamelCase<operations["createScreenshotsJob"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["createScreenshotsJob"]["responses"][200]["content"]["application/json"]>> {
+/** Take a screenshot of a website on a particular browser */
+  createJob(body: DeepCamelCase<operations["createScreenshotsJob"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["createScreenshotsJob"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/screenshots",
       params: undefined,
@@ -61,7 +63,8 @@ createScreenshotsJob(body: DeepCamelCase<operations["createScreenshotsJob"]["req
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["createScreenshotsJob"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getScreenshotsBrowsers(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getScreenshotsBrowsers"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of browsers supported by Screenshots API */
+  getBrowsers(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getScreenshotsBrowsers"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/screenshots/browsers.json",
       params: undefined,

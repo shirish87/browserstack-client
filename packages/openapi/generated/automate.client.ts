@@ -238,7 +238,8 @@ export type GetAutomateSessionNetworkLogsError = HttpError<
 >;
 
 export class GeneratedAutomateClient extends APIClient {
-getAutomateBrowsers(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches all automate browsers. */
+  getBrowsers(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/browsers.json",
       params: undefined,
@@ -254,7 +255,8 @@ getAutomateBrowsers(options?: ExecuteOptions): Promise<DeepCamelCase<operations[
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomatePlan(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches Automate plan details */
+  getPlan(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/plan.json",
       params: undefined,
@@ -270,7 +272,8 @@ getAutomatePlan(options?: ExecuteOptions): Promise<DeepCamelCase<operations["get
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAutomatePlan"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSessionAppiumLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Fetches Appium logs for a session. Raw Appium Logs for each session are available to you in text format. */
+  getSessionAppiumLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/appiumlogs",
       params: { path: { sessionId: sessionId } },
@@ -286,7 +289,8 @@ getAutomateSessionAppiumLogs(sessionId: string, options?: ExecuteOptions): Promi
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-getAutomateProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Fetches the badge key for sharing a public link for the Automate dashboard to view the latest build and sessions for that project */
+  getProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/projects/{projectId}/badge_key",
       params: { path: { projectId: projectId } },
@@ -302,7 +306,8 @@ getAutomateProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-uploadAutomateSessionTerminalLogs(sessionId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Upload terminal logs for your session. */
+  uploadSessionTerminalLogs(sessionId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/terminallogs",
       params: { path: { sessionId: sessionId } },
@@ -318,7 +323,8 @@ uploadAutomateSessionTerminalLogs(sessionId: string, body: ({ file: Blob } | { u
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-deleteAutomateBuilds(buildId?: string[], options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]>> {
+/** Delete multiple builds on the server. You can delete a maximum of 5 builds at a time. Builds once deleted cannot be recovered. */
+  deleteBuilds(buildId?: string[], options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/builds",
       params: { query: { "buildId[]": buildId } },
@@ -334,7 +340,8 @@ deleteAutomateBuilds(buildId?: string[], options?: ExecuteOptions): Promise<Deep
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateBuilds"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
+/** Fetches a session for a particular build */
+  getSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
@@ -350,7 +357,8 @@ getAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCam
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>>;
   }
 
-updateAutomateSession(sessionId: string, body: DeepCamelCase<operations["updateAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
+/** Set the status for a session or update the name of the session. You can mark test status as passed or failed along with a reason. */
+  updateSession(sessionId: string, body: DeepCamelCase<operations["updateAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
@@ -366,7 +374,8 @@ updateAutomateSession(sessionId: string, body: DeepCamelCase<operations["updateA
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["updateAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>>;
   }
 
-deleteAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a session on the server. Sessions once deleted cannot be recovered */
+  deleteSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
@@ -382,7 +391,8 @@ deleteAutomateSession(sessionId: string, options?: ExecuteOptions): Promise<Deep
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateSession"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAutomateSessions(sessionId?: string[], options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]>> {
+/** Delete multiple sessions on the server. Sessions once deleted cannot be recovered. */
+  deleteSessions(sessionId?: string[], options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/sessions",
       params: { query: { "sessionId[]": sessionId } },
@@ -398,7 +408,8 @@ deleteAutomateSessions(sessionId?: string[], options?: ExecuteOptions): Promise<
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateSessions"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAutomateMediaFile(mediaId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a media file on the server. Media files once deleted cannot be recovered */
+  deleteMediaFile(mediaId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/custom_media/delete/{mediaId}",
       params: { path: { mediaId: mediaId } },
@@ -414,7 +425,8 @@ deleteAutomateMediaFile(mediaId: string, options?: ExecuteOptions): Promise<Deep
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateMediaFile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<unknown>> {
+/** Fetches a build */
+  getBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<unknown>> {
     return (this.execute({
       path: "/automate/builds/{buildId}.json",
       params: { path: { buildId: buildId } },
@@ -430,7 +442,8 @@ getAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCa
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<unknown>>;
   }
 
-updateAutomateBuild(buildId: string, body: DeepCamelCase<operations["updateAutomateBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]>> {
+/** Update the name or tag of your build after the build is complete. To delete a build tag, simply pass an empty string as value for build_tag. */
+  updateBuild(buildId: string, body: DeepCamelCase<operations["updateAutomateBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/builds/{buildId}.json",
       params: { path: { buildId: buildId } },
@@ -446,7 +459,8 @@ updateAutomateBuild(buildId: string, body: DeepCamelCase<operations["updateAutom
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateAutomateBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a build on the server. Please note that deleting a build will delete all the sessions contained within it. Builds once deleted cannot be recovered */
+  deleteBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/builds/{buildId}.json",
       params: { path: { buildId: buildId } },
@@ -462,7 +476,8 @@ deleteAutomateBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCame
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSessionLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Fetches session logs. Whenever you execute a session on BrowserStack, a session log is generated. These logs are available to you in text format. */
+  getSessionLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/logs",
       params: { path: { sessionId: sessionId } },
@@ -478,7 +493,8 @@ getAutomateSessionLogs(sessionId: string, options?: ExecuteOptions): Promise<Dee
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-uploadAutomateMediaFile(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAutomateMediaFile"]["responses"][200]["content"]["application/json"]>> {
+/** Upload a media file you want to use in your tests */
+  uploadMediaFile(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadAutomateMediaFile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/upload-media",
       params: undefined,
@@ -494,7 +510,8 @@ uploadAutomateMediaFile(body: ({ file: Blob } | { url: string }) & { fileName: s
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["uploadAutomateMediaFile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-recycleAutomateKey(body: DeepCamelCase<operations["recycleAutomateKey"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]>> {
+/** Reset Automate access key */
+  recycleKey(body: DeepCamelCase<operations["recycleAutomateKey"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/recycle_key.json",
       params: undefined,
@@ -510,7 +527,8 @@ recycleAutomateKey(body: DeepCamelCase<operations["recycleAutomateKey"]["request
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["recycleAutomateKey"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSessions(buildId: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<Array<(operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number] & Record<"automation_session", unknown>)["automation_session"]>>> {
+/** Fetches list of sessions for a particular build */
+  getSessions(buildId: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<Array<(operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number] & Record<"automation_session", unknown>)["automation_session"]>>> {
     return (this.execute({
       path: "/automate/builds/{buildId}/sessions.json",
       params: { path: { buildId: buildId }, query: { "limit": limit, "offset": offset, "status": status } },
@@ -526,7 +544,8 @@ getAutomateSessions(buildId: string, limit?: string, offset?: string, status?: s
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<Array<(operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number] & Record<"automation_session", unknown>)["automation_session"]>>>;
   }
 
-getAutomateProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
+/** Specific information about a particular project can be queried using the project ID */
+  getProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
     return (this.execute({
       path: "/automate/projects/{projectId}.json",
       params: { path: { projectId: projectId } },
@@ -542,7 +561,8 @@ getAutomateProject(projectId: string, options?: ExecuteOptions): Promise<DeepCam
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>>;
   }
 
-updateAutomateProject(projectId: string, body: DeepCamelCase<operations["updateAutomateProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]>> {
+/** Update the name of your project after the project is complete */
+  updateProject(projectId: string, body: DeepCamelCase<operations["updateAutomateProject"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/projects/{projectId}.json",
       params: { path: { projectId: projectId } },
@@ -558,7 +578,8 @@ updateAutomateProject(projectId: string, body: DeepCamelCase<operations["updateA
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateAutomateProject"]["responses"][200]["content"]["application/json"]>>;
   }
 
-deleteAutomateProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]>> {
+/** Delete a project on the server using the DELETE method. Please note that to delete a project, it needs to be empty of builds and sessions, and projects once deleted cannot be recovered */
+  deleteProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/projects/{projectId}.json",
       params: { path: { projectId: projectId } },
@@ -574,7 +595,8 @@ deleteAutomateProject(projectId: string, options?: ExecuteOptions): Promise<Deep
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteAutomateProject"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSessionSeleniumLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Fetches Selenium logs for a session. Raw Selenium logs for each session are available to you in text format. */
+  getSessionSeleniumLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/seleniumlogs",
       params: { path: { sessionId: sessionId } },
@@ -590,7 +612,8 @@ getAutomateSessionSeleniumLogs(sessionId: string, options?: ExecuteOptions): Pro
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-uploadAutomateBuildTerminalLogs(buildId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Upload terminal logs for your build. */
+  uploadBuildTerminalLogs(buildId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/builds/{buildId}/terminallogs",
       params: { path: { buildId: buildId } },
@@ -606,7 +629,8 @@ uploadAutomateBuildTerminalLogs(buildId: string, body: ({ file: Blob } | { url: 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-getAutomateMediaFiles(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of recently uploaded media files */
+  getMediaFiles(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/recent_media_files",
       params: undefined,
@@ -622,7 +646,8 @@ getAutomateMediaFiles(options?: ExecuteOptions): Promise<DeepCamelCase<operation
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAutomateMediaFiles"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateProjects(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches list of projects associated with your username and access key. You will need the id of the project for invoking any other Project API that follows in this document */
+  getProjects(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/projects.json",
       params: undefined,
@@ -638,7 +663,8 @@ getAutomateProjects(options?: ExecuteOptions): Promise<DeepCamelCase<operations[
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAutomateProjects"]["responses"][200]["content"]["application/json"]>>;
   }
 
-getAutomateSessionConsoleLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+/** Fetches console logs for a session. Console logs are enabled by default and are set to errors. You can disable them or change verbosity options by using the browserstack.console capability to disabled, errors, warnings, info, verbose. Raw Console Logs for each session are available to you in text format. */
+  getSessionConsoleLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/consolelogs",
       params: { path: { sessionId: sessionId } },
@@ -654,7 +680,8 @@ getAutomateSessionConsoleLogs(sessionId: string, options?: ExecuteOptions): Prom
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
   }
 
-getAutomateSessionTelemetryLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<ArrayBuffer>> {
+/** Fetches telemetry logs for a session. Telemetry logs for a session are available for tests run using Selenium 4. Telemetry logs are by default disabled for a session. */
+  getSessionTelemetryLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<ArrayBuffer>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/telemetrylogs",
       params: { path: { sessionId: sessionId } },
@@ -670,7 +697,8 @@ getAutomateSessionTelemetryLogs(sessionId: string, options?: ExecuteOptions): Pr
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<ArrayBuffer>>;
   }
 
-getAutomateBuilds(projectId?: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<Array<(operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>>> {
+/** Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number of builds and paginate through your data */
+  getBuilds(projectId?: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<Array<(operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>>> {
     return (this.execute({
       path: "/automate/builds.json",
       params: { query: { "projectId": projectId, "limit": limit, "offset": offset, "status": status } },
@@ -686,7 +714,8 @@ getAutomateBuilds(projectId?: string, limit?: string, offset?: string, status?: 
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<Array<(operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>>>;
   }
 
-getAutomateSessionNetworkLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateSessionNetworkLogs"]["responses"][200]["content"]["application/json"]>> {
+/** Fetches network logs for a session. Network Logs for each session are available to you in HAR (HTTP Archive) format. */
+  getSessionNetworkLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateSessionNetworkLogs"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/networklogs",
       params: { path: { sessionId: sessionId } },
