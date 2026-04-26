@@ -15,7 +15,7 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint packages --ext .ts",
-    "check": "tsc --build packages/*/tsconfig.json",
+    "check": "tsc --build packages/*/tsconfig.json packages/cli/typescript/tsconfig.json",
     "clean": "pnpm -r exec rimraf dist && rimraf node_modules"
   },
   "devDependencies": {
