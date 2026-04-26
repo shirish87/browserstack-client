@@ -30,7 +30,7 @@ const sharedAliases = {
   "@browserstack-client/test-management": path.resolve(__dirname, "packages/test-management/src/index.ts"),
   "@browserstack-client/accessibility": path.resolve(__dirname, "packages/accessibility/src/index.ts"),
   "@browserstack-client/test-reporting": path.resolve(__dirname, "packages/test-reporting/src/index.ts"),
-  "@browserstack-client/cli": path.resolve(__dirname, "packages/cli/src/index.ts"),
+  "@browserstack-client/cli": path.resolve(__dirname, "packages/cli/typescript/src/index.ts"),
   "@browserstack-client/openapi-transforms": path.resolve(__dirname, "packages/openapi-transforms/src/index.ts"),
 };
 
@@ -42,7 +42,7 @@ export default defineConfig({
       { test: { name: "local-testing", environment: "node" }, resolve: { alias: sharedAliases }, root: "./packages/local-testing" },
       { test: { name: "screenshots", environment: "node" }, resolve: { alias: sharedAliases }, root: "./packages/screenshots" },
       { test: { name: "local-testing-binary", environment: "node" }, resolve: { alias: sharedAliases }, root: "./packages/local-testing-binary" },
-      { test: { name: "cli", environment: "node" }, resolve: { alias: sharedAliases }, root: "./packages/cli" },
+      { test: { name: "cli", environment: "node" }, resolve: { alias: sharedAliases }, root: "./packages/cli/typescript" },
       { test: { name: "openapi-transforms", environment: "node", include: ["src/**/*.test.ts"], exclude: ["dist/**", "node_modules/**"] }, resolve: { alias: sharedAliases }, root: "./packages/openapi-transforms" },
       { test: { name: "core", environment: "node" }, resolve: { alias: sharedAliases }, root: "./packages/core" },
       { test: { name: "test-management", environment: "node" }, resolve: { alias: sharedAliases }, root: "./packages/test-management" },

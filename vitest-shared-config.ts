@@ -22,6 +22,6 @@ export function getSharedAliases(packageDir: string) {
     "@browserstack-client/test-management": path.resolve(packageDir, "../test-management/src/index.ts"),
     "@browserstack-client/accessibility": path.resolve(packageDir, "../accessibility/src/index.ts"),
     "@browserstack-client/test-reporting": path.resolve(packageDir, "../test-reporting/src/index.ts"),
-    "@browserstack-client/cli": path.resolve(packageDir, "../cli/src/index.ts"),
+    "@browserstack-client/cli": path.resolve(packageDir, "../cli/typescript/src/index.ts"),
   };
 }
