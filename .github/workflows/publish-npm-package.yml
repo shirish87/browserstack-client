@@ -1,10 +1,12 @@
 name: Publish npm package
+# Disabled — npm publishing is not active. Re-enable by restoring the trigger below.
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type 'publish' to confirm"
+        required: true
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: publish-npm-package
   cancel-in-progress: false
@@ -17,31 +19,35 @@ jobs:
   publish-node-lts:
     name: "node.js lts"
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.confirm == 'publish' }}
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
-          cache: "npm"
+          cache: "pnpm"
 
-      - name: Build
-        run: |
-          npm install
-          npm run build
-          npm test
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build and test
+        run: pnpm build:types && pnpm build && pnpm test
 
       - name: npm publish @next
-        run: |
-          npm publish --tag next
-        if: 'github.event.release.prerelease'
+        run: pnpm publish --tag next --filter "./packages/*" --no-git-checks
+        if: ${{ github.event.release.prerelease }}
         env:
           NODE_AUTH_TOKEN: "${{ secrets.NPM_PUBLISH_TOKEN }}"
 
       - name: npm publish
-        run: |
-          npm publish
-        if: '!github.event.release.prerelease'
+        run: pnpm publish --filter "./packages/*" --no-git-checks
+        if: ${{ !github.event.release.prerelease }}
         env:
           NODE_AUTH_TOKEN: "${{ secrets.NPM_PUBLISH_TOKEN }}"

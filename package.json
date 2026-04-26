@@ -17,7 +17,8 @@
     "coverage": "vitest run --coverage",
     "lint": "eslint packages --ext .ts",
     "check": "tsc --build packages/*/tsconfig.json packages/cli/typescript/tsconfig.json",
-    "clean": "pnpm -r exec rimraf dist && rimraf node_modules"
+    "clean": "pnpm -r exec rimraf dist && rimraf node_modules",
+    "docs:build": "typedoc && vitepress build docs"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^12.1.0",
@@ -34,7 +35,11 @@
     "typescript": "^6.0.3",
     "vite": "^8.0.8",
     "vitest": "^4.1.4",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "typedoc": "^0.28.19",
+    "typedoc-plugin-markdown": "^4.11.0",
+    "typedoc-vitepress-theme": "^1.1.2",
+    "vitepress": "^1.6.4"
   },
   "repository": {
     "type": "git",

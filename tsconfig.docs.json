@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM"],
+    "ignoreDeprecations": "6.0"
+  },
+  "exclude": [
+    "packages/*/src/__tests__",
+    "packages/*/src/test",
+    "packages/openapi-transforms/src/__tests__"
+  ]
+}

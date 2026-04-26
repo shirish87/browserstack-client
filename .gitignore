@@ -24,6 +24,7 @@ dist-ssr
 packages/cli/golang/dist/
 packages/cli/golang/browserstack
 packages/cli/golang/browserstack-client
+packages/cli/golang/generated/
 
 # Sonar / CI artefacts
 docker-compose.sonarqube.yml
@@ -35,6 +36,7 @@ generate_yaml.js
 docs/api/
 docs/.vitepress/dist/
 docs/.vitepress/cache/
+docs/superpowers/
 
 # Editor directories and files
 .vscode/*
