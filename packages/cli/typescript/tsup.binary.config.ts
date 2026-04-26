@@ -20,5 +20,6 @@ export default defineConfig({
   define: {
     "globalThis.__BUILD_TARGET__": '"binary"',
     "globalThis.__CLI_VERSION__": JSON.stringify(version),
+    "__PKG_VERSION__": JSON.stringify(version),
   },
 });

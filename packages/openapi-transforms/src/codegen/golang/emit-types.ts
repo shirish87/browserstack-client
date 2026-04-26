@@ -16,11 +16,14 @@ interface SchemaObject {
 
 type Schemas = Record<string, SchemaObject>;
 
-function goType(prop: SchemaProperty, required: boolean): string {
+function goType(prop: SchemaProperty, required: boolean, knownTypes: Set<string>): string {
   const ptr = required ? "" : "*";
   if (prop.$ref) {
-    const name = prop.$ref.replace(/^.*\//, "");
-    return `${ptr}${toPascalCase(name)}`;
+    const name = toPascalCase(prop.$ref.replace(/^.*\//, ""));
+    if (knownTypes.has(name)) {
+      return `${ptr}${name}`;
+    }
+    return "map[string]any";
   }
   switch (prop.type) {
     case "string":  return `${ptr}string`;
@@ -29,11 +32,17 @@ function goType(prop: SchemaProperty, required: boolean): string {
     case "boolean": return `${ptr}bool`;
     case "array": {
       const itemType = prop.items?.type ?? "any";
-      const goItem = itemType === "string" ? "string"
-        : itemType === "integer" ? "int"
-        : itemType === "number" ? "float64"
-        : itemType === "boolean" ? "bool"
-        : "any";
+      let goItem = "any";
+      if (prop.items?.$ref) {
+        const name = toPascalCase(prop.items.$ref.replace(/^.*\//, ""));
+        goItem = knownTypes.has(name) ? name : "map[string]any";
+      } else {
+        goItem = itemType === "string" ? "string"
+          : itemType === "integer" ? "int"
+          : itemType === "number" ? "float64"
+          : itemType === "boolean" ? "bool"
+          : "any";
+      }
       return `[]${goItem}`;
     }
     case "object":  return "map[string]any";
@@ -57,29 +66,35 @@ function mergeAllOf(schema: SchemaObject): SchemaObject {
   return merged;
 }
 
-function emitStruct(name: string, rawSchema: SchemaObject): string {
+function emitStruct(name: string, rawSchema: SchemaObject, knownTypes: Set<string>): string {
   const schema = mergeAllOf(rawSchema);
   const required = new Set(schema.required ?? []);
   const fields = Object.entries(schema.properties ?? {}).map(([fieldName, prop]) => {
     const goName = toPascalCase(fieldName).replace(/[^a-zA-Z0-9_]/g, "");
     const isRequired = required.has(fieldName);
-    const typ = goType(prop, isRequired);
+    const typ = goType(prop, isRequired, knownTypes);
     return `\t${goName} ${typ} \`json:"${fieldName}"\``;
   });
   return `type ${toPascalCase(name)} struct {\n${fields.join("\n")}\n}`;
 }
 
-function emitArrayAlias(name: string, schema: SchemaObject): string {
+function emitArrayAlias(name: string, schema: SchemaObject, knownTypes: Set<string>): string {
   const itemSchema = schema.items;
   let elemType = "any";
   if (itemSchema?.$ref) {
-    elemType = toPascalCase(itemSchema.$ref.replace(/^.*\//, ""));
-  } else if (itemSchema?.type) {
-    elemType = itemSchema.type === "string" ? "string"
-      : itemSchema.type === "integer" ? "int"
-      : itemSchema.type === "number" ? "float64"
-      : itemSchema.type === "boolean" ? "bool"
-      : "any";
+    const refName = toPascalCase(itemSchema.$ref.replace(/^.*\//, ""));
+    elemType = knownTypes.has(refName) ? refName : "map[string]any";
+  } else if (itemSchema?.type || (itemSchema as any)?.properties) {
+    if (itemSchema?.type === "object" || (itemSchema as any)?.properties) {
+      const itemName = toPascalCase(itemSchema?.title ?? (name + "Item"));
+      elemType = knownTypes.has(itemName) ? itemName : "map[string]any";
+    } else {
+      elemType = itemSchema?.type === "string" ? "string"
+        : itemSchema?.type === "integer" ? "int"
+        : itemSchema?.type === "number" ? "float64"
+        : itemSchema?.type === "boolean" ? "bool"
+        : "any";
+    }
   }
   return `type ${toPascalCase(name)} []${elemType}`;
 }
@@ -87,6 +102,8 @@ function emitArrayAlias(name: string, schema: SchemaObject): string {
 export function emitGoTypes(product: string, schemas: Schemas): string {
   const pkg = toGoPackageName(product);
   const seenDecls = new Set<string>();
+  const knownTypes = new Set(Object.keys(schemas).map(toPascalCase));
+  
   const decls = Object.entries(schemas)
     .filter(([, s]) => s.type === "object" || s.properties !== undefined || s.allOf !== undefined || s.type === "array")
     .map(([name, schema]) => {
@@ -95,8 +112,8 @@ export function emitGoTypes(product: string, schemas: Schemas): string {
         return "";
       }
       seenDecls.add(goName);
-      if (schema.type === "array") return emitArrayAlias(name, schema);
-      return emitStruct(name, schema);
+      if (schema.type === "array") return emitArrayAlias(name, schema, knownTypes);
+      return emitStruct(name, schema, knownTypes);
     })
     .filter(decl => decl !== "")
     .join("\n\n");

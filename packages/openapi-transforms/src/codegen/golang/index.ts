@@ -27,6 +27,7 @@ interface SpecResponseSchema {
   required?: string[];
   oneOf?: unknown[];
   anyOf?: unknown[];
+  items?: SpecResponseSchema;
 }
 
 interface SpecOp {
@@ -66,21 +67,49 @@ function resolveRequestCodec(op: SpecOp): string {
 function responseType(op: SpecOp, operationId: string, knownSchemas: Set<string>): string {
   const responseCodec = resolveResponseCodec(op);
   if (responseCodec === "text") return "string";
+  if (responseCodec === "binary") return "[]byte";
+
   const schema = op.responses?.["200"]?.content?.["application/json"]?.schema;
   if (!schema) return "map[string]any";
+
+  if (schema.type === "array" && schema.items) {
+    if (schema.title) {
+      const name = toPascalCase(schema.title);
+      return knownSchemas.has(name) ? name : "map[string]any";
+    }
+    
+    let elemType = "any";
+    if (schema.items.$ref) {
+      const name = toPascalCase(schema.items.$ref.replace(/^.*\//, ""));
+      elemType = knownSchemas.has(name) ? name : "map[string]any";
+    } else if (schema.items.type === "object" || schema.items.properties) {
+      const defaultName = toPascalCase(operationId) + "Response";
+      const name = toPascalCase(schema.items.title ?? (defaultName + "Item"));
+      elemType = knownSchemas.has(name) ? name : "map[string]any";
+    } else {
+      elemType = schema.items.type === "string" ? "string"
+        : schema.items.type === "integer" ? "int"
+        : schema.items.type === "number" ? "float64"
+        : schema.items.type === "boolean" ? "bool"
+        : "any";
+    }
+    return "[]" + elemType;
+  }
+
   if (schema.$ref) {
     const refName = schema.$ref.replace(/^.*\//, "");
     const goName = toPascalCase(refName);
     return knownSchemas.has(goName) ? goName : "map[string]any";
   }
+
   if (schema.type === "object" || schema.properties) {
-    const name = schema.title ?? (toPascalCase(operationId) + "Response");
-    return toPascalCase(name);
+    const name = toPascalCase(schema.title ?? (toPascalCase(operationId) + "Response"));
+    return knownSchemas.has(name) ? name : "map[string]any";
   }
   return "map[string]any";
 }
 
-type InlineSchemas = Record<string, { type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string } }>; required?: string[] }>;
+type InlineSchemas = Record<string, { type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string } }>; required?: string[]; items?: { type?: string; $ref?: string; title?: string; properties?: Record<string, any>; required?: string[] } }>;
 
 function collectInlineSchemas(
   paths: Record<string, Record<string, SpecOp | undefined>>
@@ -93,18 +122,29 @@ function collectInlineSchemas(
       if (op["x-response-custom"] || op["x-request-custom"]) continue;
 
       const responseCodec = resolveResponseCodec(op);
-      if (responseCodec !== "text") {
+      if (responseCodec !== "text" && responseCodec !== "binary") {
         const respSchema = op.responses?.["200"]?.content?.["application/json"]?.schema;
-        if (respSchema && !respSchema.$ref && (respSchema.type === "object" || respSchema.properties)) {
-          const name = respSchema.title ?? (toPascalCase(op.operationId) + "Response");
-          extra[toPascalCase(name)] = { type: "object", properties: respSchema.properties, required: respSchema.required };
+        if (respSchema && !respSchema.$ref) {
+          if (respSchema.type === "object" || respSchema.properties) {
+            const name = toPascalCase(respSchema.title ?? (toPascalCase(op.operationId) + "Response"));
+            extra[name] = { type: "object", properties: respSchema.properties, required: respSchema.required };
+          } else if (respSchema.type === "array") {
+            const name = toPascalCase(respSchema.title ?? (toPascalCase(op.operationId) + "Response"));
+            if (respSchema.title) {
+              extra[name] = { type: "array", items: respSchema.items };
+            }
+            if (respSchema.items && !respSchema.items.$ref && (respSchema.items.type === "object" || respSchema.items.properties)) {
+              const itemName = toPascalCase(respSchema.items.title ?? (name + "Item"));
+              extra[itemName] = { type: "object", properties: respSchema.items.properties, required: respSchema.items.required };
+            }
+          }
         }
       }
 
       const bodySchema = op.requestBody?.content?.["application/json"]?.schema;
       if (bodySchema && !bodySchema.$ref) {
-        const name = bodySchema.title ?? (toPascalCase(op.operationId) + "Request");
-        extra[toPascalCase(name)] = { type: "object", properties: bodySchema.properties, required: bodySchema.required };
+        const name = toPascalCase(bodySchema.title ?? (toPascalCase(op.operationId) + "Request"));
+        extra[name] = { type: "object", properties: bodySchema.properties, required: bodySchema.required };
       }
     }
   }
@@ -124,9 +164,9 @@ export async function generateGoModule(
     string,
     { type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string } }>; required?: string[]; allOf?: Array<{ $ref?: string; type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string } }>; required?: string[] }>; items?: { type?: string; $ref?: string } }
   >;
-  const knownSchemas = new Set(Object.keys(componentSchemas).map(toPascalCase));
   const inlineSchemas = collectInlineSchemas(doc.paths ?? {});
   const schemas = { ...componentSchemas, ...inlineSchemas };
+  const allKnownSchemas = new Set(Object.keys(schemas).map(toPascalCase));
 
   const methods: string[] = [];
 
@@ -159,11 +199,11 @@ export async function generateGoModule(
         }));
 
       const requestCodec = resolveRequestCodec(op);
-      const respType = responseType(op, op.operationId, knownSchemas);
+      const respType = responseType(op, op.operationId, allKnownSchemas);
       const bodySchema = op.requestBody?.content?.["application/json"]?.schema;
       const requestBodyType = op.requestBody
         ? bodySchema?.$ref
-          ? (() => { const n = toPascalCase(bodySchema.$ref.replace(/^.*\//, "")); return knownSchemas.has(n) ? n : undefined; })()
+          ? (() => { const n = toPascalCase(bodySchema.$ref.replace(/^.*\//, "")); return allKnownSchemas.has(n) ? n : undefined; })()
           : toPascalCase(op.operationId) + "Request"
         : undefined;
 

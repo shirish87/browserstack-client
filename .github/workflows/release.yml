@@ -84,9 +84,11 @@ jobs:
         with:
           name: ts-binaries
           path: |
-            packages/cli/typescript/dist-binary/browserstack-client-linux-x64
-            packages/cli/typescript/dist-binary/browserstack-client-macos-arm64
-            packages/cli/typescript/dist-binary/browserstack-client-win-x64.exe
+            packages/cli/typescript/dist-binary/browserstack-client-ts-linux-amd64
+            packages/cli/typescript/dist-binary/browserstack-client-ts-linux-arm64
+            packages/cli/typescript/dist-binary/browserstack-client-ts-darwin-amd64
+            packages/cli/typescript/dist-binary/browserstack-client-ts-darwin-arm64
+            packages/cli/typescript/dist-binary/browserstack-client-ts-windows-amd64.exe
           if_no_files_found: error
           retention-days: 1
 
@@ -178,8 +180,10 @@ jobs:
           chmod +x release-assets/go/browserstack-client-linux-arm64
           chmod +x release-assets/go/browserstack-client-darwin-amd64
           chmod +x release-assets/go/browserstack-client-darwin-arm64
-          chmod +x release-assets/ts/browserstack-client-linux-x64
-          chmod +x release-assets/ts/browserstack-client-macos-arm64
+          chmod +x release-assets/ts/browserstack-client-ts-linux-amd64
+          chmod +x release-assets/ts/browserstack-client-ts-linux-arm64
+          chmod +x release-assets/ts/browserstack-client-ts-darwin-amd64
+          chmod +x release-assets/ts/browserstack-client-ts-darwin-arm64
 
       - name: Generate release notes
         id: notes
@@ -209,9 +213,11 @@ jobs:
             echo ""
             echo "| Platform | Architecture | File |"
             echo "|----------|-------------|------|"
-            echo "| Linux | x64 | \`browserstack-client-linux-x64\` |"
-            echo "| macOS | arm64 (M1/M2) | \`browserstack-client-macos-arm64\` |"
-            echo "| Windows | x64 | \`browserstack-client-win-x64.exe\` |"
+            echo "| Linux | x64 | \`browserstack-client-ts-linux-amd64\` |"
+            echo "| Linux | arm64 | \`browserstack-client-ts-linux-arm64\` |"
+            echo "| macOS | x64 | \`browserstack-client-ts-darwin-amd64\` |"
+            echo "| macOS | arm64 (M1/M2) | \`browserstack-client-ts-darwin-arm64\` |"
+            echo "| Windows | x64 | \`browserstack-client-ts-windows-amd64.exe\` |"
             echo ""
             echo "## SDK Packages"
             echo ""
@@ -245,7 +251,9 @@ jobs:
             release-assets/go/browserstack-client-darwin-amd64 \
             release-assets/go/browserstack-client-darwin-arm64 \
             "release-assets/go/browserstack-client-windows-amd64.exe" \
-            release-assets/ts/browserstack-client-linux-x64 \
-            release-assets/ts/browserstack-client-macos-arm64 \
-            "release-assets/ts/browserstack-client-win-x64.exe" \
+            release-assets/ts/browserstack-client-ts-linux-amd64 \
+            release-assets/ts/browserstack-client-ts-linux-arm64 \
+            release-assets/ts/browserstack-client-ts-darwin-amd64 \
+            release-assets/ts/browserstack-client-ts-darwin-arm64 \
+            "release-assets/ts/browserstack-client-ts-windows-amd64.exe" \
             release-assets/sdk/*.tgz

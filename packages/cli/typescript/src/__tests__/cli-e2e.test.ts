@@ -27,7 +27,11 @@ async function runCli(binaryPath: string, args: string[]) {
     });
     return { stdout, stderr, exitCode: 0 };
   } catch (error: any) {
-    return { stdout: error.stdout ?? "", stderr: error.stderr ?? "", exitCode: error.code ?? 1 };
+    return { 
+      stdout: error.stdout ?? "", 
+      stderr: error.stderr ?? "", 
+      exitCode: typeof error.code === "number" ? error.code : 1 
+    };
   }
 }
 
