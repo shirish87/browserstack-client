@@ -1,145 +1,97 @@
-
 # BrowserStack Client
 
-This module interfaces all REST APIs offered by [BrowserStack](https://www.browserstack.com).
+This monorepo contains TypeScript clients for all REST APIs offered by [BrowserStack](https://www.browserstack.com).
 
 ![Build Status](https://github.com/shirish87/browserstack-client/actions/workflows/main.yml/badge.svg)
 
-
 ## Installation
-```
-$ npm i --save-dev browserstack-client
+
+Install the specific product client you need:
+
+```bash
+# Automate
+$ npm i @browserstack-client/automate
+
+# App Automate
+$ npm i @browserstack-client/app-automate
+
+# Accessibility
+$ npm i @browserstack-client/accessibility
+
+# Test Management
+$ npm i @browserstack-client/test-management
+
+# Local Testing (API & Binary)
+$ npm i @browserstack-client/local-testing @browserstack-client/local-testing-binary
 ```
 
 ## Requirements
 
-Please ensure that your BrowserStack account contains the required subscription(s) for using the APIs provided by this module.
+Please ensure that your BrowserStack account contains the required subscription(s) for using the APIs provided by these modules.
 
-Add your BrowserStack username and API key to the following environment variables for your shell.
+Add your BrowserStack username and API key to the following environment variables for your shell:
 
-You may also supply these credentials in code when creating an instance of an API client. See `options.username` and `options.key`.
-```
+```bash
 BROWSERSTACK_USERNAME=<your-username>
-BROWSERSTACK_KEY=<your-access-key>
+BROWSERSTACK_ACCESS_KEY=<your-access-key>
 ```
 
-Basic features require [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) support in your JavaScript runtime (`globalThis.fetch`).
-
-Additional features (running [BrowserStackLocal](https://www.browserstack.com/docs/local-testing/releases-and-downloads) binary) require node.js runtime.
-
+You may also supply these credentials in code when creating an instance of an API client.
 
 ## Basic Usage
 
+Each client is exported from its own package:
+
 ```ts
-// index.mjs
-import { BrowserStack } from "browserstack-client";
-
-// set environment variables BROWSERSTACK_USERNAME and BROWSERSTACK_KEY
-
-// BrowserStack JavaScript Testing API
-const jsTestingClient = new BrowserStack.JSTestingClient();
-/* ...or
-const jsTestingClient = new BrowserStack.JSTestingClient({
-  username: "<browserstack-username>",
-  key: "<browserstack-access-key>",
-});
-*/
-
-console.log(await jsTestingClient.getAccountStatus());
+import { AutomateClient } from "@browserstack-client/automate";
+import { AccessibilityClient } from "@browserstack-client/accessibility";
+import { AppAutomateClient } from "@browserstack-client/app-automate";
+import { TestManagementClient } from "@browserstack-client/test-management";
 
 // BrowserStack Automate API
-const automateClient = new BrowserStack.AutomateClient();
-console.log(await automateClient.getPlan());
+const automateClient = new AutomateClient();
+const plan = await automateClient.getAutomatePlan();
+console.log(plan);
 
-// BrowserStack App Automate API
-const appAutomateClient = new BrowserStack.AppAutomateClient();
-console.log(await appAutomateClient.getPlan());
+// BrowserStack Accessibility API
+const accessibilityClient = new AccessibilityClient();
+const reports = await accessibilityClient.getAccessibilityWorkflowAnalyzerReports();
+console.log(reports);
 
-// BrowserStack Screenshots API
-const screenshotsClient = new BrowserStack.ScreenshotsClient();
-console.log(await screenshotsClient.getBrowsers());
-
-// BrowserStack Local Testing API
-const localTestingClient = new BrowserStack.LocalTestingClient();
-console.log(await localTestingClient.getBinaryInstances());
+// BrowserStack Test Management API
+const tmClient = new TestManagementClient();
+const projects = await tmClient.getTestManagementProjects();
+console.log(projects);
 ```
 
-## Additional Features
+## CLI Usage
 
-Some features leverage node.js built-in modules (`node:*`) that may not be available in other JavaScript runtimes (such as [Deno](https://deno.com)).
+The monorepo also provides a unified CLI:
 
-These are bundled separately along with all basic features from above.
+```bash
+$ npx @browserstack-client/cli accessibility workflow-analyzer list
+$ npx @browserstack-client/cli automate list-projects
+```
 
-```js
-// index.mjs
-import { BrowserStack } from "browserstack-client/node";
+## Additional Features (Node.js only)
 
-const localTestingBinary = new BrowserStack.LocalTestingBinary({
-  key: "<browserstack-access-key>", // or set environment variable BROWSERSTACK_KEY
-  binHome: "<path-to-store-BrowserStackLocal-binary>", // or set environment variable BROWSERSTACK_LOCAL_BINARY_PATH
+Running the [BrowserStackLocal](https://www.browserstack.com/docs/local-testing/releases-and-downloads) binary requires the `@browserstack-client/local-testing-binary` package.
+
+```ts
+import { LocalTestingBinary } from "@browserstack-client/local-testing-binary";
+
+const localTestingBinary = new LocalTestingBinary({
+  accessKey: "<your-access-key>",
 });
 
-console.log(await localTestingBinary.start());
-console.log(await localTestingBinary.stop());
-```
-
-## Deno Sample
-```ts
-/**
- * @run --allow-read --allow-net --allow-env index.ts
- */
-
-import { load } from "https://deno.land/std@0.214.0/dotenv/mod.ts";
-import { BrowserStack } from "https://esm.sh/browserstack-client@latest";
-
-const env = await load();
-
-const options = {
-  username: env.BROWSERSTACK_USERNAME,
-  key: env.BROWSERSTACK_KEY,
-};
-
-// BrowserStack JavaScript Testing API
-const jsTestingClient = new BrowserStack.JSTestingClient(options);
-console.log(await jsTestingClient.getAccountStatus());
+await localTestingBinary.start();
+// ... run tests ...
+await localTestingBinary.stop();
 ```
 
 ## Documentation
 
-Please refer to the [documentation](https://shirish87.github.io/browserstack-client/api/globals.html) for methods available for each of these clients.
-
-
-## Proxy Support
-```
-npm install node-fetch
-npm install proxy-agent // or proxy specific https-proxy-agent (see docs)
-```
-* Docs for [node-fetch](https://www.npmjs.com/package/node-fetch#custom-agent)
-* Docs for [proxy-agent](https://github.com/TooTallNate/proxy-agents/tree/main/packages/proxy-agent)
-
-```js
-// index.mjs
-import { JSTestingClient } from "browserstack-client";
-import fetch from "node-fetch";
-import { ProxyAgent } from "proxy-agent";
-
-// Docs:
-// https://www.npmjs.com/package/node-fetch#custom-agent
-// https://github.com/TooTallNate/proxy-agents/tree/main/packages/proxy-agent
-
-const agent = new ProxyAgent();
-
-// BrowserStack JavaScript Testing API
-const jsTestingClient = new JSTestingClient({
-  username: "<browserstack-username>",
-  key: "<browserstack-access-key>",
-  // provide your own Fetch API implementation
-  fetch: (url, init) => fetch(url, { ...init, agent }),
-});
-
-console.log(await jsTestingClient.getAccountStatus());
-
-```
+Please refer to the [documentation](https://shirish87.github.io/browserstack-client/) for methods available for each of these clients.
 
 ## Thanks
 

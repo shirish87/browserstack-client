@@ -1,0 +1,1447 @@
+servers:
+  - url: "{scheme}://{host}"
+    variables:
+      scheme:
+        default: https
+      host:
+        default: api-accessibility.browserstack.com
+openapi: 3.0.2
+info:
+  title: BrowserStack Accessibility
+  version: 1.0.0
+security:
+  - basicAuth: []
+paths:
+  /api/workflow-analyzer/v1/reports:
+    get:
+      summary: List Workflow Analyzer reports
+      description: Returns a paginated list of all Workflow Analyzer accessibility reports for your account.
+      operationId: getAccessibilityWorkflowAnalyzerReports
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowAnalyzerReportList'
+  /api/workflow-analyzer/v1/reports/{report_id}:
+    get:
+      summary: Get Workflow Analyzer report summary
+      description: Returns the summary for a specific Workflow Analyzer report, including score, issue counts, and scan metadata.
+      operationId: getAccessibilityWorkflowAnalyzerReportSummary
+      parameters:
+        - name: report_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowAnalyzerReportSummary'
+  /api/workflow-analyzer/v1/reports/issues:
+    get:
+      summary: Get Workflow Analyzer report issues
+      description: Returns the paginated list of accessibility issues for a specific Workflow Analyzer report, optionally filtered by task.
+      operationId: getAccessibilityWorkflowAnalyzerReportIssues
+      parameters:
+        - name: report_id
+          in: query
+          schema:
+            type: integer
+        - name: task_id
+          in: query
+          schema:
+            type: string
+        - name: next_page
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowAnalyzerReportIssues'
+  /api/assisted-test/v1/reports:
+    get:
+      summary: List Assisted Test reports
+      description: Returns a paginated list of all Assisted Test accessibility reports for your account.
+      operationId: getAccessibilityAssistedTestReports
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistedTestReportList'
+  /api/assisted-test/v1/reports/{report_id}:
+    get:
+      summary: Get Assisted Test report summary
+      description: Returns the summary for a specific Assisted Test report, including score, issue counts, and scan metadata.
+      operationId: getAccessibilityAssistedTestReportSummary
+      parameters:
+        - name: report_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistedTestReportSummary'
+  /api/assisted-test/v1/reports/issues:
+    get:
+      summary: Get Assisted Test report issues
+      description: Returns the paginated list of accessibility issues for a specific Assisted Test report, optionally filtered by task.
+      operationId: getAccessibilityAssistedTestReportIssues
+      parameters:
+        - name: report_id
+          in: query
+          schema:
+            type: integer
+        - name: task_id
+          in: query
+          schema:
+            type: string
+        - name: next_page
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistedTestReportIssues'
+  /api/website-scanner/v1/auth_configs:
+    get:
+      summary: List Website Scanner auth configs
+      description: Returns all saved authentication configurations used by the Website Scanner for login-protected pages.
+      operationId: getAccessibilityWebsiteScannerAuthConfigs
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: $.data.authConfigs
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthConfig'
+    post:
+      summary: Create Website Scanner auth config
+      description: Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans.
+      operationId: createAccessibilityWebsiteScannerAuthConfig
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: $.data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                type: { type: string }
+                authData:
+                  type: object
+                  properties:
+                    url: { type: string }
+                    username: { type: string }
+                    password: { type: string }
+                    usernameSelector: { type: string }
+                    passwordSelector: { type: string }
+                    submitSelector: { type: string }
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthConfig'
+  /api/website-scanner/v1/scans:
+    get:
+      summary: List Website Scanner scans
+      description: Returns a paginated list of all configured Website Scanner scans for your account.
+      operationId: getAccessibilityWebsiteScannerScans
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteScannerScanList'
+    post:
+      summary: Create Website Scanner scan
+      description: Creates and triggers a new Website Scanner accessibility scan for the specified URL.
+      operationId: createAccessibilityWebsiteScannerScan
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: $.data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scan_url: { type: string }
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteScannerScanCreated'
+  /api/website-scanner/v1/scans/{scan_id}/overview:
+    get:
+      summary: Get Website Scanner scan overview
+      description: Returns the configuration overview for a specific Website Scanner scan, including URL list and scan settings.
+      operationId: getAccessibilityWebsiteScannerScanOverview
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: $.data
+      parameters:
+        - name: scan_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteScannerScanOverview'
+  /api/website-scanner/v1/scans/{scan_id}/scan_runs:
+    get:
+      summary: List Website Scanner scan runs
+      description: Returns a paginated list of all scan runs for a specific Website Scanner scan, including status and issue counts.
+      operationId: getAccessibilityWebsiteScannerScanRuns
+      parameters:
+        - name: scan_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteScannerScanRunList'
+  /api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}:
+    get:
+      summary: Get Website Scanner scan run summary
+      description: Returns a detailed summary for a specific scan run, including score, issue counts, and changes since the last run.
+      operationId: getAccessibilityWebsiteScannerScanRunSummary
+      parameters:
+        - name: scan_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: scan_run_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteScannerScanRunSummary'
+  /api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}/status:
+    get:
+      summary: Get Website Scanner scan run status
+      description: Returns the current execution status of a specific Website Scanner scan run.
+      operationId: getAccessibilityWebsiteScannerScanRunStatus
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: $.data
+      parameters:
+        - name: scan_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: scan_run_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteScannerScanRunStatus'
+  /api/website-scanner/v1/scans/{scan_id}/scan_runs/issues:
+    get:
+      summary: Get Website Scanner scan run issues
+      description: Returns paginated accessibility issues found during a specific Website Scanner scan run, optionally filtered by task.
+      operationId: getAccessibilityWebsiteScannerScanRunIssues
+      parameters:
+        - name: scan_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: scan_run_id
+          in: query
+          schema:
+            type: integer
+        - name: task_id
+          in: query
+          schema:
+            type: string
+        - name: next_page
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteScannerScanRunIssues'
+  /api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}/scan_logs:
+    get:
+      summary: Get Website Scanner scan run logs
+      description: Returns the crawl logs for a specific Website Scanner scan run, including per-URL status, redirects, and errors.
+      operationId: getAccessibilityWebsiteScannerScanRunLogs
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: $.data
+      parameters:
+        - name: scan_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: scan_run_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteScannerScanRunLogs'
+  /api/automated-tests/v1/projects:
+    get:
+      summary: List Automated Test projects
+      description: Returns a paginated list of all Automated Test accessibility projects for your account.
+      operationId: getAccessibilityAutomatedTestProjects
+      parameters:
+        - name: next_page
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomatedTestsProjectList'
+  /api/automated-tests/v1/builds:
+    get:
+      summary: List Automated Test builds
+      description: Returns a paginated list of Automated Test accessibility builds, optionally filtered by project.
+      operationId: getAccessibilityAutomatedTestBuilds
+      parameters:
+        - name: next_page
+          in: query
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomatedTestsBuildList'
+  /api/automated-tests/v1/builds/{thBuildId}/test-cases:
+    get:
+      summary: List test cases for an Automated Test build
+      description: Returns the paginated list of test cases and their accessibility results for a specific Automated Test build.
+      operationId: getAccessibilityAutomatedTestBuildTestCases
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: $.testCases
+      parameters:
+        - name: thBuildId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: next_page
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomatedTestsBuildTestCases'
+  /api/automated-tests/v1/builds/{thBuildId}:
+    get:
+      summary: Get Automated Test build summary
+      description: Returns the summary for a specific Automated Test build, including score, health stats, and issue counts.
+      operationId: getAccessibilityAutomatedTestBuildSummary
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: $.data
+      parameters:
+        - name: thBuildId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: next_page
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomatedTestsBuildSummary'
+  /api/automated-tests/v1/builds/issues:
+    get:
+      summary: Get Automated Test build issues
+      description: Returns paginated accessibility issues for a specific Automated Test build, optionally filtered by task.
+      operationId: getAccessibilityAutomatedTestBuildIssues
+      parameters:
+        - name: build_id
+          in: query
+          schema:
+            type: string
+        - name: task_id
+          in: query
+          schema:
+            type: string
+        - name: next_page
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomatedTestsBuildIssues'
+  /api/automated-tests/v1/builds/{thBuildId}/test-cases/{test_case_id}:
+    get:
+      summary: Get Automated Test case summary
+      description: Returns the accessibility summary for a specific test case within an Automated Test build.
+      operationId: getAccessibilityAutomatedTestBuildTestCaseSummary
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: $.data
+      parameters:
+        - name: thBuildId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: test_case_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: next_page
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomatedTestsTestCaseSummary'
+  /api/automated-tests/v1/builds/{thBuildId}/issues:
+    get:
+      summary: Get Automated Test case issues
+      description: Returns paginated accessibility issues for a specific test case within an Automated Test build.
+      operationId: getAccessibilityAutomatedTestBuildTestCaseIssues
+      parameters:
+        - name: thBuildId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: test_case
+          in: query
+          schema:
+            type: string
+        - name: task_id
+          in: query
+          schema:
+            type: string
+        - name: next_page
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomatedTestsTestCaseIssues'
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        has_next:
+          type: boolean
+        next_page:
+          type: string
+    EngineInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    IssueSummary:
+      type: object
+      properties:
+        componentCount:
+          type: integer
+        issueCount:
+          type: integer
+        pageCount:
+          type: integer
+    IssueSummaryFull:
+      type: object
+      properties:
+        issueCount:
+          type: integer
+        pageCount:
+          type: integer
+        componentCount:
+          type: integer
+        needsReview:
+          type: integer
+        hidden:
+          type: integer
+    IssueCount:
+      type: object
+      properties:
+        issueCountBySeverity:
+          type: object
+          properties:
+            minor:
+              type: integer
+            serious:
+              type: integer
+            critical:
+              type: integer
+            moderate:
+              type: integer
+        issueCountByURL:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+              count:
+                type: integer
+        issueCountByComponent:
+          type: array
+          items:
+            type: object
+            properties:
+              componentId:
+                type: string
+              count:
+                type: integer
+        issueCountByCategory:
+          type: array
+          items:
+            type: object
+            properties:
+              category:
+                type: string
+              count:
+                type: integer
+    ScoreData:
+      type: object
+      properties:
+        score:
+          type: integer
+        impact:
+          type: object
+          properties:
+            critical:
+              type: integer
+            serious:
+              type: integer
+            moderate:
+              type: integer
+            minor:
+              type: integer
+    ScoreDataDetailed:
+      type: object
+      properties:
+        score:
+          type: integer
+        impact:
+          type: object
+          properties:
+            critical:
+              type: integer
+            criticalPassed:
+              type: integer
+            criticalFailed:
+              type: integer
+            serious:
+              type: integer
+            seriousPassed:
+              type: integer
+            seriousFailed:
+              type: integer
+            moderate:
+              type: integer
+            moderatePassed:
+              type: integer
+            moderateFailed:
+              type: integer
+            minor:
+              type: integer
+            minorPassed:
+              type: integer
+            minorFailed:
+              type: integer
+    ChangesSinceLastRun:
+      type: object
+      properties:
+        newIssues:
+          type: integer
+        retainedIssues:
+          type: integer
+        resolvedIssues:
+          type: integer
+    OsData:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+          nullable: true
+        logo:
+          type: string
+    BrowserData:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        logo:
+          type: string
+    AuthConfig:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+        authData:
+          type: object
+          properties:
+            url:
+              type: string
+            username:
+              type: string
+            password:
+              type: string
+            usernameSelector:
+              type: string
+            passwordSelector:
+              type: string
+            submitSelector:
+              type: string
+    WorkflowAnalyzerReportList:
+      type: object
+      properties:
+        reports:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              createdBy:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                  name:
+                    type: string
+              wcagVersion:
+                type: string
+              status:
+                type: string
+              needsReview:
+                type: boolean
+              bestPractices:
+                type: boolean
+              advanced:
+                type: boolean
+              scanType:
+                type: string
+              engineInfo:
+                type: object
+                properties:
+                  testEngine:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      version:
+                        type: string
+              issueSummary:
+                type: object
+                properties:
+                  componentCount:
+                    type: integer
+                  issueCount:
+                    type: integer
+                  pageCount:
+                    type: integer
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    WorkflowAnalyzerReportSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        createdBy:
+          type: object
+          properties:
+            user_id:
+              type: integer
+            name:
+              type: string
+        time:
+          type: string
+        wcagVersion:
+          type: string
+        status:
+          type: string
+        needsReview:
+          type: boolean
+        bestPractices:
+          type: boolean
+        advanced:
+          type: boolean
+        scanType:
+          type: string
+        engineInfo:
+          $ref: '#/components/schemas/EngineInfo'
+        scoreData:
+          $ref: '#/components/schemas/ScoreData'
+        issueSummary:
+          $ref: '#/components/schemas/IssueSummary'
+        issueCount:
+          $ref: '#/components/schemas/IssueCount'
+    WorkflowAnalyzerReportIssues:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        time:
+          type: string
+        wcagVersion:
+          type: string
+        status:
+          type: string
+        needsReview:
+          type: boolean
+        bestPractices:
+          type: boolean
+        advanced:
+          type: boolean
+        scanType:
+          type: string
+        engineInfo:
+          $ref: '#/components/schemas/EngineInfo'
+        report_link:
+          type: string
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AssistedTestReportList:
+      type: object
+      properties:
+        reports:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              createdBy:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                  name:
+                    type: string
+              wcagVersion:
+                type: string
+              status:
+                type: string
+              needsReview:
+                type: boolean
+              bestPractices:
+                type: boolean
+              advanced:
+                type: boolean
+              scanType:
+                type: string
+              engineInfo:
+                type: object
+                properties:
+                  testEngine:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      version:
+                        type: string
+              issueSummary:
+                type: object
+                properties:
+                  componentCount:
+                    type: integer
+                  issueCount:
+                    type: integer
+                  pageCount:
+                    type: integer
+              assistedTestType:
+                type: string
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AssistedTestReportSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        createdBy:
+          type: object
+          properties:
+            user_id:
+              type: integer
+            name:
+              type: string
+        time:
+          type: string
+        wcagVersion:
+          type: string
+        status:
+          type: string
+        needsReview:
+          type: boolean
+        bestPractices:
+          type: boolean
+        advanced:
+          type: boolean
+        scanType:
+          type: string
+        engineInfo:
+          $ref: '#/components/schemas/EngineInfo'
+        scoreData:
+          $ref: '#/components/schemas/ScoreData'
+        issueSummary:
+          $ref: '#/components/schemas/IssueSummary'
+        issueCount:
+          $ref: '#/components/schemas/IssueCount'
+        assistedTestType:
+          type: string
+    AssistedTestReportIssues:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        time:
+          type: string
+        wcagVersion:
+          type: string
+        status:
+          type: string
+        needsReview:
+          type: boolean
+        bestPractices:
+          type: boolean
+        advanced:
+          type: boolean
+        scanType:
+          type: string
+        engineInfo:
+          $ref: '#/components/schemas/EngineInfo'
+        report_link:
+          type: string
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        assistedTestType:
+          type: string
+    WebsiteScannerScanCreated:
+      type: object
+      properties:
+        id:
+          type: integer
+        scanRunId:
+          type: integer
+        urlCount:
+          type: integer
+    WebsiteScannerScanList:
+      type: object
+      properties:
+        scans:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              createdBy:
+                type: integer
+              wcagVersion:
+                type: string
+              recurring:
+                type: boolean
+              active:
+                type: boolean
+              nextScanDate:
+                type: string
+              status:
+                type: string
+              advanced:
+                type: boolean
+              localTestingEnabled:
+                type: boolean
+              authEnabled:
+                type: boolean
+              pageCount:
+                type: integer
+              scan_url:
+                type: string
+              lastScanDetails:
+                type: object
+                properties:
+                  reportId:
+                    type: integer
+                  lastScanDate:
+                    type: string
+                  scanStatus:
+                    type: string
+                  issues:
+                    type: integer
+                  reportSummary:
+                    type: object
+                    properties:
+                      failure:
+                        type: integer
+                      success:
+                        type: integer
+                      redirect:
+                        type: integer
+                  error:
+                    type: string
+                    nullable: true
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    WebsiteScannerScanOverview:
+      type: object
+      properties:
+        scanConfigInfo:
+          type: object
+          properties:
+            name:
+              type: string
+            scanConfigId:
+              type: integer
+            createdBy:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+            wcagVersion:
+              type: string
+            needsReview:
+              type: boolean
+            bestPractices:
+              type: boolean
+            recurring:
+              type: boolean
+            advanced:
+              type: boolean
+            pageCount:
+              type: integer
+            nextScanDate:
+              type: string
+            active:
+              type: boolean
+            isProcessing:
+              type: boolean
+            authEnabled:
+              type: boolean
+            localTestingEnabled:
+              type: boolean
+        urlList:
+          type: array
+          items:
+            type: string
+    WebsiteScannerScanRunList:
+      type: object
+      properties:
+        scan_runs:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              scanDate:
+                type: string
+              issues:
+                type: integer
+              componentCount:
+                type: integer
+              reportSummary:
+                type: object
+                properties:
+                  failure:
+                    type: integer
+                  success:
+                    type: integer
+                  redirect:
+                    type: integer
+              issueSummary:
+                type: object
+                properties:
+                  minor:
+                    type: integer
+                  serious:
+                    type: integer
+                  critical:
+                    type: integer
+                  moderate:
+                    type: integer
+              error:
+                type: string
+                nullable: true
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    WebsiteScannerScanRunSummary:
+      type: object
+      properties:
+        scan_id:
+          type: integer
+        scan_run_id:
+          type: integer
+        time:
+          type: string
+        needsReview:
+          type: boolean
+        bestPractices:
+          type: boolean
+        advanced:
+          type: boolean
+        wcagVersion:
+          type: string
+        engineInfo:
+          $ref: '#/components/schemas/EngineInfo'
+        authEnabled:
+          type: boolean
+        localTestingEnabled:
+          type: boolean
+        status:
+          type: string
+        changesSinceLastRun:
+          $ref: '#/components/schemas/ChangesSinceLastRun'
+        scoreData:
+          $ref: '#/components/schemas/ScoreData'
+        issueSummary:
+          $ref: '#/components/schemas/IssueSummaryFull'
+        issueCount:
+          $ref: '#/components/schemas/IssueCount'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    WebsiteScannerScanRunStatus:
+      type: object
+      properties:
+        scan_id:
+          type: integer
+        scan_run_id:
+          type: integer
+        status:
+          type: string
+    WebsiteScannerScanRunIssues:
+      type: object
+      properties:
+        scan_id:
+          type: integer
+        scan_run_id:
+          type: integer
+        time:
+          type: string
+        needsReview:
+          type: boolean
+        bestPractices:
+          type: boolean
+        advanced:
+          type: boolean
+        engineInfo:
+          $ref: '#/components/schemas/EngineInfo'
+        wcagVersion:
+          type: string
+        report_link:
+          type: string
+    WebsiteScannerScanRunLogs:
+      type: object
+      properties:
+        urlCount:
+          type: integer
+        scanLogs:
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                type: string
+              pageUrl:
+                type: string
+              description:
+                type: string
+              finalRedirectUrl:
+                type: string
+              status:
+                type: string
+    AutomatedTestsProjectList:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              createdAt:
+                type: string
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AutomatedTestsBuildList:
+      type: object
+      properties:
+        builds:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              buildNumber:
+                type: integer
+              name:
+                type: string
+              startedAt:
+                type: string
+              wcagVersion:
+                type: string
+              recurring:
+                type: boolean
+              active:
+                type: boolean
+              status:
+                type: string
+              advanced:
+                type: boolean
+              localTestingEnabled:
+                type: boolean
+              authEnabled:
+                type: boolean
+              pageCount:
+                type: integer
+              createdBy:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+              projectId:
+                type: integer
+              thBuildId:
+                type: string
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AutomatedTestsBuildTestCases:
+      type: object
+      properties:
+        testCases:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              status:
+                type: string
+              time:
+                type: string
+              summary:
+                type: object
+                properties:
+                  pageCount:
+                    type: integer
+                  componentCount:
+                    type: integer
+                  issueCount:
+                    type: integer
+                  severityBreakdown:
+                    type: object
+                    properties:
+                      minor:
+                        type: integer
+                      serious:
+                        type: integer
+                      critical:
+                        type: integer
+                      moderate:
+                        type: integer
+              file:
+                type: string
+              osData:
+                $ref: '#/components/schemas/OsData'
+              browserData:
+                $ref: '#/components/schemas/BrowserData'
+              tags:
+                type: string
+                nullable: true
+              testRecordingTags:
+                type: array
+                items:
+                  type: string
+              error:
+                type: string
+                nullable: true
+              pages:
+                type: array
+                items:
+                  type: string
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AutomatedTestsBuildSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        buildNumber:
+          type: integer
+        wcagVersion:
+          type: string
+        testEngine:
+          $ref: '#/components/schemas/EngineInfo'
+        changesSinceLastRun:
+          $ref: '#/components/schemas/ChangesSinceLastRun'
+        scoreData:
+          $ref: '#/components/schemas/ScoreDataDetailed'
+        createdAt:
+          type: string
+        advanced:
+          type: boolean
+        needsReview:
+          type: boolean
+        bestPractice:
+          type: boolean
+        sessionData:
+          type: object
+          properties:
+            browser:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserData'
+            os:
+              type: array
+              items:
+                $ref: '#/components/schemas/OsData'
+            framework:
+              type: object
+              properties:
+                name:
+                  type: string
+                version:
+                  type: string
+        healthSummary:
+          type: object
+          properties:
+            failed:
+              type: integer
+            passed:
+              type: integer
+            skipped:
+              type: integer
+            total:
+              type: integer
+        issueSummary:
+          $ref: '#/components/schemas/IssueSummaryFull'
+        issueCount:
+          $ref: '#/components/schemas/IssueCount'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AutomatedTestsBuildIssues:
+      type: object
+      properties:
+        buildNumber:
+          type: integer
+        buildUId:
+          type: string
+        wcagVersion:
+          type: string
+        testEngine:
+          $ref: '#/components/schemas/EngineInfo'
+        time:
+          type: string
+        advanced:
+          type: boolean
+        needsReview:
+          type: boolean
+        bestPractice:
+          type: boolean
+        report_link:
+          type: string
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AutomatedTestsTestCaseSummary:
+      type: object
+      properties:
+        name:
+          type: string
+        tags:
+          type: string
+          nullable: true
+        file:
+          type: string
+        scopeList:
+          type: array
+          items:
+            type: string
+        osData:
+          $ref: '#/components/schemas/OsData'
+        browserData:
+          $ref: '#/components/schemas/BrowserData'
+        changesSinceLastRun:
+          $ref: '#/components/schemas/ChangesSinceLastRun'
+        scoreData:
+          $ref: '#/components/schemas/ScoreDataDetailed'
+        issueSummary:
+          $ref: '#/components/schemas/IssueSummaryFull'
+        issueCount:
+          $ref: '#/components/schemas/IssueCount'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AutomatedTestsTestCaseIssues:
+      type: object
+      properties:
+        name:
+          type: string
+        tags:
+          type: string
+          nullable: true
+        file:
+          type: string
+        scopeList:
+          type: array
+          items:
+            type: string
+        osData:
+          $ref: '#/components/schemas/OsData'
+        browserData:
+          $ref: '#/components/schemas/BrowserData'
+        report_link:
+          type: string
+        pagination:
+          $ref: '#/components/schemas/Pagination'

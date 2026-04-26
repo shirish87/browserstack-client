@@ -88,6 +88,8 @@ paths:
       description: Fetches Appium logs for a session. Raw Appium Logs for each session
         are available to you in text format.
       operationId: getAutomateSessionAppiumLogs
+      x-response-transform:
+        codec: text
       parameters:
       - name: sessionId
         in: path
@@ -123,6 +125,8 @@ paths:
       description: Fetches the badge key for sharing a public link for the Automate
         dashboard to view the latest build and sessions for that project
       operationId: getAutomateProjectBadgeKey
+      x-response-transform:
+        codec: text
       parameters:
       - name: projectId
         in: path
@@ -158,6 +162,14 @@ paths:
       summary: Upload terminal logs for your session.
       description: Upload terminal logs for your session.
       operationId: uploadAutomateSessionTerminalLogs
+      x-base-url: sdkCloud
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
+      x-response-transform:
+        codec: text
       parameters:
       - name: sessionId
         in: path
@@ -255,6 +267,10 @@ paths:
       summary: Fetches a session
       description: Fetches a session for a particular build
       operationId: getAutomateSession
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.automation_session"
       parameters:
       - name: sessionId
         in: path
@@ -293,6 +309,10 @@ paths:
       description: Set the status for a session or update the name of the session. You
         can mark test status as passed or failed along with a reason.
       operationId: updateAutomateSession
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.automation_session"
       parameters:
       - name: sessionId
         in: path
@@ -486,6 +506,12 @@ paths:
       summary: Fetches a build
       description: Fetches a build
       operationId: getAutomateBuild
+      x-response-transform:
+        codec: json-compose
+        config:
+          base: "$.build.automation_build"
+          merge:
+            sessions: "$.build.sessions[*].automation_session"
       parameters:
       - name: buildId
         in: path
@@ -655,6 +681,8 @@ paths:
       description: Fetches session logs. Whenever you execute a session on BrowserStack,
         a session log is generated. These logs are available to you in text format.
       operationId: getAutomateSessionLogs
+      x-response-transform:
+        codec: text
       parameters:
       - name: sessionId
         in: path
@@ -687,6 +715,11 @@ paths:
       summary: Upload a media file
       description: Upload a media file you want to use in your tests
       operationId: uploadAutomateMediaFile
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
       requestBody:
         required: true
         content:
@@ -777,6 +810,10 @@ paths:
       summary: Fetches list of sessions
       description: Fetches list of sessions for a particular build
       operationId: getAutomateSessions
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$[*].automation_session"
       parameters:
       - name: buildId
         in: path
@@ -844,6 +881,10 @@ paths:
       description: Specific information about a particular project can be queried using
         the project ID
       operationId: getAutomateProject
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.project"
       parameters:
       - name: projectId
         in: path
@@ -981,6 +1022,8 @@ paths:
       description: Fetches Selenium logs for a session. Raw Selenium logs for each session
         are available to you in text format.
       operationId: getAutomateSessionSeleniumLogs
+      x-response-transform:
+        codec: text
       parameters:
       - name: sessionId
         in: path
@@ -1016,6 +1059,13 @@ paths:
       summary: Upload terminal logs for your build.
       description: Upload terminal logs for your build.
       operationId: uploadAutomateBuildTerminalLogs
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
+      x-response-transform:
+        codec: text
       parameters:
       - name: buildId
         in: path
@@ -1129,6 +1179,8 @@ paths:
         the browserstack.console capability to disabled, errors, warnings, info, verbose.
         Raw Console Logs for each session are available to you in text format.
       operationId: getAutomateSessionConsoleLogs
+      x-response-transform:
+        codec: text
       parameters:
       - name: sessionId
         in: path
@@ -1165,6 +1217,8 @@ paths:
         are available for tests run using Selenium 4. Telemetry logs are by default
         disabled for a session.
       operationId: getAutomateSessionTelemetryLogs
+      x-response-transform:
+        codec: binary
       parameters:
       - name: sessionId
         in: path
@@ -1196,6 +1250,10 @@ paths:
       description: Fetch the 10 recent test builds that have run on BrowserStack. You
         can also limit the number of builds and paginate through your data
       operationId: getAutomateBuilds
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$[*].automation_build"
       parameters:
       - name: projectId
         in: query

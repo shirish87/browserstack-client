@@ -2,13 +2,33 @@
  * Shared core utilities for BrowserStack client packages
  * @internal
  */
-export { APIClient, resolveAccessKey, resolveUsername } from "./api-client.js";
+export { APIClient, resolveAccessKey, resolveUsername } from "./api-client";
 export type {
   BrowserStackOptions,
-  APIFetchOptions,
-} from "./api-client.js";
-export { BrowserStackError } from "./error.js";
-export type { ErrorContext } from "./error.js";
-export { buildBasicAuthHeader } from "./auth.js";
-export { env, versions, currentPlatform, currentArch } from "./env.js";
-export { makePkgInfo } from "./pkginfo.js";
+  ExecuteOptions,
+  HttpMethod,
+} from "./api-client";
+export {
+  BrowserStackError,
+  OpenAPIError,
+  NetworkError,
+  HttpError,
+  DecodeError,
+  TransformError,
+  ClientError,
+  isNetworkError,
+  isHttpError,
+  isDecodeError,
+  isTransformError,
+  isClientError,
+} from "./error";
+export type {
+  ErrorContext,
+  CodecContext,
+  ErrorKind,
+  ErrorBody,
+} from "./error";
+export { buildBasicAuthHeader } from "./auth";
+export { env, versions, currentPlatform, currentArch } from "./env";
+export type { Dict } from "./env";
+export { makePkgInfo } from "./pkginfo";

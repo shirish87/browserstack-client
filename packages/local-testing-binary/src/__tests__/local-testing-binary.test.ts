@@ -4,6 +4,8 @@ import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 import type { BrowserStackTestContext } from "@browserstack-client/core/__tests__/test-utils";
 import { localTestingBinaryContext } from "./setup.ts";
 
+const LONG_TIMEOUT = 60_000;
+
 describe("LocalBinary", () => {
   beforeAll(() => {
     env.BROWSERSTACK_LOCAL_BINARY_PATH = `${env.HOME}/.browserstack`;
@@ -175,4 +177,4 @@ describe("LocalBinary", () => {
       expect(client.args.length).toEqual(0);
     });
   });
-}, 60_000);
+}, LONG_TIMEOUT);

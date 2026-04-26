@@ -1,2 +1,2 @@
-export * from "./instance.js";
-export * from "./download.js";
+export * from "./instance";
+export * from "./download";

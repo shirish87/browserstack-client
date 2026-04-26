@@ -1,27 +1,19 @@
 import {
-  APIClient,
-  APIFetchOptions,
+  ExecuteOptions,
   BrowserStackOptions,
 } from "@browserstack-client/core";
-import { BrowserStackError } from "@browserstack-client/core";
-import type { components, operations, paths } from "@browserstack-client/openapi/screenshots";
-import type { FetchOptions } from "openapi-fetch";
+import { BrowserStackError, OpenAPIError } from "@browserstack-client/core";
+import type { components, operations } from "@browserstack-client/openapi/screenshots";
+import { GeneratedScreenshotsClient } from "@browserstack-client/openapi/screenshots/client";
+import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
 
-/**
- * ScreenshotsClient represents a client for interacting with the BrowserStack Screenshots API.
- * @see https://www.browserstack.com/screenshots/api
- * @public
- */
-export class ScreenshotsClient extends APIClient<paths> {
-  /**
-   * @internal
-   */
+type ScreenshotsJobCC = DeepCamelCase<operations["createScreenshotsJob"]["responses"][200]["content"]["application/json"]>;
+type GetJobCC = DeepCamelCase<operations["getScreenshotsJob"]["responses"][200]["content"]["application/json"]>;
+type CreateJobBody = DeepCamelCase<operations["createScreenshotsJob"]["requestBody"]["content"]["application/json"]>;
+
+export class ScreenshotsClient extends GeneratedScreenshotsClient {
   private static readonly jobCompleteStates = ["done", "error"];
 
-  /**
-   * Constructs a new instance of the ScreenshotsClient class.
-   * @param options - Optional configuration options for the client.
-   */
   constructor(options?: BrowserStackOptions) {
     super(
       options ?? {},
@@ -32,76 +24,36 @@ export class ScreenshotsClient extends APIClient<paths> {
     );
   }
 
-  /**
-   * Retrieves the list of available browsers for taking screenshots.
-   * @param options - Optional fetch options for the request.
-   * @returns A promise that resolves to the response from the API.
-   */
-  getBrowsers(options?: FetchOptions<operations["getScreenshotsBrowsers"]>) {
-    return this.makeGetRequest("/screenshots/browsers.json", options);
-  }
-
-  /**
-   * Creates a new screenshots job.
-   * @param body - The request body for creating the job.
-   * @param options - Optional fetch options for the request.
-   * @returns A promise that resolves to the response from the API.
-   */
   createJob(
-    body: operations["createScreenshotsJob"]["requestBody"]["content"]["application/json"],
-    options?: APIFetchOptions<operations["createScreenshotsJob"]>
-  ) {
-    return this.makePostRequest("/screenshots", {
-      ...options,
-      body,
-    }).then((job) => ({
+    body: CreateJobBody,
+    options?: ExecuteOptions
+  ): Promise<ScreenshotsJobCC & { id: string }> {
+    return super.createJob(body, options).then((job) => ({
       ...job,
-      id: job.job_id,
+      id: job.jobId!,
     }));
   }
 
-  /**
-   * Retrieves the details of a screenshots job.
-   * @param jobId - The ID of the job to retrieve.
-   * @param options - Optional fetch options for the request.
-   * @returns A promise that resolves to the response from the API.
-   */
   getJob(
     jobId: string,
-    options?: APIFetchOptions<operations["getScreenshotsJob"]>
-  ) {
-    return this.makeGetRequest(`/screenshots/{jobId}.json`, {
-      ...options,
-      params: {
-        path: {
-          jobId,
-        },
-      },
-    }).then((job) => ({
+    options?: ExecuteOptions
+  ): Promise<GetJobCC & { id: string }> {
+    return super.getJob(jobId, options).then((job) => ({
       ...job,
-      id: job.id ?? job.job_id,
+      id: job.id ?? job.jobId ?? jobId,
     }));
   }
 
-  /**
-   * Tracks the progress of a screenshot job and retrieves the screenshots associated with it.
-   *
-   * @param jobId - The ID of the job to track.
-   * @param onScreenshot - Optional callback function that will be called when a new screenshot is added to the result.
-   * @param pollInterval - The interval (in milliseconds) at which the job status should be polled. Default is 10000ms.
-   * @returns A promise that resolves with an array of screenshots when the job is completed.
-   */
   trackJob(
     jobId: string,
     onScreenshot?: (
-      screenshot: components["schemas"]["Screenshot"]
+      screenshot: DeepCamelCase<components["schemas"]["Screenshot"]>
     ) => void | Promise<void>,
-    options?: APIFetchOptions<operations["getScreenshotsJob"]>,
+    options?: ExecuteOptions,
     pollInterval = 10_000
-  ): Promise<components["schemas"]["Screenshot"][]> {
+  ): Promise<DeepCamelCase<components["schemas"]["Screenshot"]>[]> {
     return new Promise((resolve, reject) => {
-      const result: Map<string, components["schemas"]["Screenshot"]> =
-        new Map();
+      const result: Map<string, DeepCamelCase<components["schemas"]["Screenshot"]>> = new Map();
       let abortController: AbortController | undefined;
 
       const end = (err?: Error) => {
@@ -110,7 +62,7 @@ export class ScreenshotsClient extends APIClient<paths> {
 
         if (err) {
           reject(
-            err instanceof BrowserStackError
+            err instanceof BrowserStackError || err instanceof OpenAPIError
               ? err
               : new BrowserStackError(err.message, err)
           );
@@ -121,11 +73,9 @@ export class ScreenshotsClient extends APIClient<paths> {
 
       const interval = setInterval(async () => {
         abortController = options?.signal ? undefined : new AbortController();
+        const signal = options?.signal ?? abortController?.signal;
 
-        const job = await this.getJob(jobId, {
-          ...options,
-          signal: options?.signal ?? abortController?.signal,
-        }).catch(end);
+        const job = await this.getJob(jobId, { signal }).catch(end);
 
         if (!job) return;
 
@@ -136,7 +86,6 @@ export class ScreenshotsClient extends APIClient<paths> {
             if (!result.has(screenshot.id)) {
               result.set(screenshot.id, screenshot);
             }
-
             await onScreenshot?.(screenshot);
           }
         }
@@ -148,20 +97,12 @@ export class ScreenshotsClient extends APIClient<paths> {
     });
   }
 
-  /**
-   * Launches a screenshots job with the specified parameters.
-   *
-   * @param body - The request body for creating the screenshots job.
-   * @param onScreenshot - Optional callback function to be called when a screenshot is available.
-   * @param options - Optional options for the API fetch and job tracking, including pollInterval.
-   * @returns A promise that resolves to the result of the job tracking.
-   */
   async launch(
-    body: operations["createScreenshotsJob"]["requestBody"]["content"]["application/json"],
+    body: CreateJobBody,
     onScreenshot?: (
-      screenshot: components["schemas"]["Screenshot"]
+      screenshot: DeepCamelCase<components["schemas"]["Screenshot"]>
     ) => void | Promise<void>,
-    options?: APIFetchOptions<operations["createScreenshotsJob"]> & {
+    options?: ExecuteOptions & {
       pollInterval?: number;
     }
   ) {

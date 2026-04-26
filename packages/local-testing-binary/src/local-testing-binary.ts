@@ -305,7 +305,7 @@ export class LocalTestingBinary extends LocalTestingClient {
               return reject(new BrowserStackError(`${message} state=${state}`));
             }
           }
-        } catch (err) {
+        } catch {
           // non-JSON output from binary is unexpected
           // we have an invalid binary
           // download and retry run
@@ -568,7 +568,7 @@ export class LocalTestingBinary extends LocalTestingClient {
       if (await fileExists(binPath)) {
         return binPath;
       }
-    } catch (err) {
+    } catch {
       // expected err = ENOENT: no such file or directory, lstat <file>
     }
 

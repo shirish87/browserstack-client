@@ -1,16 +1,12 @@
-name: npm test
+name: CI
 on:
   push:
-    branches: [main]
-    paths-ignore:
-      - ".github/**"
-  workflow_dispatch:
+    branches:
+      - '__disabled__'
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
-  group: npm-test
-  cancel-in-progress: false
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   VITE_BROWSERSTACK_USERNAME: "${{ secrets.VITE_BROWSERSTACK_USERNAME }}"
@@ -27,17 +23,24 @@ jobs:
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          cache: "npm"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Build
-        run: |
-          npm install
-          npm run build
-          npm test -- -t "LocalCLI"
+        run: pnpm build:types && pnpm build
 
+      - name: Test CLI
+        run: pnpm test -- --project cli -t "LocalCLI"
 
   test-node-lts:
     name: "node.js lts"
@@ -46,17 +49,24 @@ jobs:
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          cache: "npm"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Build
-        run: |
-          npm install
-          npm run build
-          npm test
+        run: pnpm build:types && pnpm build
 
+      - name: Test
+        run: pnpm test
 
   test-node-v18:
     name: "node.js v18"
@@ -66,13 +76,81 @@ jobs:
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v4
         with:
           node-version: "18"
-          cache: "npm"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Build
+        run: pnpm build:types && pnpm build
+
+      - name: Test
+        run: pnpm test
+
+  sonarqube:
+    name: SonarQube Ephemeral Scan
+    runs-on: ubuntu-latest
+    needs: [test-node-lts]
+    services:
+      sonarqube:
+        image: sonarqube:community
+        ports:
+          - 9000:9000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build and Coverage
+        run: pnpm build:types && pnpm build && pnpm coverage
+
+      - name: Wait for SonarQube to be ready
         run: |
-          npm install
-          npm run build
-          npm test
+          echo "Waiting for SonarQube to start..."
+          until curl -s -f http://localhost:9000/api/system/status | grep -q '"status":"UP"'; do
+            sleep 5
+          done
+          echo "SonarQube is UP"
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          args: >
+            -Dsonar.host.url=http://localhost:9000
+            -Dsonar.login=admin
+            -Dsonar.password=admin
+
+      - name: Export SonarQube Issues
+        if: always()
+        run: |
+          curl -u admin:admin "http://localhost:9000/api/issues/search?componentKeys=browserstack-client&ps=500" > sonarqube-issues.json
+          curl -u admin:admin "http://localhost:9000/api/measures/component?component=browserstack-client&metricKeys=bugs,vulnerabilities,code_smells,coverage" > sonarqube-summary.json
+
+      - name: Upload SonarQube Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonarqube-reports
+          path: |
+            sonarqube-issues.json
+            sonarqube-summary.json

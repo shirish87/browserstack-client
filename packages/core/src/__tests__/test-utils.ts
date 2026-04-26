@@ -1,18 +1,20 @@
+import { homedir, tmpdir } from "node:os";
+import { join } from "node:path";
 import { assert } from "vitest";
 
 export interface BrowserStackTestContext {
   automate: {
-    client: any;
+    client: unknown;
     randomProjectId(): Promise<number>;
     randomBuildId(): Promise<string>;
     randomSessionId(): Promise<string>;
     randomMediaId(): Promise<string>;
   };
   screenshots: {
-    client: any;
+    client: unknown;
   };
   appAutomate: {
-    client: any;
+    client: unknown;
     randomProjectId(): Promise<number>;
     randomBuildId(): Promise<string>;
     randomSessionId(): Promise<string>;
@@ -24,16 +26,16 @@ export interface BrowserStackTestContext {
     randomXCUITestAppId(): Promise<string>;
   };
   jsTesting: {
-    client: any;
+    client: unknown;
     randomWorkerId(): Promise<number>;
   };
   localTesting: {
-    client: any;
+    client: unknown;
     randomBinaryInstanceId(): Promise<string>;
   };
   localTestingBinary: {
-    client: any;
-    options: any;
+    client: unknown;
+    options: Record<string, unknown>;
   };
 }
 
@@ -45,8 +47,6 @@ export function getTestCredentials() {
 }
 
 export function getLocalBinaryPath(): string {
-  const { homedir, tmpdir } = require("node:os");
-  const { join } = require("node:path");
   return process.env.VITE_BROWSERSTACK_LOCAL_BINARY_PATH ??
     join(homedir() ?? tmpdir(), ".browserstack");
 }

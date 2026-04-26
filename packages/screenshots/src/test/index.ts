@@ -1,12 +1,10 @@
 import { vi } from "vitest";
-import { ScreenshotsClient } from "../client.js";
-import * as fixtures from "./fixtures.js";
+import { type BrowserStackOptions } from "@browserstack-client/core";
+import { ScreenshotsClient } from "../index";
+import * as fixtures from "./fixtures";
 
-/**
- * Creates a mock ScreenshotsClient for testing
- */
 export function createMockScreenshotsClient(
-  options?: any
+  options?: BrowserStackOptions
 ): ScreenshotsClient & {
   getBrowsers: ReturnType<typeof vi.fn>;
   createJob: ReturnType<typeof vi.fn>;
@@ -23,7 +21,7 @@ export function createMockScreenshotsClient(
     getJob: vi.fn().mockResolvedValue(fixtures.job),
     trackJob: vi.fn().mockResolvedValue(fixtures.screenshots),
     launch: vi.fn().mockResolvedValue(fixtures.screenshots),
-  } as any;
+  } as ReturnType<typeof createMockScreenshotsClient>;
 }
 
 export { fixtures };

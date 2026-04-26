@@ -1,0 +1,75 @@
+#!/usr/bin/env node
+
+import { ensureAccessKeyExists, ensureUsernameExists, formatError } from "./utils.ts";
+import { BrowserStackError } from "@browserstack-client/core";
+import { TestManagementClient } from "@browserstack-client/test-management";
+import { BrowserStackOptions } from "@browserstack-client/core";
+import { resolve } from "node:path";
+import process from "node:process";
+import { TestManagementSchemas } from "./schemas.generated.ts";
+import { parseArgs } from "./parser.ts";
+
+interface Logger {
+  info(message: string, ...params: unknown[]): void;
+  error(message: string, ...params: unknown[]): void;
+}
+
+type TestManagementClientOptions = Partial<BrowserStackOptions>;
+
+const ACTION_SCHEMA_MAP = {
+  ...TestManagementSchemas.ProjectsActionSchemaMap,
+  ...TestManagementSchemas.FoldersActionSchemaMap,
+  ...TestManagementSchemas.TestCasesActionSchemaMap,
+  ...TestManagementSchemas.AttachmentsActionSchemaMap,
+  ...TestManagementSchemas.TestResultsActionSchemaMap,
+  ...TestManagementSchemas.TestRunsActionSchemaMap,
+  ...TestManagementSchemas.TestPlansActionSchemaMap,
+  ...TestManagementSchemas.ConfigurationsActionSchemaMap,
+  ...TestManagementSchemas.CustomFieldsActionSchemaMap,
+};
+
+const USAGE = `Usage: test-management <action> [args...]
+Actions: ${Object.keys(ACTION_SCHEMA_MAP).join(", ")}`;
+
+export async function main(
+  inputArgs: string[] = process.argv.slice(2),
+  logger: Logger = globalThis.console
+) {
+  try {
+    ensureAccessKeyExists(undefined);
+    ensureUsernameExists(undefined);
+
+    const args = inputArgs.map((a) => a.trim());
+    const actionInput = args[0]?.toLowerCase();
+    const rest = args.slice(1);
+    const opts: TestManagementClientOptions = {};
+    const client = new TestManagementClient(opts);
+
+    if (!actionInput || actionInput === "help") {
+      logger.info(USAGE);
+      return;
+    }
+
+    const schemaConfig = ACTION_SCHEMA_MAP[actionInput];
+    if (!schemaConfig) {
+      throw new BrowserStackError(`Invalid action: ${actionInput}\n${USAGE}`);
+    }
+
+    const parsed = parseArgs(schemaConfig.schema, rest);
+    const result = await schemaConfig.call(client, parsed);
+
+    logger.info(JSON.stringify(result, null, 2));
+
+  } catch (err) {
+    logger.error(formatError(err));
+    process.exit(1);
+  }
+}
+
+const isMain =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file://${resolve(process.argv[1])}`;
+
+if (isMain) {
+  main();
+}

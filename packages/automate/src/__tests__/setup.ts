@@ -1,5 +1,5 @@
-import { AutomateClient, BrowserStackOptions } from "@browserstack-client/automate";
-import { resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { BrowserStackOptions, resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { AutomateClient } from "../index";
 import { assert } from "vitest";
 
 export interface BrowserStackTestContext {
@@ -23,7 +23,7 @@ const randomAutomateBuildId = async () => {
   const builds = await automate.getBuilds();
   assert(builds.length > 0, "No builds found");
   const build = builds[Math.floor(Math.random() * builds.length)];
-  return build.hashed_id;
+  return build.hashedId;
 };
 
 export const automateContext: BrowserStackTestContext["automate"] = {
@@ -40,12 +40,12 @@ export const automateContext: BrowserStackTestContext["automate"] = {
     const sessions = await automate.getSessions(buildId);
     assert(sessions.length > 0, "No sessions found");
     const session = sessions[Math.floor(Math.random() * sessions.length)];
-    return session.hashed_id;
+    return session.hashedId;
   },
   randomMediaId: async () => {
     const files = await automate.getMediaFiles();
     assert(files.length > 0, "No media found");
     const mediaItem = files[Math.floor(Math.random() * files.length)];
-    return mediaItem.media_id;
+    return mediaItem.mediaId;
   },
 };

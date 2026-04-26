@@ -1,0 +1,2173 @@
+servers:
+  - url: "{scheme}://{host}"
+    variables:
+      scheme:
+        default: https
+      host:
+        default: test-management.browserstack.com
+
+openapi: 3.0.2
+info:
+  title: BrowserStack Test Management
+  version: 2.0.0
+  description: BrowserStack Test Management API
+  license:
+    name: MIT License
+    url: https://opensource.org/license/mit/
+
+externalDocs:
+  description: Find out more about BrowserStack Test Management
+  url: https://www.browserstack.com/docs/test-management/api-reference/introduction
+
+security:
+  - basicAuth: []
+
+paths:
+
+  # ── Projects ────────────────────────────────────────────────────────────────
+
+  /api/v2/projects:
+    get:
+      tags: [Projects]
+      summary: Get list of projects
+      operationId: getTestManagementProjects
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.projects"
+      parameters:
+        - name: p
+          in: query
+          schema: { type: integer }
+        - name: page_size
+          in: query
+          schema: { type: integer, enum: [30, 300] }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  projects:
+                    type: array
+                    items: { $ref: '#/components/schemas/ProjectSummary' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Projects]
+      summary: Create a project
+      operationId: createTestManagementProject
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.project"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project:
+                  type: object
+                  required: [name]
+                  properties:
+                    name: { type: string }
+                    description: { type: string }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  project: { $ref: '#/components/schemas/Project' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}:
+    get:
+      tags: [Projects]
+      summary: Get project details
+      operationId: getTestManagementProject
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.project"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  project: { $ref: '#/components/schemas/Project' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Projects]
+      summary: Update a project
+      operationId: updateTestManagementProject
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.project"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    description: { type: string }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  project: { $ref: '#/components/schemas/Project' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Projects]
+      summary: Delete a project
+      operationId: deleteTestManagementProject
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ── Folders ─────────────────────────────────────────────────────────────────
+
+  /api/v2/projects/{projectId}/folders:
+    get:
+      tags: [Folders]
+      summary: Get list of folders in a project
+      operationId: getTestManagementFolders
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.folders"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - name: p
+          in: query
+          schema: { type: integer }
+        - name: page_size
+          in: query
+          schema: { type: integer, enum: [30, 300] }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  folders:
+                    type: array
+                    items: { $ref: '#/components/schemas/FolderSummary' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Folders]
+      summary: Create a folder
+      operationId: createTestManagementFolder
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.folder"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                folder:
+                  type: object
+                  required: [name, description]
+                  properties:
+                    name: { type: string }
+                    description: { type: string }
+                    parent_id: { type: integer, nullable: true }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  folder: { $ref: '#/components/schemas/Folder' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/folders/{folderId}:
+    get:
+      tags: [Folders]
+      summary: Get folder details
+      operationId: getTestManagementFolder
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.folder"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/FolderId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  folder: { $ref: '#/components/schemas/Folder' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Folders]
+      summary: Update a folder
+      operationId: updateTestManagementFolder
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.folder"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/FolderId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                folder:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    description: { type: string }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  folder: { $ref: '#/components/schemas/Folder' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Folders]
+      summary: Delete a folder
+      operationId: deleteTestManagementFolder
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/FolderId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/folders/{folderId}/move:
+    post:
+      tags: [Folders]
+      summary: Move a folder
+      operationId: moveTestManagementFolder
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.folder"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/FolderId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parent_id: { type: integer, nullable: true }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  folder: { $ref: '#/components/schemas/Folder' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ── Test Cases ──────────────────────────────────────────────────────────────
+
+  /api/v2/projects/{projectId}/test-cases:
+    get:
+      tags: [TestCases]
+      summary: Get list of test cases
+      operationId: getTestManagementTestCases
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_cases"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { name: p, in: query, schema: { type: integer } }
+        - { name: page_size, in: query, schema: { type: integer, enum: [30, 300] } }
+        - { name: updated_after, in: query, schema: { type: string } }
+        - { name: updated_before, in: query, schema: { type: string } }
+        - { name: archived, in: query, schema: { type: boolean } }
+        - { name: minify, in: query, schema: { type: boolean } }
+        - { name: id, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { type: string } }
+        - { name: priority, in: query, schema: { type: string } }
+        - { name: owner, in: query, schema: { type: string } }
+        - { name: case_type, in: query, schema: { type: string } }
+        - { name: folder_id, in: query, schema: { type: integer } }
+        - { name: tags, in: query, schema: { type: string } }
+        - { name: issue_ids, in: query, schema: { type: string } }
+        - { name: issue_type, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_cases:
+                    type: array
+                    items: { $ref: '#/components/schemas/TestCase' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    patch:
+      tags: [TestCases]
+      summary: Bulk edit test cases
+      operationId: bulkEditTestManagementTestCases
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids, test_case]
+              properties:
+                ids:
+                  type: array
+                  items: { type: string }
+                test_case:
+                  type: object
+                  properties:
+                    preconditions: { type: string }
+                    owner: { type: string }
+                    tags: { type: array, items: { type: string } }
+                    custom_fields: { type: object }
+                    automation_status: { type: string }
+                    case_type: { type: string }
+                    priority: { type: string }
+                    status: { type: string }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    delete:
+      tags: [TestCases]
+      summary: Bulk delete test cases
+      operationId: bulkDeleteTestManagementTestCases
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  items: { type: string }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/test-cases/archive:
+    post:
+      tags: [TestCases]
+      summary: Bulk archive test cases
+      operationId: bulkArchiveTestManagementTestCases
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  items: { type: string }
+                  maxItems: 1000
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/test-cases/unarchive:
+    post:
+      tags: [TestCases]
+      summary: Bulk unarchive test cases
+      operationId: bulkUnarchiveTestManagementTestCases
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  items: { type: string }
+                  maxItems: 1000
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/test-cases/with-operations:
+    patch:
+      tags: [TestCases]
+      summary: Bulk edit test cases with operations
+      operationId: bulkEditTestManagementTestCasesWithOperations
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids, test_case]
+              properties:
+                ids:
+                  type: array
+                  items: { type: string }
+                test_case:
+                  type: object
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/folders/{folderId}/test-cases:
+    post:
+      tags: [TestCases]
+      summary: Create a test case
+      operationId: createTestManagementTestCase
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.data.test_case"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/FolderId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test_case:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    template: { type: string }
+                    description: { type: string }
+                    owner: { type: string }
+                    preconditions: { type: string }
+                    test_case_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          description: { type: string }
+                          result: { type: string }
+                    issues:
+                      type: array
+                      items: { type: string }
+                    issue_tracker:
+                      type: object
+                      properties:
+                        name: { type: string }
+                        host: { type: string }
+                    tags:
+                      type: array
+                      items: { type: string }
+                    case_type: { type: string }
+                    priority: { type: string }
+                    custom_fields: { type: object }
+                    feature: { type: string }
+                    scenario: { type: string }
+                    background: { type: string }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      test_case: { $ref: '#/components/schemas/TestCase' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/test-cases/{testCaseId}:
+    patch:
+      tags: [TestCases]
+      summary: Update a test case
+      operationId: updateTestManagementTestCase
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.data.test_case"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestCaseId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test_case:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    case_type: { type: string }
+                    priority: { type: string }
+                    status: { type: string }
+                    description: { type: string }
+                    owner: { type: string }
+                    preconditions: { type: string }
+                    test_case_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          description: { type: string }
+                          result: { type: string }
+                    issues:
+                      type: array
+                      items: { type: string }
+                    issue_tracker:
+                      type: object
+                      properties:
+                        name: { type: string }
+                        host: { type: string }
+                    tags:
+                      type: array
+                      items: { type: string }
+                    custom_fields: { type: object }
+                    automation_status: { type: string }
+                    feature: { type: string }
+                    scenario: { type: string }
+                    background: { type: string }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      test_case: { $ref: '#/components/schemas/TestCase' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [TestCases]
+      summary: Delete a test case
+      operationId: deleteTestManagementTestCase
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestCaseId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-cases/{testCaseId}/archive:
+    post:
+      tags: [TestCases]
+      summary: Archive a test case
+      operationId: archiveTestManagementTestCase
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.data.test_case"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestCaseId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      test_case: { $ref: '#/components/schemas/TestCase' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-cases/{testCaseId}/unarchive:
+    post:
+      tags: [TestCases]
+      summary: Unarchive a test case
+      operationId: unarchiveTestManagementTestCase
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.data.test_case"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestCaseId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      test_case: { $ref: '#/components/schemas/TestCase' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-cases/{testCaseId}/move:
+    post:
+      tags: [TestCases]
+      summary: Move a test case to a different folder
+      operationId: moveTestManagementTestCase
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.data.test_case"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestCaseId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [destination_folder_id]
+              properties:
+                destination_folder_id: { type: integer }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      test_case: { $ref: '#/components/schemas/TestCase' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-cases/{testCaseId}/attachments:
+    get:
+      tags: [Attachments]
+      summary: Get attachments for a test case
+      operationId: getTestManagementTestCaseAttachments
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.attachments"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestCaseId' }
+        - { name: p, in: query, schema: { type: integer } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  attachments:
+                    type: array
+                    items: { $ref: '#/components/schemas/Attachment' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Attachments]
+      summary: Add attachment to a test case
+      operationId: addTestManagementTestCaseAttachment
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.attachment"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestCaseId' }
+        - { name: inline, in: query, schema: { type: boolean } }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                file_name:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  attachment: { $ref: '#/components/schemas/Attachment' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/test-cases/{testCaseId}/attachments/{attachmentId}:
+    delete:
+      tags: [Attachments]
+      summary: Delete attachment from a test case
+      operationId: deleteTestManagementTestCaseAttachment
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestCaseId' }
+        - { $ref: '#/components/parameters/AttachmentId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-cases/{testCaseId}/results:
+    get:
+      tags: [TestResults]
+      summary: Get test results for a test case across all test runs
+      operationId: getTestManagementTestCaseResults
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_results"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestCaseId' }
+        - { name: p, in: query, schema: { type: integer } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_results:
+                    type: array
+                    items: { $ref: '#/components/schemas/TestResult' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  # ── Test Runs ────────────────────────────────────────────────────────────────
+
+  /api/v2/projects/{projectId}/test-runs:
+    get:
+      tags: [TestRuns]
+      summary: Get list of test runs
+      operationId: getTestManagementTestRuns
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_runs"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { name: closed_before, in: query, schema: { type: string } }
+        - { name: closed_after, in: query, schema: { type: string } }
+        - { name: created_before, in: query, schema: { type: string } }
+        - { name: created_after, in: query, schema: { type: string } }
+        - { name: test_plan_id, in: query, schema: { type: string } }
+        - { name: assignee, in: query, schema: { type: string } }
+        - { name: include_closed, in: query, schema: { type: boolean } }
+        - { name: run_state, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_runs:
+                    type: array
+                    items: { $ref: '#/components/schemas/TestRunSummary' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [TestRuns]
+      summary: Create a test run
+      operationId: createTestManagementTestRun
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_run"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test_run: { $ref: '#/components/schemas/TestRunInput' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_run: { $ref: '#/components/schemas/TestRun' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/test-runs/{testRunId}:
+    get:
+      tags: [TestRuns]
+      summary: Get test run details
+      operationId: getTestManagementTestRun
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_run"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestRunId' }
+        - { name: minify, in: query, schema: { type: boolean } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_run: { $ref: '#/components/schemas/TestRunDetail' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-runs/{testRunId}/test-cases:
+    get:
+      tags: [TestRuns]
+      summary: Get test cases of a test run
+      operationId: getTestManagementTestRunTestCases
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_cases"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestRunId' }
+        - { name: p, in: query, schema: { type: integer } }
+        - { name: fetch_steps, in: query, schema: { type: boolean } }
+        - { name: minify, in: query, schema: { type: boolean } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_cases:
+                    type: array
+                    items: { $ref: '#/components/schemas/TestRunTestCase' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-runs/{testRunId}/update:
+    patch:
+      tags: [TestRuns]
+      summary: Partially update a test run
+      operationId: patchTestManagementTestRun
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.testrun"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestRunId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test_run: { $ref: '#/components/schemas/TestRunPatchInput' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  testrun: { $ref: '#/components/schemas/TestRun' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    post:
+      tags: [TestRuns]
+      summary: Fully update a test run (replaces test cases)
+      operationId: updateTestManagementTestRun
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.testrun"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestRunId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test_run: { $ref: '#/components/schemas/TestRunInput' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  testrun: { $ref: '#/components/schemas/TestRun' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-runs/{testRunId}/assign:
+    post:
+      tags: [TestRuns]
+      summary: Update assignees of test cases within a test run
+      operationId: assignTestManagementTestRunTestCases
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestRunId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assign_to]
+              properties:
+                assign_to:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      test_case_id: { type: string }
+                      configuration_id: { type: integer }
+                      assignee: { type: string }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-runs/{testRunId}/close:
+    post:
+      tags: [TestRuns]
+      summary: Close a test run
+      operationId: closeTestManagementTestRun
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.testrun"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestRunId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  testrun: { $ref: '#/components/schemas/TestRun' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-runs/{testRunId}/delete:
+    post:
+      tags: [TestRuns]
+      summary: Delete a test run
+      operationId: deleteTestManagementTestRun
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestRunId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-runs/{testRunId}/results:
+    get:
+      tags: [TestResults]
+      summary: Get all test results for a test run
+      operationId: getTestManagementTestRunResults
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_results"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestRunId' }
+        - { name: p, in: query, schema: { type: integer } }
+        - { name: validate_tc, in: query, schema: { type: boolean } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_results:
+                    type: array
+                    items: { $ref: '#/components/schemas/TestResult' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [TestResults]
+      summary: Add test result(s) to a test run
+      operationId: addTestManagementTestRunResults
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestRunId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required: [test_result, test_case_id]
+                  properties:
+                    test_result: { $ref: '#/components/schemas/TestResultInput' }
+                    test_case_id: { type: string }
+                    configuration_id: { type: integer }
+                - type: object
+                  required: [results]
+                  properties:
+                    results:
+                      type: array
+                      items:
+                        type: object
+                        required: [test_result, test_case_id]
+                        properties:
+                          test_result: { $ref: '#/components/schemas/TestResultInput' }
+                          test_case_id: { type: string }
+                          configuration_id: { type: integer }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/test-runs/{testRunId}/test-cases/{testCaseId}/results:
+    get:
+      tags: [TestResults]
+      summary: Get test results for a specific test case in a test run
+      operationId: getTestManagementTestRunTestCaseResults
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_results"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestRunId' }
+        - { $ref: '#/components/parameters/TestCaseId' }
+        - { name: p, in: query, schema: { type: integer } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_results:
+                    type: array
+                    items: { $ref: '#/components/schemas/TestResult' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/test-results/{testResultId}/attachments:
+    get:
+      tags: [Attachments]
+      summary: Get attachments for a test result
+      operationId: getTestManagementTestResultAttachments
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.attachments"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestResultId' }
+        - { name: p, in: query, schema: { type: integer } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  attachments:
+                    type: array
+                    items: { $ref: '#/components/schemas/Attachment' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Attachments]
+      summary: Add attachment to a test result
+      operationId: addTestManagementTestResultAttachment
+      x-request-transform:
+        codec: multipart
+        config:
+          fileField: file
+          filenameFrom: "$.file_name"
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.attachment"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestResultId' }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                file_name:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  attachment: { $ref: '#/components/schemas/Attachment' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/test-results/{testResultId}/attachments/{attachmentId}:
+    delete:
+      tags: [Attachments]
+      summary: Delete attachment from a test result
+      operationId: deleteTestManagementTestResultAttachment
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestResultId' }
+        - { $ref: '#/components/parameters/AttachmentId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ── Test Plans ───────────────────────────────────────────────────────────────
+
+  /api/v2/projects/{projectId}/test-plans:
+    get:
+      tags: [TestPlans]
+      summary: Get list of test plans
+      operationId: getTestManagementTestPlans
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_plans"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { name: p, in: query, schema: { type: integer } }
+        - { name: page_size, in: query, schema: { type: integer, enum: [30, 300] } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_plans:
+                    type: array
+                    items: { $ref: '#/components/schemas/TestPlan' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [TestPlans]
+      summary: Create a test plan
+      operationId: createTestManagementTestPlan
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_plan"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test_plan:
+                  type: object
+                  required: [name]
+                  properties:
+                    name: { type: string }
+                    plan_status: { type: string }
+                    description: { type: string }
+                    start_date: { type: string }
+                    end_date: { type: string, nullable: true }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_plan: { $ref: '#/components/schemas/TestPlan' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/projects/{projectId}/test-plans/{testPlanId}:
+    get:
+      tags: [TestPlans]
+      summary: Get test plan details
+      operationId: getTestManagementTestPlan
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_plan"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestPlanId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_plan: { $ref: '#/components/schemas/TestPlanDetail' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-plans/{testPlanId}/update:
+    post:
+      tags: [TestPlans]
+      summary: Update a test plan
+      operationId: updateTestManagementTestPlan
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_plan"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestPlanId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test_plan:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    plan_status: { type: string }
+                    description: { type: string }
+                    start_date: { type: string }
+                    end_date: { type: string, nullable: true }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_plan: { $ref: '#/components/schemas/TestPlan' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v2/projects/{projectId}/test-plans/{testPlanId}/test-runs:
+    get:
+      tags: [TestPlans]
+      summary: Get test runs linked to a test plan
+      operationId: getTestManagementTestPlanTestRuns
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.test_runs"
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/TestPlanId' }
+        - { name: p, in: query, schema: { type: integer } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  test_runs:
+                    type: array
+                    items: { $ref: '#/components/schemas/TestRunSummary' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ── Configurations ───────────────────────────────────────────────────────────
+
+  /api/v2/configurations:
+    get:
+      tags: [Configurations]
+      summary: Get all configurations
+      operationId: getTestManagementConfigurations
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.configurations"
+      parameters:
+        - { name: p, in: query, schema: { type: integer } }
+        - { name: page_size, in: query, schema: { type: integer, enum: [30, 300] } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  configurations:
+                    type: array
+                    items: { $ref: '#/components/schemas/Configuration' }
+                  info: { $ref: '#/components/schemas/PaginationInfo' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Configurations]
+      summary: Add a custom configuration
+      operationId: createTestManagementConfiguration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  id: { type: integer }
+                  name: { type: string }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/configurations/{configurationId}:
+    get:
+      tags: [Configurations]
+      summary: Get configuration by ID
+      operationId: getTestManagementConfiguration
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.configuration"
+      parameters:
+        - { $ref: '#/components/parameters/ConfigurationId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  configuration: { $ref: '#/components/schemas/Configuration' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ── Custom Fields ────────────────────────────────────────────────────────────
+
+  /api/v2/custom-fields:
+    get:
+      tags: [CustomFields]
+      summary: Get all custom fields
+      operationId: getTestManagementCustomFields
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.custom_fields"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  custom_fields:
+                    type: array
+                    items: { $ref: '#/components/schemas/CustomField' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [CustomFields]
+      summary: Create a custom field
+      operationId: createTestManagementCustomField
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.custom_field"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [field_name, field_type, field_entity_type]
+              properties:
+                field_name: { type: string, maxLength: 32 }
+                place_holder_text: { type: string, maxLength: 150 }
+                field_type: { type: string, enum: [string, dropdown, text, user, boolean, url, date, int] }
+                is_required: { type: boolean }
+                options:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      option_value: { type: string }
+                      is_default: { type: boolean }
+                applies_to_all_projects: { type: boolean }
+                field_entity_type: { type: string, enum: [test_case, test_result] }
+                link_to_future_projects: { type: boolean }
+                assigned_projects:
+                  type: array
+                  items: { type: string }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  custom_field: { $ref: '#/components/schemas/CustomField' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v2/custom-fields/{customFieldId}:
+    patch:
+      tags: [CustomFields]
+      summary: Update a custom field
+      operationId: updateTestManagementCustomField
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$.custom_field"
+      parameters:
+        - { $ref: '#/components/parameters/CustomFieldId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                field_name: { type: string }
+                place_holder_text: { type: string }
+                field_type: { type: string }
+                is_required: { type: boolean }
+                options: { type: array, items: { type: object } }
+                applies_to_all_projects: { type: boolean }
+                field_entity_type: { type: string }
+                link_to_future_projects: { type: boolean }
+                assigned_projects: { type: array, items: { type: string } }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      custom_field: { $ref: '#/components/schemas/CustomField' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [CustomFields]
+      summary: Delete a custom field
+      operationId: deleteTestManagementCustomField
+      parameters:
+        - { $ref: '#/components/parameters/CustomFieldId' }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  parameters:
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema: { type: string }
+    FolderId:
+      name: folderId
+      in: path
+      required: true
+      schema: { type: integer }
+    TestCaseId:
+      name: testCaseId
+      in: path
+      required: true
+      schema: { type: string }
+    TestRunId:
+      name: testRunId
+      in: path
+      required: true
+      schema: { type: string }
+    TestPlanId:
+      name: testPlanId
+      in: path
+      required: true
+      schema: { type: string }
+    TestResultId:
+      name: testResultId
+      in: path
+      required: true
+      schema: { type: integer }
+    AttachmentId:
+      name: attachmentId
+      in: path
+      required: true
+      schema: { type: integer }
+    ConfigurationId:
+      name: configurationId
+      in: path
+      required: true
+      schema: { type: string }
+    CustomFieldId:
+      name: customFieldId
+      in: path
+      required: true
+      schema: { type: string }
+
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: { type: string }
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: { type: string }
+
+  schemas:
+    PaginationInfo:
+      type: object
+      properties:
+        page: { type: integer }
+        page_size: { type: integer }
+        count: { type: integer }
+        prev: { type: integer, nullable: true }
+        next: { type: integer, nullable: true }
+
+    ProjectSummary:
+      type: object
+      properties:
+        name: { type: string }
+        identifier: { type: string }
+
+    Project:
+      type: object
+      properties:
+        name: { type: string }
+        identifier: { type: string }
+        description: { type: string }
+        created_at: { type: string }
+        created_by: { type: string }
+        team_id:
+          type: array
+          items: { type: integer }
+
+    FolderSummary:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        parent_id: { type: integer, nullable: true }
+        sub_folders_count: { type: integer }
+        links:
+          type: object
+          properties:
+            sub_folders: { type: string }
+
+    Folder:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+        parent_id: { type: integer, nullable: true }
+        cases_count: { type: integer }
+        sub_folders_count: { type: integer }
+        links:
+          type: object
+          properties:
+            sub_folders: { type: string }
+
+    TestCaseStep:
+      type: object
+      properties:
+        id: { type: integer }
+        order: { type: integer }
+        description: { type: string }
+        result: { type: string }
+
+    TestCase:
+      type: object
+      properties:
+        identifier: { type: string }
+        name: { type: string }
+        description: { type: string }
+        owner: { type: string }
+        preconditions: { type: string }
+        case_type: { type: string }
+        priority: { type: string }
+        status: { type: string }
+        automation_status: { type: string }
+        archived: { type: string }
+        folder_id: { type: integer }
+        template: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+        test_case_steps:
+          type: array
+          items: { $ref: '#/components/schemas/TestCaseStep' }
+        issues:
+          type: array
+          items: { type: string }
+        custom_fields: { type: object }
+        created_at: { type: string }
+        updated_at: { type: string }
+        feature: { type: string }
+        scenario: { type: string }
+        background: { type: string }
+
+    TestRunSummary:
+      type: object
+      properties:
+        identifier: { type: string }
+        name: { type: string }
+        active_state: { type: string }
+        run_state: { type: string }
+        assignee: { type: string }
+        created_at: { type: string }
+        project_id: { type: string }
+        test_cases_count: { type: integer }
+        configurations:
+          type: array
+          items: { type: integer }
+
+    TestRun:
+      type: object
+      properties:
+        identifier: { type: string }
+        name: { type: string }
+        description: { type: string }
+        active_state: { type: string }
+        run_state: { type: string }
+        assignee: { type: string }
+        created_at: { type: string }
+        updated_at: { type: string }
+        project_id: { type: string }
+        test_cases_count: { type: integer }
+        tags:
+          type: array
+          items: { type: string }
+        issues:
+          type: array
+          items: { type: string }
+        test_plan:
+          type: object
+          nullable: true
+          properties:
+            identifier: { type: string }
+            name: { type: string }
+
+    TestRunDetail:
+      allOf:
+        - $ref: '#/components/schemas/TestRun'
+        - type: object
+          properties:
+            configurations:
+              type: array
+              items: { type: integer }
+            test_cases:
+              type: array
+              items: { $ref: '#/components/schemas/TestRunTestCase' }
+            links: { type: object }
+            passed_count: { type: integer }
+            failed_count: { type: integer }
+            overall_progress: { type: object }
+
+    TestRunTestCase:
+      type: object
+      properties:
+        identifier: { type: string }
+        name: { type: string }
+        description: { type: string }
+        case_type: { type: string }
+        priority: { type: string }
+        status: { type: string }
+        assignee: { type: string }
+        latest_status: { type: string }
+        latest_result_id: { type: integer }
+        configuration_id: { type: integer }
+        folder_path:
+          type: array
+          items: { type: integer }
+        steps:
+          type: array
+          items: { $ref: '#/components/schemas/TestCaseStep' }
+        dataset:
+          type: array
+          items:
+            type: object
+            properties:
+              variable: { type: string }
+              row: { type: string }
+        created_at: { type: string }
+        last_updated_at: { type: string }
+        created_by: { type: string }
+        last_updated_by: { type: string }
+
+    TestRunInput:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        run_state: { type: string }
+        assignee: { type: string }
+        test_case_assignee: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+        issues:
+          type: array
+          items: { type: string }
+        issue_tracker:
+          type: object
+          properties:
+            name: { type: string }
+            host: { type: string }
+        test_plan_id: { type: string }
+        configurations:
+          type: array
+          items: { type: integer }
+        configuration_map:
+          type: array
+          items:
+            type: object
+            properties:
+              test_case_id:
+                oneOf:
+                  - type: string
+                  - type: array
+                    items: { type: string }
+              configuration_ids:
+                type: array
+                items: { type: integer }
+        test_cases:
+          type: array
+          items: { type: string }
+        folder_ids:
+          type: array
+          items: { type: integer }
+        include_all: { type: boolean }
+        filter_test_cases:
+          type: object
+          properties:
+            status: { type: array, items: { type: string } }
+            priority: { type: array, items: { type: string } }
+            case_type: { type: array, items: { type: string } }
+            owner: { type: array, items: { type: string } }
+            tags: { type: array, items: { type: string } }
+            custom_fields: { type: object }
+
+    TestRunPatchInput:
+      type: object
+      properties:
+        name: { type: string }
+        run_state: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+        configurations:
+          type: array
+          items: { type: integer }
+        configuration_map:
+          type: array
+          items:
+            type: object
+            properties:
+              test_case_id:
+                oneOf:
+                  - type: string
+                  - type: array
+                    items: { type: string }
+              configuration_ids:
+                type: array
+                items: { type: integer }
+        filter_test_cases:
+          type: object
+          properties:
+            status: { type: array, items: { type: string } }
+            priority: { type: array, items: { type: string } }
+            case_type: { type: array, items: { type: string } }
+            owner: { type: array, items: { type: string } }
+            tags: { type: array, items: { type: string } }
+
+    TestPlan:
+      type: object
+      properties:
+        identifier: { type: string }
+        name: { type: string }
+        description: { type: string }
+        active_state: { type: string }
+        plan_status: { type: string }
+        project_id: { type: string }
+        start_date: { type: string }
+        end_date: { type: string, nullable: true }
+        created_at: { type: string }
+        test_runs_count:
+          type: object
+          properties:
+            active: { type: integer }
+            closed: { type: integer }
+
+    TestPlanDetail:
+      allOf:
+        - $ref: '#/components/schemas/TestPlan'
+        - type: object
+          properties:
+            test_runs:
+              type: array
+              items: { $ref: '#/components/schemas/TestRunSummary' }
+
+    TestResult:
+      type: object
+      properties:
+        id: { type: integer }
+        test_run_id: { type: string }
+        test_case_id: { type: string }
+        configuration_id: { type: integer }
+        status: { type: string }
+        comment: { type: string }
+        duration: { type: integer }
+        created_at: { type: string }
+        created_by: { type: string }
+        attachments:
+          type: array
+          items: { $ref: '#/components/schemas/Attachment' }
+        issues:
+          type: array
+          items: { type: string }
+        custom_fields: { type: object }
+
+    TestResultInput:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string }
+        comment: { type: string }
+        duration: { type: integer }
+        issues:
+          type: array
+          items: { type: string }
+        issue_tracker:
+          type: object
+          properties:
+            name: { type: string }
+            host: { type: string }
+        custom_fields: { type: object }
+
+    Attachment:
+      type: object
+      properties:
+        id: { type: integer }
+        filename: { type: string }
+        file_size: { type: integer }
+        created_at: { type: string }
+        created_by: { type: string }
+        url: { type: string }
+        inline: { type: boolean }
+
+    Configuration:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        created_at: { type: string }
+
+    CustomField:
+      type: object
+      properties:
+        id: { type: string }
+        field_name: { type: string }
+        place_holder_text: { type: string }
+        field_type: { type: string }
+        is_required: { type: boolean }
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              option_value: { type: string }
+              is_default: { type: boolean }
+        applies_to_all_projects: { type: boolean }
+        field_entity_type: { type: string }
+        link_to_future_projects: { type: boolean }
+        assigned_projects:
+          type: array
+          items: { type: string }
+        created_at: { type: string }

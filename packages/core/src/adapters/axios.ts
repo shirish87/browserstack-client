@@ -21,11 +21,25 @@
  * });
  * ```
  */
-export function createAxiosAdapter(
-  axios: any // AxiosInstance
-): typeof fetch {
+interface AxiosLike {
+  request(config: {
+    url: string;
+    method: string;
+    headers: Record<string, string>;
+    data: BodyInit | null | undefined;
+    responseType: "arraybuffer";
+    validateStatus: (status: number) => boolean;
+  }): Promise<{
+    data: ArrayBuffer;
+    status: number;
+    statusText: string;
+    headers: Record<string, string>;
+  }>;
+}
+
+export function createAxiosAdapter(axios: AxiosLike): typeof fetch {
   return async (input, init) => {
-    const url = typeof input === "string" ? input : input.url;
+    const url = typeof input === "string" ? input : (input instanceof Request ? input.url : input.toString());
     const method = (init?.method ?? "GET").toUpperCase();
     const headers = Object.fromEntries(
       new Headers(init?.headers ?? {}).entries()
@@ -43,9 +57,7 @@ export function createAxiosAdapter(
     return new Response(axiosResp.data, {
       status: axiosResp.status,
       statusText: axiosResp.statusText,
-      headers: new Headers(
-        axiosResp.headers as Record<string, string>
-      ),
+      headers: new Headers(axiosResp.headers),
     });
   };
 }

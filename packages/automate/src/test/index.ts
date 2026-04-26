@@ -1,21 +1,19 @@
 import { vi } from "vitest";
-import { AutomateClient } from "../client.js";
-import * as fixtures from "./fixtures.js";
+import { type BrowserStackOptions } from "@browserstack-client/core";
+import { AutomateClient } from "../index";
+import * as fixtures from "./fixtures";
 
-/**
- * Creates a mock AutomateClient for testing
- */
 export function createMockAutomateClient(
-  options?: any
+  options?: BrowserStackOptions
 ): AutomateClient & {
-  recycleKey: ReturnType<typeof vi.fn>;
+  recycleAutomateKey: ReturnType<typeof vi.fn>;
   getPlan: ReturnType<typeof vi.fn>;
   getBrowsers: ReturnType<typeof vi.fn>;
   getProjects: ReturnType<typeof vi.fn>;
   getProject: ReturnType<typeof vi.fn>;
   updateProject: ReturnType<typeof vi.fn>;
   deleteProject: ReturnType<typeof vi.fn>;
-  getBadgeKey: ReturnType<typeof vi.fn>;
+  getProjectBadgeKey: ReturnType<typeof vi.fn>;
   getBuilds: ReturnType<typeof vi.fn>;
   getBuild: ReturnType<typeof vi.fn>;
   updateBuild: ReturnType<typeof vi.fn>;
@@ -42,14 +40,14 @@ export function createMockAutomateClient(
 
   return {
     ...client,
-    recycleKey: vi.fn().mockResolvedValue(fixtures.recycleKeyResponse),
+    recycleAutomateKey: vi.fn().mockResolvedValue(fixtures.recycleKeyResponse),
     getPlan: vi.fn().mockResolvedValue(fixtures.plan),
     getBrowsers: vi.fn().mockResolvedValue(fixtures.browsers),
     getProjects: vi.fn().mockResolvedValue(fixtures.projects),
     getProject: vi.fn().mockResolvedValue(fixtures.project),
     updateProject: vi.fn().mockResolvedValue(fixtures.project),
     deleteProject: vi.fn().mockResolvedValue({}),
-    getBadgeKey: vi.fn().mockResolvedValue(fixtures.badgeKey),
+    getProjectBadgeKey: vi.fn().mockResolvedValue(fixtures.badgeKey),
     getBuilds: vi.fn().mockResolvedValue(fixtures.builds),
     getBuild: vi.fn().mockResolvedValue(fixtures.build),
     updateBuild: vi.fn().mockResolvedValue(fixtures.build),
@@ -71,7 +69,7 @@ export function createMockAutomateClient(
     uploadMediaFile: vi.fn().mockResolvedValue(fixtures.mediaFile),
     getMediaFiles: vi.fn().mockResolvedValue(fixtures.mediaFiles),
     deleteMediaFile: vi.fn().mockResolvedValue({}),
-  } as any;
+  } as ReturnType<typeof createMockAutomateClient>;
 }
 
 export { fixtures };

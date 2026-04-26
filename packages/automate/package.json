@@ -34,13 +34,14 @@
   },
   "dependencies": {
     "@browserstack-client/core": "workspace:*",
-    "@browserstack-client/openapi": "workspace:*"
+    "@browserstack-client/openapi": "workspace:*",
+    "@browserstack-client/openapi-transforms": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^20.19.39",
+    "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
-    "typescript": "^6.0.2",
-    "vitest": "^1.6.1",
-    "zod": "^3.25.76"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.4",
+    "zod": "^4.3.6"
   }
 }

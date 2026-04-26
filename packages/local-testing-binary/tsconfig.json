@@ -4,7 +4,9 @@
     "baseUrl": ".",
     "noEmit": true,
     "paths": {
+      "@browserstack-client/local-testing-binary": ["./src/index.ts"],
       "@browserstack-client/core": ["../core/src/index.ts"],
+      "@browserstack-client/core/__tests__/*": ["../core/src/__tests__/*.ts"],
       "@browserstack-client/local-testing": ["../local-testing/src/index.ts"],
       "@browserstack-client/openapi/local-testing": ["../openapi/generated/local-testing.ts"]
     }

@@ -1,0 +1,28 @@
+openapi: 3.0.3
+info: { title: tiny, version: "1.0" }
+paths:
+  /projects/{projectId}:
+    get:
+      operationId: getProject
+      x-response-transform: { codec: json-unwrap, config: { path: "$.project" } }
+      parameters:
+        - { name: projectId, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: ok, content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+        "404": { description: nf, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /logs:
+    get:
+      operationId: getLogs
+      x-response-transform: { codec: text }
+      responses: { "200": { description: ok, content: { text/plain: { schema: { type: string } } } } }
+  /upload:
+    post:
+      operationId: uploadFile
+      x-request-custom: true
+      x-response-custom: true
+      responses: { "200": { description: ok, content: { application/json: { schema: { type: object } } } } }
+components:
+  schemas:
+    Envelope: { type: object, properties: { project: { $ref: "#/components/schemas/Project" } } }
+    Project: { type: object, properties: { id: { type: integer } } }
+    Error: { type: object, properties: { message: { type: string } } }

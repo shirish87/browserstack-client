@@ -13,12 +13,34 @@ generated/*
 coverage
 node_modules
 dist
+dist-binary
 dist-ssr
 *.local
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Go build output
+packages/cli/golang/dist/
+packages/cli/golang/browserstack
+packages/cli/golang/browserstack-client
+
+# Generated CLI files (produced by pnpm build:types)
+packages/cli/golang/generated/
+packages/cli/typescript/src/constants.generated.ts
+packages/cli/typescript/src/schemas.generated.ts
+
+# Sonar / CI artefacts
+docker-compose.sonarqube.yml
+sonar-project.properties
+sample-junit.xml
+generate_yaml.cjs
+generate_yaml.js
 
 docs/api/
 docs/.vitepress/dist/
 docs/.vitepress/cache/
+docs/superpowers/
 
 # Editor directories and files
 .vscode/*

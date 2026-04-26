@@ -1,6 +1,6 @@
 // for compatibility with nodejs and deno
 
-interface Dict<T> {
+export interface Dict<T> {
   [key: string]: T | undefined;
 }
 

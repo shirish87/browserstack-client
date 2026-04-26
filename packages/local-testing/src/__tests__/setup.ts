@@ -1,7 +1,5 @@
-import {
-  LocalTestingClient,
-  BrowserStackOptions,
-} from "@browserstack-client/local-testing";
+import { LocalTestingClient } from "@browserstack-client/local-testing";
+import type { BrowserStackOptions } from "@browserstack-client/core";
 import { resolveAccessKey, resolveUsername } from "@browserstack-client/core";
 import { assert } from "vitest";
 
