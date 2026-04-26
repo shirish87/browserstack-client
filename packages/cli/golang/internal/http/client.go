@@ -26,21 +26,30 @@ type APIError struct {
 func (e *APIError) Error() string {
 	if len(e.Body) > 0 {
 		trimmed := bytes.TrimSpace([]byte(e.Body))
-		if bytes.HasPrefix(trimmed, []byte("<html")) || bytes.HasPrefix(trimmed, []byte("<!DOCTYPE")) {
+		lowerBody := bytes.ToLower(trimmed)
+		if bytes.HasPrefix(lowerBody, []byte("<html")) ||
+			bytes.HasPrefix(lowerBody, []byte("<!doctype")) ||
+			bytes.Contains(lowerBody, []byte("<head")) ||
+			bytes.Contains(lowerBody, []byte("<body")) {
 			return fmt.Sprintf("HTTP %d %s", e.StatusCode, e.Status)
 		}
 
 		// If it's JSON, try to extract error or message field
 		var parsed map[string]any
 		if err := json.Unmarshal(trimmed, &parsed); err == nil {
-			for _, key := range []string{"error", "message", "detail"} {
+			for _, key := range []string{"error", "message", "detail", "description"} {
 				if val, ok := parsed[key].(string); ok && val != "" {
 					return fmt.Sprintf("HTTP %d %s: %s", e.StatusCode, e.Status, val)
 				}
 			}
 		}
 
-		return fmt.Sprintf("HTTP %d %s: %s", e.StatusCode, e.Status, e.Body)
+		// Limit the raw body length if we still decide to show it
+		bodyStr := e.Body
+		if len(bodyStr) > 512 {
+			bodyStr = bodyStr[:512] + "..."
+		}
+		return fmt.Sprintf("HTTP %d %s: %s", e.StatusCode, e.Status, bodyStr)
 	}
 	return fmt.Sprintf("HTTP %d %s", e.StatusCode, e.Status)
 }

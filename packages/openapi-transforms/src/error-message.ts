@@ -7,9 +7,14 @@ function firstString(v: unknown): string | undefined {
 export function defaultErrorMessage(body: unknown): string | undefined {
   if (body == null) return undefined;
   if (typeof body === "string") {
-    const s = body.trim();
-    if (s.startsWith("<html") || s.startsWith("<!DOCTYPE html") || s.startsWith("<head") || s.startsWith("<body")) {
-        return undefined;
+    const s = body.trim().toLowerCase();
+    if (
+      s.startsWith("<html") ||
+      s.startsWith("<!doctype html") ||
+      s.includes("<head") ||
+      s.includes("<body")
+    ) {
+      return undefined;
     }
     return firstString(body);
   }
