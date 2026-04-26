@@ -82,7 +82,12 @@ func (c *Client) buildURL(path string, query map[string]string) string {
 	}
 	params := url.Values{}
 	for k, v := range query {
-		params.Set(k, v)
+		if v != "" {
+			params.Set(k, v)
+		}
+	}
+	if len(params) == 0 {
+		return u
 	}
 	return u + "?" + params.Encode()
 }
