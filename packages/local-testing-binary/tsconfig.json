@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true,
+    "paths": {
+      "@browserstack-client/core": ["../core/src/index.ts"],
+      "@browserstack-client/local-testing": ["../local-testing/src/index.ts"],
+      "@browserstack-client/openapi/local-testing": ["../openapi/generated/local-testing.ts"]
+    }
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,3050 @@
+servers:
+  - url: "{scheme}://{host}{basePath}"
+    variables:
+      scheme:
+        default: https
+      host:
+        default: api.browserstack.com
+      basePath:
+        default: "/5"
+  - url: "{scheme}://{host}"
+    variables:
+      scheme:
+        default: https
+      host:
+        default: api-cloud.browserstack.com
+
+openapi: 3.0.2
+info:
+  title: BrowserStack App Automate
+  version: 5.0.0
+  description: BrowserStack App Automate API
+  license:
+    name: MIT License
+    url: https://opensource.org/license/mit/
+
+externalDocs:
+  description: Find out more about BrowserStack
+  url: https://www.browserstack.com/docs/
+
+
+security:
+  - basicAuth: []
+
+paths:
+  /app-automate/builds/{buildId}.json:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches a build
+      description: Fetches a build
+      operationId: getAppAutomateBuild
+      parameters:
+      - name: buildId
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateBuildResponse
+                type: object
+                required:
+                - build
+                properties:
+                  build:
+                    type: object
+                    required:
+                    - automation_build
+                    - sessions
+                    properties:
+                      automation_build:
+                        $ref: '#/components/schemas/AutomateBuild'
+                      sessions:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - automation_session
+                          properties:
+                            automation_session:
+                              $ref: '#/components/schemas/AutomateSession'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '403':
+          $ref: '#/components/schemas/403.Forbidden'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    put:
+      tags:
+      - AppAutomate
+      summary: Update the tag of your build
+      description: Update the tag of your build after the build is complete. To delete
+        a build tag, simply pass an empty string as value for build_tag.
+      operationId: updateAppAutomateBuild
+      parameters:
+      - name: buildId
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: UpdateAppAutomateBuildRequest
+              type: object
+              required:
+              - build_tag
+              properties:
+                build_tag:
+                  type: string
+                  description: The new build tag that you want to set
+                  example: registration
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: UpdateAppAutomateBuildResponse
+                oneOf:
+                - type: object
+                  required:
+                  - automation_build
+                  properties:
+                    automation_build:
+                      $ref: '#/components/schemas/AutomateBuild'
+                - type: object
+                  required:
+                  - error
+                  properties:
+                    error:
+                      type: string
+                      description: Error message
+                      example: A build with this name already exists.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    delete:
+      tags:
+      - AppAutomate
+      summary: Delete a build on the server
+      description: Delete a build on the server. Please note that deleting a build will
+        delete all the sessions contained within it. Builds once deleted cannot be recovered
+      operationId: deleteAppAutomateBuild
+      parameters:
+      - name: buildId
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: DeleteAppAutomateBuildResponse
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of deletion
+                    example: ok
+                  message:
+                    type: string
+                    description: Message indicating the deletion of the build
+                    example: Build a4fb480a55efd6b3c558afb1ee051a7c337b8ef0 was deleted
+                      successfully.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/recent_media_files/{customId}:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded media files by custom ID
+      description: Fetches list of recently uploaded media files by custom ID
+      operationId: getAppAutomateMediaFilesByCustomId
+      parameters:
+      - name: customId
+        in: path
+        description: Filter recently uploaded media files by custom ID.
+        required: true
+        schema:
+          type: string
+          example: media_1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateMediaFilesByCustomIdResponse
+                oneOf:
+                - type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/AppAutomateMediaFile'
+                - type: object
+                  required:
+                  - message
+                  properties:
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/builds/{buildId}/sessions/{sessionId}/logs:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches session logs
+      description: "Access the logs for the session in textual format. It includes information\
+        \ about the test session\u2019s desired capabilities and detailed information\
+        \ about every request and response. You can view all the steps executed in the\
+        \ test and troubleshoot errors for any failed steps."
+      operationId: getAppAutomateSessionLogs
+      parameters:
+      - name: buildId
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      - name: sessionId
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: The response will be text/plain logs comprising the details
+                  of each request and response in the session execution.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/recent_apps:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded apps
+      description: Fetches list of recently uploaded apps
+      operationId: getAppAutomateApps
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateAppsResponse
+                oneOf:
+                - type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/AppAutomateApp'
+                - type: object
+                  required:
+                  - message
+                  properties:
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/recent_group_media:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded media files for the entire group
+      description: Fetches list of recently uploaded media files for the entire group
+      operationId: getAppAutomateGroupMediaFiles
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateGroupMediaFilesResponse
+                oneOf:
+                - type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/AppAutomateMediaFile'
+                - type: object
+                  required:
+                  - message
+                  properties:
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/xcuitest/v2/apps/{appId}:
+    get:
+      tags:
+      - AppAutomate
+      summary: Get details of an uploaded XCUITest app
+      description: Get details of an uploaded XCUITest app
+      operationId: getAppAutomateXCUITestApp
+      parameters:
+      - name: appId
+        in: path
+        description: App ID of your app
+        required: true
+        schema:
+          type: string
+          example: e5b3d27df5d02c367b1469709525dc20da41e65b
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateXCUITestAppResponse
+                type: object
+                required:
+                - app
+                properties:
+                  app:
+                    type: object
+                    $ref: '#/components/schemas/AppAutomateApp'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    delete:
+      tags:
+      - AppAutomate
+      summary: Delete a XCUITest app that was previously uploaded to BrowserStack
+      description: Delete an app that was previously uploaded to BrowserStack. Note
+        that apps once deleted cannot be recovered.
+      operationId: deleteAppAutomateXCUITestApp
+      parameters:
+      - name: appId
+        in: path
+        description: ID of your uploaded app
+        required: true
+        schema:
+          type: string
+          example: c8ddcb5649a8280ca800075bfd8f151115bba6b3
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: DeleteAppAutomateXCUITestAppResponse
+                type: object
+                required:
+                - success
+                properties:
+                  success:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        description: Indicates whether deletion was success or a failure.
+                        example: App with url bs://231e820c35ee15b8438ec31df1fb689c03abd8e5
+                          was deleted.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/builds/{buildId}/sessions/{sessionId}/networklogs:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches network logs
+      description: Access the network logs for your session. These logs capture network
+        data such as network traffic, latency, HTTP requests/responses in the HAR (HTTP
+        Archive) format. You can identify any performance bottlenecks or debug failed
+        REST API responses. Network logs are disabled by default.
+      operationId: getAppAutomateNetworkLogs
+      parameters:
+      - name: buildId
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      - name: sessionId
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                description: HAR (HTTP Archive) format
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/builds/{buildId}/terminallogs:
+    post:
+      tags:
+      - AppAutomate
+      summary: Upload terminal logs for your build.
+      description: Upload terminal logs for your build.
+      operationId: uploadAppAutomateBuildTerminalLogs
+      parameters:
+      - name: buildId
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: UploadAppAutomateBuildTerminalLogsRequest
+              type: object
+              required:
+              - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Path to the terminal log file on your machine. The max
+                    allowed file size is 2MB
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: UploadAppAutomateBuildTerminalLogsResponse
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+                    description: Message indicating upload result.
+                    example: File has been uploaded successfully!
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/flutter-integration-tests/v2/android/app:
+    post:
+      tags:
+      - AppAutomate
+      summary: Upload an app
+      description: Upload the application under test (AUT) for Flutter testing.
+      operationId: uploadAppAutomateFlutterAndroidApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: UploadAppAutomateFlutterAndroidAppRequest
+              allOf:
+              - type: object
+                properties:
+                  custom_id:
+                    type: string
+                    description: Custom ID for the app. Accepted characters are A-Z,
+                      a-z, 0-9, ., -, _. All other characters are ignored. Character
+                      limit is 100.
+                    example: app_1
+              - oneOf:
+                - type: object
+                  required:
+                  - file
+                  properties:
+                    file:
+                      type: string
+                      format: binary
+                      description: Path to the app file on your machine. Supported file
+                        formats are .apk and .aab files for Android and .ipa file for
+                        iOS
+                - type: object
+                  required:
+                  - url
+                  properties:
+                    url:
+                      type: string
+                      description: URL of the app file. Ensure that its a publicly accessible
+                        URL as BrowserStack will attempt to download the app from this
+                        location. Supported file formats are .apk and .aab files for
+                        Android and .ipa file for iOS
+                      example: https://example.com/app.ipa
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppAutomateApp'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/detox/v2/android/app:
+    post:
+      tags:
+      - AppAutomate
+      summary: Upload an app
+      description: Upload the application under test (AUT) for Detox Android testing.
+      operationId: uploadAppAutomateDetoxAndroidApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: UploadAppAutomateDetoxAndroidAppRequest
+              allOf:
+              - type: object
+                properties:
+                  custom_id:
+                    type: string
+                    description: Custom ID for the app. Accepted characters are A-Z,
+                      a-z, 0-9, ., -, _. All other characters are ignored. Character
+                      limit is 100.
+                    example: app_1
+              - oneOf:
+                - type: object
+                  required:
+                  - file
+                  properties:
+                    file:
+                      type: string
+                      format: binary
+                      description: Path to the app file on your machine. Supported file
+                        formats are .apk and .aab files for Android and .ipa file for
+                        iOS
+                - type: object
+                  required:
+                  - url
+                  properties:
+                    url:
+                      type: string
+                      description: URL of the app file. Ensure that its a publicly accessible
+                        URL as BrowserStack will attempt to download the app from this
+                        location. Supported file formats are .apk and .aab files for
+                        Android and .ipa file for iOS
+                      example: https://example.com/app.ipa
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppAutomateApp'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/xcuitest/v2/apps:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded XCUITest apps
+      description: Fetches list of recently uploaded XCUITest apps
+      operationId: getAppAutomateXCUITestApps
+      parameters:
+      - name: scope
+        in: query
+        description: Show recent apps at a group level or user level.
+        schema:
+          type: string
+          enum:
+          - group
+          - user
+          default: group
+      - name: custom_id
+        in: query
+        description: Filter recently uploaded apps by custom ID. Accepted characters
+          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
+          is 100.
+        schema:
+          type: string
+          example: app_1
+      - name: limit
+        in: query
+        description: Number of recent apps to be fetched. Default is 10.
+        schema:
+          type: number
+          default: 10
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateXCUITestAppsResponse
+                oneOf:
+                - type: object
+                  required:
+                  - apps
+                  properties:
+                    apps:
+                      type: array
+                      items:
+                        type: object
+                        $ref: '#/components/schemas/AppAutomateApp'
+                - type: object
+                  required:
+                  - message
+                  properties:
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/sessions/{sessionId}/terminallogs:
+    post:
+      tags:
+      - AppAutomate
+      summary: Upload terminal logs for your session.
+      description: Upload terminal logs for your session.
+      operationId: uploadAppAutomateSessionTerminalLogs
+      parameters:
+      - name: sessionId
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: UploadAppAutomateSessionTerminalLogsRequest
+              type: object
+              required:
+              - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Path to the terminal log file on your machine. The max
+                    allowed file size is 2MB
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: UploadAppAutomateSessionTerminalLogsResponse
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+                    description: Message indicating upload result.
+                    example: File has been uploaded successfully!
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/plan.json:
+    get:
+      tags:
+      - AppAutomate
+      summary: Get App Automate plan details
+      description: Fetches App Automate plan details
+      operationId: getAppAutomatePlan
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomatePlan'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/flutter-integration-tests/v2/ios/test-package:
+    post:
+      tags:
+      - AppAutomate
+      summary: Upload a Flutter test package for iOS
+      description: Upload the application under test (AUT) for Flutter iOS testing in
+        .zip format.
+      operationId: uploadAppAutomateFlutteriOSApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: UploadAppAutomateFlutteriOSAppRequest
+              allOf:
+              - type: object
+                properties:
+                  custom_id:
+                    type: string
+                    description: Custom ID for the app. Accepted characters are A-Z,
+                      a-z, 0-9, ., -, _. All other characters are ignored. Character
+                      limit is 100.
+                    example: app_1
+              - oneOf:
+                - type: object
+                  required:
+                  - file
+                  properties:
+                    file:
+                      type: string
+                      format: binary
+                      description: Path to the app file on your machine. Supported file
+                        formats are .apk and .aab files for Android and .ipa file for
+                        iOS
+                - type: object
+                  required:
+                  - url
+                  properties:
+                    url:
+                      type: string
+                      description: URL of the app file. Ensure that its a publicly accessible
+                        URL as BrowserStack will attempt to download the app from this
+                        location. Supported file formats are .apk and .aab files for
+                        Android and .ipa file for iOS
+                      example: https://example.com/app.ipa
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppAutomateTestPackage'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/detox/v2/android/app-client:
+    post:
+      tags:
+      - AppAutomate
+      summary: Upload an app client
+      description: Upload the app client under test for Detox Android testing.
+      operationId: uploadAppAutomateDetoxAndroidAppClient
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: UploadAppAutomateDetoxAndroidAppClientRequest
+              allOf:
+              - type: object
+                properties:
+                  custom_id:
+                    type: string
+                    description: Custom ID for the app. Accepted characters are A-Z,
+                      a-z, 0-9, ., -, _. All other characters are ignored. Character
+                      limit is 100.
+                    example: app_1
+              - oneOf:
+                - type: object
+                  required:
+                  - file
+                  properties:
+                    file:
+                      type: string
+                      format: binary
+                      description: Path to the app file on your machine. Supported file
+                        formats are .apk and .aab files for Android
+                - type: object
+                  required:
+                  - url
+                  properties:
+                    url:
+                      type: string
+                      description: URL of the app file. Ensure that its a publicly accessible
+                        URL as BrowserStack will attempt to download the app from this
+                        location. Supported file formats are .apk and .aab files for
+                        Android
+                      example: https://example.com/app.apk
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppAutomateApp'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/xcuitest/v2/app:
+    post:
+      tags:
+      - AppAutomate
+      summary: Upload an app
+      description: Upload the application under test (AUT) for XCUITest testing.
+      operationId: uploadAppAutomateXCUITestApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: UploadAppAutomateXCUITestAppRequest
+              allOf:
+              - type: object
+                properties:
+                  custom_id:
+                    type: string
+                    description: Custom ID for the app. Accepted characters are A-Z,
+                      a-z, 0-9, ., -, _. All other characters are ignored. Character
+                      limit is 100.
+                    example: app_1
+              - oneOf:
+                - type: object
+                  required:
+                  - file
+                  properties:
+                    file:
+                      type: string
+                      format: binary
+                      description: Path to the app file on your machine. Supported file
+                        formats are .apk and .aab files for Android and .ipa file for
+                        iOS
+                - type: object
+                  required:
+                  - url
+                  properties:
+                    url:
+                      type: string
+                      description: URL of the app file. Ensure that its a publicly accessible
+                        URL as BrowserStack will attempt to download the app from this
+                        location. Supported file formats are .apk and .aab files for
+                        Android and .ipa file for iOS
+                      example: https://example.com/app.ipa
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppAutomateApp'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/projects/{projectId}.json:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches a project
+      description: Specific information about a particular project can be queried using
+        the project ID
+      operationId: getAppAutomateProject
+      parameters:
+      - name: projectId
+        in: path
+        description: ID of your project
+        required: true
+        schema:
+          type: number
+          example: 966019
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateProjectResponse
+                type: object
+                required:
+                - project
+                properties:
+                  project:
+                    allOf:
+                    - $ref: '#/components/schemas/AutomateProject'
+                    - type: object
+                      required:
+                      - builds
+                      properties:
+                        builds:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/AutomateBuild'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    put:
+      tags:
+      - AppAutomate
+      summary: Update the name of your project
+      description: Update the name of your project after the project is complete
+      operationId: updateAppAutomateProject
+      parameters:
+      - name: projectId
+        in: path
+        description: ID of your project
+        required: true
+        schema:
+          type: number
+          example: 966019
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: UpdateAppAutomateProjectRequest
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  description: Name of your project
+                  example: pricing_project
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/AutomateProject'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    delete:
+      tags:
+      - AppAutomate
+      summary: Delete your project
+      description: Delete a project on the server using the DELETE method. Please note
+        that to delete a project, it needs to be empty of builds and sessions, and projects
+        once deleted cannot be recovered
+      operationId: deleteAppAutomateProject
+      parameters:
+      - name: projectId
+        in: path
+        description: ID of your project
+        required: true
+        schema:
+          type: number
+          example: 966019
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: DeleteAppAutomateProjectResponse
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the operation
+                    example: ok
+                  message:
+                    type: string
+                    description: Message indicating the status of the operation
+                    example: Project 966019 was deleted successfully.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/devices.json:
+    get:
+      tags:
+      - AppAutomate
+      summary: Get a list of supported Android and iOS devices
+      description: Fetches list of devices supported by App Automate
+      operationId: getAppAutomateDevices
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/components/schemas/AppAutomateDevice'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/builds/{buildId}/sessions/{sessionId}/appiumlogs:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches Appium logs
+      description: Access the Appium logs for your session. These are logs generated
+        by the Appium server and contain the details about your each Appium command
+        execution in the test session. You can troubleshoot any errors in case your
+        test session failed.
+      operationId: getAppAutomateAppiumLogs
+      parameters:
+      - name: buildId
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      - name: sessionId
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: The response will be text/plain logs comprising the details
+                  of session execution on the device.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/app/delete/{appId}:
+    delete:
+      tags:
+      - AppAutomate
+      summary: Delete an app that was previously uploaded to BrowserStack
+      description: Delete an app that was previously uploaded to BrowserStack. Note
+        that apps once deleted cannot be recovered.
+      operationId: deleteAppAutomateApp
+      parameters:
+      - name: appId
+        in: path
+        description: ID of your uploaded app
+        required: true
+        schema:
+          type: string
+          example: c8ddcb5649a8280ca800075bfd8f151115bba6b3
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: DeleteAppAutomateAppResponse
+                type: object
+                required:
+                - success
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates whether deletion was success or a failure.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/flutter-integration-tests/v2/android/apps/{appId}:
+    get:
+      tags:
+      - AppAutomate
+      summary: Get details of an uploaded Flutter app
+      description: Get details of an uploaded Flutter app
+      operationId: getAppAutomateFlutterAndroidApp
+      parameters:
+      - name: appId
+        in: path
+        description: App ID of your app
+        required: true
+        schema:
+          type: string
+          example: e5b3d27df5d02c367b1469709525dc20da41e65b
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateFlutterAndroidAppResponse
+                type: object
+                required:
+                - app
+                properties:
+                  app:
+                    type: object
+                    $ref: '#/components/schemas/AppAutomateApp'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    delete:
+      tags:
+      - AppAutomate
+      summary: Delete a Flutter app that was previously uploaded to BrowserStack
+      description: Delete an app that was previously uploaded to BrowserStack. Note
+        that apps once deleted cannot be recovered.
+      operationId: deleteAppAutomateFlutterAndroidApp
+      parameters:
+      - name: appId
+        in: path
+        description: ID of your uploaded app
+        required: true
+        schema:
+          type: string
+          example: c8ddcb5649a8280ca800075bfd8f151115bba6b3
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: DeleteAppAutomateFlutterAndroidAppResponse
+                type: object
+                required:
+                - success
+                properties:
+                  success:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        description: Indicates whether deletion was success or a failure.
+                        example: App with url bs://231e820c35ee15b8438ec31df1fb689c03abd8e5
+                          was deleted.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/upload-media:
+    post:
+      tags:
+      - AppAutomate
+      summary: Upload a media file
+      description: Upload a media file you want to use in your tests
+      operationId: uploadAppAutomateMediaFile
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: UploadAppAutomateMediaFileRequest
+              type: object
+              required:
+              - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: 'Path to the media file on your machine. Note: You can
+                    upload up to 10 media files on the BrowserStack server. By default,
+                    we delete the uploaded files after 30 days from the date of upload.'
+                custom_id:
+                  type: string
+                  description: Custom ID for the media file. This ID is used to specify
+                    the media files to be used in your tests.
+                  example: media_1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppAutomateMediaFile'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/espresso/v2/apps:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded Espresso apps
+      description: Fetches list of recently uploaded Espresso apps
+      operationId: getAppAutomateEspressoApps
+      parameters:
+      - name: scope
+        in: query
+        description: Show recent apps at a group level or user level.
+        schema:
+          type: string
+          enum:
+          - group
+          - user
+          default: group
+      - name: custom_id
+        in: query
+        description: Filter recently uploaded apps by custom ID. Accepted characters
+          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
+          is 100.
+        schema:
+          type: string
+          example: app_1
+      - name: limit
+        in: query
+        description: Number of recent apps to be fetched. Default is 10.
+        schema:
+          type: number
+          default: 10
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateEspressoAppsResponse
+                oneOf:
+                - type: object
+                  required:
+                  - apps
+                  properties:
+                    apps:
+                      type: array
+                      items:
+                        type: object
+                        $ref: '#/components/schemas/AppAutomateApp'
+                - type: object
+                  required:
+                  - message
+                  properties:
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling/v2:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches app profiling data v2
+      description: Access the detailed app profling metrics such as installed app size,
+        UI rendering metrics, resource consumption metrics, etc.
+      operationId: getAppAutomateAppProfilingDataV2
+      parameters:
+      - name: buildId
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      - name: sessionId
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppAutomateAppProfilingV2'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/sessions/{sessionId}.json:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches a session
+      description: Get details of a test session including its status and debugging
+        information such as Appium logs and test video recording
+      operationId: getAppAutomateSession
+      parameters:
+      - name: sessionId
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateSessionResponse
+                type: object
+                required:
+                - automation_session
+                properties:
+                  automation_session:
+                    $ref: '#/components/schemas/AppAutomateSession'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    put:
+      tags:
+      - AppAutomate
+      summary: Update session status
+      description: Set the status for a session. You can mark test status as passed
+        or failed along with a reason.
+      operationId: updateAppAutomateSession
+      parameters:
+      - name: sessionId
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: UpdateAppAutomateSessionRequest
+              type: object
+              required:
+              - status
+              - reason
+              properties:
+                status:
+                  type: string
+                  description: Status of the session
+                  enum:
+                  - passed
+                  - failed
+                  example: passed
+                reason:
+                  type: string
+                  description: Reason for marking the session as failed
+                  example: Test failed because of assertion error
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - automation_session
+                properties:
+                  automation_session:
+                    $ref: '#/components/schemas/AppAutomateSession'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    delete:
+      tags:
+      - AppAutomate
+      summary: Delete a session on the server
+      description: Delete a session on the server. Sessions once deleted cannot be recovered
+      operationId: deleteAppAutomateSession
+      parameters:
+      - name: sessionId
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: DeleteAppAutomateSessionResponse
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of deletion
+                    example: ok
+                  message:
+                    type: string
+                    description: Message indicating the deletion of the session
+                    example: Session 4207442b2b0567368956dba064c22a3235a76214 was deleted
+                      successfully.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/projects.json:
+    get:
+      tags:
+      - AppAutomate
+      summary: Retrieve a list of recent projects for your BrowserStack group
+      description: Fetch the last 10 projects or your BrowserStack group. You can also
+        limit the number of projects and paginate through your data
+      operationId: getAppAutomateProjects
+      parameters:
+      - name: limit
+        in: query
+        description: Specify the number of results to be displayed. The default value
+          is 10, and the maximum value is 100
+        required: false
+        schema:
+          type: number
+          example: 10
+      - name: offset
+        in: query
+        description: Retrieve projects from a specific point using the offset parameter
+        required: false
+        schema:
+          type: number
+          example: 0
+      - name: status
+        in: query
+        description: Status of the build
+        required: false
+        schema:
+          type: string
+          enum:
+          - running
+          - timeout
+          - failed
+          - done
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/components/schemas/AutomateProject'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/custom_media/delete/{mediaId}:
+    delete:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded media files for the entire group
+      description: Fetches list of recently uploaded media files for the entire group
+      operationId: deleteAppAutomateMediaFile
+      parameters:
+      - name: mediaId
+        in: path
+        description: ID of your media file
+        required: true
+        schema:
+          type: string
+          example: 90c7a8h8dc82308108734e9a46c24d8f01de12881
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: DeleteAppAutomateMediaFileResponse
+                type: object
+                required:
+                - success
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates whether deletion was success or a failure.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/espresso/v2/apps/{appId}:
+    get:
+      tags:
+      - AppAutomate
+      summary: Get details of an uploaded Espresso app
+      description: Get details of an uploaded Espresso app
+      operationId: getAppAutomateEspressoApp
+      parameters:
+      - name: appId
+        in: path
+        description: App ID of your app
+        required: true
+        schema:
+          type: string
+          example: e5b3d27df5d02c367b1469709525dc20da41e65b
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateEspressoAppResponse
+                type: object
+                required:
+                - app
+                properties:
+                  app:
+                    type: object
+                    $ref: '#/components/schemas/AppAutomateApp'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    delete:
+      tags:
+      - AppAutomate
+      summary: Delete a Espresso app that was previously uploaded to BrowserStack
+      description: Delete an app that was previously uploaded to BrowserStack. Note
+        that apps once deleted cannot be recovered.
+      operationId: deleteAppAutomateEspressoApp
+      parameters:
+      - name: appId
+        in: path
+        description: ID of your uploaded app
+        required: true
+        schema:
+          type: string
+          example: c8ddcb5649a8280ca800075bfd8f151115bba6b3
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: DeleteAppAutomateEspressoAppResponse
+                type: object
+                required:
+                - success
+                properties:
+                  success:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        description: Indicates whether deletion was success or a failure.
+                        example: App with url bs://231e820c35ee15b8438ec31df1fb689c03abd8e5
+                          was deleted.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/recent_media_files:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded media files
+      description: Fetches list of recently uploaded media files
+      operationId: getAppAutomateMediaFiles
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateMediaFilesResponse
+                oneOf:
+                - type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/AppAutomateMediaFile'
+                - type: object
+                  required:
+                  - message
+                  properties:
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/flutter-integration-tests/v2/ios/test-packages:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded Flutter iOS test packages
+      description: Fetches list of recently uploaded Flutter iOS test packages
+      operationId: getAppAutomateFlutteriOSApps
+      parameters:
+      - name: scope
+        in: query
+        description: Show recent apps at a group level or user level.
+        schema:
+          type: string
+          enum:
+          - group
+          - user
+          default: group
+      - name: custom_id
+        in: query
+        description: Filter recently uploaded apps by custom ID. Accepted characters
+          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
+          is 100.
+        schema:
+          type: string
+          example: app_1
+      - name: limit
+        in: query
+        description: Number of recent apps to be fetched. Default is 10.
+        schema:
+          type: number
+          default: 10
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateFlutteriOSAppsResponse
+                oneOf:
+                - type: object
+                  required:
+                  - test_packages
+                  properties:
+                    test_packages:
+                      type: array
+                      items:
+                        type: object
+                        $ref: '#/components/schemas/AppAutomateTestPackage'
+                - type: object
+                  required:
+                  - message
+                  properties:
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/upload:
+    post:
+      tags:
+      - AppAutomate
+      summary: Upload an app
+      description: Upload the application under test (AUT) for Appium testing.
+      operationId: uploadAppAutomateApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: UploadAppAutomateAppRequest
+              allOf:
+              - type: object
+                properties:
+                  custom_id:
+                    type: string
+                    description: Custom ID for the app. Accepted characters are A-Z,
+                      a-z, 0-9, ., -, _. All other characters are ignored. Character
+                      limit is 100.
+                    example: app_1
+              - oneOf:
+                - type: object
+                  required:
+                  - file
+                  properties:
+                    file:
+                      type: string
+                      format: binary
+                      description: Path to the app file on your machine. Supported file
+                        formats are .apk and .aab files for Android and .ipa file for
+                        iOS
+                - type: object
+                  required:
+                  - url
+                  properties:
+                    url:
+                      type: string
+                      description: URL of the app file. Ensure that its a publicly accessible
+                        URL as BrowserStack will attempt to download the app from this
+                        location. Supported file formats are .apk and .aab files for
+                        Android and .ipa file for iOS
+                      example: https://example.com/app.ipa
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppAutomateApp'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/recent_group_apps:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded apps for the entire group
+      description: Fetches list of recently uploaded apps for the entire group
+      operationId: getAppAutomateGroupApps
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateGroupAppsResponse
+                oneOf:
+                - type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/AppAutomateApp'
+                - type: object
+                  required:
+                  - message
+                  properties:
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/espresso/v2/app:
+    post:
+      tags:
+      - AppAutomate
+      summary: Upload an app
+      description: Upload the application under test (AUT) for Espresso testing.
+      operationId: uploadAppAutomateEspressoApp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              title: UploadAppAutomateEspressoAppRequest
+              allOf:
+              - type: object
+                properties:
+                  custom_id:
+                    type: string
+                    description: Custom ID for the app. Accepted characters are A-Z,
+                      a-z, 0-9, ., -, _. All other characters are ignored. Character
+                      limit is 100.
+                    example: app_1
+              - oneOf:
+                - type: object
+                  required:
+                  - file
+                  properties:
+                    file:
+                      type: string
+                      format: binary
+                      description: Path to the app file on your machine. Supported file
+                        formats are .apk and .aab files for Android and .ipa file for
+                        iOS
+                - type: object
+                  required:
+                  - url
+                  properties:
+                    url:
+                      type: string
+                      description: URL of the app file. Ensure that its a publicly accessible
+                        URL as BrowserStack will attempt to download the app from this
+                        location. Supported file formats are .apk and .aab files for
+                        Android and .ipa file for iOS
+                      example: https://example.com/app.ipa
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppAutomateApp'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/recent_apps/{customId}:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded apps by custom ID
+      description: Fetches list of uploaded apps by custom ID
+      operationId: getAppAutomateAppsByCustomId
+      parameters:
+      - name: customId
+        in: path
+        description: Custom ID of your app
+        required: true
+        schema:
+          type: string
+          example: app_1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateAppsByCustomIdResponse
+                oneOf:
+                - type: array
+                  items:
+                    type: object
+                    $ref: '#/components/schemas/AppAutomateApp'
+                - type: object
+                  required:
+                  - message
+                  properties:
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/flutter-integration-tests/v2/android/apps:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of uploaded Flutter apps
+      description: Fetches list of recently uploaded Flutter apps
+      operationId: getAppAutomateFlutterAndroidApps
+      parameters:
+      - name: scope
+        in: query
+        description: Show recent apps at a group level or user level.
+        schema:
+          type: string
+          enum:
+          - group
+          - user
+          default: group
+      - name: custom_id
+        in: query
+        description: Filter recently uploaded apps by custom ID. Accepted characters
+          are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
+          is 100.
+        schema:
+          type: string
+          example: app_1
+      - name: limit
+        in: query
+        description: Number of recent apps to be fetched. Default is 10.
+        schema:
+          type: number
+          default: 10
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateFlutterAndroidAppsResponse
+                oneOf:
+                - type: object
+                  required:
+                  - apps
+                  properties:
+                    apps:
+                      type: array
+                      items:
+                        type: object
+                        $ref: '#/components/schemas/AppAutomateApp'
+                - type: object
+                  required:
+                  - message
+                  properties:
+                    message:
+                      type: string
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/builds/{buildId}/sessions/{sessionId}/devicelogs:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches device logs
+      description: Access the device logs for your session. These are system logs specific
+        to your application generated by the OS(Android/iOS) and can be helpful for
+        debugging any application crashes during test execution.
+      operationId: getAppAutomateDeviceLogs
+      parameters:
+      - name: buildId
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      - name: sessionId
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: The response will be text/plain logs comprising the details
+                  of session execution on the device.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/builds/{buildId}/sessions/{sessionId}/appprofiling:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches app profiling data
+      description: Access the app profiling logs to view the resource consumption (CPU,
+        memory, battery, and network) by your app on the device. The logs are only available
+        for Android.
+      operationId: getAppAutomateAppProfilingDataV1
+      parameters:
+      - name: buildId
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      - name: sessionId
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppAutomateAppProfilingV1'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/builds.json:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of builds
+      description: Fetch the 10 recent test builds that have run on BrowserStack. You
+        can also limit the number of builds and paginate through your data
+      operationId: getAppAutomateBuilds
+      parameters:
+      - name: projectId
+        in: query
+        description: ID of your project
+        required: false
+        schema:
+          type: number
+          example: 966019
+      - name: limit
+        in: query
+        description: Specify the number of results to be displayed. The default value
+          is 10, and the maximum value is 100
+        required: false
+        schema:
+          type: number
+          example: 10
+      - name: offset
+        in: query
+        description: Retrieve builds from a specific point using the offset parameter
+        required: false
+        schema:
+          type: number
+          example: 0
+      - name: status
+        in: query
+        description: Status of the build
+        required: false
+        schema:
+          type: string
+          enum:
+          - running
+          - timeout
+          - failed
+          - done
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateBuildsResponse
+                type: array
+                items:
+                  type: object
+                  required:
+                  - automation_build
+                  properties:
+                    automation_build:
+                      $ref: '#/components/schemas/AutomateBuild'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/flutter-integration-tests/v2/ios/test-package/{appId}:
+    get:
+      tags:
+      - AppAutomate
+      summary: Get details of an uploaded Flutter iOS test package
+      description: Get details of an uploaded Flutter iOS test package
+      operationId: getAppAutomateFlutteriOSApp
+      parameters:
+      - name: appId
+        in: path
+        description: Test package ID of your app
+        required: true
+        schema:
+          type: string
+          example: e5b3d27df5d02c367b1469709525dc20da41e65b
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - test_package
+                properties:
+                  test_package:
+                    type: object
+                    $ref: '#/components/schemas/AppAutomateTestPackage'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+    delete:
+      tags:
+      - AppAutomate
+      summary: Delete a Flutter iOS test package that was previously uploaded to BrowserStack
+      description: Delete a Flutter iOS test package that was previously uploaded to
+        BrowserStack. Note that apps once deleted cannot be recovered.
+      operationId: deleteAppAutomateFlutteriOSApp
+      parameters:
+      - name: appId
+        in: path
+        description: Test package ID of your app
+        required: true
+        schema:
+          type: string
+          example: c8ddcb5649a8280ca800075bfd8f151115bba6b3
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: DeleteAppAutomateFlutteriOSAppResponse
+                type: object
+                required:
+                - success
+                properties:
+                  success:
+                    type: object
+                    required:
+                    - message
+                    properties:
+                      message:
+                        type: string
+                        description: Indicates whether deletion was success or a failure.
+                        example: App with url bs://231e820c35ee15b8438ec31df1fb689c03abd8e5
+                          was deleted.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/projects/{projectId}/badge_key:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches the badge key for the project
+      description: Fetches the badge key for sharing a public link for the Automate
+        dashboard to view the latest build and sessions for that project
+      operationId: getAppAutomateProjectBadgeKey
+      parameters:
+      - name: projectId
+        in: path
+        description: ID of your project
+        required: true
+        schema:
+          type: number
+          example: 966019
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                badge_key:
+                  value: VnZ6dGxkRGxGc1RIY01iZGZBVjJBNTA2R0s4ZUhiZkg2cnB...
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    400.BadRequest:
+      description: Bad request.
+    401.Unauthorized:
+      description: Your BrowserStack access credentials are invalid.
+    403.Forbidden:
+      description: Authorized user is not the owner of the resource.
+    404.NotFound:
+      description: The requested resource could not be found.
+    422.UnprocessableEntity:
+      description: Request is well-formed but has semantic errors. The response will provide
+        more details about error.
+    5xx.InternalServerError:
+      description: Indicates an error with BrowserStack servers.
+    AppAutomateApp:
+      title: AppAutomateApp
+      type: object
+      required:
+      - app_url
+      properties:
+        app_id:
+          type: string
+          description: Unique ID returned on successful upload of your app on BrowserStack.
+          example: 90c7a8h8dc82308108734e9a46c24d8f01de12881
+        app_url:
+          type: string
+          description: Unique identifier returned upon successful upload of your app on
+            BrowserStack. This value can be used later to specify the application under
+            test in your Appium test scripts.
+          example: media://90c7a8h8dc82308108734e9a46c24d8f01de12881
+        app_name:
+          type: string
+          description: Name of the app file uploaded.
+          example: app-release.apk
+        app_version:
+          type: string
+          description: Version of the app.
+          example: 1.0.0
+        uploaded_at:
+          type: string
+          description: Timestamp of the app file upload.
+          example: '2021-09-30T10:00:00.000Z'
+        expiry:
+          type: string
+          description: Timestamp of the app file expiry.
+          example: '2021-09-30T10:00:00.000Z'
+        custom_id:
+          type: string
+          description: Custom ID defined for the uploaded app. Accepted characters are
+            A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
+            is 100.
+          example: media_1
+        shareable_id:
+          type: string
+          description: Shareable ID allows other users in your organization to test an
+            app you uploaded.
+          example: steve/SampleApp
+    AppAutomateDevice:
+      title: AppAutomateDevice
+      type: object
+      required:
+      - os
+      - os_version
+      - device
+      - real_mobile
+      properties:
+        os:
+          type: string
+          example: ios
+        os_version:
+          type: string
+          example: '14'
+        device:
+          type: string
+          example: iPad Pro 12.9 2021
+        real_mobile:
+          type: boolean
+          example: true
+    AppAutomateMediaFile:
+      title: AppAutomateMediaFile
+      type: object
+      required:
+      - media_id
+      - media_url
+      properties:
+        media_id:
+          type: string
+          description: Unique ID returned on successful upload of your media file on BrowserStack.
+          example: 90c7a8h8dc82308108734e9a46c24d8f01de12881
+        media_url:
+          type: string
+          description: Unique identifier returned upon successful upload of your media
+            file on BrowserStack. This value is used to specify the media files to be
+            used in your tests.
+          example: media://90c7a8h8dc82308108734e9a46c24d8f01de12881
+        media_name:
+          type: string
+          description: Name of the media file uploaded.
+          example: media.jpg
+        uploaded_at:
+          type: string
+          description: Timestamp of the media file upload.
+          example: '2021-09-30T10:00:00.000Z'
+        custom_id:
+          type: string
+          description: Custom ID of the media file uploaded. Accepted characters are A-Z,
+            a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.
+          example: media_1
+        shareable_id:
+          type: string
+          description: Shareable ID allows members of other teams to use the media files
+            in their tests.
+          example: steve/SampleMedia
+    AppAutomateSession:
+      title: AppAutomateSession
+      allOf:
+      - type: object
+        $ref: '#/components/schemas/AutomateSession'
+      - type: object
+        required:
+        - app_details
+        properties:
+          app_details:
+            type: object
+            properties:
+              app_name:
+                type: string
+                description: Package name of the app.
+                example: com.sample.loginapplication
+              app_version:
+                type: string
+                description: Version of the app.
+                example: '1.0'
+              app_url:
+                type: string
+                description: Unique identifier returned upon successful upload of your
+                  app on BrowserStack. This value can be used later to specify the application
+                  under test in your Appium test scripts."
+                example: media://90c7a8h8dc82308108734e9a46c24d8f01de12881
+              app_custom_id:
+                type: string
+                description: Custom ID defined for the uploaded app.
+                example: LoginApp
+              uploaded_at:
+                type: string
+                description: Timestamp of the app upload.
+                example: '2021-09-30T10:00:00.000Z'
+    AppAutomateTestPackage:
+      title: AppAutomateTestPackage
+      type: object
+      required:
+      - test_package_url
+      properties:
+        test_package_id:
+          type: string
+          description: Unique ID returned on successful upload of your app on BrowserStack.
+          example: 90c7a8h8dc82308108734e9a46c24d8f01de12881
+        test_package_url:
+          type: string
+          description: Unique identifier returned upon successful upload of your app on
+            BrowserStack. This value can be used later to specify the application under
+            test in your Appium test scripts.
+          example: media://90c7a8h8dc82308108734e9a46c24d8f01de12881
+        test_package_name:
+          type: string
+          description: Name of the media file uploaded.
+          example: media.zip
+        uploaded_at:
+          type: string
+          description: Timestamp of the media file upload.
+          example: '2021-09-30T10:00:00.000Z'
+        custom_id:
+          type: string
+          description: Custom ID defined for the uploaded app. Accepted characters are
+            A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit
+            is 100.
+          example: media_1
+        shareable_id:
+          type: string
+          description: Shareable ID allows other users in your organization to test an
+            app you uploaded.
+          example: steve/SampleApp
+    Browser:
+      title: Browser
+      type: object
+      required:
+      - browser
+      - browser_version
+      properties:
+        browser:
+          type: string
+          example: Chrome
+        browser_version:
+          type: string
+          example: '80.0'
+    BrowserDevice:
+      title: BrowserDevice
+      allOf:
+      - $ref: '#/components/schemas/Browser'
+      - type: object
+        required:
+        - devices
+        - real_devices
+        properties:
+          browser:
+            type: string
+            example: Android Browser
+          devices:
+            type: array
+            items:
+              type: string
+              example: Google Nexus
+          real_devices:
+            type: array
+            items:
+              type: string
+            maxItems: 0
+    BrowserList:
+      title: BrowserList
+      type: array
+      items:
+        $ref: '#/components/schemas/BrowserPlatform'
+    BrowserMap:
+      title: BrowserMap
+      type: object
+      properties:
+        Windows:
+          type: object
+          required:
+          - XP
+          - '7'
+          - '8'
+          - '8.1'
+          - '10'
+          - '11'
+          properties:
+            XP:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            '7':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            '8':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            '8.1':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            '10':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            '11':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/BrowserPlatform'
+        OS X:
+          type: object
+          required:
+          - Snow Leopard
+          - Lion
+          - Mountain Lion
+          - Mavericks
+          - Yosemite
+          - El Capitan
+          - Sierra
+          - High Sierra
+          - Mojave
+          - Catalina
+          - Big Sur
+          - Monterey
+          - Ventura
+          - Sonoma
+          properties:
+            Snow Leopard:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Lion:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Mountain Lion:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Mavericks:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Yosemite:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            El Capitan:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Sierra:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            High Sierra:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Mojave:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Catalina:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Big Sur:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Monterey:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Ventura:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Sonoma:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            additionalProperties:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+        winphone:
+          type: object
+          required:
+          - '8.1'
+          properties:
+            '8.1':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+        android:
+          type: object
+          required:
+          - '14.0'
+          - '13.0'
+          - '12.0'
+          - '11.0'
+          - '10.0'
+          - '9.0'
+          - '8.1'
+          - '8.0'
+          - '7.1'
+          - '7.0'
+          - '6.0'
+          - '5.0'
+          - '4.4'
+          - '4.3'
+          - '4.2'
+          - '4.1'
+          - '4.0'
+          - '2.3'
+          - '2.2'
+          properties:
+            '14.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '13.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '12.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '11.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '10.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '9.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '8.1':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '8.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '7.1':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '7.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '6.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '5.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '4.4':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '4.3':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '4.2':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '4.1':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '4.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '2.3':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '2.2':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            additionalProperties:
+              type: array
+              items:
+                oneOf:
+                - $ref: '#/components/schemas/BrowserRealDevice'
+                - $ref: '#/components/schemas/BrowserDevice'
+    BrowserPlatform:
+      title: BrowserPlatform
+      allOf:
+      - $ref: '#/components/schemas/Browser'
+      - type: object
+        required:
+        - os
+        - os_version
+        properties:
+          os:
+            type: string
+            example: Windows
+          os_version:
+            type: string
+            example: '10'
+          device:
+            type: string
+            example:
+          real_mobile:
+            type: boolean
+            example:
+    BrowserRealDevice:
+      title: BrowserRealDevice
+      allOf:
+      - $ref: '#/components/schemas/Browser'
+      - type: object
+        required:
+        - devices
+        - real_devices
+        properties:
+          browser:
+            type: string
+            example: Android Browser
+          devices:
+            type: array
+            items:
+              type: string
+            maxItems: 0
+          real_devices:
+            type: array
+            items:
+              type: string
+              example: Google Pixel 6 Pro
+    NewWorker:
+      title: NewWorker
+      allOf:
+      - type: object
+        required:
+        - url
+        - os
+        - os_version
+        properties:
+          url:
+            type: string
+            description: URL to be opened in the browser
+            example: https://www.google.com/ncr
+          timeout:
+            type: number
+            description: 'Time in seconds before the worker is terminated. The default
+              value is 300 seconds and the minimum value is 60 seconds. IMPORTANT: Irrespective
+              of the timeout parameter, a browser worker is alive for a maximum time of
+              1800 seconds.'
+            example: 300
+          os:
+            type: string
+            description: Operating system name.
+            example: Windows
+          os_version:
+            type: string
+            description: Operating system version.
+            example: '10'
+          name:
+            type: string
+            description: Name of the worker.
+            example: qunit-test-pricing
+          build:
+            type: string
+            description: Name of the build the session is running under.
+            example: staging-build
+          project:
+            type: string
+            description: Name of the project the build is organized under.
+            example: pricing-project
+          browserstack.video:
+            type: boolean
+            description: Enable video recording for the session. The default value is
+              false.
+            example: true
+          resolution:
+            type: string
+            description: Set the resolution of VM before the beginning of your test. Available
+              for Desktop only. The default value is 1024x768.
+            example: 1024x768
+      - oneOf:
+        - type: object
+          required:
+          - browser
+          - browser_version
+          properties:
+            browser:
+              type: string
+              description: Browser name.
+              example: Chrome
+            browser_version:
+              type: string
+              description: Browser version.
+              example: '80.0'
+        - type: object
+          properties:
+            device:
+              type: string
+              description: Device name. If a device is not provided it defaults to the
+                first device available for that os version.
+              example: iPhone 11 Pro
+            browser:
+              type: string
+              description: Browser name.
+              example: Chrome
+            browser_version:
+              type: string
+              description: Browser version.
+              example: '80.0'
+    Status:
+      title: Status
+      type: object
+      required:
+      - used_time
+      - running_sessions
+      - session_limit
+      - total_available_time
+      properties:
+        used_time:
+          type: number
+          example: 10
+        running_sessions:
+          type: number
+          example: 0
+        session_limit:
+          type: number
+          example: 0
+        total_available_time:
+          type: string
+          example: Unlimited Testing Time
+    Worker:
+      title: Worker
+      allOf:
+      - $ref: '#/components/schemas/BrowserPlatform'
+      - type: object
+        required:
+        - id
+        properties:
+          id:
+            type: number
+            description: ID of the worker.
+            example: 122326697
+          sessionId:
+            description: ID of the session.
+            example: 550709149fe79e949363b581e774d5ebffa1b8fe
+          status:
+            type: string
+            enum:
+            - queue
+            - running
+            description: Current status of the worker.
+            example: running
+          browser_url:
+            type: string
+            description: Dashboard URL of the session
+            example: ''

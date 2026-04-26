@@ -1,0 +1,479 @@
+servers:
+  - url: "{scheme}://{host}{basePath}"
+    variables:
+      scheme:
+        default: https
+      host:
+        default: api.browserstack.com
+      basePath:
+        default: "/5"
+  - url: "{scheme}://{host}"
+    variables:
+      scheme:
+        default: https
+      host:
+        default: api-cloud.browserstack.com
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    400.BadRequest:
+      description: Bad request.
+    401.Unauthorized:
+      description: Your BrowserStack access credentials are invalid.
+    403.Forbidden:
+      description: Authorized user is not the owner of the resource.
+    404.NotFound:
+      description: The requested resource could not be found.
+    422.UnprocessableEntity:
+      description: Request is well-formed but has semantic errors. The response will provide
+        more details about error.
+    5xx.InternalServerError:
+      description: Indicates an error with BrowserStack servers.
+    Browser:
+      title: Browser
+      type: object
+      required:
+      - browser
+      - browser_version
+      properties:
+        browser:
+          type: string
+          example: Chrome
+        browser_version:
+          type: string
+          example: '80.0'
+    BrowserDevice:
+      title: BrowserDevice
+      allOf:
+      - $ref: '#/components/schemas/Browser'
+      - type: object
+        required:
+        - devices
+        - real_devices
+        properties:
+          browser:
+            type: string
+            example: Android Browser
+          devices:
+            type: array
+            items:
+              type: string
+              example: Google Nexus
+          real_devices:
+            type: array
+            items:
+              type: string
+            maxItems: 0
+    BrowserList:
+      title: BrowserList
+      type: array
+      items:
+        $ref: '#/components/schemas/BrowserPlatform'
+    BrowserMap:
+      title: BrowserMap
+      type: object
+      properties:
+        Windows:
+          type: object
+          required:
+          - XP
+          - '7'
+          - '8'
+          - '8.1'
+          - '10'
+          - '11'
+          properties:
+            XP:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            '7':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            '8':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            '8.1':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            '10':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            '11':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/BrowserPlatform'
+        OS X:
+          type: object
+          required:
+          - Snow Leopard
+          - Lion
+          - Mountain Lion
+          - Mavericks
+          - Yosemite
+          - El Capitan
+          - Sierra
+          - High Sierra
+          - Mojave
+          - Catalina
+          - Big Sur
+          - Monterey
+          - Ventura
+          - Sonoma
+          properties:
+            Snow Leopard:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Lion:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Mountain Lion:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Mavericks:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Yosemite:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            El Capitan:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Sierra:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            High Sierra:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Mojave:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Catalina:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Big Sur:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Monterey:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Ventura:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            Sonoma:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+            additionalProperties:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserPlatform'
+        winphone:
+          type: object
+          required:
+          - '8.1'
+          properties:
+            '8.1':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+        android:
+          type: object
+          required:
+          - '14.0'
+          - '13.0'
+          - '12.0'
+          - '11.0'
+          - '10.0'
+          - '9.0'
+          - '8.1'
+          - '8.0'
+          - '7.1'
+          - '7.0'
+          - '6.0'
+          - '5.0'
+          - '4.4'
+          - '4.3'
+          - '4.2'
+          - '4.1'
+          - '4.0'
+          - '2.3'
+          - '2.2'
+          properties:
+            '14.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '13.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '12.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '11.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '10.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '9.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '8.1':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '8.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '7.1':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '7.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '6.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserRealDevice'
+            '5.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '4.4':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '4.3':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '4.2':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '4.1':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '4.0':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '2.3':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            '2.2':
+              type: array
+              items:
+                $ref: '#/components/schemas/BrowserDevice'
+            additionalProperties:
+              type: array
+              items:
+                oneOf:
+                - $ref: '#/components/schemas/BrowserRealDevice'
+                - $ref: '#/components/schemas/BrowserDevice'
+    BrowserPlatform:
+      title: BrowserPlatform
+      allOf:
+      - $ref: '#/components/schemas/Browser'
+      - type: object
+        required:
+        - os
+        - os_version
+        properties:
+          os:
+            type: string
+            example: Windows
+          os_version:
+            type: string
+            example: '10'
+          device:
+            type: string
+            example:
+          real_mobile:
+            type: boolean
+            example:
+    BrowserRealDevice:
+      title: BrowserRealDevice
+      allOf:
+      - $ref: '#/components/schemas/Browser'
+      - type: object
+        required:
+        - devices
+        - real_devices
+        properties:
+          browser:
+            type: string
+            example: Android Browser
+          devices:
+            type: array
+            items:
+              type: string
+            maxItems: 0
+          real_devices:
+            type: array
+            items:
+              type: string
+              example: Google Pixel 6 Pro
+    NewWorker:
+      title: NewWorker
+      allOf:
+      - type: object
+        required:
+        - url
+        - os
+        - os_version
+        properties:
+          url:
+            type: string
+            description: URL to be opened in the browser
+            example: https://www.google.com/ncr
+          timeout:
+            type: number
+            description: 'Time in seconds before the worker is terminated. The default
+              value is 300 seconds and the minimum value is 60 seconds. IMPORTANT: Irrespective
+              of the timeout parameter, a browser worker is alive for a maximum time of
+              1800 seconds.'
+            example: 300
+          os:
+            type: string
+            description: Operating system name.
+            example: Windows
+          os_version:
+            type: string
+            description: Operating system version.
+            example: '10'
+          name:
+            type: string
+            description: Name of the worker.
+            example: qunit-test-pricing
+          build:
+            type: string
+            description: Name of the build the session is running under.
+            example: staging-build
+          project:
+            type: string
+            description: Name of the project the build is organized under.
+            example: pricing-project
+          browserstack.video:
+            type: boolean
+            description: Enable video recording for the session. The default value is
+              false.
+            example: true
+          resolution:
+            type: string
+            description: Set the resolution of VM before the beginning of your test. Available
+              for Desktop only. The default value is 1024x768.
+            example: 1024x768
+      - oneOf:
+        - type: object
+          required:
+          - browser
+          - browser_version
+          properties:
+            browser:
+              type: string
+              description: Browser name.
+              example: Chrome
+            browser_version:
+              type: string
+              description: Browser version.
+              example: '80.0'
+        - type: object
+          properties:
+            device:
+              type: string
+              description: Device name. If a device is not provided it defaults to the
+                first device available for that os version.
+              example: iPhone 11 Pro
+            browser:
+              type: string
+              description: Browser name.
+              example: Chrome
+            browser_version:
+              type: string
+              description: Browser version.
+              example: '80.0'
+    Status:
+      title: Status
+      type: object
+      required:
+      - used_time
+      - running_sessions
+      - session_limit
+      - total_available_time
+      properties:
+        used_time:
+          type: number
+          example: 10
+        running_sessions:
+          type: number
+          example: 0
+        session_limit:
+          type: number
+          example: 0
+        total_available_time:
+          type: string
+          example: Unlimited Testing Time
+    Worker:
+      title: Worker
+      allOf:
+      - $ref: '#/components/schemas/BrowserPlatform'
+      - type: object
+        required:
+        - id
+        properties:
+          id:
+            type: number
+            description: ID of the worker.
+            example: 122326697
+          sessionId:
+            description: ID of the session.
+            example: 550709149fe79e949363b581e774d5ebffa1b8fe
+          status:
+            type: string
+            enum:
+            - queue
+            - running
+            description: Current status of the worker.
+            example: running
+          browser_url:
+            type: string
+            description: Dashboard URL of the session
+            example: ''

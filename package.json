@@ -1,77 +1,39 @@
 {
-  "name": "browserstack-client",
-  "version": "3.5.5",
-  "description": "BrowserStack APIs client library for node.js",
+  "name": "browserstack-client-monorepo",
+  "private": true,
   "type": "module",
-  "main": "./dist/browserstack-client.umd.cjs",
-  "bin": {
-    "browserstack-local": "./dist/node/browserstack-local.cjs",
-    "browserstack-app-automate": "./dist/node/browserstack-app-automate.cjs"
-  },
-  "module": "./dist/browserstack-client.js",
-  "types": "./dist/types/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/browserstack-client.js",
-      "require": "./dist/browserstack-client.umd.cjs"
-    },
-    "./node": {
-      "types": "./dist/types/index.node.d.ts",
-      "import": "./dist/node/browserstack-client.js",
-      "require": "./dist/node/browserstack-client.cjs"
-    },
-    "./package.json": "./package.json",
-    "./*": "./dist/*"
-  },
-  "scripts": {
-    "prebuild": "node build.mjs && npm run lint",
-    "build": "tsc && vite build && vite build --config vite.config.node.ts",
-    "test": "vitest run --typecheck",
-    "test-watch": "vitest --typecheck",
-    "coverage": "vitest run --coverage.enabled --coverage.include=src --coverage.exclude=src/generated",
-    "lint": "eslint . --ext .ts",
-    "predocs:dev": "typedoc",
-    "docs:dev": "vitepress dev docs",
-    "predocs:build": "typedoc",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
-    "generate:java": "npx @openapitools/openapi-generator-cli generate --generator-key java",
-    "generate:kotlin": "npx @openapitools/openapi-generator-cli generate --generator-key kotlin",
-    "generate:csharp": "npx @openapitools/openapi-generator-cli generate --generator-key csharp",
-    "generate:ruby": "npx @openapitools/openapi-generator-cli generate --generator-key ruby"
-  },
-  "author": "Shirish Kamath",
-  "license": "MIT",
-  "files": [
-    "dist/**/*",
-    "*.d.ts"
-  ],
+  "version": "6.0.0",
+  "description": "BrowserStack client SDK monorepo",
+  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=18.0.0"
   },
-  "devDependencies": {
-    "@apidevtools/swagger-parser": "^10.1.0",
-    "@types/node": "^20.11.19",
-    "@typescript-eslint/eslint-plugin": "^7.0.1",
-    "@typescript-eslint/parser": "^7.0.1",
-    "@vitest/coverage-v8": "1.2.1",
-    "eslint": "^8.56.0",
-    "openapi-typescript": "^7.0.0-next.7",
-    "openapi-typescript-helpers": "^0.0.7",
-    "typedoc": "^0.25.9",
-    "typedoc-plugin-markdown": "^4.0.0-next.43",
-    "typedoc-vitepress-theme": "^1.0.0-next.9",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4",
-    "vite-plugin-dts": "^3.7.3",
-    "vitepress": "^1.0.0-rc.44",
-    "vitest": "1.2.1"
+  "scripts": {
+    "build": "pnpm -r --filter='./packages/*' run build",
+    "build:types": "pnpm --filter @browserstack-client/openapi run build",
+    "test": "vitest run --workspace vitest.workspace.ts",
+    "test:watch": "vitest --workspace vitest.workspace.ts",
+    "coverage": "vitest run --workspace vitest.workspace.ts --coverage",
+    "lint": "eslint packages --ext .ts",
+    "typecheck": "tsc --build packages/*/tsconfig.json",
+    "clean": "pnpm -r exec rimraf dist && rimraf node_modules"
   },
-  "dependencies": {
-    "fflate": "^0.8.2",
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "^10.1.1",
+    "@types/node": "^20.19.39",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vitest/coverage-v8": "^1.6.1",
+    "eslint": "^8.57.1",
     "openapi-fetch": "0.9.2",
-    "signal-exit": "^4.1.0"
+    "openapi-typescript": "^7.13.0",
+    "openapi-typescript-helpers": "^0.0.7",
+    "rimraf": "^5.0.10",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3",
+    "vitest": "^1.6.1",
+    "zod": "^3.25.76"
   },
   "repository": {
     "type": "git",
@@ -80,14 +42,5 @@
   "homepage": "https://shirish87.github.io/browserstack-client/",
   "bugs": {
     "url": "https://github.com/shirish87/browserstack-client/issues"
-  },
-  "keywords": [
-    "browserstack",
-    "api",
-    "client",
-    "node",
-    "javascript",
-    "typescript",
-    "esm"
-  ]
+  }
 }

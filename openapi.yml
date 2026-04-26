@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   title: BrowserStack Client
-  version: 5.0.0
+  version: 6.0.0
   description: >-
     BrowserStack is a cloud web and mobile testing platform that provides developers with the ability to test
     their websites and mobile applications across on-demand browsers, operating systems and real mobile devices.
