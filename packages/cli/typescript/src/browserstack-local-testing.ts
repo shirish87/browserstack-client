@@ -4,11 +4,17 @@ import { ensureAccessKeyExists } from "./utils.ts";
 import { BrowserStackError } from "@browserstack-client/core";
 import { LocalTestingClient } from "@browserstack-client/local-testing";
 import process from "node:process";
+import { LocalTesting } from "./constants.generated.ts";
+import { LocalTestingSchemas } from "./schemas.generated.ts";
+import { parseArgs } from "./parser.ts";
 
 interface Logger {
   info(message: string, ...params: unknown[]): void;
   error(message: string, ...params: unknown[]): void;
 }
+
+const USAGE = `Usage: local-testing <action> [args...]
+Actions: ${Object.values(LocalTesting.Action).join(", ")}`;
 
 export async function main(
   inputArgs: string[] = process.argv.slice(2),
@@ -19,42 +25,30 @@ export async function main(
     const client = new LocalTestingClient({ accessKey });
 
     const args = inputArgs.map((a) => a.trim());
-    const resource = args[0]?.toLowerCase();
-    const action = args[1]?.toLowerCase();
-    const rest = args.slice(2);
+    const actionInput = args[0]?.toLowerCase();
+    const rest = args.slice(1);
 
-    if (resource !== "instances") {
-      throw new BrowserStackError(
-        `Invalid resource: ${resource} (valid: instances)`
-      );
+    if (!actionInput || actionInput === "help") {
+      logger.info(USAGE);
+      return;
     }
 
-    switch (action) {
-      case "list": {
-        const instances = await client.getBinaryInstances();
-        const list = Array.isArray(instances) ? instances : [];
-        list.forEach((inst) =>
-          logger.info(inst.id ?? "", inst.localIdentifier ?? "", inst.startTime ?? "")
-        );
-        break;
-      }
-      case "get": {
-        if (!rest[0]) throw new BrowserStackError("Missing <instanceId>");
-        const inst = await client.getBinaryInstance(rest[0]);
-        logger.info(JSON.stringify(inst, null, 2));
-        break;
-      }
-      case "disconnect": {
-        if (!rest[0]) throw new BrowserStackError("Missing <instanceId>");
-        const message = await client.disconnectBinaryInstance(rest[0]);
-        logger.info(message);
-        break;
-      }
-      default:
-        throw new BrowserStackError(
-          `Invalid instances action: ${action} (valid: list, get, disconnect)`
-        );
+    // Map input string to enum value
+    const action = Object.values(LocalTesting.Action).find((a: string) => a.toLowerCase() === actionInput);
+    if (!action) {
+      throw new BrowserStackError(`Invalid action: ${actionInput}\n${USAGE}`);
     }
+
+    const schemaConfig = LocalTestingSchemas.ActionSchemaMap[action];
+    if (!schemaConfig) {
+        throw new BrowserStackError(`No schema found for action: ${action}`);
+    }
+
+    const parsed = parseArgs(schemaConfig.schema, rest);
+    const result = await schemaConfig.call(client, parsed);
+
+    logger.info(JSON.stringify(result, null, 2));
+
   } catch (err) {
     if (err instanceof Error) {
       logger.error(err.message);

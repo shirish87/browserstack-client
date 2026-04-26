@@ -14,17 +14,35 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 	client := accessibility.New(c)
 	ctx := context.Background()
 
+	const usage = "Valid actions:\n" +
+		"  get-workflow-analyzer-reports, get-workflow-analyzer-report-summary,\n" +
+		"  get-workflow-analyzer-report-issues, get-assisted-test-reports,\n" +
+		"  get-assisted-test-report-summary, get-assisted-test-report-issues,\n" +
+		"  get-website-scanner-auth-configs, create-website-scanner-auth-config,\n" +
+		"  get-website-scanner-scans, create-website-scanner-scan,\n" +
+		"  get-website-scanner-scan-overview, get-website-scanner-scan-runs,\n" +
+		"  get-website-scanner-scan-run-summary, get-website-scanner-scan-run-status,\n" +
+		"  get-website-scanner-scan-run-issues, get-website-scanner-scan-run-logs,\n" +
+		"  get-automated-test-projects, get-automated-test-builds,\n" +
+		"  get-automated-test-build-test-cases, get-automated-test-build-summary,\n" +
+		"  get-automated-test-build-issues, get-automated-test-build-test-case-summary,\n" +
+		"  get-automated-test-build-test-case-issues"
+
 	switch action {
-	// Workflow Analyzer
-	case "list-workflow-reports":
+	case "help":
+		fmt.Println("Usage: accessibility <action> [args...]")
+		fmt.Println(usage)
+		return nil
+
+	case accessibility.ActionListWorkflowAnalyzerReports:
 		result, err := client.GetWorkflowAnalyzerReports(ctx)
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "get-workflow-report":
+	case accessibility.ActionGetWorkflowAnalyzerReportSummary:
 		if len(args) < 1 {
-			return fmt.Errorf("usage: accessibility get-workflow-report <reportId>")
+			return fmt.Errorf("usage: accessibility get-workflow-analyzer-report-summary <reportId>")
 		}
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
@@ -35,9 +53,9 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-	case "get-workflow-report-issues":
+	case accessibility.ActionListWorkflowAnalyzerReportIssues:
 		if len(args) < 1 {
-			return fmt.Errorf("usage: accessibility get-workflow-report-issues <reportId>")
+			return fmt.Errorf("usage: accessibility get-workflow-analyzer-report-issues <reportId>")
 		}
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
@@ -48,17 +66,15 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-
-	// Assisted Test
-	case "list-assisted-test-reports":
+	case accessibility.ActionListAssistedTestReports:
 		result, err := client.GetAssistedTestReports(ctx)
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "get-assisted-test-report":
+	case accessibility.ActionGetAssistedTestReportSummary:
 		if len(args) < 1 {
-			return fmt.Errorf("usage: accessibility get-assisted-test-report <reportId>")
+			return fmt.Errorf("usage: accessibility get-assisted-test-report-summary <reportId>")
 		}
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
@@ -69,7 +85,7 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-	case "get-assisted-test-report-issues":
+	case accessibility.ActionListAssistedTestReportIssues:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: accessibility get-assisted-test-report-issues <reportId>")
 		}
@@ -82,23 +98,21 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-
-	// Website Scanner
-	case "list-website-scanner-auth-configs":
+	case accessibility.ActionListWebsiteScannerAuthConfigs:
 		result, err := client.GetWebsiteScannerAuthConfigs(ctx)
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "list-website-scans":
+	case accessibility.ActionListWebsiteScannerScans:
 		result, err := client.GetWebsiteScannerScans(ctx)
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "get-website-scan-overview":
+	case accessibility.ActionGetWebsiteScannerScanOverview:
 		if len(args) < 1 {
-			return fmt.Errorf("usage: accessibility get-website-scan-overview <scanId>")
+			return fmt.Errorf("usage: accessibility get-website-scanner-scan-overview <scanId>")
 		}
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
@@ -109,9 +123,9 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-	case "list-website-scan-runs":
+	case accessibility.ActionListWebsiteScannerScanRuns:
 		if len(args) < 1 {
-			return fmt.Errorf("usage: accessibility list-website-scan-runs <scanId>")
+			return fmt.Errorf("usage: accessibility get-website-scanner-scan-runs <scanId>")
 		}
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
@@ -122,9 +136,9 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-	case "get-website-scan-run":
+	case accessibility.ActionGetWebsiteScannerScanRunSummary:
 		if len(args) < 2 {
-			return fmt.Errorf("usage: accessibility get-website-scan-run <scanId> <scanRunId>")
+			return fmt.Errorf("usage: accessibility get-website-scanner-scan-run-summary <scanId> <scanRunId>")
 		}
 		scanID, err := strconv.Atoi(args[0])
 		if err != nil {
@@ -139,9 +153,9 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-	case "get-website-scan-run-status":
+	case accessibility.ActionListWebsiteScannerScanRunStatus:
 		if len(args) < 2 {
-			return fmt.Errorf("usage: accessibility get-website-scan-run-status <scanId> <scanRunId>")
+			return fmt.Errorf("usage: accessibility get-website-scanner-scan-run-status <scanId> <scanRunId>")
 		}
 		scanID, err := strconv.Atoi(args[0])
 		if err != nil {
@@ -156,9 +170,9 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-	case "get-website-scan-run-issues":
+	case accessibility.ActionListWebsiteScannerScanRunIssues:
 		if len(args) < 2 {
-			return fmt.Errorf("usage: accessibility get-website-scan-run-issues <scanId> <scanRunId>")
+			return fmt.Errorf("usage: accessibility get-website-scanner-scan-run-issues <scanId> <scanRunId>")
 		}
 		scanID, err := strconv.Atoi(args[0])
 		if err != nil {
@@ -173,9 +187,9 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-	case "get-website-scan-run-logs":
+	case accessibility.ActionListWebsiteScannerScanRunLogs:
 		if len(args) < 2 {
-			return fmt.Errorf("usage: accessibility get-website-scan-run-logs <scanId> <scanRunId>")
+			return fmt.Errorf("usage: accessibility get-website-scanner-scan-run-logs <scanId> <scanRunId>")
 		}
 		scanID, err := strconv.Atoi(args[0])
 		if err != nil {
@@ -190,30 +204,19 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-
-	// Automated Tests
-	case "list-automated-test-projects":
+	case accessibility.ActionListAutomatedTestProjects:
 		result, err := client.GetAutomatedTestProjects(ctx, "")
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "list-automated-test-builds":
+	case accessibility.ActionListAutomatedTestBuilds:
 		result, err := client.GetAutomatedTestBuilds(ctx, "", 0)
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "get-automated-test-build":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: accessibility get-automated-test-build <buildId>")
-		}
-		result, err := client.GetAutomatedTestBuildSummary(ctx, args[0], "")
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case "get-automated-test-build-test-cases":
+	case accessibility.ActionListAutomatedTestBuildTestCases:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: accessibility get-automated-test-build-test-cases <buildId>")
 		}
@@ -222,7 +225,16 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-	case "get-automated-test-build-issues":
+	case accessibility.ActionGetAutomatedTestBuildSummary:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: accessibility get-automated-test-build-summary <buildId>")
+		}
+		result, err := client.GetAutomatedTestBuildSummary(ctx, args[0], "")
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case accessibility.ActionListAutomatedTestBuildIssues:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: accessibility get-automated-test-build-issues <buildId>")
 		}
@@ -231,33 +243,26 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 			return err
 		}
 		return output.Print(result)
-	case "get-automated-test-case-summary":
+	case accessibility.ActionGetAutomatedTestBuildTestCaseSummary:
 		if len(args) < 2 {
-			return fmt.Errorf("usage: accessibility get-automated-test-case-summary <buildId> <testCaseId>")
+			return fmt.Errorf("usage: accessibility get-automated-test-build-test-case-summary <buildId> <testCaseId>")
 		}
 		result, err := client.GetAutomatedTestBuildTestCaseSummary(ctx, args[0], args[1], "")
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "get-automated-test-case-issues":
-		if len(args) < 2 {
-			return fmt.Errorf("usage: accessibility get-automated-test-case-issues <buildId> <testCase>")
+	case accessibility.ActionListAutomatedTestBuildTestCaseIssues:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: accessibility get-automated-test-build-test-case-issues <buildId>")
 		}
-		result, err := client.GetAutomatedTestBuildTestCaseIssues(ctx, args[0], args[1], "", "")
+		result, err := client.GetAutomatedTestBuildTestCaseIssues(ctx, args[0], "", "", "")
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
 
 	default:
-		return fmt.Errorf("unknown action: %s\n\nValid actions:\n"+
-			"  list-workflow-reports, get-workflow-report, get-workflow-report-issues\n"+
-			"  list-assisted-test-reports, get-assisted-test-report, get-assisted-test-report-issues\n"+
-			"  list-website-scanner-auth-configs, list-website-scans, get-website-scan-overview\n"+
-			"  list-website-scan-runs, get-website-scan-run, get-website-scan-run-status, get-website-scan-run-issues, get-website-scan-run-logs\n"+
-			"  list-automated-test-projects, list-automated-test-builds, get-automated-test-build\n"+
-			"  get-automated-test-build-test-cases, get-automated-test-build-issues\n"+
-			"  get-automated-test-case-summary, get-automated-test-case-issues", action)
+		return fmt.Errorf("unknown action: %s\n\n%s", action, usage)
 	}
 }

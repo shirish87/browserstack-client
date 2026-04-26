@@ -5,8 +5,9 @@ import openapiTS, { astToString } from "openapi-typescript";
 import ts from "typescript";
 import { fileURLToPath } from "node:url";
 import { CodecRegistry, registerAllBuiltins } from "@browserstack-client/openapi-transforms";
-import { generateClientModule } from "@browserstack-client/openapi-transforms/codegen";
+import { generateClientModule } from "@browserstack-client/openapi-transforms/codegen/typescript";
 import { generateGoModule } from "@browserstack-client/openapi-transforms/codegen/golang";
+import { extractCLIMetadata, generateTSConstants, generateTSSchemas, generateGoConstants } from "@browserstack-client/openapi-transforms/codegen/cli";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -214,3 +215,26 @@ async function generateGoModules() {
 }
 
 await generateGoModules();
+
+console.log("Generating CLI constants...");
+const cliMetadata = [];
+for (const { product } of productSpecs) {
+  const specPath = path.join(__dirname, "specs", `${product}.yml`);
+  cliMetadata.push(await extractCLIMetadata(specPath, product));
+}
+
+const tsConstants = generateTSConstants(cliMetadata);
+await fs.writeFile(path.join(__dirname, "../cli/typescript/src/constants.generated.ts"), tsConstants);
+console.log("  ✓ constants.generated.ts (TS)");
+
+const tsSchemas = generateTSSchemas(cliMetadata);
+await fs.writeFile(path.join(__dirname, "../cli/typescript/src/schemas.generated.ts"), tsSchemas);
+console.log("  ✓ schemas.generated.ts (TS)");
+
+console.log("Generating Go CLI constants...");
+for (const m of cliMetadata) {
+  const goConstants = generateGoConstants(m);
+  const outPath = path.join(__dirname, `../cli/golang/generated/${m.product}/constants.generated.go`);
+  await fs.writeFile(outPath, goConstants);
+  console.log(`  ✓ ${m.product}/constants.generated.go (Go)`);
+}

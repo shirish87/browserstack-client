@@ -5,29 +5,49 @@ import (
 	"fmt"
 	"strconv"
 
-	reporting "github.com/browserstack/browserstack-client/generated/test-reporting"
+	testreporting "github.com/browserstack/browserstack-client/generated/test-reporting"
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 	"github.com/browserstack/browserstack-client/internal/output"
 )
 
-const testReportingBaseURL = "https://api-automation.browserstack.com/ext/v1"
+const testReportingBaseURL = "https://api-test-reporting.browserstack.com"
 
 func runTestReporting(username, accessKey, action string, args []string) error {
 	c := browserstackhttp.New(testReportingBaseURL, username, accessKey)
-	client := reporting.New(c)
+	client := testreporting.New(c)
 	ctx := context.Background()
 
+	const usage = "Valid actions:\n" +
+		"  get-projects, get-project-builds, start-build, get-latest-build, get-build,\n" +
+		"  update-build, finish-build, start-test-run, finish-test-run, start-hook-run,\n" +
+		"  finish-hook-run, add-build-logs, get-test-runs, get-self-healing-report,\n" +
+		"  get-quality-gate-status, get-quality-gate-settings, update-quality-gate-settings,\n" +
+		"  create-quality-gate-profile, get-quality-gate-profile, update-quality-gate-profile,\n" +
+		"  delete-quality-gate-profile, toggle-quality-gate-profile, upload-report"
+
 	switch action {
-	// Projects
-	case "list-projects":
+	case "help":
+		fmt.Println("Usage: test-reporting <action> [args...]")
+		fmt.Println(usage)
+		return nil
+
+	case testreporting.ActionListProjects:
 		result, err := client.GetProjects(ctx, "")
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-
-	// Builds
-	case "get-build":
+	case testreporting.ActionListProjectBuilds:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: test-reporting get-project-builds <projectId>")
+		}
+		id, _ := strconv.Atoi(args[0])
+		result, err := client.GetProjectBuilds(ctx, id, "", "", "", "", "", "", "", "")
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case testreporting.ActionGetBuild:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: test-reporting get-build <buildId>")
 		}
@@ -36,37 +56,22 @@ func runTestReporting(username, accessKey, action string, args []string) error {
 			return err
 		}
 		return output.Print(result)
-	case "get-latest-build":
+	case testreporting.ActionGetLatestBuild:
 		result, err := client.GetLatestBuild(ctx, "", "", "", "", "")
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "list-project-builds":
+	case testreporting.ActionListTestRuns:
 		if len(args) < 1 {
-			return fmt.Errorf("usage: test-reporting list-project-builds <projectId>")
-		}
-		projectID, err := strconv.Atoi(args[0])
-		if err != nil {
-			return fmt.Errorf("projectId must be an integer")
-		}
-		result, err := client.GetProjectBuilds(ctx, projectID, "", "", "", "", "", "", "", "")
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-
-	// Test runs
-	case "list-test-runs":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: test-reporting list-test-runs <buildId>")
+			return fmt.Errorf("usage: test-reporting get-test-runs <buildId>")
 		}
 		result, err := client.GetTestRuns(ctx, args[0], "", "", "", "", "", "", "")
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "get-self-healing-report":
+	case testreporting.ActionGetSelfHealingReport:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: test-reporting get-self-healing-report <buildUuid>")
 		}
@@ -75,9 +80,7 @@ func runTestReporting(username, accessKey, action string, args []string) error {
 			return err
 		}
 		return output.Print(result)
-
-	// Quality gates
-	case "get-quality-gate-status":
+	case testreporting.ActionListQualityGateStatus:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: test-reporting get-quality-gate-status <buildUuid>")
 		}
@@ -86,7 +89,7 @@ func runTestReporting(username, accessKey, action string, args []string) error {
 			return err
 		}
 		return output.Print(result)
-	case "get-quality-gate-settings":
+	case testreporting.ActionListQualityGateSettings:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: test-reporting get-quality-gate-settings <projectName>")
 		}
@@ -95,7 +98,7 @@ func runTestReporting(username, accessKey, action string, args []string) error {
 			return err
 		}
 		return output.Print(result)
-	case "get-quality-gate-profile":
+	case testreporting.ActionGetQualityGateProfile:
 		if len(args) < 2 {
 			return fmt.Errorf("usage: test-reporting get-quality-gate-profile <projectName> <profileUuid>")
 		}
@@ -104,7 +107,7 @@ func runTestReporting(username, accessKey, action string, args []string) error {
 			return err
 		}
 		return output.Print(result)
-	case "delete-quality-gate-profile":
+	case testreporting.ActionDeleteQualityGateProfile:
 		if len(args) < 2 {
 			return fmt.Errorf("usage: test-reporting delete-quality-gate-profile <projectName> <profileUuid>")
 		}
@@ -115,10 +118,6 @@ func runTestReporting(username, accessKey, action string, args []string) error {
 		return output.Print(result)
 
 	default:
-		return fmt.Errorf("unknown action: %s\n\nValid actions:\n"+
-			"  list-projects\n"+
-			"  get-build, get-latest-build, list-project-builds\n"+
-			"  list-test-runs, get-self-healing-report\n"+
-			"  get-quality-gate-status, get-quality-gate-settings, get-quality-gate-profile, delete-quality-gate-profile", action)
+		return fmt.Errorf("unknown action: %s\n\n%s", action, usage)
 	}
 }

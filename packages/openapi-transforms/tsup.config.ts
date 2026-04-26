@@ -5,6 +5,7 @@ export default defineConfig({
     "src/index.ts",
     "src/codegen/typescript/index.ts",
     "src/codegen/golang/index.ts",
+    "src/codegen/cli/index.ts",
   ],
   format: ["esm"],
   bundle: true,

@@ -11,35 +11,44 @@ import { main as runTestManagement } from "./browserstack-test-management.ts";
 import { main as runAccessibility } from "./browserstack-accessibility.ts";
 import { main as runTestReporting } from "./browserstack-test-reporting.ts";
 
+import { Product } from "./constants.generated.ts";
+
 const products: Record<string, (args: string[]) => Promise<void>> = {
   local: runLocal,
-  "app-automate": runAppAutomate,
-  automate: runAutomate,
-  "local-testing": runLocalTesting,
-  "test-management": runTestManagement,
-  accessibility: runAccessibility,
-  "test-reporting": runTestReporting,
+  [Product.AppAutomate]: runAppAutomate,
+  [Product.Automate]: runAutomate,
+  [Product.LocalTesting]: runLocalTesting,
+  [Product.TestManagement]: runTestManagement,
+  [Product.Accessibility]: runAccessibility,
+  [Product.TestReporting]: runTestReporting,
 };
 
 export async function main(inputArgs: string[] = process.argv.slice(2)) {
-  const product = inputArgs[0]?.toLowerCase().trim();
+  const productInput = inputArgs[0]?.toLowerCase().trim();
 
-  if (product === "version") {
+  if (productInput === "version") {
     const ver = (globalThis as Record<string, unknown>)["__CLI_VERSION__"] as string | undefined
       ?? (await import("../package.json", { with: { type: "json" } })).default.version;
     process.stdout.write(`browserstack-client ${ver}\n`);
     return;
   }
 
-  if (!product || !products[product]) {
-    const valid = Object.keys(products).join(", ");
+  if (productInput === "help") {
+    const valid = ["local", ...Object.values(Product)].join(", ");
+    process.stdout.write(`Usage: browserstack-client <product> <action> [args...]\n`);
+    process.stdout.write(`Products: ${valid}\n`);
+    return;
+  }
+
+  if (!productInput || !products[productInput]) {
+    const valid = ["local", ...Object.values(Product)].join(", ");
     process.stderr.write(
-      `Invalid or missing product: ${product ?? "(none)"} (valid: ${valid})\n`
+      `Invalid or missing product: ${productInput ?? "(none)"} (valid: ${valid})\n`
     );
     process.exit(1);
   }
 
-  await products[product](inputArgs.slice(1));
+  await products[productInput](inputArgs.slice(1));
 }
 
 const isMain =

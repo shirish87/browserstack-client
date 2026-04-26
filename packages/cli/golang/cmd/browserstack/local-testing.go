@@ -13,14 +13,22 @@ func runLocalTesting(c *browserstackhttp.Client, action string, args []string) e
 	client := localtesting.New(c)
 	ctx := context.Background()
 
+	const usage = "Valid actions:\n" +
+		"  get-instances, get-instance, disconnect-instance"
+
 	switch action {
-	case "list-instances":
+	case "help":
+		fmt.Println("Usage: local-testing <action> [args...]")
+		fmt.Println(usage)
+		return nil
+
+	case localtesting.ActionListInstances:
 		result, err := client.GetInstances(ctx, "", "", "")
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "get-instance":
+	case localtesting.ActionGetInstance:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: local-testing get-instance <instanceId>")
 		}
@@ -29,7 +37,7 @@ func runLocalTesting(c *browserstackhttp.Client, action string, args []string) e
 			return err
 		}
 		return output.Print(result)
-	case "disconnect-instance":
+	case localtesting.ActionDisconnectInstance:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: local-testing disconnect-instance <instanceId>")
 		}
@@ -39,7 +47,6 @@ func runLocalTesting(c *browserstackhttp.Client, action string, args []string) e
 		}
 		return output.Print(result)
 	default:
-		return fmt.Errorf("unknown action: %s\n\nValid actions:\n"+
-			"  list-instances, get-instance, disconnect-instance", action)
+		return fmt.Errorf("unknown action: %s\n\n%s", action, usage)
 	}
 }

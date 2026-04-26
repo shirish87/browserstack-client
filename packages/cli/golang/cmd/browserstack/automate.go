@@ -13,107 +13,36 @@ func runAutomate(c *browserstackhttp.Client, action string, args []string) error
 	client := automate.New(c)
 	ctx := context.Background()
 
+	const usage = "Valid actions:\n" +
+		"  get-browsers, get-plan, get-session-appium-logs, get-project-badge-key,\n" +
+		"  upload-session-terminal-logs, delete-builds, get-session, update-session,\n" +
+		"  delete-session, delete-sessions, delete-media-file, get-build, update-build,\n" +
+		"  delete-build, get-session-logs, upload-media-file, recycle-key, get-sessions,\n" +
+		"  get-project, update-project, delete-project, get-session-selenium-logs,\n" +
+		"  upload-build-terminal-logs, get-media-files, get-projects,\n" +
+		"  get-session-console-logs, get-session-telemetry-logs, get-builds, get-session-network-logs"
+
 	switch action {
-	case "get-plan":
-		result, err := client.GetPlan(ctx)
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case "list-browsers":
+	case "help":
+		fmt.Println("Usage: automate <action> [args...]")
+		fmt.Println(usage)
+		return nil
+
+	case automate.ActionListBrowsers:
 		result, err := client.GetBrowsers(ctx)
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-
-	// Builds
-	case "list-builds":
-		result, err := client.GetBuilds(ctx, "", "", "", "")
+	case automate.ActionGetPlan:
+		result, err := client.GetPlan(ctx)
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "get-build":
+	case automate.ActionListSessionAppiumLogs:
 		if len(args) < 1 {
-			return fmt.Errorf("usage: automate get-build <buildId>")
-		}
-		result, err := client.GetBuild(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case "delete-build":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate delete-build <buildId>")
-		}
-		result, err := client.DeleteBuild(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-
-	// Sessions
-	case "list-sessions":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate list-sessions <buildId>")
-		}
-		result, err := client.GetSessions(ctx, args[0], "", "", "")
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case "get-session":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate get-session <sessionId>")
-		}
-		result, err := client.GetSession(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case "delete-session":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate delete-session <sessionId>")
-		}
-		result, err := client.DeleteSession(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case "get-session-logs":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate get-session-logs <sessionId>")
-		}
-		result, err := client.GetSessionLogs(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		fmt.Println(result)
-		return nil
-	case "get-selenium-logs":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate get-selenium-logs <sessionId>")
-		}
-		result, err := client.GetSessionSeleniumLogs(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		fmt.Println(result)
-		return nil
-	case "get-console-logs":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate get-console-logs <sessionId>")
-		}
-		result, err := client.GetSessionConsoleLogs(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		fmt.Println(result)
-		return nil
-	case "get-appium-logs":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate get-appium-logs <sessionId>")
+			return fmt.Errorf("usage: automate get-session-appium-logs <sessionId>")
 		}
 		result, err := client.GetSessionAppiumLogs(ctx, args[0])
 		if err != nil {
@@ -121,51 +50,7 @@ func runAutomate(c *browserstackhttp.Client, action string, args []string) error
 		}
 		fmt.Println(result)
 		return nil
-	case "get-network-logs":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate get-network-logs <sessionId>")
-		}
-		result, err := client.GetSessionNetworkLogs(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case "get-telemetry-logs":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate get-telemetry-logs <sessionId>")
-		}
-		result, err := client.GetSessionTelemetryLogs(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-
-	// Projects
-	case "list-projects":
-		result, err := client.GetProjects(ctx)
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case "get-project":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate get-project <projectId>")
-		}
-		result, err := client.GetProject(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case "delete-project":
-		if len(args) < 1 {
-			return fmt.Errorf("usage: automate delete-project <projectId>")
-		}
-		result, err := client.DeleteProject(ctx, args[0])
-		if err != nil {
-			return err
-		}
-		return output.Print(result)
-	case "get-project-badge-key":
+	case automate.ActionGetProjectBadgeKey:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: automate get-project-badge-key <projectId>")
 		}
@@ -175,15 +60,43 @@ func runAutomate(c *browserstackhttp.Client, action string, args []string) error
 		}
 		fmt.Println(result)
 		return nil
-
-	// Media files
-	case "list-media-files":
-		result, err := client.GetMediaFiles(ctx)
+	case automate.ActionDeleteBuilds:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate delete-builds <buildId>")
+		}
+		result, err := client.DeleteBuilds(ctx, args[0])
 		if err != nil {
 			return err
 		}
 		return output.Print(result)
-	case "delete-media-file":
+	case automate.ActionGetSession:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate get-session <sessionId>")
+		}
+		result, err := client.GetSession(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionDeleteSession:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate delete-session <sessionId>")
+		}
+		result, err := client.DeleteSession(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionDeleteSessions:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate delete-sessions <sessionId>")
+		}
+		result, err := client.DeleteSessions(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionDeleteMediaFile:
 		if len(args) < 1 {
 			return fmt.Errorf("usage: automate delete-media-file <mediaId>")
 		}
@@ -192,14 +105,119 @@ func runAutomate(c *browserstackhttp.Client, action string, args []string) error
 			return err
 		}
 		return output.Print(result)
+	case automate.ActionGetBuild:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate get-build <buildId>")
+		}
+		result, err := client.GetBuild(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionDeleteBuild:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate delete-build <buildId>")
+		}
+		result, err := client.DeleteBuild(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionListSessionLogs:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate get-session-logs <sessionId>")
+		}
+		result, err := client.GetSessionLogs(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		fmt.Println(result)
+		return nil
+	case automate.ActionListSessions:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate get-sessions <buildId>")
+		}
+		result, err := client.GetSessions(ctx, args[0], "", "", "")
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionGetProject:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate get-project <projectId>")
+		}
+		result, err := client.GetProject(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionDeleteProject:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate delete-project <projectId>")
+		}
+		result, err := client.DeleteProject(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionListSessionSeleniumLogs:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate get-session-selenium-logs <sessionId>")
+		}
+		result, err := client.GetSessionSeleniumLogs(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		fmt.Println(result)
+		return nil
+	case automate.ActionListMediaFiles:
+		result, err := client.GetMediaFiles(ctx)
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionListProjects:
+		result, err := client.GetProjects(ctx)
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionListSessionConsoleLogs:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate get-session-console-logs <sessionId>")
+		}
+		result, err := client.GetSessionConsoleLogs(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		fmt.Println(result)
+		return nil
+	case automate.ActionListSessionTelemetryLogs:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate get-session-telemetry-logs <sessionId>")
+		}
+		result, err := client.GetSessionTelemetryLogs(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionListBuilds:
+		result, err := client.GetBuilds(ctx, "", "", "", "")
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
+	case automate.ActionListSessionNetworkLogs:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate get-session-network-logs <sessionId>")
+		}
+		result, err := client.GetSessionNetworkLogs(ctx, args[0])
+		if err != nil {
+			return err
+		}
+		return output.Print(result)
 
 	default:
-		return fmt.Errorf("unknown action: %s\n\nValid actions:\n"+
-			"  get-plan, list-browsers\n"+
-			"  list-builds, get-build, delete-build\n"+
-			"  list-sessions, get-session, delete-session\n"+
-			"  get-session-logs, get-selenium-logs, get-console-logs, get-appium-logs, get-network-logs, get-telemetry-logs\n"+
-			"  list-projects, get-project, delete-project, get-project-badge-key\n"+
-			"  list-media-files, delete-media-file", action)
+		return fmt.Errorf("unknown action: %s\n\n%s", action, usage)
 	}
 }

@@ -69,10 +69,11 @@
     "@browserstack-client/core": "workspace:*",
     "@browserstack-client/local-testing": "workspace:*",
     "@browserstack-client/local-testing-binary": "workspace:*",
-    "@browserstack-client/test-reporting": "workspace:*",
     "@browserstack-client/openapi-transforms": "workspace:*",
     "@browserstack-client/test-management": "workspace:*",
-    "signal-exit": "^4.1.0"
+    "@browserstack-client/test-reporting": "workspace:*",
+    "signal-exit": "^4.1.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
