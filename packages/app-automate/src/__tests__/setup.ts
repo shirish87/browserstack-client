@@ -32,7 +32,7 @@ function pickRandom<T>(items: T[]): T {
 }
 
 const randomAppAutomateBuildId = async () => {
-  const builds = await appAutomate.getAppAutomateBuilds();
+  const builds = await appAutomate.getBuilds();
   assert(builds.length > 0, "No builds found");
   return pickRandom(builds).hashedId;
 };
@@ -41,53 +41,53 @@ export const appAutomateContext: BrowserStackTestContext["appAutomate"] = {
   client: appAutomate,
   randomBuildId: randomAppAutomateBuildId,
   randomProjectId: async () => {
-    const projects = await appAutomate.getAppAutomateProjects();
+    const projects = await appAutomate.getProjects();
     assert(projects.length > 0, "No projects found");
     return pickRandom(projects).id!;
   },
   randomSessionId: async () => {
     const buildId = await randomAppAutomateBuildId();
-    const build = await appAutomate.getAppAutomateBuild(buildId);
+    const build = await appAutomate.getBuild(buildId);
     const sessions = build.sessions ?? [];
     assert(sessions.length > 0, "No sessions found");
     const session = pickRandom(sessions);
     return session.automationSession!.hashedId;
   },
   randomMediaId: async () => {
-    const files = await appAutomate.getAppAutomateMediaFiles();
+    const files = await appAutomate.getMediaFiles();
     const arr = Array.isArray(files) ? files : [];
     assert(arr.length > 0, "No media found");
     return pickRandom(arr).mediaId;
   },
   randomAppiumAppId: async () => {
-    const apps = await appAutomate.getAppAutomateApps();
+    const apps = await appAutomate.getApps();
     const arr = Array.isArray(apps) ? apps : [];
     assert(arr.length > 0, "No apps found");
     return pickRandom(arr).appId!;
   },
   randomFlutterAndroidAppId: async () => {
-    const apps = await appAutomate.getAppAutomateFlutterAndroidApps();
+    const apps = await appAutomate.getFlutterAndroidApps();
     const arr = Array.isArray(apps) ? apps : [];
     assert(arr.length > 0, "No Flutter Android apps found");
     const match = arr.find((a) => a.customId === "example-app");
     return (match ?? pickRandom(arr)).appId!;
   },
   randomFlutteriOSTestPackageId: async () => {
-    const pkgs = await appAutomate.getAppAutomateFlutteriOSApps();
+    const pkgs = await appAutomate.getFlutteriOSApps();
     const arr = Array.isArray(pkgs) ? pkgs : [];
     assert(arr.length > 0, "No Flutter iOS test packages found");
     const match = arr.find((a) => a.customId === "example-app");
     return (match ?? pickRandom(arr)).testPackageId!;
   },
   randomEspressoAppId: async () => {
-    const apps = await appAutomate.getAppAutomateEspressoApps();
+    const apps = await appAutomate.getEspressoApps();
     const arr = Array.isArray(apps) ? apps : [];
     assert(arr.length > 0, "No Espresso apps found");
     const match = arr.find((a) => a.customId === "example-app");
     return (match ?? pickRandom(arr)).appId!;
   },
   randomXCUITestAppId: async () => {
-    const apps = await appAutomate.getAppAutomateXCUITestApps();
+    const apps = await appAutomate.getXCUITestApps();
     const arr = Array.isArray(apps) ? apps : [];
     assert(arr.length > 0, "No XCUITest apps found");
     const match = arr.find((a) => a.customId === "example-app");

@@ -24,18 +24,18 @@ async function handleWorkflowAnalyzer(
 
   switch (action) {
     case "list": {
-      const result = await client.getAccessibilityWorkflowAnalyzerReports();
+      const result = await client.getWorkflowAnalyzerReports();
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <report_id>");
-      const result = await client.getAccessibilityWorkflowAnalyzerReportSummary(Number(args[0]));
+      const result = await client.getWorkflowAnalyzerReportSummary(Number(args[0]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "issues": {
-      const result = await client.getAccessibilityWorkflowAnalyzerReportIssues();
+      const result = await client.getWorkflowAnalyzerReportIssues();
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -58,18 +58,18 @@ async function handleAssistedTest(
 
   switch (action) {
     case "list": {
-      const result = await client.getAccessibilityAssistedTestReports();
+      const result = await client.getAssistedTestReports();
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <report_id>");
-      const result = await client.getAccessibilityAssistedTestReportSummary(Number(args[0]));
+      const result = await client.getAssistedTestReportSummary(Number(args[0]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "issues": {
-      const result = await client.getAccessibilityAssistedTestReportIssues();
+      const result = await client.getAssistedTestReportIssues();
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -92,51 +92,51 @@ async function handleWebsiteScanner(
 
   switch (action) {
     case "list-configs": {
-      const result = await client.getAccessibilityWebsiteScannerAuthConfigs();
+      const result = await client.getWebsiteScannerAuthConfigs();
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "list-scans": {
-      const result = await client.getAccessibilityWebsiteScannerScans();
+      const result = await client.getWebsiteScannerScans();
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "get-scan": {
       if (!args[0]) throw new BrowserStackError("Missing <scan_id>");
-      const result = await client.getAccessibilityWebsiteScannerScanOverview(Number(args[0]));
+      const result = await client.getWebsiteScannerScanOverview(Number(args[0]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "list-runs": {
       if (!args[0]) throw new BrowserStackError("Missing <scan_id>");
-      const result = await client.getAccessibilityWebsiteScannerScanRuns(Number(args[0]));
+      const result = await client.getWebsiteScannerScanRuns(Number(args[0]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "get-run": {
       if (!args[0]) throw new BrowserStackError("Missing <scan_id>");
       if (!args[1]) throw new BrowserStackError("Missing <scan_run_id>");
-      const result = await client.getAccessibilityWebsiteScannerScanRunSummary(Number(args[0]), Number(args[1]));
+      const result = await client.getWebsiteScannerScanRunSummary(Number(args[0]), Number(args[1]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "status": {
       if (!args[0]) throw new BrowserStackError("Missing <scan_id>");
       if (!args[1]) throw new BrowserStackError("Missing <scan_run_id>");
-      const result = await client.getAccessibilityWebsiteScannerScanRunStatus(Number(args[0]), Number(args[1]));
+      const result = await client.getWebsiteScannerScanRunStatus(Number(args[0]), Number(args[1]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "issues": {
       if (!args[0]) throw new BrowserStackError("Missing <scan_id>");
-      const result = await client.getAccessibilityWebsiteScannerScanRunIssues(Number(args[0]));
+      const result = await client.getWebsiteScannerScanRunIssues(Number(args[0]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "logs": {
       if (!args[0]) throw new BrowserStackError("Missing <scan_id>");
       if (!args[1]) throw new BrowserStackError("Missing <scan_run_id>");
-      const result = await client.getAccessibilityWebsiteScannerScanRunLogs(Number(args[0]), Number(args[1]));
+      const result = await client.getWebsiteScannerScanRunLogs(Number(args[0]), Number(args[1]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -159,42 +159,42 @@ async function handleAutomatedTests(
 
   switch (action) {
     case "list-projects": {
-      const result = await client.getAccessibilityAutomatedTestProjects();
+      const result = await client.getAutomatedTestProjects();
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "list-builds": {
-      const result = await client.getAccessibilityAutomatedTestBuilds();
+      const result = await client.getAutomatedTestBuilds();
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "list-test-cases": {
       if (!args[0]) throw new BrowserStackError("Missing <thBuildId>");
-      const result = await client.getAccessibilityAutomatedTestBuildTestCases(args[0]);
+      const result = await client.getAutomatedTestBuildTestCases(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "get-build": {
       if (!args[0]) throw new BrowserStackError("Missing <thBuildId>");
-      const result = await client.getAccessibilityAutomatedTestBuildSummary(args[0]);
+      const result = await client.getAutomatedTestBuildSummary(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "build-issues": {
-      const result = await client.getAccessibilityAutomatedTestBuildIssues();
+      const result = await client.getAutomatedTestBuildIssues();
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "get-test-case": {
       if (!args[0]) throw new BrowserStackError("Missing <thBuildId>");
       if (!args[1]) throw new BrowserStackError("Missing <testCaseId>");
-      const result = await client.getAccessibilityAutomatedTestBuildTestCaseSummary(args[0], args[1]);
+      const result = await client.getAutomatedTestBuildTestCaseSummary(args[0], args[1]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "test-case-issues": {
       if (!args[0]) throw new BrowserStackError("Missing <thBuildId>");
-      const result = await client.getAccessibilityAutomatedTestBuildTestCaseIssues(args[0]);
+      const result = await client.getAutomatedTestBuildTestCaseIssues(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }

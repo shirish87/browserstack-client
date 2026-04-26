@@ -12,21 +12,21 @@ interface Logger {
   error(message: string, ...params: unknown[]): void;
 }
 
-type ClientOptions = Partial<BrowserStackOptions & { uploadBaseUrl?: string }>;
+type TestReportingClientOptions = Partial<BrowserStackOptions & { uploadBaseUrl?: string }>;
 
 // ── projects ─────────────────────────────────────────────────────────────────
 
 async function handleProjects(
   action: string,
   _args: string[],
-  opts: ClientOptions,
+  opts: TestReportingClientOptions,
   logger: Logger
 ) {
   const client = new TestReportingClient(opts);
 
   switch (action) {
     case "list": {
-      const resp = await client.getTestReportingProjects();
+      const resp = await client.getProjects();
       const list = (resp as { projects?: Array<{ id: unknown; name: unknown }> })?.projects ?? (resp as Array<{ id: unknown; name: unknown }>);
       (Array.isArray(list) ? list : []).forEach((p) => logger.info(String(p.id ?? ""), String(p.name ?? "")));
       break;
@@ -41,7 +41,7 @@ async function handleProjects(
 async function handleBuilds(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestReportingClientOptions,
   logger: Logger
 ) {
   const client = new TestReportingClient(opts);
@@ -49,20 +49,20 @@ async function handleBuilds(
   switch (action) {
     case "list": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
-      const resp = await client.getTestReportingProjectBuilds(Number(args[0]));
+      const resp = await client.getProjectBuilds(Number(args[0]));
       const list = (resp as { builds?: unknown[] })?.builds ?? resp;
       logger.info(JSON.stringify(list, null, 2));
       break;
     }
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <buildId>");
-      const build = await client.getTestReportingBuild(args[0]);
+      const build = await client.getBuild(args[0]);
       logger.info(JSON.stringify(build, null, 2));
       break;
     }
     case "latest": {
       if (!args[0]) throw new BrowserStackError("Missing <projectName>");
-      const build = await client.getTestReportingLatestBuild(args[0], args[1]);
+      const build = await client.getLatestBuild(args[0], args[1]);
       logger.info(JSON.stringify(build, null, 2));
       break;
     }
@@ -70,19 +70,19 @@ async function handleBuilds(
       if (!args[0]) throw new BrowserStackError("Missing <buildId>");
       if (!args[1]) throw new BrowserStackError("Missing <tags> (comma separated)");
       const tags = args[1].split(",").map((t) => t.trim());
-      await client.updateTestReportingBuild(args[0], { buildTags: tags });
+      await client.updateBuild(args[0], { buildTags: tags });
       logger.info(`Build ${args[0]} updated.`);
       break;
     }
     case "test-runs": {
       if (!args[0]) throw new BrowserStackError("Missing <buildId>");
-      const runs = await client.getTestReportingTestRuns(args[0]);
+      const runs = await client.getTestRuns(args[0]);
       logger.info(JSON.stringify(runs, null, 2));
       break;
     }
     case "self-healing-report": {
       if (!args[0]) throw new BrowserStackError("Missing <buildUuid>");
-      const report = await client.getTestReportingSelfHealingReport(args[0]);
+      const report = await client.getSelfHealingReport(args[0]);
       logger.info(JSON.stringify(report, null, 2));
       break;
     }
@@ -98,7 +98,7 @@ async function handleBuilds(
 async function handleUpload(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestReportingClientOptions,
   logger: Logger
 ) {
   const client = new TestReportingClient(opts);
@@ -112,7 +112,7 @@ async function handleUpload(
       const filePath = resolve(args[0]);
       const data = await readFile(filePath);
       const filename = basename(filePath);
-      await client.uploadTestReportingReport({
+      await client.uploadReport({
         file: new Blob([data]),
         fileName: filename,
         projectName: args[1],
@@ -132,7 +132,7 @@ async function handleUpload(
 async function handleIngestion(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestReportingClientOptions,
   logger: Logger
 ) {
   const client = new TestReportingClient(opts);
@@ -141,20 +141,20 @@ async function handleIngestion(
     case "start-build": {
       if (!args[0]) throw new BrowserStackError("Missing <json-body>");
       const body = JSON.parse(args[0]);
-      const result = await client.startTestReportingBuild(body);
+      const result = await client.startBuild(body);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "finish-build": {
       if (!args[0]) throw new BrowserStackError("Missing <buildHashedId>");
-      const result = await client.finishTestReportingBuild(args[0], { finishedAt: new Date().toISOString() });
+      const result = await client.finishBuild(args[0], { finishedAt: new Date().toISOString() });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "start-test-run": {
       if (!args[0]) throw new BrowserStackError("Missing <buildHashedId>");
       if (!args[1]) throw new BrowserStackError("Missing <json-body>");
-      const result = await client.startTestReportingTestRun(args[0], JSON.parse(args[1]));
+      const result = await client.startTestRun(args[0], JSON.parse(args[1]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -162,14 +162,14 @@ async function handleIngestion(
       if (!args[0]) throw new BrowserStackError("Missing <buildHashedId>");
       if (!args[1]) throw new BrowserStackError("Missing <testRunUuid>");
       if (!args[2]) throw new BrowserStackError("Missing <json-body>");
-      const result = await client.finishTestReportingTestRun(args[0], args[1], JSON.parse(args[2]));
+      const result = await client.finishTestRun(args[0], args[1], JSON.parse(args[2]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "start-hook": {
       if (!args[0]) throw new BrowserStackError("Missing <buildHashedId>");
       if (!args[1]) throw new BrowserStackError("Missing <json-body>");
-      const result = await client.startTestReportingHookRun(args[0], JSON.parse(args[1]));
+      const result = await client.startHookRun(args[0], JSON.parse(args[1]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -177,14 +177,14 @@ async function handleIngestion(
       if (!args[0]) throw new BrowserStackError("Missing <buildHashedId>");
       if (!args[1]) throw new BrowserStackError("Missing <hookRunUuid>");
       if (!args[2]) throw new BrowserStackError("Missing <json-body>");
-      const result = await client.finishTestReportingHookRun(args[0], args[1], JSON.parse(args[2]));
+      const result = await client.finishHookRun(args[0], args[1], JSON.parse(args[2]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "add-logs": {
       if (!args[0]) throw new BrowserStackError("Missing <buildHashedId>");
       if (!args[1]) throw new BrowserStackError("Missing <json-logs-array>");
-      const result = await client.addTestReportingBuildLogs(args[0], { logs: JSON.parse(args[1]) });
+      const result = await client.addBuildLogs(args[0], { logs: JSON.parse(args[1]) });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -200,7 +200,7 @@ async function handleIngestion(
 async function handleQualityGates(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestReportingClientOptions,
   logger: Logger
 ) {
   const client = new TestReportingClient(opts);
@@ -208,34 +208,34 @@ async function handleQualityGates(
   switch (action) {
     case "status": {
       if (!args[0]) throw new BrowserStackError("Missing <buildUuid>");
-      const result = await client.getTestReportingQualityGateStatus(args[0]);
+      const result = await client.getQualityGateStatus(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "settings": {
       if (!args[0]) throw new BrowserStackError("Missing <projectName>");
-      const result = await client.getTestReportingQualityGateSettings(args[0]);
+      const result = await client.getQualityGateSettings(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "update-settings": {
       if (!args[0]) throw new BrowserStackError("Missing <projectName>");
       if (!args[1]) throw new BrowserStackError("Missing <enabled> (true/false)");
-      const result = await client.updateTestReportingQualityGateSettings(args[0], { enabled: args[1] === "true" });
+      const result = await client.updateQualityGateSettings(args[0], { enabled: args[1] === "true" });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "get-profile": {
       if (!args[0]) throw new BrowserStackError("Missing <projectName>");
       if (!args[1]) throw new BrowserStackError("Missing <profileUuid>");
-      const result = await client.getTestReportingQualityGateProfile(args[0], args[1]);
+      const result = await client.getQualityGateProfile(args[0], args[1]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "create-profile": {
       if (!args[0]) throw new BrowserStackError("Missing <projectName>");
       if (!args[1]) throw new BrowserStackError("Missing <json-body>");
-      const result = await client.createTestReportingQualityGateProfile(args[0], JSON.parse(args[1]));
+      const result = await client.createQualityGateProfile(args[0], JSON.parse(args[1]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -243,7 +243,7 @@ async function handleQualityGates(
       if (!args[0]) throw new BrowserStackError("Missing <projectName>");
       if (!args[1]) throw new BrowserStackError("Missing <profileUuid>");
       if (!args[2]) throw new BrowserStackError("Missing <json-body>");
-      const result = await client.updateTestReportingQualityGateProfile(args[0], args[1], JSON.parse(args[2]));
+      const result = await client.updateQualityGateProfile(args[0], args[1], JSON.parse(args[2]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -251,14 +251,14 @@ async function handleQualityGates(
       if (!args[0]) throw new BrowserStackError("Missing <projectName>");
       if (!args[1]) throw new BrowserStackError("Missing <profileUuid>");
       if (!args[2]) throw new BrowserStackError("Missing <enabled> (true/false)");
-      const result = await client.toggleTestReportingQualityGateProfile(args[0], args[1], { enabled: args[2] === "true" });
+      const result = await client.toggleQualityGateProfile(args[0], args[1], { enabled: args[2] === "true" });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete-profile": {
       if (!args[0]) throw new BrowserStackError("Missing <projectName>");
       if (!args[1]) throw new BrowserStackError("Missing <profileUuid>");
-      const result = await client.deleteTestReportingQualityGateProfile(args[0], args[1]);
+      const result = await client.deleteQualityGateProfile(args[0], args[1]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -283,7 +283,7 @@ export async function main(
     const resource = args[0]?.toLowerCase();
     const action = args[1]?.toLowerCase();
     const rest = args.slice(2);
-    const opts: ClientOptions = {};
+    const opts: TestReportingClientOptions = {};
 
     switch (resource) {
       case "projects":

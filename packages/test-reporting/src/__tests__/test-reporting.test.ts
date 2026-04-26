@@ -9,7 +9,7 @@ describe("TestReportingClient", () => {
   describe("Projects", () => {
     test("getTestReportingProjects", async () => {
       const { client } = testReportingContext;
-      const resp = await client.getTestReportingProjects();
+      const resp = await client.getProjects();
       const projects = (resp as { projects?: unknown[] })?.projects ?? resp;
       expect(Array.isArray(projects)).toBe(true);
     }, TIMEOUT);
@@ -19,7 +19,7 @@ describe("TestReportingClient", () => {
     test("getTestReportingProjectBuilds", async () => {
       const { client, randomProjectId } = testReportingContext;
       const projectId = await randomProjectId();
-      const resp = await client.getTestReportingProjectBuilds(projectId);
+      const resp = await client.getProjectBuilds(projectId);
       const builds = (resp as { builds?: unknown[] })?.builds ?? resp;
       expect(Array.isArray(builds)).toBe(true);
     }, TIMEOUT);
@@ -28,7 +28,7 @@ describe("TestReportingClient", () => {
       const { client, randomProjectId, randomBuildUuid } = testReportingContext;
       const projectId = await randomProjectId();
       const buildUuid = await randomBuildUuid(projectId);
-      const build = await client.getTestReportingBuild(buildUuid);
+      const build = await client.getBuild(buildUuid);
       expect(build).toBeDefined();
       expect((build as { buildId?: string })?.buildId ?? (build as { id?: string })?.id).toBeDefined();
     }, TIMEOUT);
@@ -36,11 +36,11 @@ describe("TestReportingClient", () => {
     test.skip("getTestReportingLatestBuild (paid feature)", async () => {
       const { client, randomProjectId } = testReportingContext;
       const projectId = await randomProjectId();
-      const resp = await client.getTestReportingProjects();
+      const resp = await client.getProjects();
       const projects = (resp as { projects?: Array<{ name: string; id: number }> })?.projects ?? (resp as Array<{ name: string; id: number }>);
       const project = projects.find((p) => p.id === projectId);
       expect(project?.name).toBeDefined();
-      const build = await client.getTestReportingLatestBuild(project!.name);
+      const build = await client.getLatestBuild(project!.name);
       expect(build).toBeDefined();
     }, TIMEOUT);
 
@@ -49,7 +49,7 @@ describe("TestReportingClient", () => {
       const projectId = await randomProjectId();
       const buildUuid = await randomBuildUuid(projectId);
       const tag = `test-tag-${Date.now()}`;
-      const result = await client.updateTestReportingBuild(buildUuid, { buildTags: [tag] });
+      const result = await client.updateBuild(buildUuid, { buildTags: [tag] });
       expect(result).toBeDefined();
     }, TIMEOUT);
   });
@@ -59,7 +59,7 @@ describe("TestReportingClient", () => {
       const { client, randomProjectId, randomBuildUuid } = testReportingContext;
       const projectId = await randomProjectId();
       const buildUuid = await randomBuildUuid(projectId);
-      const resp = await client.getTestReportingTestRuns(buildUuid);
+      const resp = await client.getTestRuns(buildUuid);
       expect(resp).toBeDefined();
     }, TIMEOUT);
   });
@@ -69,7 +69,7 @@ describe("TestReportingClient", () => {
       const { client, randomProjectId, randomBuildUuid } = testReportingContext;
       const projectId = await randomProjectId();
       const buildUuid = await randomBuildUuid(projectId);
-      const report = await client.getTestReportingSelfHealingReport(buildUuid);
+      const report = await client.getSelfHealingReport(buildUuid);
       expect(report).toBeDefined();
     }, TIMEOUT);
   });
@@ -79,30 +79,30 @@ describe("TestReportingClient", () => {
       const { client, randomProjectId, randomBuildUuid } = testReportingContext;
       const projectId = await randomProjectId();
       const buildUuid = await randomBuildUuid(projectId);
-      const status = await client.getTestReportingQualityGateStatus(buildUuid);
+      const status = await client.getQualityGateStatus(buildUuid);
       expect(status).toBeDefined();
     }, TIMEOUT);
 
     test.skip("getTestReportingQualityGateSettings (paid feature)", async () => {
       const { client, randomProjectId } = testReportingContext;
       const projectId = await randomProjectId();
-      const resp = await client.getTestReportingProjects();
+      const resp = await client.getProjects();
       const projects = (resp as { projects?: Array<{ name: string; id: number }> })?.projects ?? (resp as Array<{ name: string; id: number }>);
       const project = projects.find((p) => p.id === projectId);
       expect(project?.name).toBeDefined();
-      const settings = await client.getTestReportingQualityGateSettings(project!.name);
+      const settings = await client.getQualityGateSettings(project!.name);
       expect(settings).toBeDefined();
     }, TIMEOUT);
 
     test("createTestReportingQualityGateProfile + getTestReportingQualityGateProfile + updateTestReportingQualityGateProfile + toggleTestReportingQualityGateProfile + deleteTestReportingQualityGateProfile", async () => {
       const { client, randomProjectId } = testReportingContext;
       const projectId = await randomProjectId();
-      const resp = await client.getTestReportingProjects();
+      const resp = await client.getProjects();
       const projects = (resp as { projects?: Array<{ name: string; id: number }> })?.projects ?? (resp as Array<{ name: string; id: number }>);
       const project = projects.find((p) => p.id === projectId);
       const projectName = project!.name;
 
-      const created = await client.createTestReportingQualityGateProfile(projectName, {
+      const created = await client.createQualityGateProfile(projectName, {
         name: `test-profile-${Date.now()}`,
         enabled: true,
         isGlobalProfile: false,
@@ -111,19 +111,19 @@ describe("TestReportingClient", () => {
       expect((created as { uuid?: string })?.uuid).toBeDefined();
       const profileUuid = (created as { uuid: string }).uuid;
 
-      const fetched = await client.getTestReportingQualityGateProfile(projectName, profileUuid);
+      const fetched = await client.getQualityGateProfile(projectName, profileUuid);
       expect(fetched).toBeDefined();
 
-      await client.updateTestReportingQualityGateProfile(projectName, profileUuid, {
+      await client.updateQualityGateProfile(projectName, profileUuid, {
         name: `test-profile-${Date.now()}-updated`,
         enabled: true,
         isGlobalProfile: false,
         rules: [],
       });
 
-      await client.toggleTestReportingQualityGateProfile(projectName, profileUuid, { enabled: false });
+      await client.toggleQualityGateProfile(projectName, profileUuid, { enabled: false });
 
-      await client.deleteTestReportingQualityGateProfile(projectName, profileUuid);
+      await client.deleteQualityGateProfile(projectName, profileUuid);
     }, LONG_TIMEOUT);
   });
 
@@ -132,7 +132,7 @@ describe("TestReportingClient", () => {
       const { client } = testReportingContext;
       const now = new Date().toISOString();
 
-      const started = await client.startTestReportingBuild({
+      const started = await client.startBuild({
         name: `sdk-ingestion-test-${Date.now()}`,
         projectName: "sdk-integration-tests",
         startedAt: now,
@@ -141,7 +141,7 @@ describe("TestReportingClient", () => {
       expect((started as { buildHashedId?: string })?.buildHashedId).toBeDefined();
       const buildHashedId = (started as { buildHashedId: string }).buildHashedId;
 
-      const testStarted = await client.startTestReportingTestRun(buildHashedId, {
+      const testStarted = await client.startTestRun(buildHashedId, {
         name: "sdk test run",
         fileName: "test.ts",
         scopes: ["SDK", "Integration"],
@@ -150,14 +150,14 @@ describe("TestReportingClient", () => {
       expect((testStarted as { uuid?: string })?.uuid).toBeDefined();
       const testRunUuid = (testStarted as { uuid: string }).uuid;
 
-      await client.finishTestReportingTestRun(buildHashedId, testRunUuid, {
+      await client.finishTestRun(buildHashedId, testRunUuid, {
         result: "passed",
         finishedAt: new Date().toISOString(),
         fileName: "test.ts",
         scopes: ["SDK", "Integration"],
       });
 
-      await client.finishTestReportingBuild(buildHashedId, {
+      await client.finishBuild(buildHashedId, {
         finishedAt: new Date().toISOString(),
       });
     }, LONG_TIMEOUT);
@@ -172,7 +172,7 @@ describe("TestReportingClient", () => {
     <testcase name="sample test" classname="SdkTest" time="0.001"/>
   </testsuite>
 </testsuites>`;
-      const result = await client.uploadTestReportingReport({
+      const result = await client.uploadReport({
         file: new Blob([junitXml], { type: "application/xml" }),
         fileName: "results.xml",
         projectName: "sdk-integration-tests",

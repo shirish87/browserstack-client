@@ -12,47 +12,47 @@ interface Logger {
   error(message: string, ...params: unknown[]): void;
 }
 
-type ClientOptions = Partial<BrowserStackOptions>;
+type TestManagementClientOptions = Partial<BrowserStackOptions>;
 
 // ── projects ─────────────────────────────────────────────────────────────────
 
 async function handleProjects(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestManagementClientOptions,
   logger: Logger
 ) {
   const client = new TestManagementClient(opts);
 
   switch (action) {
     case "list": {
-      const projects = await client.getTestManagementProjects();
+      const projects = await client.getProjects();
       const list = Array.isArray(projects) ? projects : [];
       list.forEach((p) => logger.info(p.identifier ?? "", p.name ?? ""));
       break;
     }
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
-      const project = await client.getTestManagementProject(args[0]);
+      const project = await client.getProject(args[0]);
       logger.info(JSON.stringify(project, null, 2));
       break;
     }
     case "create": {
       if (!args[0]) throw new BrowserStackError("Missing <name>");
-      const result = await client.createTestManagementProject({ project: { name: args[0], description: args[1] } });
+      const result = await client.createProject({ project: { name: args[0], description: args[1] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "update": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <name>");
-      const result = await client.updateTestManagementProject(args[0], { project: { name: args[1] } });
+      const result = await client.updateProject(args[0], { project: { name: args[1] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
-      const result = await client.deleteTestManagementProject(args[0]);
+      const result = await client.deleteProject(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -68,7 +68,7 @@ async function handleProjects(
 async function handleFolders(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestManagementClientOptions,
   logger: Logger
 ) {
   const client = new TestManagementClient(opts);
@@ -76,7 +76,7 @@ async function handleFolders(
   switch (action) {
     case "list": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
-      const folders = await client.getTestManagementFolders(args[0]);
+      const folders = await client.getFolders(args[0]);
       const list = Array.isArray(folders) ? folders : [];
       list.forEach((f) => logger.info(String(f.id ?? ""), f.name ?? ""));
       break;
@@ -84,21 +84,21 @@ async function handleFolders(
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <folderId>");
-      const folder = await client.getTestManagementFolder(args[0], Number(args[1]));
+      const folder = await client.getFolder(args[0], Number(args[1]));
       logger.info(JSON.stringify(folder, null, 2));
       break;
     }
     case "create": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <name>");
-      const result = await client.createTestManagementFolder(args[0], { folder: { name: args[1], description: args[2] ?? "" } });
+      const result = await client.createFolder(args[0], { folder: { name: args[1], description: args[2] ?? "" } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <folderId>");
-      const result = await client.deleteTestManagementFolder(args[0], Number(args[1]));
+      const result = await client.deleteFolder(args[0], Number(args[1]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -106,14 +106,14 @@ async function handleFolders(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <folderId>");
       if (!args[2]) throw new BrowserStackError("Missing <name>");
-      const result = await client.updateTestManagementFolder(args[0], Number(args[1]), { folder: { name: args[2] } });
+      const result = await client.updateFolder(args[0], Number(args[1]), { folder: { name: args[2] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "move": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <folderId>");
-      const result = await client.moveTestManagementFolder(args[0], Number(args[1]), { parentId: args[2] ? Number(args[2]) : undefined });
+      const result = await client.moveFolder(args[0], Number(args[1]), { parentId: args[2] ? Number(args[2]) : undefined });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -129,7 +129,7 @@ async function handleFolders(
 async function handleTestCases(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestManagementClientOptions,
   logger: Logger
 ) {
   const client = new TestManagementClient(opts);
@@ -137,7 +137,7 @@ async function handleTestCases(
   switch (action) {
     case "list": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
-      const cases = await client.getTestManagementTestCases(args[0]);
+      const cases = await client.getTestCases(args[0]);
       const list = Array.isArray(cases) ? cases : [];
       list.forEach((tc) => logger.info(tc.identifier ?? "", tc.name ?? "", tc.status ?? ""));
       break;
@@ -146,7 +146,7 @@ async function handleTestCases(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <folderId>");
       if (!args[2]) throw new BrowserStackError("Missing <name>");
-      const result = await client.createTestManagementTestCase(args[0], Number(args[1]), { testCase: { name: args[2] } });
+      const result = await client.createTestCase(args[0], Number(args[1]), { testCase: { name: args[2] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -154,28 +154,28 @@ async function handleTestCases(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testCaseId>");
       if (!args[2]) throw new BrowserStackError("Missing <name>");
-      const result = await client.updateTestManagementTestCase(args[0], args[1], { testCase: { name: args[2] } });
+      const result = await client.updateTestCase(args[0], args[1], { testCase: { name: args[2] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testCaseId>");
-      const result = await client.deleteTestManagementTestCase(args[0], args[1]);
+      const result = await client.deleteTestCase(args[0], args[1]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "archive": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testCaseId>");
-      const result = await client.archiveTestManagementTestCase(args[0], args[1]);
+      const result = await client.archiveTestCase(args[0], args[1]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "unarchive": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testCaseId>");
-      const result = await client.unarchiveTestManagementTestCase(args[0], args[1]);
+      const result = await client.unarchiveTestCase(args[0], args[1]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -183,14 +183,14 @@ async function handleTestCases(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testCaseId>");
       if (!args[2]) throw new BrowserStackError("Missing <destinationFolderId>");
-      const result = await client.moveTestManagementTestCase(args[0], args[1], { destinationFolderId: Number(args[2]) });
+      const result = await client.moveTestCase(args[0], args[1], { destinationFolderId: Number(args[2]) });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "attachments": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testCaseId>");
-      const attachments = await client.getTestManagementTestCaseAttachments(args[0], args[1]);
+      const attachments = await client.getTestCaseAttachments(args[0], args[1]);
       logger.info(JSON.stringify(attachments, null, 2));
       break;
     }
@@ -200,7 +200,7 @@ async function handleTestCases(
       if (!args[2]) throw new BrowserStackError("Missing <file-path>");
       const filePath = resolve(args[2]);
       const filename = basename(filePath);
-      const result = await client.addTestManagementTestCaseAttachment(args[0], args[1], {
+      const result = await client.addTestCaseAttachment(args[0], args[1], {
         file: new Blob([await readFile(filePath)]),
         fileName: filename,
       });
@@ -210,7 +210,7 @@ async function handleTestCases(
     case "results": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testCaseId>");
-      const results = await client.getTestManagementTestCaseResults(args[0], args[1]);
+      const results = await client.getTestCaseResults(args[0], args[1]);
       logger.info(JSON.stringify(results, null, 2));
       break;
     }
@@ -226,7 +226,7 @@ async function handleTestCases(
 async function handleTestRuns(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestManagementClientOptions,
   logger: Logger
 ) {
   const client = new TestManagementClient(opts);
@@ -234,7 +234,7 @@ async function handleTestRuns(
   switch (action) {
     case "list": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
-      const runs = await client.getTestManagementTestRuns(args[0]);
+      const runs = await client.getTestRuns(args[0]);
       const list = Array.isArray(runs) ? runs : [];
       list.forEach((r) => logger.info(r.identifier ?? "", r.name ?? "", r.runState ?? ""));
       break;
@@ -242,35 +242,35 @@ async function handleTestRuns(
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
-      const run = await client.getTestManagementTestRun(args[0], args[1]);
+      const run = await client.getTestRun(args[0], args[1]);
       logger.info(JSON.stringify(run, null, 2));
       break;
     }
     case "create": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <name>");
-      const result = await client.createTestManagementTestRun(args[0], { testRun: { name: args[1], includeAll: true } });
+      const result = await client.createTestRun(args[0], { testRun: { name: args[1], includeAll: true } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "close": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
-      const result = await client.closeTestManagementTestRun(args[0], args[1]);
+      const result = await client.closeTestRun(args[0], args[1]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
-      const result = await client.deleteTestManagementTestRun(args[0], args[1]);
+      const result = await client.deleteTestRun(args[0], args[1]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "results": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
-      const results = await client.getTestManagementTestRunResults(args[0], args[1]);
+      const results = await client.getTestRunResults(args[0], args[1]);
       logger.info(JSON.stringify(results, null, 2));
       break;
     }
@@ -278,7 +278,7 @@ async function handleTestRuns(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
       if (!args[2]) throw new BrowserStackError("Missing <name>");
-      const result = await client.updateTestManagementTestRun(args[0], args[1], { testRun: { name: args[2] } });
+      const result = await client.updateTestRun(args[0], args[1], { testRun: { name: args[2] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -286,14 +286,14 @@ async function handleTestRuns(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
       if (!args[2]) throw new BrowserStackError("Missing <name>");
-      const result = await client.patchTestManagementTestRun(args[0], args[1], { testRun: { name: args[2] } });
+      const result = await client.patchTestRun(args[0], args[1], { testRun: { name: args[2] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "test-cases": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
-      const cases = await client.getTestManagementTestRunTestCases(args[0], args[1]);
+      const cases = await client.getTestRunTestCases(args[0], args[1]);
       logger.info(JSON.stringify(cases, null, 2));
       break;
     }
@@ -302,7 +302,7 @@ async function handleTestRuns(
       if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
       if (!args[2]) throw new BrowserStackError("Missing <testCaseId>");
       if (!args[3]) throw new BrowserStackError("Missing <assignee>");
-      const result = await client.assignTestManagementTestRunTestCases(args[0], args[1], {
+      const result = await client.assignTestRunTestCases(args[0], args[1], {
         assignTo: [{ testCaseId: args[2], assignee: args[3] }],
       });
       logger.info(JSON.stringify(result, null, 2));
@@ -313,7 +313,7 @@ async function handleTestRuns(
       if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
       if (!args[2]) throw new BrowserStackError("Missing <testCaseId>");
       if (!args[3]) throw new BrowserStackError("Missing <status> (passed|failed|skipped)");
-      const result = await client.addTestManagementTestRunResults(args[0], args[1], {
+      const result = await client.addTestRunResults(args[0], args[1], {
         testResult: { status: args[3] as never },
         testCaseId: args[2],
       });
@@ -324,7 +324,7 @@ async function handleTestRuns(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testRunId>");
       if (!args[2]) throw new BrowserStackError("Missing <testCaseId>");
-      const results = await client.getTestManagementTestRunTestCaseResults(args[0], args[1], args[2]);
+      const results = await client.getTestRunTestCaseResults(args[0], args[1], args[2]);
       logger.info(JSON.stringify(results, null, 2));
       break;
     }
@@ -340,7 +340,7 @@ async function handleTestRuns(
 async function handleTestPlans(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestManagementClientOptions,
   logger: Logger
 ) {
   const client = new TestManagementClient(opts);
@@ -348,7 +348,7 @@ async function handleTestPlans(
   switch (action) {
     case "list": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
-      const plans = await client.getTestManagementTestPlans(args[0]);
+      const plans = await client.getTestPlans(args[0]);
       const list = Array.isArray(plans) ? plans : [];
       list.forEach((p) => logger.info(p.identifier ?? "", p.name ?? "", p.planStatus ?? ""));
       break;
@@ -356,14 +356,14 @@ async function handleTestPlans(
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testPlanId>");
-      const plan = await client.getTestManagementTestPlan(args[0], args[1]);
+      const plan = await client.getTestPlan(args[0], args[1]);
       logger.info(JSON.stringify(plan, null, 2));
       break;
     }
     case "create": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <name>");
-      const result = await client.createTestManagementTestPlan(args[0], { testPlan: { name: args[1] } });
+      const result = await client.createTestPlan(args[0], { testPlan: { name: args[1] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -371,14 +371,14 @@ async function handleTestPlans(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testPlanId>");
       if (!args[2]) throw new BrowserStackError("Missing <name>");
-      const result = await client.updateTestManagementTestPlan(args[0], args[1], { testPlan: { name: args[2] } });
+      const result = await client.updateTestPlan(args[0], args[1], { testPlan: { name: args[2] } });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "test-runs": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testPlanId>");
-      const runs = await client.getTestManagementTestPlanTestRuns(args[0], args[1]);
+      const runs = await client.getTestPlanTestRuns(args[0], args[1]);
       logger.info(JSON.stringify(runs, null, 2));
       break;
     }
@@ -394,27 +394,27 @@ async function handleTestPlans(
 async function handleConfigurations(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestManagementClientOptions,
   logger: Logger
 ) {
   const client = new TestManagementClient(opts);
 
   switch (action) {
     case "list": {
-      const configs = await client.getTestManagementConfigurations();
+      const configs = await client.getConfigurations();
       const list = Array.isArray(configs) ? configs : [];
       list.forEach((c) => logger.info(String(c.id ?? ""), c.name ?? ""));
       break;
     }
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <configurationId>");
-      const config = await client.getTestManagementConfiguration(args[0]);
+      const config = await client.getConfiguration(args[0]);
       logger.info(JSON.stringify(config, null, 2));
       break;
     }
     case "create": {
       if (!args[0]) throw new BrowserStackError("Missing <name>");
-      const result = await client.createTestManagementConfiguration({ name: args[0] });
+      const result = await client.createConfiguration({ name: args[0] });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -430,14 +430,14 @@ async function handleConfigurations(
 async function handleCustomFields(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestManagementClientOptions,
   logger: Logger
 ) {
   const client = new TestManagementClient(opts);
 
   switch (action) {
     case "list": {
-      const fields = await client.getTestManagementCustomFields();
+      const fields = await client.getCustomFields();
       const list = Array.isArray(fields) ? fields : [];
       list.forEach((f) => logger.info(f.id ?? "", f.fieldName ?? "", f.fieldType ?? ""));
       break;
@@ -446,7 +446,7 @@ async function handleCustomFields(
       if (!args[0]) throw new BrowserStackError("Missing <fieldName>");
       if (!args[1]) throw new BrowserStackError("Missing <fieldType>");
       if (!args[2]) throw new BrowserStackError("Missing <fieldEntityType>");
-      const result = await client.createTestManagementCustomField({
+      const result = await client.createCustomField({
         fieldName: args[0],
         fieldType: args[1] as never,
         fieldEntityType: args[2] as never,
@@ -457,13 +457,13 @@ async function handleCustomFields(
     case "update": {
       if (!args[0]) throw new BrowserStackError("Missing <customFieldId>");
       if (!args[1]) throw new BrowserStackError("Missing <fieldName>");
-      const result = await client.updateTestManagementCustomField(args[0], { fieldName: args[1] });
+      const result = await client.updateCustomField(args[0], { fieldName: args[1] });
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete": {
       if (!args[0]) throw new BrowserStackError("Missing <customFieldId>");
-      const result = await client.deleteTestManagementCustomField(args[0]);
+      const result = await client.deleteCustomField(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -479,7 +479,7 @@ async function handleCustomFields(
 async function handleTestResults(
   action: string,
   args: string[],
-  opts: ClientOptions,
+  opts: TestManagementClientOptions,
   logger: Logger
 ) {
   const client = new TestManagementClient(opts);
@@ -488,7 +488,7 @@ async function handleTestResults(
     case "attachments": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testResultId>");
-      const attachments = await client.getTestManagementTestResultAttachments(args[0], Number(args[1]));
+      const attachments = await client.getTestResultAttachments(args[0], Number(args[1]));
       logger.info(JSON.stringify(attachments, null, 2));
       break;
     }
@@ -498,7 +498,7 @@ async function handleTestResults(
       if (!args[2]) throw new BrowserStackError("Missing <file-path>");
       const filePath = resolve(args[2]);
       const filename = basename(filePath);
-      const result = await client.addTestManagementTestResultAttachment(args[0], Number(args[1]), {
+      const result = await client.addTestResultAttachment(args[0], Number(args[1]), {
         file: new Blob([await readFile(filePath)]),
         fileName: filename,
       });
@@ -509,7 +509,7 @@ async function handleTestResults(
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       if (!args[1]) throw new BrowserStackError("Missing <testResultId>");
       if (!args[2]) throw new BrowserStackError("Missing <attachmentId>");
-      const result = await client.deleteTestManagementTestResultAttachment(args[0], Number(args[1]), Number(args[2]));
+      const result = await client.deleteTestResultAttachment(args[0], Number(args[1]), Number(args[2]));
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -534,7 +534,7 @@ export async function main(
     const resource = args[0]?.toLowerCase();
     const action = args[1]?.toLowerCase();
     const rest = args.slice(2);
-    const opts: ClientOptions = {};
+    const opts: TestManagementClientOptions = {};
 
     switch (resource) {
       case "projects":

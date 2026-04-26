@@ -12,7 +12,7 @@ describe("AutomateClient", () => {
 
     test("getAutomatePlan", async () => {
       const { client } = automateContext;
-      const data = await client.getAutomatePlan();
+      const data = await client.getPlan();
       expect(data).toBeDefined();
       expect(data.automatePlan).toBeDefined();
       expectTypeOf(data).toMatchTypeOf<DeepCamelCase<components["schemas"]["AutomatePlan"]>>();
@@ -21,7 +21,7 @@ describe("AutomateClient", () => {
 
   test("getAutomateBrowsers", async () => {
     const { client } = automateContext;
-    const data = await client.getAutomateBrowsers();
+    const data = await client.getBrowsers();
     expect(data).toBeDefined();
     expect(data).toBeInstanceOf(Array);
     expect(data.length).toBeGreaterThan(0);
@@ -31,7 +31,7 @@ describe("AutomateClient", () => {
   describe("Project", () => {
     test("getAutomateProjects", async () => {
       const { client } = automateContext;
-      const data = await client.getAutomateProjects();
+      const data = await client.getProjects();
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
@@ -43,7 +43,7 @@ describe("AutomateClient", () => {
     test("getAutomateProject", async () => {
       const { client, randomProjectId } = automateContext;
       const projectId = await randomProjectId();
-      const data = await client.getAutomateProject(String(projectId));
+      const data = await client.getProject(String(projectId));
       expect(data).toBeDefined();
       expect(data.id).toBeDefined();
       expectTypeOf(data).toMatchTypeOf<
@@ -55,7 +55,7 @@ describe("AutomateClient", () => {
       const { client, randomProjectId } = automateContext;
       const projectId = await randomProjectId();
       const name = `pricing-project-${Date.now()}`;
-      const data = await client.updateAutomateProject(String(projectId), { name });
+      const data = await client.updateProject(String(projectId), { name });
       expect(data).toBeDefined();
       expect(data.id).toBeDefined();
       expect(data.name).toBe(name);
@@ -67,7 +67,7 @@ describe("AutomateClient", () => {
     test("getAutomateProjectBadgeKey", async () => {
       const { client, randomProjectId } = automateContext;
       const projectId = await randomProjectId();
-      const data = await client.getAutomateProjectBadgeKey(String(projectId));
+      const data = await client.getProjectBadgeKey(String(projectId));
       expect(data).toBeDefined();
       expect(data.length).toBeGreaterThan(0);
       expectTypeOf(data).toEqualTypeOf<string>();
@@ -77,7 +77,7 @@ describe("AutomateClient", () => {
   describe("Build", () => {
     test("getAutomateBuilds", async () => {
       const { client } = automateContext;
-      const data = await client.getAutomateBuilds();
+      const data = await client.getBuilds();
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
@@ -89,7 +89,7 @@ describe("AutomateClient", () => {
     test("getAutomateBuild", async () => {
       const { client, randomBuildId } = automateContext;
       const buildId = await randomBuildId();
-      const data = await client.getAutomateBuild(buildId);
+      const data = await client.getBuild(buildId);
       expect(data).toBeDefined();
     });
 
@@ -98,7 +98,7 @@ describe("AutomateClient", () => {
         const { client, randomBuildId } = automateContext;
         const buildId = await randomBuildId();
         const name = `pricing-build-${Date.now()}`;
-        const data = await client.updateAutomateBuild(buildId, { name });
+        const data = await client.updateBuild(buildId, { name });
         expect(data).toBeDefined();
         if ("automationBuild" in data) {
           expect(data.automationBuild.name).toEqual(name);
@@ -109,7 +109,7 @@ describe("AutomateClient", () => {
         const { client, randomBuildId } = automateContext;
         const buildId = await randomBuildId();
         const tag = `pricing-build-${Date.now()}`;
-        const data = await client.updateAutomateBuild(buildId, { buildTag: tag });
+        const data = await client.updateBuild(buildId, { buildTag: tag });
         expect(data).toBeDefined();
         if ("automationBuild" in data) {
           expect(data.automationBuild.buildTag).toEqual(tag);
@@ -120,7 +120,7 @@ describe("AutomateClient", () => {
     test("uploadAutomateBuildTerminalLogs", async () => {
       const { client, randomBuildId } = automateContext;
       const buildId = await randomBuildId();
-      const data = await client.uploadAutomateBuildTerminalLogs(buildId, {
+      const data = await client.uploadBuildTerminalLogs(buildId, {
         file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
         fileName: "terminal.txt",
       });
@@ -135,7 +135,7 @@ describe("AutomateClient", () => {
     test("getAutomateSessions", async () => {
       const { client, randomBuildId } = automateContext;
       const buildId = await randomBuildId();
-      const data = await client.getAutomateSessions(buildId);
+      const data = await client.getSessions(buildId);
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
@@ -147,7 +147,7 @@ describe("AutomateClient", () => {
     test("getAutomateSession", async () => {
       const { client, randomSessionId } = automateContext;
       const sessionId = await randomSessionId();
-      const data = await client.getAutomateSession(sessionId);
+      const data = await client.getSession(sessionId);
       expect(data).toBeDefined();
       expect(data).haveOwnProperty("status");
       expectTypeOf(data).toMatchTypeOf<
@@ -159,7 +159,7 @@ describe("AutomateClient", () => {
       test("status/reason", async () => {
         const { client, randomSessionId } = automateContext;
         const sessionId = await randomSessionId();
-        const data = await client.updateAutomateSession(sessionId, {
+        const data = await client.updateSession(sessionId, {
           status: "failed",
           reason: "Session failed",
         });
@@ -175,7 +175,7 @@ describe("AutomateClient", () => {
       test("name", async () => {
         const { client, randomSessionId } = automateContext;
         const sessionId = await randomSessionId();
-        const data = await client.updateAutomateSession(sessionId, {
+        const data = await client.updateSession(sessionId, {
           name: "pricing-session",
         });
 
@@ -191,7 +191,7 @@ describe("AutomateClient", () => {
     test("uploadAutomateSessionTerminalLogs", async () => {
       const { client, randomSessionId } = automateContext;
       const sessionId = await randomSessionId();
-      const data = await client.uploadAutomateSessionTerminalLogs(sessionId, {
+      const data = await client.uploadSessionTerminalLogs(sessionId, {
         file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
         fileName: "terminal.txt",
       });
@@ -205,7 +205,7 @@ describe("AutomateClient", () => {
   describe("Media Files", () => {
     test("uploadAutomateMediaFile", async () => {
       const { client } = automateContext;
-      const data = await client.uploadAutomateMediaFile({
+      const data = await client.uploadMediaFile({
         file: new Blob(["test"], { type: "text/plain" }),
         fileName: "test.txt",
       });
@@ -216,7 +216,7 @@ describe("AutomateClient", () => {
 
     test("getAutomateMediaFiles", async () => {
       const { client } = automateContext;
-      const data = await client.getAutomateMediaFiles();
+      const data = await client.getMediaFiles();
       expect(data).toBeDefined();
       expect(data).toBeInstanceOf(Array);
       expect(data.length).toBeGreaterThan(0);
@@ -227,14 +227,14 @@ describe("AutomateClient", () => {
 
     test("deleteAutomateMediaFile", async () => {
       const { client } = automateContext;
-      await client.uploadAutomateMediaFile({
+      await client.uploadMediaFile({
         file: new Blob(["delete-me"], { type: "text/plain" }),
         fileName: "delete-me.txt",
       });
-      const files = await client.getAutomateMediaFiles();
+      const files = await client.getMediaFiles();
       expect(files.length).toBeGreaterThan(0);
       const mediaId = files[files.length - 1].mediaId;
-      const data = await client.deleteAutomateMediaFile(mediaId);
+      const data = await client.deleteMediaFile(mediaId);
       expect(data).toBeDefined();
       expect(data).haveOwnProperty("success");
       expect(data.success).toEqual(true);

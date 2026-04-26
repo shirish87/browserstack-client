@@ -37,33 +37,33 @@ async function handleBuilds(
 
   switch (action) {
     case "list": {
-      const builds = await client.getAutomateBuilds();
+      const builds = await client.getBuilds();
       const list = Array.isArray(builds) ? builds : [];
       list.forEach((b) => logger.info(b.hashedId ?? "", b.name, b.status));
       break;
     }
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <buildId>");
-      const build = await client.getAutomateBuild(args[0]);
+      const build = await client.getBuild(args[0]);
       logger.info(JSON.stringify(build, null, 2));
       break;
     }
     case "update": {
       if (!args[0]) throw new BrowserStackError("Missing <buildId>");
       const kv = parseKvArgs(args.slice(1));
-      const result = await client.updateAutomateBuild(args[0], kv as never);
+      const result = await client.updateBuild(args[0], kv as never);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete": {
       if (!args[0]) throw new BrowserStackError("Missing <buildId>");
-      const result = await client.deleteAutomateBuild(args[0]);
+      const result = await client.deleteBuild(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete-many": {
       if (!args.length) throw new BrowserStackError("Missing build IDs");
-      const result = await client.deleteAutomateBuilds(args);
+      const result = await client.deleteBuilds(args);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -102,33 +102,33 @@ async function handleSessions(
   switch (action) {
     case "list": {
       if (!args[0]) throw new BrowserStackError("Missing <buildId>");
-      const sessions = await client.getAutomateSessions(args[0]);
+      const sessions = await client.getSessions(args[0]);
       const list = Array.isArray(sessions) ? sessions : [];
       list.forEach((s) => logger.info(s.hashedId ?? "", s.name, s.status));
       break;
     }
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <sessionId>");
-      const session = await client.getAutomateSession(args[0]);
+      const session = await client.getSession(args[0]);
       logger.info(JSON.stringify(session, null, 2));
       break;
     }
     case "update": {
       if (!args[0]) throw new BrowserStackError("Missing <sessionId>");
       const kv = parseKvArgs(args.slice(1));
-      const result = await client.updateAutomateSession(args[0], kv as never);
+      const result = await client.updateSession(args[0], kv as never);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete": {
       if (!args[0]) throw new BrowserStackError("Missing <sessionId>");
-      const result = await client.deleteAutomateSession(args[0]);
+      const result = await client.deleteSession(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete-many": {
       if (!args.length) throw new BrowserStackError("Missing session IDs");
-      const result = await client.deleteAutomateSessions(args);
+      const result = await client.deleteSessions(args);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -139,19 +139,19 @@ async function handleSessions(
 
       switch (logType) {
         case "selenium":
-          process.stdout.write(await client.getAutomateSessionLogs(sessionId) as string);
+          process.stdout.write(await client.getSessionLogs(sessionId) as string);
           break;
         case "appium":
-          process.stdout.write(await client.getAutomateSessionAppiumLogs(sessionId) as string);
+          process.stdout.write(await client.getSessionAppiumLogs(sessionId) as string);
           break;
         case "console":
-          process.stdout.write(await client.getAutomateSessionConsoleLogs(sessionId) as string);
+          process.stdout.write(await client.getSessionConsoleLogs(sessionId) as string);
           break;
         case "network":
-          logger.info(JSON.stringify(await client.getAutomateSessionNetworkLogs(sessionId), null, 2));
+          logger.info(JSON.stringify(await client.getSessionNetworkLogs(sessionId), null, 2));
           break;
         case "telemetry": {
-          const buf = await client.getAutomateSessionTelemetryLogs(sessionId);
+          const buf = await client.getSessionTelemetryLogs(sessionId);
           process.stdout.write(Buffer.from(buf as ArrayBuffer));
           break;
         }
@@ -177,7 +177,7 @@ async function handleProjects(
 
   switch (action) {
     case "list": {
-      const projects = await client.getAutomateProjects();
+      const projects = await client.getProjects();
       const list = Array.isArray(projects) ? projects : [];
       list.forEach((p) => {
         const proj = (p as { project?: typeof p }).project ?? p;
@@ -187,26 +187,26 @@ async function handleProjects(
     }
     case "get": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
-      const project = await client.getAutomateProject(args[0]);
+      const project = await client.getProject(args[0]);
       logger.info(JSON.stringify(project, null, 2));
       break;
     }
     case "update": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
       const kv = parseKvArgs(args.slice(1));
-      const result = await client.updateAutomateProject(args[0], kv as never);
+      const result = await client.updateProject(args[0], kv as never);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "delete": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
-      const result = await client.deleteAutomateProject(args[0]);
+      const result = await client.deleteProject(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
     case "badge-key": {
       if (!args[0]) throw new BrowserStackError("Missing <projectId>");
-      const key = await client.getAutomateProjectBadgeKey(args[0]);
+      const key = await client.getProjectBadgeKey(args[0]);
       logger.info(key as string);
       break;
     }
@@ -229,7 +229,7 @@ async function handleMedia(
 
   switch (action) {
     case "list": {
-      const files = await client.getAutomateMediaFiles();
+      const files = await client.getMediaFiles();
       const list = Array.isArray(files) ? files : [];
       list.forEach((f) =>
         logger.info(
@@ -246,7 +246,7 @@ async function handleMedia(
       if (!args[0]) throw new BrowserStackError("Missing <file-path>");
       const filePath = resolve(args[0]);
       const filename = basename(filePath);
-      const result = await client.uploadAutomateMediaFile({
+      const result = await client.uploadMediaFile({
         file: new Blob([await readFile(filePath)]),
         fileName: filename,
       });
@@ -255,7 +255,7 @@ async function handleMedia(
     }
     case "delete": {
       if (!args[0]) throw new BrowserStackError("Missing <mediaId>");
-      const result = await client.deleteAutomateMediaFile(args[0]);
+      const result = await client.deleteMediaFile(args[0]);
       logger.info(JSON.stringify(result, null, 2));
       break;
     }
@@ -301,13 +301,13 @@ export async function main(
         break;
       case "plan": {
         const client = new AutomateClient(opts);
-        const plan = await client.getAutomatePlan();
+        const plan = await client.getPlan();
         logger.info(JSON.stringify(plan, null, 2));
         break;
       }
       case "browsers": {
         const client = new AutomateClient(opts);
-        const browsers = await client.getAutomateBrowsers();
+        const browsers = await client.getBrowsers();
         logger.info(JSON.stringify(browsers, null, 2));
         break;
       }

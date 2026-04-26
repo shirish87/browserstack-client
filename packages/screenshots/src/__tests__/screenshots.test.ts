@@ -10,7 +10,7 @@ describe("ScreenshotsClient", () => {
 
   test("getScreenshotsBrowsers", async () => {
     const { client } = screenshotsContext;
-    const data = await client.getScreenshotsBrowsers();
+    const data = await client.getBrowsers();
     expect(data).toBeDefined();
 
     // The Screenshots API may return { success: true } instead of a browser
@@ -59,7 +59,7 @@ describe("ScreenshotsClient", () => {
   // fails due to job.state=queued_all until test timeout
   test("launch", async () => {
     const { client } = screenshotsContext;
-    const data = await client.getScreenshotsBrowsers();
+    const data = await client.getBrowsers();
     if (!Array.isArray(data)) return;
 
     const screenshots = await client.launch({

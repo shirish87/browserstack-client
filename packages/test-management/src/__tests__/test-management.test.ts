@@ -10,7 +10,7 @@ describe("TestManagementClient", () => {
   describe("Projects", () => {
     test("getTestManagementProjects", async () => {
       const { client } = testManagementContext;
-      const projects = await client.getTestManagementProjects();
+      const projects = await client.getProjects();
       expect(Array.isArray(projects)).toBe(true);
       const list = projects as NonNullable<typeof projects>;
       expect(list.length).toBeGreaterThan(0);
@@ -22,26 +22,26 @@ describe("TestManagementClient", () => {
       const { client } = testManagementContext;
       const name = `test-project-${Date.now()}`;
 
-      const created = await client.createTestManagementProject({ project: { name, description: "test" } });
+      const created = await client.createProject({ project: { name, description: "test" } });
       expect(created!.name).toBe(name);
       expect(created!.identifier).toBeDefined();
       const projectId = created!.identifier!;
 
-      const fetched = await client.getTestManagementProject(projectId);
+      const fetched = await client.getProject(projectId);
       expect(fetched!.identifier).toBe(projectId);
       expect(fetched!.name).toBe(name);
 
-      const updated = await client.updateTestManagementProject(projectId, { project: { description: "updated" } });
+      const updated = await client.updateProject(projectId, { project: { description: "updated" } });
       expect(updated!.identifier).toBe(projectId);
 
-      const deleted = await client.deleteTestManagementProject(projectId);
+      const deleted = await client.deleteProject(projectId);
       expect(deleted).toBeDefined();
     }, TIMEOUT);
 
     test("getTestManagementProject", async () => {
       const { client, randomProjectId } = testManagementContext;
       const projectId = await randomProjectId();
-      const project = await client.getTestManagementProject(projectId);
+      const project = await client.getProject(projectId);
       expect(project!.identifier).toBe(projectId);
     });
   });
@@ -50,7 +50,7 @@ describe("TestManagementClient", () => {
     test("getTestManagementFolders", async () => {
       const { client, randomProjectId } = testManagementContext;
       const projectId = await randomProjectId();
-      const folders = await client.getTestManagementFolders(projectId);
+      const folders = await client.getFolders(projectId);
       expect(Array.isArray(folders)).toBe(true);
     });
 
@@ -59,32 +59,32 @@ describe("TestManagementClient", () => {
       const projectId = await randomProjectId();
       const name = `folder-${Date.now()}`;
 
-      const created = await client.createTestManagementFolder(projectId, { folder: { name, description: "test folder" } });
+      const created = await client.createFolder(projectId, { folder: { name, description: "test folder" } });
       expect(created!.name).toBe(name);
       expect(created!.id).toBeDefined();
       const folderId = created!.id!;
 
-      const fetched = await client.getTestManagementFolder(projectId, folderId);
+      const fetched = await client.getFolder(projectId, folderId);
       expect(fetched!.id).toBe(folderId);
 
-      const updated = await client.updateTestManagementFolder(projectId, folderId, { folder: { name: `${name}-updated` } });
+      const updated = await client.updateFolder(projectId, folderId, { folder: { name: `${name}-updated` } });
       expect(updated!.id).toBe(folderId);
 
-      await client.deleteTestManagementFolder(projectId, folderId);
+      await client.deleteFolder(projectId, folderId);
     }, TIMEOUT);
 
     test("moveTestManagementFolder", async () => {
       const { client, randomProjectId } = testManagementContext;
       const projectId = await randomProjectId();
 
-      const parent = await client.createTestManagementFolder(projectId, { folder: { name: `parent-${Date.now()}`, description: "" } });
-      const child = await client.createTestManagementFolder(projectId, { folder: { name: `child-${Date.now()}`, description: "" } });
+      const parent = await client.createFolder(projectId, { folder: { name: `parent-${Date.now()}`, description: "" } });
+      const child = await client.createFolder(projectId, { folder: { name: `child-${Date.now()}`, description: "" } });
 
-      const moved = await client.moveTestManagementFolder(projectId, child!.id!, { parentId: parent!.id });
+      const moved = await client.moveFolder(projectId, child!.id!, { parentId: parent!.id });
       expect(moved!.id).toBe(child!.id);
 
-      await client.deleteTestManagementFolder(projectId, child!.id!);
-      await client.deleteTestManagementFolder(projectId, parent!.id!);
+      await client.deleteFolder(projectId, child!.id!);
+      await client.deleteFolder(projectId, parent!.id!);
     }, TIMEOUT);
   });
 
@@ -92,7 +92,7 @@ describe("TestManagementClient", () => {
     test("getTestManagementTestCases", async () => {
       const { client, randomProjectId } = testManagementContext;
       const projectId = await randomProjectId();
-      const cases = await client.getTestManagementTestCases(projectId);
+      const cases = await client.getTestCases(projectId);
       expect(Array.isArray(cases)).toBe(true);
     });
 
@@ -101,14 +101,14 @@ describe("TestManagementClient", () => {
       const projectId = await randomProjectId();
       const folderId = await randomFolderId(projectId);
 
-      const created = await client.createTestManagementTestCase(projectId, folderId, { testCase: { name: `tc-${Date.now()}`, description: "test case" } });
+      const created = await client.createTestCase(projectId, folderId, { testCase: { name: `tc-${Date.now()}`, description: "test case" } });
       expect(created!.identifier).toBeDefined();
       const caseId = created!.identifier!;
 
-      const updated = await client.updateTestManagementTestCase(projectId, caseId, { testCase: { name: `tc-${Date.now()}-updated` } });
+      const updated = await client.updateTestCase(projectId, caseId, { testCase: { name: `tc-${Date.now()}-updated` } });
       expect(updated!.identifier).toBe(caseId);
 
-      await client.deleteTestManagementTestCase(projectId, caseId);
+      await client.deleteTestCase(projectId, caseId);
     }, TIMEOUT);
 
     test.skip("archiveTestManagementTestCase + unarchiveTestManagementTestCase (paid feature)", async () => {
@@ -116,16 +116,16 @@ describe("TestManagementClient", () => {
       const projectId = await randomProjectId();
       const folderId = await randomFolderId(projectId);
 
-      const created = await client.createTestManagementTestCase(projectId, folderId, { testCase: { name: `tc-archive-${Date.now()}` } });
+      const created = await client.createTestCase(projectId, folderId, { testCase: { name: `tc-archive-${Date.now()}` } });
       const caseId = created!.identifier!;
 
-      const archived = await client.archiveTestManagementTestCase(projectId, caseId);
+      const archived = await client.archiveTestCase(projectId, caseId);
       expect(archived!.identifier).toBe(caseId);
 
-      const unarchived = await client.unarchiveTestManagementTestCase(projectId, caseId);
+      const unarchived = await client.unarchiveTestCase(projectId, caseId);
       expect(unarchived!.identifier).toBe(caseId);
 
-      await client.deleteTestManagementTestCase(projectId, caseId);
+      await client.deleteTestCase(projectId, caseId);
     }, TIMEOUT);
 
     test("moveTestManagementTestCase", async () => {
@@ -133,15 +133,15 @@ describe("TestManagementClient", () => {
       const projectId = await randomProjectId();
       const sourceFolderId = await randomFolderId(projectId);
 
-      const newFolder = await client.createTestManagementFolder(projectId, { folder: { name: `dest-${Date.now()}`, description: "" } });
-      const created = await client.createTestManagementTestCase(projectId, sourceFolderId, { testCase: { name: `tc-move-${Date.now()}` } });
+      const newFolder = await client.createFolder(projectId, { folder: { name: `dest-${Date.now()}`, description: "" } });
+      const created = await client.createTestCase(projectId, sourceFolderId, { testCase: { name: `tc-move-${Date.now()}` } });
       const caseId = created!.identifier!;
 
-      const moved = await client.moveTestManagementTestCase(projectId, caseId, { destinationFolderId: newFolder!.id! });
+      const moved = await client.moveTestCase(projectId, caseId, { destinationFolderId: newFolder!.id! });
       expect(moved!.identifier).toBe(caseId);
 
-      await client.deleteTestManagementTestCase(projectId, caseId);
-      await client.deleteTestManagementFolder(projectId, newFolder!.id!);
+      await client.deleteTestCase(projectId, caseId);
+      await client.deleteFolder(projectId, newFolder!.id!);
     }, TIMEOUT);
 
     test.skip("bulkArchiveTestManagementTestCases + bulkUnarchiveTestManagementTestCases + bulkDeleteTestManagementTestCases (paid feature)", async () => {
@@ -149,13 +149,13 @@ describe("TestManagementClient", () => {
       const projectId = await randomProjectId();
       const folderId = await randomFolderId(projectId);
 
-      const tc1 = await client.createTestManagementTestCase(projectId, folderId, { testCase: { name: `bulk-1-${Date.now()}` } });
-      const tc2 = await client.createTestManagementTestCase(projectId, folderId, { testCase: { name: `bulk-2-${Date.now()}` } });
+      const tc1 = await client.createTestCase(projectId, folderId, { testCase: { name: `bulk-1-${Date.now()}` } });
+      const tc2 = await client.createTestCase(projectId, folderId, { testCase: { name: `bulk-2-${Date.now()}` } });
       const ids = [tc1!.identifier!, tc2!.identifier!];
 
-      await client.bulkArchiveTestManagementTestCases(projectId, { ids });
-      await client.bulkUnarchiveTestManagementTestCases(projectId, { ids });
-      await client.bulkDeleteTestManagementTestCases(projectId, { ids });
+      await client.bulkArchiveTestCases(projectId, { ids });
+      await client.bulkUnarchiveTestCases(projectId, { ids });
+      await client.bulkDeleteTestCases(projectId, { ids });
     }, LONG_TIMEOUT);
 
     test("bulkEditTestManagementTestCases", async () => {
@@ -163,22 +163,22 @@ describe("TestManagementClient", () => {
       const projectId = await randomProjectId();
       const folderId = await randomFolderId(projectId);
 
-      const tc1 = await client.createTestManagementTestCase(projectId, folderId, { testCase: { name: `bulk-edit-1-${Date.now()}` } });
-      const tc2 = await client.createTestManagementTestCase(projectId, folderId, { testCase: { name: `bulk-edit-2-${Date.now()}` } });
+      const tc1 = await client.createTestCase(projectId, folderId, { testCase: { name: `bulk-edit-1-${Date.now()}` } });
+      const tc2 = await client.createTestCase(projectId, folderId, { testCase: { name: `bulk-edit-2-${Date.now()}` } });
       const ids = [tc1!.identifier!, tc2!.identifier!];
 
-      const result = await client.bulkEditTestManagementTestCases(projectId, { ids, testCase: { ids, tags: ["bulk-edit-test"] } as never });
+      const result = await client.bulkEditTestCases(projectId, { ids, testCase: { ids, tags: ["bulk-edit-test"] } as never });
       expect(result).toBeDefined();
 
-      await client.deleteTestManagementTestCase(projectId, ids[0]!);
-      await client.deleteTestManagementTestCase(projectId, ids[1]!);
+      await client.deleteTestCase(projectId, ids[0]!);
+      await client.deleteTestCase(projectId, ids[1]!);
     }, TIMEOUT);
 
     test("getTestManagementTestCaseAttachments", async () => {
       const { client, randomProjectId, randomTestCaseId } = testManagementContext;
       const projectId = await randomProjectId();
       const testCaseId = await randomTestCaseId(projectId);
-      const attachments = await client.getTestManagementTestCaseAttachments(projectId, testCaseId);
+      const attachments = await client.getTestCaseAttachments(projectId, testCaseId);
       expect(Array.isArray(attachments)).toBe(true);
     });
 
@@ -187,26 +187,26 @@ describe("TestManagementClient", () => {
       const projectId = await randomProjectId();
       const folderId = await randomFolderId(projectId);
 
-      const tc = await client.createTestManagementTestCase(projectId, folderId, { testCase: { name: `tc-attach-${Date.now()}` } });
+      const tc = await client.createTestCase(projectId, folderId, { testCase: { name: `tc-attach-${Date.now()}` } });
       const testCaseId = tc!.identifier!;
 
       const content = new Blob(["test attachment content"], { type: "text/plain" });
-      await client.addTestManagementTestCaseAttachment(projectId, testCaseId, { file: content, fileName: "test.txt" });
+      await client.addTestCaseAttachment(projectId, testCaseId, { file: content, fileName: "test.txt" });
 
-      const attachments = await client.getTestManagementTestCaseAttachments(projectId, testCaseId);
+      const attachments = await client.getTestCaseAttachments(projectId, testCaseId);
       const list = attachments as Array<{ id: number }>;
       expect(list.length).toBeGreaterThan(0);
       const attachmentId = list[0]!.id;
 
-      await client.deleteTestManagementTestCaseAttachment(projectId, testCaseId, attachmentId);
-      await client.deleteTestManagementTestCase(projectId, testCaseId);
+      await client.deleteTestCaseAttachment(projectId, testCaseId, attachmentId);
+      await client.deleteTestCase(projectId, testCaseId);
     }, TIMEOUT);
 
     test("getTestManagementTestCaseResults", async () => {
       const { client, randomProjectId, randomTestCaseId } = testManagementContext;
       const projectId = await randomProjectId();
       const testCaseId = await randomTestCaseId(projectId);
-      const results = await client.getTestManagementTestCaseResults(projectId, testCaseId);
+      const results = await client.getTestCaseResults(projectId, testCaseId);
       expect(Array.isArray(results)).toBe(true);
     });
   });
@@ -215,7 +215,7 @@ describe("TestManagementClient", () => {
     test("getTestManagementTestRuns", async () => {
       const { client, randomProjectId } = testManagementContext;
       const projectId = await randomProjectId();
-      const runs = await client.getTestManagementTestRuns(projectId);
+      const runs = await client.getTestRuns(projectId);
       expect(Array.isArray(runs)).toBe(true);
     });
 
@@ -223,28 +223,28 @@ describe("TestManagementClient", () => {
       const { client, randomProjectId } = testManagementContext;
       const projectId = await randomProjectId();
 
-      const created = await client.createTestManagementTestRun(projectId, {
+      const created = await client.createTestRun(projectId, {
         testRun: { name: `run-${Date.now()}`, includeAll: true },
       });
       expect(created!.identifier).toBeDefined();
       const runId = created!.identifier!;
 
-      const fetched = await client.getTestManagementTestRun(projectId, runId);
+      const fetched = await client.getTestRun(projectId, runId);
       expect(fetched!.identifier).toBe(runId);
 
-      const patched = await client.patchTestManagementTestRun(projectId, runId, {
+      const patched = await client.patchTestRun(projectId, runId, {
         testRun: { name: `run-${Date.now()}-patched` },
       });
       expect(patched!.identifier).toBe(runId);
 
-      await client.deleteTestManagementTestRun(projectId, runId);
+      await client.deleteTestRun(projectId, runId);
     }, TIMEOUT);
 
     test("getTestManagementTestRunTestCases", async () => {
       const { client, randomProjectId, randomTestRunId } = testManagementContext;
       const projectId = await randomProjectId();
       const testRunId = await randomTestRunId(projectId);
-      const cases = await client.getTestManagementTestRunTestCases(projectId, testRunId);
+      const cases = await client.getTestRunTestCases(projectId, testRunId);
       expect(Array.isArray(cases)).toBe(true);
     }, TIMEOUT);
 
@@ -252,17 +252,17 @@ describe("TestManagementClient", () => {
       const { client, randomProjectId } = testManagementContext;
       const projectId = await randomProjectId();
 
-      const created = await client.createTestManagementTestRun(projectId, {
+      const created = await client.createTestRun(projectId, {
         testRun: { name: `run-update-${Date.now()}`, includeAll: false, testCases: [] },
       });
       const runId = created!.identifier!;
 
-      const updated = await client.updateTestManagementTestRun(projectId, runId, {
+      const updated = await client.updateTestRun(projectId, runId, {
         testRun: { name: `run-update-${Date.now()}-updated` },
       });
       expect(updated!.identifier).toBe(runId);
 
-      await client.deleteTestManagementTestRun(projectId, runId);
+      await client.deleteTestRun(projectId, runId);
     }, TIMEOUT);
 
     test("assignTestManagementTestRunTestCases", async () => {
@@ -270,18 +270,18 @@ describe("TestManagementClient", () => {
       const projectId = await randomProjectId();
       const testCaseId = await randomTestCaseId(projectId);
 
-      const run = await client.createTestManagementTestRun(projectId, {
+      const run = await client.createTestRun(projectId, {
         testRun: { name: `run-assign-${Date.now()}`, includeAll: false, testCases: [testCaseId] },
       });
       const runId = run!.identifier!;
 
       const username = resolveUsername()!;
-      const result = await client.assignTestManagementTestRunTestCases(projectId, runId, {
+      const result = await client.assignTestRunTestCases(projectId, runId, {
         assignTo: [{ testCaseId, assignee: username }],
       });
       expect(result).toBeDefined();
 
-      await client.deleteTestManagementTestRun(projectId, runId);
+      await client.deleteTestRun(projectId, runId);
     }, TIMEOUT);
 
     test("addTestManagementTestRunResults + getTestManagementTestRunTestCaseResults", async () => {
@@ -289,21 +289,21 @@ describe("TestManagementClient", () => {
       const projectId = await randomProjectId();
       const testCaseId = await randomTestCaseId(projectId);
 
-      const run = await client.createTestManagementTestRun(projectId, {
+      const run = await client.createTestRun(projectId, {
         testRun: { name: `run-results-${Date.now()}`, includeAll: false, testCases: [testCaseId] },
       });
       const runId = run!.identifier!;
 
-      const added = await client.addTestManagementTestRunResults(projectId, runId, {
+      const added = await client.addTestRunResults(projectId, runId, {
         testResult: { status: "passed" },
         testCaseId,
       });
       expect(added).toBeDefined();
 
-      const results = await client.getTestManagementTestRunTestCaseResults(projectId, runId, testCaseId);
+      const results = await client.getTestRunTestCaseResults(projectId, runId, testCaseId);
       expect(Array.isArray(results)).toBe(true);
 
-      await client.deleteTestManagementTestRun(projectId, runId);
+      await client.deleteTestRun(projectId, runId);
     }, TIMEOUT);
 
     test("getTestManagementTestResultAttachments + addTestManagementTestResultAttachment + deleteTestManagementTestResultAttachment", async () => {
@@ -311,40 +311,40 @@ describe("TestManagementClient", () => {
       const projectId = await randomProjectId();
       const testCaseId = await randomTestCaseId(projectId);
 
-      const run = await client.createTestManagementTestRun(projectId, {
+      const run = await client.createTestRun(projectId, {
         testRun: { name: `run-result-attach-${Date.now()}`, includeAll: false, testCases: [testCaseId] },
       });
       const runId = run!.identifier!;
 
-      await client.addTestManagementTestRunResults(projectId, runId, {
+      await client.addTestRunResults(projectId, runId, {
         testResult: { status: "passed" },
         testCaseId,
       });
 
-      const runResults = await client.getTestManagementTestRunResults(projectId, runId);
+      const runResults = await client.getTestRunResults(projectId, runId);
       const resultId = (runResults as Array<{ id: number }>)[0]!.id;
 
-      const attachments = await client.getTestManagementTestResultAttachments(projectId, resultId);
+      const attachments = await client.getTestResultAttachments(projectId, resultId);
       expect(Array.isArray(attachments)).toBe(true);
 
       const content = new Blob(["result attachment"], { type: "text/plain" });
-      await client.addTestManagementTestResultAttachment(projectId, resultId, { file: content, fileName: "result.txt" });
+      await client.addTestResultAttachment(projectId, resultId, { file: content, fileName: "result.txt" });
 
-      const attachmentsAfter = await client.getTestManagementTestResultAttachments(projectId, resultId);
+      const attachmentsAfter = await client.getTestResultAttachments(projectId, resultId);
       const attachList = attachmentsAfter as Array<{ id: number }>;
       expect(attachList.length).toBeGreaterThan(0);
 
-      await client.deleteTestManagementTestResultAttachment(projectId, resultId, attachList[0]!.id);
-      await client.deleteTestManagementTestRun(projectId, runId);
+      await client.deleteTestResultAttachment(projectId, resultId, attachList[0]!.id);
+      await client.deleteTestRun(projectId, runId);
     }, LONG_TIMEOUT);
 
     test("closeTestManagementTestRun", async () => {
       const { client, randomProjectId } = testManagementContext;
       const projectId = await randomProjectId();
-      const created = await client.createTestManagementTestRun(projectId, {
+      const created = await client.createTestRun(projectId, {
         testRun: { name: `run-close-${Date.now()}`, includeAll: false, testCases: [] },
       });
-      const closed = await client.closeTestManagementTestRun(projectId, created!.identifier!);
+      const closed = await client.closeTestRun(projectId, created!.identifier!);
       expect(closed!.identifier).toBe(created!.identifier);
     }, TIMEOUT);
 
@@ -352,7 +352,7 @@ describe("TestManagementClient", () => {
       const { client, randomProjectId, randomTestRunId } = testManagementContext;
       const projectId = await randomProjectId();
       const testRunId = await randomTestRunId(projectId);
-      const results = await client.getTestManagementTestRunResults(projectId, testRunId);
+      const results = await client.getTestRunResults(projectId, testRunId);
       expect(Array.isArray(results)).toBe(true);
     });
   });
@@ -361,7 +361,7 @@ describe("TestManagementClient", () => {
     test("getTestManagementTestPlans", async () => {
       const { client, randomProjectId } = testManagementContext;
       const projectId = await randomProjectId();
-      const plans = await client.getTestManagementTestPlans(projectId);
+      const plans = await client.getTestPlans(projectId);
       expect(Array.isArray(plans)).toBe(true);
     });
 
@@ -369,16 +369,16 @@ describe("TestManagementClient", () => {
       const { client, randomProjectId } = testManagementContext;
       const projectId = await randomProjectId();
 
-      const created = await client.createTestManagementTestPlan(projectId, {
+      const created = await client.createTestPlan(projectId, {
         testPlan: { name: `plan-${Date.now()}` },
       });
       expect(created!.identifier).toBeDefined();
       const planId = created!.identifier!;
 
-      const fetched = await client.getTestManagementTestPlan(projectId, planId);
+      const fetched = await client.getTestPlan(projectId, planId);
       expect(fetched!.identifier).toBe(planId);
 
-      const updated = await client.updateTestManagementTestPlan(projectId, planId, {
+      const updated = await client.updateTestPlan(projectId, planId, {
         testPlan: { name: `plan-${Date.now()}-updated` },
       });
       expect(updated!.identifier).toBe(planId);
@@ -388,7 +388,7 @@ describe("TestManagementClient", () => {
       const { client, randomProjectId, randomTestPlanId } = testManagementContext;
       const projectId = await randomProjectId();
       const planId = await randomTestPlanId(projectId);
-      const runs = await client.getTestManagementTestPlanTestRuns(projectId, planId);
+      const runs = await client.getTestPlanTestRuns(projectId, planId);
       expect(Array.isArray(runs)).toBe(true);
     });
   });
@@ -396,18 +396,18 @@ describe("TestManagementClient", () => {
   describe("Configurations", () => {
     test("getTestManagementConfigurations", async () => {
       const { client } = testManagementContext;
-      const configs = await client.getTestManagementConfigurations();
+      const configs = await client.getConfigurations();
       expect(Array.isArray(configs)).toBe(true);
     });
 
     test("createTestManagementConfiguration + getTestManagementConfiguration", async () => {
       const { client } = testManagementContext;
-      const created = await client.createTestManagementConfiguration({ name: `cfg-${Date.now()}` });
+      const created = await client.createConfiguration({ name: `cfg-${Date.now()}` });
       expect(created).toBeDefined();
       expect(created!.id).toBeDefined();
       const configId = String(created!.id!);
 
-      const fetched = await client.getTestManagementConfiguration(configId);
+      const fetched = await client.getConfiguration(configId);
       expect(fetched!.id).toBe(created!.id);
     }, TIMEOUT);
   });
@@ -415,14 +415,14 @@ describe("TestManagementClient", () => {
   describe("CustomFields", () => {
     test("getTestManagementCustomFields", async () => {
       const { client } = testManagementContext;
-      const fields = await client.getTestManagementCustomFields();
+      const fields = await client.getCustomFields();
       expect(Array.isArray(fields)).toBe(true);
     });
 
     test.skip("createTestManagementCustomField + updateTestManagementCustomField + deleteTestManagementCustomField (paid feature)", async () => {
       const { client } = testManagementContext;
 
-      const created = await client.createTestManagementCustomField({
+      const created = await client.createCustomField({
         fieldName: `cf-${Date.now()}`,
         fieldType: "string",
         fieldEntityType: "test_case",
@@ -431,12 +431,12 @@ describe("TestManagementClient", () => {
       expect(created!.id).toBeDefined();
       const fieldId = created!.id!;
 
-      const updated = await client.updateTestManagementCustomField(fieldId, {
+      const updated = await client.updateCustomField(fieldId, {
         fieldName: `cf-${Date.now()}-updated`,
       });
       expect(updated).toBeDefined();
 
-      await client.deleteTestManagementCustomField(fieldId);
+      await client.deleteCustomField(fieldId);
     }, TIMEOUT);
   });
 

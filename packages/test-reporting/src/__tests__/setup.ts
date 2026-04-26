@@ -21,7 +21,7 @@ const client = new TestReportingClient(getOptions());
 export const testReportingContext: TestReportingTestContext["testReporting"] = {
   client,
   randomProjectId: async (): Promise<number> => {
-    const resp = await client.getTestReportingProjects();
+    const resp = await client.getProjects();
     const projects = (resp as { projects?: Array<{ id: number }> })?.projects ?? (resp as Array<{ id: number }>);
     assert(Array.isArray(projects) && projects.length > 0, "No test reporting projects found");
     const project = projects[Math.floor(Math.random() * projects.length)]!;
@@ -29,7 +29,7 @@ export const testReportingContext: TestReportingTestContext["testReporting"] = {
     return project.id;
   },
   randomBuildUuid: async (projectId: number): Promise<string> => {
-    const resp = await client.getTestReportingProjectBuilds(projectId);
+    const resp = await client.getProjectBuilds(projectId);
     const builds = (resp as { builds?: Array<{ buildId: string }> })?.builds ?? (resp as Array<{ buildId: string }>);
     assert(Array.isArray(builds) && builds.length > 0, "No builds found for project");
     const build = builds[Math.floor(Math.random() * builds.length)]!;
@@ -37,7 +37,7 @@ export const testReportingContext: TestReportingTestContext["testReporting"] = {
     return build.buildId;
   },
   randomBuildHashedId: async (projectId: number): Promise<string> => {
-    const resp = await client.getTestReportingProjectBuilds(projectId);
+    const resp = await client.getProjectBuilds(projectId);
     const builds = (resp as { builds?: Array<{ buildId: string }> })?.builds ?? (resp as Array<{ buildId: string }>);
     assert(Array.isArray(builds) && builds.length > 0, "No builds found for project");
     const build = builds[Math.floor(Math.random() * builds.length)]!;

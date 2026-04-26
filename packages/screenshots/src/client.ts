@@ -28,7 +28,7 @@ export class ScreenshotsClient extends GeneratedScreenshotsClient {
     body: CreateJobBody,
     options?: ExecuteOptions
   ): Promise<ScreenshotsJobCC & { id: string }> {
-    return this.createScreenshotsJob(body, options).then((job) => ({
+    return super.createJob(body, options).then((job) => ({
       ...job,
       id: job.jobId!,
     }));
@@ -38,7 +38,7 @@ export class ScreenshotsClient extends GeneratedScreenshotsClient {
     jobId: string,
     options?: ExecuteOptions
   ): Promise<GetJobCC & { id: string }> {
-    return this.getScreenshotsJob(jobId, options).then((job) => ({
+    return super.getJob(jobId, options).then((job) => ({
       ...job,
       id: job.id ?? job.jobId ?? jobId,
     }));

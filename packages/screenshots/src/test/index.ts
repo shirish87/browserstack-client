@@ -5,7 +5,7 @@ import * as fixtures from "./fixtures";
 export function createMockScreenshotsClient(
   options?: BrowserStackOptions
 ): ScreenshotsClient & {
-  getScreenshotsBrowsers: ReturnType<typeof vi.fn>;
+  getBrowsers: ReturnType<typeof vi.fn>;
   createJob: ReturnType<typeof vi.fn>;
   getJob: ReturnType<typeof vi.fn>;
   trackJob: ReturnType<typeof vi.fn>;
@@ -15,7 +15,7 @@ export function createMockScreenshotsClient(
 
   return {
     ...client,
-    getScreenshotsBrowsers: vi.fn().mockResolvedValue(fixtures.browsers),
+    getBrowsers: vi.fn().mockResolvedValue(fixtures.browsers),
     createJob: vi.fn().mockResolvedValue(fixtures.job),
     getJob: vi.fn().mockResolvedValue(fixtures.job),
     trackJob: vi.fn().mockResolvedValue(fixtures.screenshots),
