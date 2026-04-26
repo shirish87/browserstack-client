@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build": "pnpm -r --filter='./packages/*' run build",
-    "build:types": "pnpm --filter @browserstack-client/openapi run build",
+    "build:transforms": "pnpm --filter @browserstack-client/openapi-transforms run build",
+    "build:types": "pnpm build:transforms && pnpm --filter @browserstack-client/openapi run build",
     "build:go": "cd packages/cli/golang && make build",
     "build:cli:go": "pnpm build:go",
     "build:cli:ts": "pnpm --filter @browserstack-client/cli run build:binary",
@@ -20,7 +21,8 @@
     "coverage": "vitest run --coverage",
     "lint": "eslint packages --ext .ts",
     "check": "tsc --build --noEmit packages/*/tsconfig.json packages/cli/typescript/tsconfig.json",
-    "clean": "pnpm -r exec rimraf dist && rimraf node_modules",
+    "clean": "pnpm -r exec rimraf dist dist-binary",
+    "clean:deps": "pnpm clean && rimraf node_modules",
     "docs:build": "typedoc && vitepress build docs"
   },
   "devDependencies": {
