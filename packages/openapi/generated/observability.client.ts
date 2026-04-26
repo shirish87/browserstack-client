@@ -65,7 +65,7 @@ getObservabilityBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCa
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getObservabilityBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-updateObservabilityBuild(buildId: string, body: DeepCamelCase<operations["updateObservabilityBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<unknown>> {
+updateObservabilityBuild(buildId: string, body: DeepCamelCase<operations["updateObservabilityBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<void> {
     return (this.execute({
       path: "/builds/{buildId}",
       params: { path: { buildId: buildId } },
@@ -78,7 +78,7 @@ updateObservabilityBuild(buildId: string, body: DeepCamelCase<operations["update
       operationId: "updateObservabilityBuild",
       method: "PATCH" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<unknown>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<void>;
   }
 
 getObservabilityTestRuns(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getObservabilityTestRuns"]["responses"][200]["content"]["application/json"]>> {
@@ -97,7 +97,7 @@ getObservabilityTestRuns(buildId: string, options?: ExecuteOptions): Promise<Dee
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getObservabilityTestRuns"]["responses"][200]["content"]["application/json"]>>;
   }
 
-uploadObservabilityJUnitReport(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<unknown>> {
+uploadObservabilityJUnitReport(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<void> {
     return (this.execute({
       path: "/junit/upload",
       params: undefined,
@@ -110,6 +110,6 @@ uploadObservabilityJUnitReport(body: ({ file: Blob } | { url: string }) & { file
       operationId: "uploadObservabilityJUnitReport",
       method: "POST" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<unknown>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<void>;
   }
 }

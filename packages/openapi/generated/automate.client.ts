@@ -237,6 +237,34 @@ export type GetAutomateSessionNetworkLogsError = HttpError<
   | (operations["getAutomateSessionNetworkLogs"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
+/** @interface */
+export type GetAutomateSessionResult = DeepCamelCase<(operations["getAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>;
+/** @interface */
+export type UpdateAutomateSessionResult = DeepCamelCase<(operations["updateAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>;
+/** @interface */
+export type GetAutomateBuildSessionsItem = DeepCamelCase<(((operations["getAutomateBuild"]["responses"][200]["content"]["application/json"] & Record<"build", unknown>)["build"] & Record<"sessions", unknown>)["sessions"][number] & Record<"automation_session", unknown>)["automation_session"]>;
+/** @interface */
+export type GetAutomateBuildResult = DeepCamelCase<((operations["getAutomateBuild"]["responses"][200]["content"]["application/json"] & Record<"build", unknown>)["build"] & Record<"automation_build", unknown>)["automation_build"]> & { sessions: Array<GetAutomateBuildSessionsItem> };
+/** @interface */
+export type GetAutomateSessionsResultItem = DeepCamelCase<(operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number] & Record<"automation_session", unknown>)["automation_session"]>;
+export type GetAutomateSessionsResult = Array<GetAutomateSessionsResultItem>;
+/** @interface */
+export type GetAutomateProjectResult = DeepCamelCase<(operations["getAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>;
+/** @interface */
+export type GetAutomateBuildsResultItem = DeepCamelCase<(operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>;
+export type GetAutomateBuildsResult = Array<GetAutomateBuildsResultItem>;
+
+/**
+ * @preventInline GetAutomateSessionResult
+ * @preventInline UpdateAutomateSessionResult
+ * @preventInline GetAutomateBuildSessionsItem
+ * @preventInline GetAutomateBuildResult
+ * @preventInline GetAutomateSessionsResultItem
+ * @preventInline GetAutomateSessionsResult
+ * @preventInline GetAutomateProjectResult
+ * @preventInline GetAutomateBuildsResultItem
+ * @preventInline GetAutomateBuildsResult
+ */
 export class GeneratedAutomateClient extends APIClient {
 /** Fetches all automate browsers. */
   getBrowsers(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]>> {
@@ -273,7 +301,7 @@ export class GeneratedAutomateClient extends APIClient {
   }
 
 /** Fetches Appium logs for a session. Raw Appium Logs for each session are available to you in text format. */
-  getSessionAppiumLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+  getSessionAppiumLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/appiumlogs",
       params: { path: { sessionId: sessionId } },
@@ -286,11 +314,11 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateSessionAppiumLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
 /** Fetches the badge key for sharing a public link for the Automate dashboard to view the latest build and sessions for that project */
-  getProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+  getProjectBadgeKey(projectId: string, options?: ExecuteOptions): Promise<string> {
     return (this.execute({
       path: "/automate/projects/{projectId}/badge_key",
       params: { path: { projectId: projectId } },
@@ -303,11 +331,11 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateProjectBadgeKey",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
 /** Upload terminal logs for your session. */
-  uploadSessionTerminalLogs(sessionId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+  uploadSessionTerminalLogs(sessionId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<string> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/terminallogs",
       params: { path: { sessionId: sessionId } },
@@ -320,7 +348,7 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "uploadAutomateSessionTerminalLogs",
       method: "POST" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
 /** Delete multiple builds on the server. You can delete a maximum of 5 builds at a time. Builds once deleted cannot be recovered. */
@@ -341,7 +369,7 @@ export class GeneratedAutomateClient extends APIClient {
   }
 
 /** Fetches a session for a particular build */
-  getSession(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
+  getSession(sessionId: string, options?: ExecuteOptions): Promise<GetAutomateSessionResult> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
@@ -354,11 +382,11 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateSession",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAutomateSessionResult>;
   }
 
 /** Set the status for a session or update the name of the session. You can mark test status as passed or failed along with a reason. */
-  updateSession(sessionId: string, body: DeepCamelCase<operations["updateAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["updateAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>> {
+  updateSession(sessionId: string, body: DeepCamelCase<operations["updateAutomateSession"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<UpdateAutomateSessionResult> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}.json",
       params: { path: { sessionId: sessionId } },
@@ -371,7 +399,7 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "updateAutomateSession",
       method: "PUT" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["updateAutomateSession"]["responses"][200]["content"]["application/json"] & Record<"automation_session", unknown>)["automation_session"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<UpdateAutomateSessionResult>;
   }
 
 /** Delete a session on the server. Sessions once deleted cannot be recovered */
@@ -426,7 +454,7 @@ export class GeneratedAutomateClient extends APIClient {
   }
 
 /** Fetches a build */
-  getBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<unknown>> {
+  getBuild(buildId: string, options?: ExecuteOptions): Promise<GetAutomateBuildResult> {
     return (this.execute({
       path: "/automate/builds/{buildId}.json",
       params: { path: { buildId: buildId } },
@@ -439,7 +467,7 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateBuild",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<unknown>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAutomateBuildResult>;
   }
 
 /** Update the name or tag of your build after the build is complete. To delete a build tag, simply pass an empty string as value for build_tag. */
@@ -477,7 +505,7 @@ export class GeneratedAutomateClient extends APIClient {
   }
 
 /** Fetches session logs. Whenever you execute a session on BrowserStack, a session log is generated. These logs are available to you in text format. */
-  getSessionLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+  getSessionLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/logs",
       params: { path: { sessionId: sessionId } },
@@ -490,7 +518,7 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateSessionLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
 /** Upload a media file you want to use in your tests */
@@ -528,7 +556,7 @@ export class GeneratedAutomateClient extends APIClient {
   }
 
 /** Fetches list of sessions for a particular build */
-  getSessions(buildId: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<Array<(operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number] & Record<"automation_session", unknown>)["automation_session"]>>> {
+  getSessions(buildId: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<GetAutomateSessionsResult> {
     return (this.execute({
       path: "/automate/builds/{buildId}/sessions.json",
       params: { path: { buildId: buildId }, query: { "limit": limit, "offset": offset, "status": status } },
@@ -541,11 +569,11 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateSessions",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<Array<(operations["getAutomateSessions"]["responses"][200]["content"]["application/json"][number] & Record<"automation_session", unknown>)["automation_session"]>>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAutomateSessionsResult>;
   }
 
 /** Specific information about a particular project can be queried using the project ID */
-  getProject(projectId: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
+  getProject(projectId: string, options?: ExecuteOptions): Promise<GetAutomateProjectResult> {
     return (this.execute({
       path: "/automate/projects/{projectId}.json",
       params: { path: { projectId: projectId } },
@@ -558,7 +586,7 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateProject",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAutomateProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAutomateProjectResult>;
   }
 
 /** Update the name of your project after the project is complete */
@@ -596,7 +624,7 @@ export class GeneratedAutomateClient extends APIClient {
   }
 
 /** Fetches Selenium logs for a session. Raw Selenium logs for each session are available to you in text format. */
-  getSessionSeleniumLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+  getSessionSeleniumLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/seleniumlogs",
       params: { path: { sessionId: sessionId } },
@@ -609,11 +637,11 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateSessionSeleniumLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
 /** Upload terminal logs for your build. */
-  uploadBuildTerminalLogs(buildId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+  uploadBuildTerminalLogs(buildId: string, body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<string> {
     return (this.execute({
       path: "/automate/builds/{buildId}/terminallogs",
       params: { path: { buildId: buildId } },
@@ -626,7 +654,7 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "uploadAutomateBuildTerminalLogs",
       method: "POST" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
 /** Fetches list of recently uploaded media files */
@@ -664,7 +692,7 @@ export class GeneratedAutomateClient extends APIClient {
   }
 
 /** Fetches console logs for a session. Console logs are enabled by default and are set to errors. You can disable them or change verbosity options by using the browserstack.console capability to disabled, errors, warnings, info, verbose. Raw Console Logs for each session are available to you in text format. */
-  getSessionConsoleLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+  getSessionConsoleLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/consolelogs",
       params: { path: { sessionId: sessionId } },
@@ -677,11 +705,11 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateSessionConsoleLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 
 /** Fetches telemetry logs for a session. Telemetry logs for a session are available for tests run using Selenium 4. Telemetry logs are by default disabled for a session. */
-  getSessionTelemetryLogs(sessionId: string, options?: ExecuteOptions): Promise<DeepCamelCase<ArrayBuffer>> {
+  getSessionTelemetryLogs(sessionId: string, options?: ExecuteOptions): Promise<ArrayBuffer> {
     return (this.execute({
       path: "/automate/sessions/{sessionId}/telemetrylogs",
       params: { path: { sessionId: sessionId } },
@@ -694,11 +722,11 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateSessionTelemetryLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<ArrayBuffer>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<ArrayBuffer>;
   }
 
 /** Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number of builds and paginate through your data */
-  getBuilds(projectId?: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<DeepCamelCase<Array<(operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>>> {
+  getBuilds(projectId?: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<GetAutomateBuildsResult> {
     return (this.execute({
       path: "/automate/builds.json",
       params: { query: { "projectId": projectId, "limit": limit, "offset": offset, "status": status } },
@@ -711,7 +739,7 @@ export class GeneratedAutomateClient extends APIClient {
       operationId: "getAutomateBuilds",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<Array<(operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAutomateBuildsResult>;
   }
 
 /** Fetches network logs for a session. Network Logs for each session are available to you in HAR (HTTP Archive) format. */

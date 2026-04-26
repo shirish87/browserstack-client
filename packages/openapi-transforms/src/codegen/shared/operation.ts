@@ -1,3 +1,11 @@
+export function toPascalCase(s: string): string {
+  return s
+    .split(/[-_ .]/)
+    .filter((part) => part.length > 0)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+}
+
 // Maps product name → PascalCase prefix used in operationIds for that product
 export const OPERATION_ID_PREFIX: Record<string, string> = {
   "accessibility": "Accessibility",

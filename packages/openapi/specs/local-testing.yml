@@ -94,7 +94,6 @@ paths:
                   instances:
                     type: array
                     items:
-                      type: object
                       $ref: '#/components/schemas/LocalBinaryInstance'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
@@ -159,7 +158,6 @@ paths:
                   instances:
                     type: array
                     items:
-                      type: object
                       $ref: '#/components/schemas/LocalBinaryInstance'
         '400':
           $ref: '#/components/schemas/400.BadRequest'

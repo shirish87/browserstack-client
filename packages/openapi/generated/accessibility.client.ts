@@ -50,6 +50,36 @@ export type GetAccessibilityAutomatedTestBuildTestCaseSummaryError = HttpError<u
 
 export type GetAccessibilityAutomatedTestBuildTestCaseIssuesError = HttpError<unknown>;
 
+/** @interface */
+export type GetAccessibilityWebsiteScannerAuthConfigsResult = DeepCamelCase<((operations["getAccessibilityWebsiteScannerAuthConfigs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"authConfigs", unknown>)["authConfigs"]>;
+/** @interface */
+export type CreateAccessibilityWebsiteScannerAuthConfigResult = DeepCamelCase<(operations["createAccessibilityWebsiteScannerAuthConfig"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>;
+/** @interface */
+export type CreateAccessibilityWebsiteScannerScanResult = DeepCamelCase<(operations["createAccessibilityWebsiteScannerScan"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>;
+/** @interface */
+export type GetAccessibilityWebsiteScannerScanOverviewResult = DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanOverview"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>;
+/** @interface */
+export type GetAccessibilityWebsiteScannerScanRunStatusResult = DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunStatus"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>;
+/** @interface */
+export type GetAccessibilityWebsiteScannerScanRunLogsResult = DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunLogs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>;
+/** @interface */
+export type GetAccessibilityAutomatedTestBuildTestCasesResult = DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCases"]["responses"][200]["content"]["application/json"] & Record<"testCases", unknown>)["testCases"]>;
+/** @interface */
+export type GetAccessibilityAutomatedTestBuildSummaryResult = DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>;
+/** @interface */
+export type GetAccessibilityAutomatedTestBuildTestCaseSummaryResult = DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCaseSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>;
+
+/**
+ * @preventInline GetAccessibilityWebsiteScannerAuthConfigsResult
+ * @preventInline CreateAccessibilityWebsiteScannerAuthConfigResult
+ * @preventInline CreateAccessibilityWebsiteScannerScanResult
+ * @preventInline GetAccessibilityWebsiteScannerScanOverviewResult
+ * @preventInline GetAccessibilityWebsiteScannerScanRunStatusResult
+ * @preventInline GetAccessibilityWebsiteScannerScanRunLogsResult
+ * @preventInline GetAccessibilityAutomatedTestBuildTestCasesResult
+ * @preventInline GetAccessibilityAutomatedTestBuildSummaryResult
+ * @preventInline GetAccessibilityAutomatedTestBuildTestCaseSummaryResult
+ */
 export class GeneratedAccessibilityClient extends APIClient {
 /** Returns a paginated list of all Workflow Analyzer accessibility reports for your account. */
   getWorkflowAnalyzerReports(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReports"]["responses"][200]["content"]["application/json"]>> {
@@ -154,7 +184,7 @@ export class GeneratedAccessibilityClient extends APIClient {
   }
 
 /** Returns all saved authentication configurations used by the Website Scanner for login-protected pages. */
-  getWebsiteScannerAuthConfigs(options?: ExecuteOptions): Promise<DeepCamelCase<((operations["getAccessibilityWebsiteScannerAuthConfigs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"authConfigs", unknown>)["authConfigs"]>> {
+  getWebsiteScannerAuthConfigs(options?: ExecuteOptions): Promise<GetAccessibilityWebsiteScannerAuthConfigsResult> {
     return (this.execute({
       path: "/api/website-scanner/v1/auth_configs",
       params: undefined,
@@ -167,11 +197,11 @@ export class GeneratedAccessibilityClient extends APIClient {
       operationId: "getAccessibilityWebsiteScannerAuthConfigs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<((operations["getAccessibilityWebsiteScannerAuthConfigs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"authConfigs", unknown>)["authConfigs"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAccessibilityWebsiteScannerAuthConfigsResult>;
   }
 
 /** Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans. */
-  createWebsiteScannerAuthConfig(body: DeepCamelCase<operations["createAccessibilityWebsiteScannerAuthConfig"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createAccessibilityWebsiteScannerAuthConfig"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+  createWebsiteScannerAuthConfig(body: DeepCamelCase<operations["createAccessibilityWebsiteScannerAuthConfig"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<CreateAccessibilityWebsiteScannerAuthConfigResult> {
     return (this.execute({
       path: "/api/website-scanner/v1/auth_configs",
       params: undefined,
@@ -184,7 +214,7 @@ export class GeneratedAccessibilityClient extends APIClient {
       operationId: "createAccessibilityWebsiteScannerAuthConfig",
       method: "POST" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["createAccessibilityWebsiteScannerAuthConfig"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<CreateAccessibilityWebsiteScannerAuthConfigResult>;
   }
 
 /** Returns a paginated list of all configured Website Scanner scans for your account. */
@@ -205,7 +235,7 @@ export class GeneratedAccessibilityClient extends APIClient {
   }
 
 /** Creates and triggers a new Website Scanner accessibility scan for the specified URL. */
-  createWebsiteScannerScan(body: DeepCamelCase<operations["createAccessibilityWebsiteScannerScan"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["createAccessibilityWebsiteScannerScan"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+  createWebsiteScannerScan(body: DeepCamelCase<operations["createAccessibilityWebsiteScannerScan"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<CreateAccessibilityWebsiteScannerScanResult> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans",
       params: undefined,
@@ -218,11 +248,11 @@ export class GeneratedAccessibilityClient extends APIClient {
       operationId: "createAccessibilityWebsiteScannerScan",
       method: "POST" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["createAccessibilityWebsiteScannerScan"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<CreateAccessibilityWebsiteScannerScanResult>;
   }
 
 /** Returns the configuration overview for a specific Website Scanner scan, including URL list and scan settings. */
-  getWebsiteScannerScanOverview(scanId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanOverview"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+  getWebsiteScannerScanOverview(scanId: number, options?: ExecuteOptions): Promise<GetAccessibilityWebsiteScannerScanOverviewResult> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans/{scan_id}/overview",
       params: { path: { scan_id: scanId } },
@@ -235,7 +265,7 @@ export class GeneratedAccessibilityClient extends APIClient {
       operationId: "getAccessibilityWebsiteScannerScanOverview",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanOverview"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAccessibilityWebsiteScannerScanOverviewResult>;
   }
 
 /** Returns a paginated list of all scan runs for a specific Website Scanner scan, including status and issue counts. */
@@ -273,7 +303,7 @@ export class GeneratedAccessibilityClient extends APIClient {
   }
 
 /** Returns the current execution status of a specific Website Scanner scan run. */
-  getWebsiteScannerScanRunStatus(scanId: number, scanRunId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunStatus"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+  getWebsiteScannerScanRunStatus(scanId: number, scanRunId: number, options?: ExecuteOptions): Promise<GetAccessibilityWebsiteScannerScanRunStatusResult> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}/status",
       params: { path: { scan_id: scanId, scan_run_id: scanRunId } },
@@ -286,7 +316,7 @@ export class GeneratedAccessibilityClient extends APIClient {
       operationId: "getAccessibilityWebsiteScannerScanRunStatus",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunStatus"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAccessibilityWebsiteScannerScanRunStatusResult>;
   }
 
 /** Returns paginated accessibility issues found during a specific Website Scanner scan run, optionally filtered by task. */
@@ -307,7 +337,7 @@ export class GeneratedAccessibilityClient extends APIClient {
   }
 
 /** Returns the crawl logs for a specific Website Scanner scan run, including per-URL status, redirects, and errors. */
-  getWebsiteScannerScanRunLogs(scanId: number, scanRunId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunLogs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+  getWebsiteScannerScanRunLogs(scanId: number, scanRunId: number, options?: ExecuteOptions): Promise<GetAccessibilityWebsiteScannerScanRunLogsResult> {
     return (this.execute({
       path: "/api/website-scanner/v1/scans/{scan_id}/scan_runs/{scan_run_id}/scan_logs",
       params: { path: { scan_id: scanId, scan_run_id: scanRunId } },
@@ -320,7 +350,7 @@ export class GeneratedAccessibilityClient extends APIClient {
       operationId: "getAccessibilityWebsiteScannerScanRunLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityWebsiteScannerScanRunLogs"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAccessibilityWebsiteScannerScanRunLogsResult>;
   }
 
 /** Returns a paginated list of all Automated Test accessibility projects for your account. */
@@ -358,7 +388,7 @@ export class GeneratedAccessibilityClient extends APIClient {
   }
 
 /** Returns the paginated list of test cases and their accessibility results for a specific Automated Test build. */
-  getAutomatedTestBuildTestCases(thBuildId: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCases"]["responses"][200]["content"]["application/json"] & Record<"testCases", unknown>)["testCases"]>> {
+  getAutomatedTestBuildTestCases(thBuildId: string, nextPage?: string, options?: ExecuteOptions): Promise<GetAccessibilityAutomatedTestBuildTestCasesResult> {
     return (this.execute({
       path: "/api/automated-tests/v1/builds/{thBuildId}/test-cases",
       params: { path: { thBuildId: thBuildId }, query: { "next_page": nextPage } },
@@ -371,11 +401,11 @@ export class GeneratedAccessibilityClient extends APIClient {
       operationId: "getAccessibilityAutomatedTestBuildTestCases",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCases"]["responses"][200]["content"]["application/json"] & Record<"testCases", unknown>)["testCases"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAccessibilityAutomatedTestBuildTestCasesResult>;
   }
 
 /** Returns the summary for a specific Automated Test build, including score, health stats, and issue counts. */
-  getAutomatedTestBuildSummary(thBuildId: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+  getAutomatedTestBuildSummary(thBuildId: string, nextPage?: string, options?: ExecuteOptions): Promise<GetAccessibilityAutomatedTestBuildSummaryResult> {
     return (this.execute({
       path: "/api/automated-tests/v1/builds/{thBuildId}",
       params: { path: { thBuildId: thBuildId }, query: { "next_page": nextPage } },
@@ -388,7 +418,7 @@ export class GeneratedAccessibilityClient extends APIClient {
       operationId: "getAccessibilityAutomatedTestBuildSummary",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAccessibilityAutomatedTestBuildSummaryResult>;
   }
 
 /** Returns paginated accessibility issues for a specific Automated Test build, optionally filtered by task. */
@@ -409,7 +439,7 @@ export class GeneratedAccessibilityClient extends APIClient {
   }
 
 /** Returns the accessibility summary for a specific test case within an Automated Test build. */
-  getAutomatedTestBuildTestCaseSummary(thBuildId: string, testCaseId: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCaseSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>> {
+  getAutomatedTestBuildTestCaseSummary(thBuildId: string, testCaseId: string, nextPage?: string, options?: ExecuteOptions): Promise<GetAccessibilityAutomatedTestBuildTestCaseSummaryResult> {
     return (this.execute({
       path: "/api/automated-tests/v1/builds/{thBuildId}/test-cases/{test_case_id}",
       params: { path: { thBuildId: thBuildId, test_case_id: testCaseId }, query: { "next_page": nextPage } },
@@ -422,7 +452,7 @@ export class GeneratedAccessibilityClient extends APIClient {
       operationId: "getAccessibilityAutomatedTestBuildTestCaseSummary",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCaseSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAccessibilityAutomatedTestBuildTestCaseSummaryResult>;
   }
 
 /** Returns paginated accessibility issues for a specific test case within an Automated Test build. */

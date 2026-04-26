@@ -1,5 +1,6 @@
 import { BrowserStackOptions } from "@browserstack-client/core";
 import { GeneratedAutomateClient } from "@browserstack-client/openapi/automate/client";
+export type * from "@browserstack-client/openapi/automate/client";
 
 export class AutomateClient extends GeneratedAutomateClient {
   constructor(options?: BrowserStackOptions) {
@@ -12,3 +13,4 @@ export class AutomateClient extends GeneratedAutomateClient {
     );
   }
 }
+

@@ -2,7 +2,7 @@ import { toPascalCase, toGoPackageName } from "./case";
 
 interface SchemaProperty {
   type?: string;
-  items?: { type?: string };
+  items?: { type?: string; $ref?: string };
   $ref?: string;
 }
 
@@ -11,7 +11,8 @@ interface SchemaObject {
   properties?: Record<string, SchemaProperty>;
   required?: string[];
   allOf?: Array<{ $ref?: string; type?: string; properties?: Record<string, SchemaProperty>; required?: string[] }>;
-  items?: { type?: string; $ref?: string };
+  items?: { type?: string; $ref?: string; title?: string; properties?: Record<string, SchemaProperty> };
+  _baseEmbed?: string;
 }
 
 type Schemas = Record<string, SchemaObject>;
@@ -69,12 +70,16 @@ function mergeAllOf(schema: SchemaObject): SchemaObject {
 function emitStruct(name: string, rawSchema: SchemaObject, knownTypes: Set<string>): string {
   const schema = mergeAllOf(rawSchema);
   const required = new Set(schema.required ?? []);
-  const fields = Object.entries(schema.properties ?? {}).map(([fieldName, prop]) => {
+  const fields: string[] = [];
+  if (rawSchema._baseEmbed) {
+    fields.push(`\t${rawSchema._baseEmbed}`);
+  }
+  for (const [fieldName, prop] of Object.entries(schema.properties ?? {})) {
     const goName = toPascalCase(fieldName).replace(/[^a-zA-Z0-9_]/g, "");
     const isRequired = required.has(fieldName);
     const typ = goType(prop, isRequired, knownTypes);
-    return `\t${goName} ${typ} \`json:"${fieldName}"\``;
-  });
+    fields.push(`\t${goName} ${typ} \`json:"${fieldName}"\``);
+  }
   return `type ${toPascalCase(name)} struct {\n${fields.join("\n")}\n}`;
 }
 
@@ -84,8 +89,8 @@ function emitArrayAlias(name: string, schema: SchemaObject, knownTypes: Set<stri
   if (itemSchema?.$ref) {
     const refName = toPascalCase(itemSchema.$ref.replace(/^.*\//, ""));
     elemType = knownTypes.has(refName) ? refName : "map[string]any";
-  } else if (itemSchema?.type || (itemSchema as any)?.properties) {
-    if (itemSchema?.type === "object" || (itemSchema as any)?.properties) {
+  } else if (itemSchema?.type || itemSchema?.properties) {
+    if (itemSchema?.type === "object" || itemSchema?.properties) {
       const itemName = toPascalCase(itemSchema?.title ?? (name + "Item"));
       elemType = knownTypes.has(itemName) ? itemName : "map[string]any";
     } else {

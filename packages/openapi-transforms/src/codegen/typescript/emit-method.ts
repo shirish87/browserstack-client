@@ -12,6 +12,7 @@ export interface EmitMethodInput {
   hasRequestBody: boolean;
   operationsKey: string;
   returnType: string;
+  returnTypeAliases?: string[];
   annotations: OperationAnnotations;
   baseUrl: "sdk" | "sdkCloud";
   overrides?: OperationOverrides;
@@ -81,8 +82,14 @@ export function emitMethod(input: EmitMethodInput): string {
     ? `/** ${docText.replace(/\*\//g, "* /")} */\n  `
     : "";
 
+  // Named aliases (from deriveReturnType) already include DeepCamelCase — don't double-wrap.
+  // Matches: plain alias (e.g. GetBuildResult) or Array<PlainAlias>
+  const isNamedAlias = /^[A-Za-z][A-Za-z0-9]*$/.test(input.returnType)
+    || /^Array<[A-Za-z][A-Za-z0-9]*>$/.test(input.returnType);
+  const retType = isNamedAlias ? input.returnType : `DeepCamelCase<${input.returnType}>`;
+
   return `
-  ${jsdoc}${input.methodName}(${params}): Promise<DeepCamelCase<${input.returnType}>> {
+  ${jsdoc}${input.methodName}(${params}): Promise<${retType}> {
     return (this.execute({
       path: "${input.path}",
       params: ${paramsArg},
@@ -95,6 +102,6 @@ export function emitMethod(input: EmitMethodInput): string {
       operationId: "${input.operationId}",
       method: "${input.method}" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, ${respOverrideLit})) as Promise<DeepCamelCase<${input.returnType}>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, ${respOverrideLit})) as Promise<${retType}>;
   }`.trim();
 }

@@ -14,26 +14,38 @@ function ann(responseCodec: string, responseCodecConfig: unknown = {}): Operatio
 
 describe("deriveReturnType", () => {
   it("applies $.foo against a { foo: T } shape", () => {
-    expect(deriveReturnType(
+    const result = deriveReturnType(
       `operations["getX"]["responses"][200]["content"]["application/json"]`,
       ann("json-unwrap", { path: "$.foo" }),
-    )).toBe(`(operations["getX"]["responses"][200]["content"]["application/json"] & Record<"foo", unknown>)["foo"]`);
+      "getX",
+    );
+    expect(result.type).toBe(`(operations["getX"]["responses"][200]["content"]["application/json"] & Record<"foo", unknown>)["foo"]`);
+    expect(result.aliases).toEqual([]);
   });
-  it("applies $[*].bar against T[] shape as array of bar", () => {
-    expect(deriveReturnType(
+  it("applies $[*].bar against T[] shape as array of bar — emits named element+list aliases", () => {
+    const result = deriveReturnType(
       `operations["getX"]["responses"][200]["content"]["application/json"]`,
       ann("json-unwrap", { path: "$[*].bar" }),
-    )).toBe(`Array<(operations["getX"]["responses"][200]["content"]["application/json"][number] & Record<"bar", unknown>)["bar"]>`);
+      "getX",
+    );
+    expect(result.type).toBe(`GetXResult`);
+    // element alias + list alias
+    expect(result.aliases.length).toBeGreaterThanOrEqual(2);
+    expect(result.aliases.some((a) => a.includes("GetXResultItem"))).toBe(true);
+    expect(result.aliases.some((a) => a.includes("GetXResult ="))).toBe(true);
   });
   it("returns base type for json codec", () => {
-    expect(deriveReturnType(
+    const result = deriveReturnType(
       `operations["getX"]["responses"][200]["content"]["application/json"]`,
       ann("json"),
-    )).toBe(`operations["getX"]["responses"][200]["content"]["application/json"]`);
+      "getX",
+    );
+    expect(result.type).toBe(`operations["getX"]["responses"][200]["content"]["application/json"]`);
+    expect(result.aliases).toEqual([]);
   });
   it("uses `string` for text, `ArrayBuffer` for binary default", () => {
-    expect(deriveReturnType("X", ann("text"))).toBe("string");
-    expect(deriveReturnType("X", ann("binary"))).toBe("ArrayBuffer");
-    expect(deriveReturnType("X", ann("binary", { as: "blob" }))).toBe("Blob");
+    expect(deriveReturnType("X", ann("text"), "getX").type).toBe("string");
+    expect(deriveReturnType("X", ann("binary"), "getX").type).toBe("ArrayBuffer");
+    expect(deriveReturnType("X", ann("binary", { as: "blob" }), "getX").type).toBe("Blob");
   });
 });

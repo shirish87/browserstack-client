@@ -25,10 +25,30 @@ import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
     ...m,
     overrides: input.fieldOverrides[m.operationId],
   }));
-  const aliases = input.errorAliases.map((a) => emitErrorAlias(a.operationId, a.errorStatuses)).join("\n\n");
-  const body = `export class ${input.className} extends APIClient {
+  const errorAliases = input.errorAliases.map((a) => emitErrorAlias(a.operationId, a.errorStatuses)).join("\n\n");
+  // Collect return type helper aliases, deduplicating across methods
+  const seen = new Set<string>();
+  const returnTypeAliases: string[] = [];
+  for (const m of methods) {
+    for (const alias of (m.returnTypeAliases ?? [])) {
+      if (!seen.has(alias)) { seen.add(alias); returnTypeAliases.push(alias); }
+    }
+  }
+  // Extract alias names for @preventInline so TypeDoc shows them as named types in signatures
+  const aliasNames = returnTypeAliases
+    .map((a) => {
+      const m = a.match(/export type ([A-Za-z][A-Za-z0-9]*) =/);
+      return m ? m[1] : null;
+    })
+    .filter((n): n is string => n !== null);
+  const preventInlineTags = aliasNames.map((n) => ` * @preventInline ${n}`).join("\n");
+  const classJsDoc = aliasNames.length
+    ? `/**\n${preventInlineTags}\n */\n`
+    : "";
+  const body = `${classJsDoc}export class ${input.className} extends APIClient {
 ${methods.map(emitMethod).join("\n\n")}
 }`;
-  const out = `${header}\n${aliases}\n\n${body}\n`;
+  const returnTypeSection = returnTypeAliases.length ? returnTypeAliases.join("\n") + "\n\n" : "";
+  const out = `${header}\n${errorAliases}\n\n${returnTypeSection}${body}\n`;
   return out.split("\n").map((line) => line.trimEnd()).join("\n");
 }

@@ -62,8 +62,9 @@ export async function generateClientModule(opts: GenerateClientOptions): Promise
 
       const successCT = op.responses?.["200"]?.content?.["application/json"]
         ? `operations["${operationId}"]["responses"][200]["content"]["application/json"]`
-        : op.responses?.["200"]?.content?.["text/plain"] ? `string` : `unknown`;
-      const returnType = deriveReturnType(successCT, annotations);
+        : op.responses?.["200"]?.content?.["text/plain"] ? `string` : `void`;
+      const derived = deriveReturnType(successCT, annotations, operationId);
+      const returnType = derived.type;
       const resolvedParams = (op.parameters ?? []).map((p) => {
         if (p.$ref) {
           const refName = p.$ref.replace("#/components/parameters/", "");
@@ -85,7 +86,8 @@ export async function generateClientModule(opts: GenerateClientOptions): Promise
         operationId, methodName: stripOperationPrefix(operationId, opts.product),
         method: method.toUpperCase() as EmitMethodInput["method"], path,
         pathParams, queryParams, hasRequestBody: Boolean(op.requestBody),
-        operationsKey: operationId, returnType, annotations, baseUrl: (op["x-base-url"] ?? opts.baseUrl) as "sdk" | "sdkCloud",
+        operationsKey: operationId, returnType, returnTypeAliases: derived.aliases,
+        annotations, baseUrl: (op["x-base-url"] ?? opts.baseUrl) as "sdk" | "sdkCloud",
         summary: op.summary, description: op.description,
       });
       const errorStatuses = Object.keys(op.responses ?? {}).map(Number)

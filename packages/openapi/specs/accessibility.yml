@@ -137,9 +137,15 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AuthConfig'
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      authConfigs:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AuthConfig'
     post:
       summary: Create Website Scanner auth config
       description: Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans.
@@ -172,7 +178,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthConfig'
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AuthConfig'
   /api/website-scanner/v1/scans:
     get:
       summary: List Website Scanner scans
@@ -207,7 +216,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WebsiteScannerScanCreated'
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WebsiteScannerScanCreated'
   /api/website-scanner/v1/scans/{scan_id}/overview:
     get:
       summary: Get Website Scanner scan overview
@@ -229,7 +241,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WebsiteScannerScanOverview'
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WebsiteScannerScanOverview'
   /api/website-scanner/v1/scans/{scan_id}/scan_runs:
     get:
       summary: List Website Scanner scan runs
@@ -305,7 +320,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WebsiteScannerScanRunStatus'
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WebsiteScannerScanRunStatus'
   /api/website-scanner/v1/scans/{scan_id}/scan_runs/issues:
     get:
       summary: Get Website Scanner scan run issues
@@ -362,7 +380,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WebsiteScannerScanRunLogs'
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WebsiteScannerScanRunLogs'
   /api/automated-tests/v1/projects:
     get:
       summary: List Automated Test projects
@@ -426,7 +447,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AutomatedTestsBuildTestCases'
+                type: object
+                properties:
+                  testCases:
+                    $ref: '#/components/schemas/AutomatedTestsBuildTestCases'
   /api/automated-tests/v1/builds/{thBuildId}:
     get:
       summary: Get Automated Test build summary
@@ -452,7 +476,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AutomatedTestsBuildSummary'
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomatedTestsBuildSummary'
   /api/automated-tests/v1/builds/issues:
     get:
       summary: Get Automated Test build issues
@@ -508,7 +535,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AutomatedTestsTestCaseSummary'
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomatedTestsTestCaseSummary'
   /api/automated-tests/v1/builds/{thBuildId}/issues:
     get:
       summary: Get Automated Test case issues
@@ -598,30 +628,15 @@ components:
         issueCountByURL:
           type: array
           items:
-            type: object
-            properties:
-              url:
-                type: string
-              count:
-                type: integer
+            $ref: '#/components/schemas/IssueCountByURL'
         issueCountByComponent:
           type: array
           items:
-            type: object
-            properties:
-              componentId:
-                type: string
-              count:
-                type: integer
+            $ref: '#/components/schemas/IssueCountByComponent'
         issueCountByCategory:
           type: array
           items:
-            type: object
-            properties:
-              category:
-                type: string
-              count:
-                type: integer
+            $ref: '#/components/schemas/IssueCountByCategory'
     ScoreData:
       type: object
       properties:
@@ -722,56 +737,58 @@ components:
               type: string
             submitSelector:
               type: string
+    WorkflowAnalyzerReportItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        createdBy:
+          type: object
+          properties:
+            user_id:
+              type: integer
+            name:
+              type: string
+        wcagVersion:
+          type: string
+        status:
+          type: string
+        needsReview:
+          type: boolean
+        bestPractices:
+          type: boolean
+        advanced:
+          type: boolean
+        scanType:
+          type: string
+        engineInfo:
+          type: object
+          properties:
+            testEngine:
+              type: object
+              properties:
+                name:
+                  type: string
+                version:
+                  type: string
+        issueSummary:
+          type: object
+          properties:
+            componentCount:
+              type: integer
+            issueCount:
+              type: integer
+            pageCount:
+              type: integer
     WorkflowAnalyzerReportList:
       type: object
       properties:
         reports:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              createdBy:
-                type: object
-                properties:
-                  user_id:
-                    type: integer
-                  name:
-                    type: string
-              wcagVersion:
-                type: string
-              status:
-                type: string
-              needsReview:
-                type: boolean
-              bestPractices:
-                type: boolean
-              advanced:
-                type: boolean
-              scanType:
-                type: string
-              engineInfo:
-                type: object
-                properties:
-                  testEngine:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      version:
-                        type: string
-              issueSummary:
-                type: object
-                properties:
-                  componentCount:
-                    type: integer
-                  issueCount:
-                    type: integer
-                  pageCount:
-                    type: integer
+            $ref: '#/components/schemas/WorkflowAnalyzerReportItem'
         pagination:
           $ref: '#/components/schemas/Pagination'
     WorkflowAnalyzerReportSummary:
@@ -837,58 +854,60 @@ components:
           type: string
         pagination:
           $ref: '#/components/schemas/Pagination'
+    AssistedTestReportItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        createdBy:
+          type: object
+          properties:
+            user_id:
+              type: integer
+            name:
+              type: string
+        wcagVersion:
+          type: string
+        status:
+          type: string
+        needsReview:
+          type: boolean
+        bestPractices:
+          type: boolean
+        advanced:
+          type: boolean
+        scanType:
+          type: string
+        engineInfo:
+          type: object
+          properties:
+            testEngine:
+              type: object
+              properties:
+                name:
+                  type: string
+                version:
+                  type: string
+        issueSummary:
+          type: object
+          properties:
+            componentCount:
+              type: integer
+            issueCount:
+              type: integer
+            pageCount:
+              type: integer
+        assistedTestType:
+          type: string
     AssistedTestReportList:
       type: object
       properties:
         reports:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              createdBy:
-                type: object
-                properties:
-                  user_id:
-                    type: integer
-                  name:
-                    type: string
-              wcagVersion:
-                type: string
-              status:
-                type: string
-              needsReview:
-                type: boolean
-              bestPractices:
-                type: boolean
-              advanced:
-                type: boolean
-              scanType:
-                type: string
-              engineInfo:
-                type: object
-                properties:
-                  testEngine:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      version:
-                        type: string
-              issueSummary:
-                type: object
-                properties:
-                  componentCount:
-                    type: integer
-                  issueCount:
-                    type: integer
-                  pageCount:
-                    type: integer
-              assistedTestType:
-                type: string
+            $ref: '#/components/schemas/AssistedTestReportItem'
         pagination:
           $ref: '#/components/schemas/Pagination'
     AssistedTestReportSummary:
@@ -1211,107 +1230,111 @@ components:
                 type: string
         pagination:
           $ref: '#/components/schemas/Pagination'
+    AutomatedTestsBuildItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        buildNumber:
+          type: integer
+        name:
+          type: string
+        startedAt:
+          type: string
+        wcagVersion:
+          type: string
+        recurring:
+          type: boolean
+        active:
+          type: boolean
+        status:
+          type: string
+        advanced:
+          type: boolean
+        localTestingEnabled:
+          type: boolean
+        authEnabled:
+          type: boolean
+        pageCount:
+          type: integer
+        createdBy:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        projectId:
+          type: integer
+        thBuildId:
+          type: string
     AutomatedTestsBuildList:
       type: object
       properties:
         builds:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                type: integer
-              buildNumber:
-                type: integer
-              name:
-                type: string
-              startedAt:
-                type: string
-              wcagVersion:
-                type: string
-              recurring:
-                type: boolean
-              active:
-                type: boolean
-              status:
-                type: string
-              advanced:
-                type: boolean
-              localTestingEnabled:
-                type: boolean
-              authEnabled:
-                type: boolean
-              pageCount:
-                type: integer
-              createdBy:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  name:
-                    type: string
-              projectId:
-                type: integer
-              thBuildId:
-                type: string
+            $ref: '#/components/schemas/AutomatedTestsBuildItem'
         pagination:
           $ref: '#/components/schemas/Pagination'
+    AutomatedTestsBuildTestCaseItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        status:
+          type: string
+        time:
+          type: string
+        summary:
+          type: object
+          properties:
+            pageCount:
+              type: integer
+            componentCount:
+              type: integer
+            issueCount:
+              type: integer
+            severityBreakdown:
+              type: object
+              properties:
+                minor:
+                  type: integer
+                serious:
+                  type: integer
+                critical:
+                  type: integer
+                moderate:
+                  type: integer
+        file:
+          type: string
+        osData:
+          $ref: '#/components/schemas/OsData'
+        browserData:
+          $ref: '#/components/schemas/BrowserData'
+        tags:
+          type: string
+          nullable: true
+        testRecordingTags:
+          type: array
+          items:
+            type: string
+        error:
+          type: string
+          nullable: true
+        pages:
+          type: array
+          items:
+            type: string
     AutomatedTestsBuildTestCases:
       type: object
       properties:
         testCases:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              status:
-                type: string
-              time:
-                type: string
-              summary:
-                type: object
-                properties:
-                  pageCount:
-                    type: integer
-                  componentCount:
-                    type: integer
-                  issueCount:
-                    type: integer
-                  severityBreakdown:
-                    type: object
-                    properties:
-                      minor:
-                        type: integer
-                      serious:
-                        type: integer
-                      critical:
-                        type: integer
-                      moderate:
-                        type: integer
-              file:
-                type: string
-              osData:
-                $ref: '#/components/schemas/OsData'
-              browserData:
-                $ref: '#/components/schemas/BrowserData'
-              tags:
-                type: string
-                nullable: true
-              testRecordingTags:
-                type: array
-                items:
-                  type: string
-              error:
-                type: string
-                nullable: true
-              pages:
-                type: array
-                items:
-                  type: string
+            $ref: '#/components/schemas/AutomatedTestsBuildTestCaseItem'
         pagination:
           $ref: '#/components/schemas/Pagination'
     AutomatedTestsBuildSummary:
@@ -1445,3 +1468,24 @@ components:
           type: string
         pagination:
           $ref: '#/components/schemas/Pagination'
+    IssueCountByURL:
+      type: object
+      properties:
+        url:
+          type: string
+        count:
+          type: integer
+    IssueCountByComponent:
+      type: object
+      properties:
+        componentId:
+          type: string
+        count:
+          type: integer
+    IssueCountByCategory:
+      type: object
+      properties:
+        category:
+          type: string
+        count:
+          type: integer

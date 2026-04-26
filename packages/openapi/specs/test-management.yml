@@ -1678,7 +1678,7 @@ paths:
       x-response-transform:
         codec: json-unwrap
         config:
-          path: "$.custom_field"
+          path: "$.data.custom_field"
       parameters:
         - { $ref: '#/components/parameters/CustomFieldId' }
       requestBody:

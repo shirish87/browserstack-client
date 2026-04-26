@@ -64,10 +64,100 @@ function resolveRequestCodec(op: SpecOp): string {
   return rt.codec;
 }
 
+function resolveJsonComposeResultName(operationId: string): string {
+  return toPascalCase(operationId) + "Result";
+}
+
+function buildJsonComposeSchema(
+  op: SpecOp,
+  operationId: string
+): { name: string; schema: InlineSchemas[string] } | undefined {
+  const rt = op["x-response-transform"];
+  if (!rt || typeof rt === "string" || rt.codec !== "json-compose") return undefined;
+  const cfg = rt.config as { base?: string; merge?: Record<string, string> } | undefined;
+  if (!cfg?.base) return undefined;
+
+  // Resolve base: e.g. "$.build.automation_build" → find the $ref at that path in the response schema
+  const rawSchema = op.responses?.["200"]?.content?.["application/json"]?.schema;
+  if (!rawSchema) return undefined;
+
+  // Walk the base path segments (skip leading "$.")
+  const baseSegments = cfg.base.replace(/^\$\./, "").split(".");
+  let node: SpecResponseSchema | undefined = rawSchema;
+  for (const seg of baseSegments) {
+    node = (node?.properties as Record<string, SpecResponseSchema> | undefined)?.[seg];
+    if (!node) return undefined;
+  }
+  const baseRef = node?.$ref?.replace(/^.*\//, "");
+  if (!baseRef) return undefined;
+  const baseGoName = toPascalCase(baseRef);
+
+  // Build properties for result struct: embed base type + merge fields
+  const props: InlineSchemas[string]["properties"] = {};
+  const required: string[] = [];
+
+  // For each merge entry, resolve the element type
+  for (const [field, path] of Object.entries(cfg.merge ?? {})) {
+    // e.g. "$.build.sessions[*].automation_session"
+    // split on "." then handle [*] segments
+    const parts = path.replace(/^\$\./, "").split(".");
+    let mergeNode: SpecResponseSchema | undefined = rawSchema;
+    let reachedWildcard = false;
+    for (const part of parts) {
+      if (part === "[*]") { reachedWildcard = true; break; }
+      const cleanPart = part.replace(/\[\*\]$/, "");
+      const isWildcard = part.endsWith("[*]");
+      mergeNode = (mergeNode?.properties as Record<string, SpecResponseSchema> | undefined)?.[cleanPart];
+      if (!mergeNode) break;
+      if (isWildcard) { reachedWildcard = true; break; }
+    }
+    // After wildcard, remaining parts walk into items.properties to find the element $ref
+    let itemRef: string | undefined;
+    if (reachedWildcard && mergeNode) {
+      // Find index of the wildcard part
+      const wildcardIdx = parts.findIndex((p) => p === "[*]" || p.endsWith("[*]"));
+      const remaining = parts.slice(wildcardIdx + 1);
+      // Start from items of the array schema
+      let itemNode: SpecResponseSchema | undefined = mergeNode.items;
+      for (const part of remaining) {
+        itemNode = (itemNode?.properties as Record<string, SpecResponseSchema> | undefined)?.[part];
+        if (!itemNode) break;
+      }
+      if (itemNode?.$ref) {
+        itemRef = itemNode.$ref.replace(/^.*\//, "");
+      } else if (!remaining.length && mergeNode.items?.$ref) {
+        itemRef = mergeNode.items.$ref.replace(/^.*\//, "");
+      }
+    } else if (mergeNode?.items?.$ref) {
+      itemRef = mergeNode.items.$ref.replace(/^.*\//, "");
+    }
+    if (itemRef) {
+      props[field] = { type: "array", items: { $ref: `#/components/schemas/${itemRef}` } };
+      required.push(field);
+    }
+  }
+
+  const name = resolveJsonComposeResultName(operationId);
+  return {
+    name,
+    schema: {
+      type: "object",
+      properties: props,
+      required,
+      _baseEmbed: baseGoName,
+    },
+  };
+}
+
 function responseType(op: SpecOp, operationId: string, knownSchemas: Set<string>): string {
   const responseCodec = resolveResponseCodec(op);
   if (responseCodec === "text") return "string";
   if (responseCodec === "binary") return "[]byte";
+
+  if (responseCodec === "json-compose") {
+    const resultName = resolveJsonComposeResultName(operationId);
+    return knownSchemas.has(resultName) ? resultName : "map[string]any";
+  }
 
   const schema = op.responses?.["200"]?.content?.["application/json"]?.schema;
   if (!schema) return "map[string]any";
@@ -109,7 +199,7 @@ function responseType(op: SpecOp, operationId: string, knownSchemas: Set<string>
   return "map[string]any";
 }
 
-type InlineSchemas = Record<string, { type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string } }>; required?: string[]; items?: { type?: string; $ref?: string; title?: string; properties?: Record<string, any>; required?: string[] } }>;
+type InlineSchemas = Record<string, { type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string; $ref?: string } }>; required?: string[]; items?: { type?: string; $ref?: string; title?: string; properties?: Record<string, { type?: string; $ref?: string }>; required?: string[] }; _baseEmbed?: string }>;
 
 function collectInlineSchemas(
   paths: Record<string, Record<string, SpecOp | undefined>>
@@ -122,6 +212,12 @@ function collectInlineSchemas(
       if (op["x-response-custom"] || op["x-request-custom"]) continue;
 
       const responseCodec = resolveResponseCodec(op);
+
+      if (responseCodec === "json-compose") {
+        const composed = buildJsonComposeSchema(op, op.operationId);
+        if (composed) extra[composed.name] = composed.schema;
+      }
+
       if (responseCodec !== "text" && responseCodec !== "binary") {
         const respSchema = op.responses?.["200"]?.content?.["application/json"]?.schema;
         if (respSchema && !respSchema.$ref) {

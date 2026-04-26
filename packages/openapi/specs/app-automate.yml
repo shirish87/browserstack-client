@@ -706,23 +706,14 @@ paths:
           content:
             application/json:
               schema:
-                title: GetAppAutomateXCUITestAppsResponse
-                oneOf:
-                - type: object
-                  required:
-                  - apps
-                  properties:
-                    apps:
-                      type: array
-                      items:
-                        type: object
-                        $ref: '#/components/schemas/AppAutomateApp'
-                - type: object
-                  required:
-                  - message
-                  properties:
-                    message:
-                      type: string
+                type: object
+                required:
+                - apps
+                properties:
+                  apps:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AppAutomateApp'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -1442,23 +1433,14 @@ paths:
           content:
             application/json:
               schema:
-                title: GetAppAutomateEspressoAppsResponse
-                oneOf:
-                - type: object
-                  required:
-                  - apps
-                  properties:
-                    apps:
-                      type: array
-                      items:
-                        type: object
-                        $ref: '#/components/schemas/AppAutomateApp'
-                - type: object
-                  required:
-                  - message
-                  properties:
-                    message:
-                      type: string
+                type: object
+                required:
+                - apps
+                properties:
+                  apps:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AppAutomateApp'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -1905,23 +1887,14 @@ paths:
           content:
             application/json:
               schema:
-                title: GetAppAutomateFlutteriOSAppsResponse
-                oneOf:
-                - type: object
-                  required:
-                  - test_packages
-                  properties:
-                    test_packages:
-                      type: array
-                      items:
-                        type: object
-                        $ref: '#/components/schemas/AppAutomateTestPackage'
-                - type: object
-                  required:
-                  - message
-                  properties:
-                    message:
-                      type: string
+                type: object
+                required:
+                - test_packages
+                properties:
+                  test_packages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AppAutomateTestPackage'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -2181,23 +2154,14 @@ paths:
           content:
             application/json:
               schema:
-                title: GetAppAutomateFlutterAndroidAppsResponse
-                oneOf:
-                - type: object
-                  required:
-                  - apps
-                  properties:
-                    apps:
-                      type: array
-                      items:
-                        type: object
-                        $ref: '#/components/schemas/AppAutomateApp'
-                - type: object
-                  required:
-                  - message
-                  properties:
-                    message:
-                      type: string
+                type: object
+                required:
+                - apps
+                properties:
+                  apps:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AppAutomateApp'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':

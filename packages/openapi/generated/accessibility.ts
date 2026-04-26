@@ -458,18 +458,9 @@ export interface components {
                 critical?: number;
                 moderate?: number;
             };
-            issueCountByURL?: {
-                url?: string;
-                count?: number;
-            }[];
-            issueCountByComponent?: {
-                componentId?: string;
-                count?: number;
-            }[];
-            issueCountByCategory?: {
-                category?: string;
-                count?: number;
-            }[];
+            issueCountByURL?: components["schemas"]["IssueCountByURL"][];
+            issueCountByComponent?: components["schemas"]["IssueCountByComponent"][];
+            issueCountByCategory?: components["schemas"]["IssueCountByCategory"][];
         };
         ScoreData: {
             score?: number;
@@ -525,32 +516,33 @@ export interface components {
                 submitSelector?: string;
             };
         };
-        WorkflowAnalyzerReportList: {
-            reports?: {
-                id?: number;
+        WorkflowAnalyzerReportItem: {
+            id?: number;
+            name?: string;
+            createdBy?: {
+                user_id?: number;
                 name?: string;
-                createdBy?: {
-                    user_id?: number;
+            };
+            wcagVersion?: string;
+            status?: string;
+            needsReview?: boolean;
+            bestPractices?: boolean;
+            advanced?: boolean;
+            scanType?: string;
+            engineInfo?: {
+                testEngine?: {
                     name?: string;
+                    version?: string;
                 };
-                wcagVersion?: string;
-                status?: string;
-                needsReview?: boolean;
-                bestPractices?: boolean;
-                advanced?: boolean;
-                scanType?: string;
-                engineInfo?: {
-                    testEngine?: {
-                        name?: string;
-                        version?: string;
-                    };
-                };
-                issueSummary?: {
-                    componentCount?: number;
-                    issueCount?: number;
-                    pageCount?: number;
-                };
-            }[];
+            };
+            issueSummary?: {
+                componentCount?: number;
+                issueCount?: number;
+                pageCount?: number;
+            };
+        };
+        WorkflowAnalyzerReportList: {
+            reports?: components["schemas"]["WorkflowAnalyzerReportItem"][];
             pagination?: components["schemas"]["Pagination"];
         };
         WorkflowAnalyzerReportSummary: {
@@ -586,33 +578,34 @@ export interface components {
             report_link?: string;
             pagination?: components["schemas"]["Pagination"];
         };
-        AssistedTestReportList: {
-            reports?: {
-                id?: number;
+        AssistedTestReportItem: {
+            id?: number;
+            name?: string;
+            createdBy?: {
+                user_id?: number;
                 name?: string;
-                createdBy?: {
-                    user_id?: number;
+            };
+            wcagVersion?: string;
+            status?: string;
+            needsReview?: boolean;
+            bestPractices?: boolean;
+            advanced?: boolean;
+            scanType?: string;
+            engineInfo?: {
+                testEngine?: {
                     name?: string;
+                    version?: string;
                 };
-                wcagVersion?: string;
-                status?: string;
-                needsReview?: boolean;
-                bestPractices?: boolean;
-                advanced?: boolean;
-                scanType?: string;
-                engineInfo?: {
-                    testEngine?: {
-                        name?: string;
-                        version?: string;
-                    };
-                };
-                issueSummary?: {
-                    componentCount?: number;
-                    issueCount?: number;
-                    pageCount?: number;
-                };
-                assistedTestType?: string;
-            }[];
+            };
+            issueSummary?: {
+                componentCount?: number;
+                issueCount?: number;
+                pageCount?: number;
+            };
+            assistedTestType?: string;
+        };
+        AssistedTestReportList: {
+            reports?: components["schemas"]["AssistedTestReportItem"][];
             pagination?: components["schemas"]["Pagination"];
         };
         AssistedTestReportSummary: {
@@ -780,54 +773,56 @@ export interface components {
             }[];
             pagination?: components["schemas"]["Pagination"];
         };
-        AutomatedTestsBuildList: {
-            builds?: {
+        AutomatedTestsBuildItem: {
+            id?: number;
+            buildNumber?: number;
+            name?: string;
+            startedAt?: string;
+            wcagVersion?: string;
+            recurring?: boolean;
+            active?: boolean;
+            status?: string;
+            advanced?: boolean;
+            localTestingEnabled?: boolean;
+            authEnabled?: boolean;
+            pageCount?: number;
+            createdBy?: {
                 id?: number;
-                buildNumber?: number;
                 name?: string;
-                startedAt?: string;
-                wcagVersion?: string;
-                recurring?: boolean;
-                active?: boolean;
-                status?: string;
-                advanced?: boolean;
-                localTestingEnabled?: boolean;
-                authEnabled?: boolean;
-                pageCount?: number;
-                createdBy?: {
-                    id?: number;
-                    name?: string;
-                };
-                projectId?: number;
-                thBuildId?: string;
-            }[];
+            };
+            projectId?: number;
+            thBuildId?: string;
+        };
+        AutomatedTestsBuildList: {
+            builds?: components["schemas"]["AutomatedTestsBuildItem"][];
             pagination?: components["schemas"]["Pagination"];
         };
-        AutomatedTestsBuildTestCases: {
-            testCases?: {
-                id?: number;
-                name?: string;
-                status?: string;
-                time?: string;
-                summary?: {
-                    pageCount?: number;
-                    componentCount?: number;
-                    issueCount?: number;
-                    severityBreakdown?: {
-                        minor?: number;
-                        serious?: number;
-                        critical?: number;
-                        moderate?: number;
-                    };
+        AutomatedTestsBuildTestCaseItem: {
+            id?: number;
+            name?: string;
+            status?: string;
+            time?: string;
+            summary?: {
+                pageCount?: number;
+                componentCount?: number;
+                issueCount?: number;
+                severityBreakdown?: {
+                    minor?: number;
+                    serious?: number;
+                    critical?: number;
+                    moderate?: number;
                 };
-                file?: string;
-                osData?: components["schemas"]["OsData"];
-                browserData?: components["schemas"]["BrowserData"];
-                tags?: string | null;
-                testRecordingTags?: string[];
-                error?: string | null;
-                pages?: string[];
-            }[];
+            };
+            file?: string;
+            osData?: components["schemas"]["OsData"];
+            browserData?: components["schemas"]["BrowserData"];
+            tags?: string | null;
+            testRecordingTags?: string[];
+            error?: string | null;
+            pages?: string[];
+        };
+        AutomatedTestsBuildTestCases: {
+            testCases?: components["schemas"]["AutomatedTestsBuildTestCaseItem"][];
             pagination?: components["schemas"]["Pagination"];
         };
         AutomatedTestsBuildSummary: {
@@ -893,6 +888,18 @@ export interface components {
             browserData?: components["schemas"]["BrowserData"];
             report_link?: string;
             pagination?: components["schemas"]["Pagination"];
+        };
+        IssueCountByURL: {
+            url?: string;
+            count?: number;
+        };
+        IssueCountByComponent: {
+            componentId?: string;
+            count?: number;
+        };
+        IssueCountByCategory: {
+            category?: string;
+            count?: number;
         };
     };
     responses: never;
@@ -1050,7 +1057,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthConfig"][];
+                    "application/json": {
+                        data?: {
+                            authConfigs?: components["schemas"]["AuthConfig"][];
+                        };
+                    };
                 };
             };
         };
@@ -1085,7 +1096,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthConfig"];
+                    "application/json": {
+                        data?: components["schemas"]["AuthConfig"];
+                    };
                 };
             };
         };
@@ -1131,7 +1144,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["WebsiteScannerScanCreated"];
+                    "application/json": {
+                        data?: components["schemas"]["WebsiteScannerScanCreated"];
+                    };
                 };
             };
         };
@@ -1153,7 +1168,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["WebsiteScannerScanOverview"];
+                    "application/json": {
+                        data?: components["schemas"]["WebsiteScannerScanOverview"];
+                    };
                 };
             };
         };
@@ -1224,7 +1241,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["WebsiteScannerScanRunStatus"];
+                    "application/json": {
+                        data?: components["schemas"]["WebsiteScannerScanRunStatus"];
+                    };
                 };
             };
         };
@@ -1273,7 +1292,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["WebsiteScannerScanRunLogs"];
+                    "application/json": {
+                        data?: components["schemas"]["WebsiteScannerScanRunLogs"];
+                    };
                 };
             };
         };
@@ -1342,7 +1363,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AutomatedTestsBuildTestCases"];
+                    "application/json": {
+                        testCases?: components["schemas"]["AutomatedTestsBuildTestCases"];
+                    };
                 };
             };
         };
@@ -1366,7 +1389,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AutomatedTestsBuildSummary"];
+                    "application/json": {
+                        data?: components["schemas"]["AutomatedTestsBuildSummary"];
+                    };
                 };
             };
         };
@@ -1415,7 +1440,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AutomatedTestsTestCaseSummary"];
+                    "application/json": {
+                        data?: components["schemas"]["AutomatedTestsTestCaseSummary"];
+                    };
                 };
             };
         };
