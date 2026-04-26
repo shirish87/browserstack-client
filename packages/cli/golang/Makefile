@@ -1,7 +1,9 @@
 .PHONY: build test lint integration-test
 
+VERSION := $(shell node -e "process.stdout.write(require('../typescript/package.json').version)")
+
 build:
-	go build -o dist/browserstack ./cmd/browserstack
+	go build -ldflags "-X main.version=$(VERSION)" -o dist/browserstack-client ./cmd/browserstack
 
 test:
 	go test ./...

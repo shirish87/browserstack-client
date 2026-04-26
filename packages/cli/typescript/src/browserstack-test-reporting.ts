@@ -320,8 +320,7 @@ export async function main(
 
 const isMain =
   import.meta.url === `file://${process.argv[1]}` ||
-  import.meta.url === `file://${resolve(process.argv[1])}` ||
-  (globalThis as Record<string, unknown>)["__BUILD_TARGET__"] === "binary";
+  import.meta.url === `file://${resolve(process.argv[1])}`;
 
 if (isMain) {
   main();

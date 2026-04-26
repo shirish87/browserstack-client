@@ -7,7 +7,15 @@ import (
 	bshttp "github.com/browserstack/browserstack-client/internal/http"
 )
 
+// version is set at build time via -ldflags "-X main.version=<ver>"
+var version = "dev"
+
 func main() {
+	if len(os.Args) >= 2 && os.Args[1] == "version" {
+		fmt.Printf("browserstack-client %s\n", version)
+		return
+	}
+
 	username := os.Getenv("BROWSERSTACK_USERNAME")
 	accessKey := os.Getenv("BROWSERSTACK_ACCESS_KEY")
 
@@ -17,7 +25,8 @@ func main() {
 	}
 
 	if len(os.Args) < 3 {
-		fmt.Fprintln(os.Stderr, "Usage: browserstack <product> <action> [args...]")
+		fmt.Fprintln(os.Stderr, "Usage: browserstack-client <product> <action> [args...]")
+		fmt.Fprintln(os.Stderr, "       browserstack-client version")
 		fmt.Fprintln(os.Stderr, "Products: automate, app-automate, screenshots, local-testing, test-management, test-reporting, accessibility")
 		os.Exit(1)
 	}

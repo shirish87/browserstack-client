@@ -1,4 +1,8 @@
 import { defineConfig } from "tsup";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { version } = require("./package.json") as { version: string };
 
 export default defineConfig({
   entry: {
@@ -15,5 +19,6 @@ export default defineConfig({
   noExternal: [/.*/],
   define: {
     "globalThis.__BUILD_TARGET__": '"binary"',
+    "globalThis.__CLI_VERSION__": JSON.stringify(version),
   },
 });

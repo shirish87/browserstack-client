@@ -24,6 +24,13 @@ const products: Record<string, (args: string[]) => Promise<void>> = {
 export async function main(inputArgs: string[] = process.argv.slice(2)) {
   const product = inputArgs[0]?.toLowerCase().trim();
 
+  if (product === "version") {
+    const ver = (globalThis as Record<string, unknown>)["__CLI_VERSION__"] as string | undefined
+      ?? (await import("../package.json", { with: { type: "json" } })).default.version;
+    process.stdout.write(`browserstack-client ${ver}\n`);
+    return;
+  }
+
   if (!product || !products[product]) {
     const valid = Object.keys(products).join(", ");
     process.stderr.write(
