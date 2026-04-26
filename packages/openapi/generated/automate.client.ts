@@ -254,17 +254,6 @@ export type GetAutomateProjectResult = DeepCamelCase<(operations["getAutomatePro
 export type GetAutomateBuildsResultItem = DeepCamelCase<(operations["getAutomateBuilds"]["responses"][200]["content"]["application/json"][number] & Record<"automation_build", unknown>)["automation_build"]>;
 export type GetAutomateBuildsResult = Array<GetAutomateBuildsResultItem>;
 
-/**
- * @preventInline GetAutomateSessionResult
- * @preventInline UpdateAutomateSessionResult
- * @preventInline GetAutomateBuildSessionsItem
- * @preventInline GetAutomateBuildResult
- * @preventInline GetAutomateSessionsResultItem
- * @preventInline GetAutomateSessionsResult
- * @preventInline GetAutomateProjectResult
- * @preventInline GetAutomateBuildsResultItem
- * @preventInline GetAutomateBuildsResult
- */
 export class GeneratedAutomateClient extends APIClient {
 /** Fetches all automate browsers. */
   getBrowsers(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAutomateBrowsers"]["responses"][200]["content"]["application/json"]>> {
