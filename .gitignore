@@ -19,6 +19,7 @@ dist-ssr
 
 # TypeScript build info
 *.tsbuildinfo
+.turbo/
 
 # Go build output
 packages/cli/golang/dist/
