@@ -6,6 +6,7 @@ import ts from "typescript";
 import { fileURLToPath } from "node:url";
 import { CodecRegistry, registerAllBuiltins } from "@browserstack-client/openapi-transforms";
 import { generateClientModule } from "@browserstack-client/openapi-transforms/codegen";
+import { generateGoModule } from "@browserstack-client/openapi-transforms/codegen/golang";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -186,3 +187,29 @@ for (const { product, baseUrl } of productSpecs) {
 }
 
 function toPascal(s) { return s.split(/[-_]/).map(w => w[0].toUpperCase() + w.slice(1)).join(""); }
+
+console.log("Generating Go client modules...");
+
+async function generateGoModules() {
+  const goOutBase = path.join(__dirname, "../../cli/golang/generated");
+  for (const { product } of productSpecs) {
+    const specFile = path.join(__dirname, "specs", `${product}.yml`);
+    try {
+      const { typesGo, clientGo } = await generateGoModule({
+        specPath: specFile,
+        product,
+        modulePath: "github.com/browserstack/browserstack-client",
+      });
+      const outDir = path.join(goOutBase, product);
+      await fs.mkdir(outDir, { recursive: true });
+      await fs.writeFile(path.join(outDir, "types.go"), typesGo);
+      await fs.writeFile(path.join(outDir, "client.go"), clientGo);
+      console.log(`  ✓ ${product}/ (Go)`);
+    } catch (e) {
+      console.error(`  ✗ ${product}:`, e.message);
+      process.exitCode = 1;
+    }
+  }
+}
+
+await generateGoModules();

@@ -13,6 +13,10 @@
     "./codegen": {
       "types": "./dist/codegen/typescript/index.d.ts",
       "import": "./dist/codegen/typescript/index.js"
+    },
+    "./codegen/golang": {
+      "types": "./dist/codegen/golang/index.d.ts",
+      "import": "./dist/codegen/golang/index.js"
     }
   },
   "files": [

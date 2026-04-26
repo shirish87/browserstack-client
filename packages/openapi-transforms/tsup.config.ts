@@ -1,7 +1,11 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts", "src/codegen/typescript/index.ts"],
+  entry: [
+    "src/index.ts",
+    "src/codegen/typescript/index.ts",
+    "src/codegen/golang/index.ts",
+  ],
   format: ["esm"],
   bundle: true,
   dts: true,
