@@ -51,6 +51,8 @@ const ast = await openapiTS(specUrl, {
 await fs.writeFile(
   path.join(outDir, "openapi.ts"),
   astToString(ast)
+    .replace(/ \* @description /g, " * ")
+    .replace(/\/\*\* @description /g, "/** ")
 );
 
 console.log("✓ Generated openapi.ts");

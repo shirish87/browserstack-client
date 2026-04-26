@@ -1,5 +1,6 @@
 import { resolveAccessKey, resolveUsername } from "@browserstack-client/core";
 import { BrowserStackError } from "@browserstack-client/core";
+import { isHttpError } from "@browserstack-client/openapi-transforms";
 
 /**
  * Ensures that an access key exists and returns it.
@@ -37,4 +38,25 @@ export function ensureUsernameExists(data: string | undefined): string {
   }
 
   return username.trim();
+}
+
+/**
+ * Formats an error into a human-readable string.
+ * @param err - The error to format.
+ * @returns The formatted error message.
+ *
+ * @internal
+ */
+export function formatError(err: unknown): string {
+  if (isHttpError(err)) {
+    const statusText = err.statusText || "";
+    const msg = err.message && err.message !== `HTTP ${err.status} ${statusText}`.trim() ? `: ${err.message}` : "";
+    return `Error: ${err.status} ${statusText}${msg}`;
+  }
+
+  if (err instanceof Error) {
+    return err.message;
+  }
+
+  return String(err);
 }

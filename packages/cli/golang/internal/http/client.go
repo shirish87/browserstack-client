@@ -24,7 +24,25 @@ type APIError struct {
 }
 
 func (e *APIError) Error() string {
-	return fmt.Sprintf("HTTP %d %s: %s", e.StatusCode, e.Status, e.Body)
+	if len(e.Body) > 0 {
+		trimmed := bytes.TrimSpace([]byte(e.Body))
+		if bytes.HasPrefix(trimmed, []byte("<html")) || bytes.HasPrefix(trimmed, []byte("<!DOCTYPE")) {
+			return fmt.Sprintf("HTTP %d %s", e.StatusCode, e.Status)
+		}
+
+		// If it's JSON, try to extract error or message field
+		var parsed map[string]any
+		if err := json.Unmarshal(trimmed, &parsed); err == nil {
+			for _, key := range []string{"error", "message", "detail"} {
+				if val, ok := parsed[key].(string); ok && val != "" {
+					return fmt.Sprintf("HTTP %d %s: %s", e.StatusCode, e.Status, val)
+				}
+			}
+		}
+
+		return fmt.Sprintf("HTTP %d %s: %s", e.StatusCode, e.Status, e.Body)
+	}
+	return fmt.Sprintf("HTTP %d %s", e.StatusCode, e.Status)
 }
 
 func New(baseURL, username, accessKey string) *Client {

@@ -6,7 +6,13 @@ function firstString(v: unknown): string | undefined {
 
 export function defaultErrorMessage(body: unknown): string | undefined {
   if (body == null) return undefined;
-  if (typeof body === "string") return firstString(body);
+  if (typeof body === "string") {
+    const s = body.trim();
+    if (s.startsWith("<html") || s.startsWith("<!DOCTYPE html") || s.startsWith("<head") || s.startsWith("<body")) {
+        return undefined;
+    }
+    return firstString(body);
+  }
   if (typeof body !== "object") return undefined;
   const o = body as Record<string, unknown>;
   return (

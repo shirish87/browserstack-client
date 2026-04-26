@@ -6,6 +6,7 @@ export { APIClient, resolveAccessKey, resolveUsername } from "./api-client";
 export type {
   BrowserStackOptions,
   ExecuteOptions,
+  HttpMethod,
 } from "./api-client";
 export {
   BrowserStackError,
@@ -29,4 +30,5 @@ export type {
 } from "./error";
 export { buildBasicAuthHeader } from "./auth";
 export { env, versions, currentPlatform, currentArch } from "./env";
+export type { Dict } from "./env";
 export { makePkgInfo } from "./pkginfo";

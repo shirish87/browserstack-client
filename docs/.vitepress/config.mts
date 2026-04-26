@@ -21,6 +21,10 @@ export default defineConfig({
         link: "https://www.npmjs.com/package/browserstack-client",
       },
     ],
-    sidebar: typedocSidebar,
+    sidebar: [
+      { text: "Architecture", link: "/architecture" },
+      { text: "Recipes", link: "/recipes" },
+      ...typedocSidebar,
+    ],
   },
 });
