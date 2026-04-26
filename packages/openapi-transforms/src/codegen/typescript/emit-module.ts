@@ -41,10 +41,7 @@ import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
       return m ? m[1] : null;
     })
     .filter((n): n is string => n !== null);
-  const preventInlineTags = aliasNames.map((n) => ` * @_preventInline ${n}`).join("\n");
-  const classJsDoc = aliasNames.length
-    ? `/**\n${preventInlineTags}\n */\n`
-    : "";
+  const classJsDoc = "";
   const body = `${classJsDoc}export class ${input.className} extends APIClient {
 ${methods.map(emitMethod).join("\n\n")}
 }`;
