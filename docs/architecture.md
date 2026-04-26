@@ -2,6 +2,47 @@
 
 The BrowserStack Client SDK is designed with an OpenAPI-first approach, ensuring that all clients (TypeScript and Golang) and the CLI are consistently generated from a single source of truth.
 
+## Component Architecture
+
+The following diagram illustrates how the different components of the project interact and their dependency flow:
+
+```mermaid
+graph TD
+    subgraph "Source of Truth"
+        Specs["OpenAPI Specs<br/>(packages/openapi/specs/*.yml)"]
+    end
+
+    subgraph "Generation Engine"
+        Transforms["OpenAPI Transforms<br/>(packages/openapi-transforms)"]
+        Build["Build Script<br/>(packages/openapi/build.mjs)"]
+    end
+
+    subgraph "Shared Core"
+        Core["Core Library (TS)<br/>(packages/core)"]
+    end
+
+    subgraph "TypeScript SDKs"
+        SDK_TS["Product SDKs (TS)<br/>(@browserstack-client/automate, etc.)"]
+    end
+
+    subgraph "Command Line Interfaces"
+        CLI_TS["TypeScript CLI<br/>(packages/cli/typescript)"]
+        CLI_GO["Golang CLI / SDK<br/>(packages/cli/golang)"]
+    end
+
+    %% Dependencies
+    Specs --> Build
+    Build --> Transforms
+    Transforms --> SDK_TS
+    Transforms --> CLI_TS
+    Transforms --> CLI_GO
+
+    Core --> SDK_TS
+    Core --> CLI_TS
+    
+    SDK_TS --> CLI_TS
+```
+
 ## Source of Truth: OpenAPI Specs
 
 The project uses OpenAPI 3.x specifications to define all BrowserStack REST APIs.

@@ -1,10 +1,11 @@
 import { defineConfig } from "vitepress";
+import { withMermaid } from "vitepress-plugin-mermaid";
 import typedocSidebar from "../api/typedoc-sidebar.json";
 
 const isCI = process.env.CI === "true" || process.env.GITHUB_ACTIONS === "true";
 
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+export default withMermaid(defineConfig({
   base: isCI ? "/browserstack-client/" : "/",
   cleanUrls: true,
   title: "BrowserStack Client",
@@ -28,4 +29,4 @@ export default defineConfig({
       ...typedocSidebar,
     ],
   },
-});
+}));
