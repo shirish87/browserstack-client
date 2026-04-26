@@ -248,6 +248,7 @@ jobs:
           gh release create "$TAG" \
             --title "Release $TAG" \
             --notes "$RELEASE_NOTES" \
+            --overwrite \
             $( [ "$IS_PRE" = "true" ] && echo "--prerelease" ) \
             release-assets/go/browserstack-client-linux-amd64 \
             release-assets/go/browserstack-client-linux-arm64 \
