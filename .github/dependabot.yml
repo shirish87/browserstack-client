@@ -1,8 +1,3 @@
 version: 2
-updates:
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    allow:
-      - dependency-type: production
+updates: []
+# Disabled — re-enable when ready for automated dependency updates

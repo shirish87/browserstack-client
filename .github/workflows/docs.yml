@@ -1,9 +1,8 @@
 name: Publish docs
 on:
   push:
-    tags:
-      - '*'
-  workflow_dispatch:
+    branches:
+      - '__disabled__'
 
 concurrency:
   group: pages

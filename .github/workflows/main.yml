@@ -1,9 +1,8 @@
 name: CI
 on:
   push:
-    paths-ignore:
-      - ".github/**"
-  workflow_dispatch:
+    branches:
+      - '__disabled__'
 
 concurrency:
   group: ci-${{ github.ref }}

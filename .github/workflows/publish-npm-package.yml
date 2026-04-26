@@ -1,11 +1,9 @@
 name: Publish npm package
 # Disabled — npm publishing is not active. Re-enable by restoring the trigger below.
 on:
-  workflow_dispatch:
-    inputs:
-      confirm:
-        description: "Type 'publish' to confirm"
-        required: true
+  push:
+    branches:
+      - '__disabled__'
 
 concurrency:
   group: publish-npm-package
