@@ -3118,3 +3118,96 @@ components:
             type: string
             description: Dashboard URL of the session
             example: ''
+    AutomateBuild:
+      title: AutomateBuild
+      type: object
+      required:
+      - name
+      - hashed_id
+      - duration
+      - status
+      - build_tag
+      - public_url
+      properties:
+        name:
+          type: string
+          description: Name of your build
+          example: pricing_project_build
+        duration:
+          type: number
+          description: Duration of build execution
+          example: 10
+        status:
+          type: string
+          enum:
+          - running
+          - timeout
+          - failed
+          - done
+        user_id:
+          type: number
+          description: Identifier for the user
+          example: 256454
+        group_id:
+          type: number
+          description: Identifier for your account or group
+          example: 2
+        sub_group_id:
+          type: number
+          description: Identifier for a team in a group
+          example: 0
+        automation_project_id:
+          type: number
+          description: ID of your project
+          example: 866256
+        hashed_id:
+          type: string
+          description: Hashed ID of the build
+          example: 4207442b2b0567368956dba064c22a3235a76214
+        build_tag:
+          type: string
+          description: Tag for the build
+          example: pricing_project_build
+        public_url:
+          type: string
+          description: Public URL of the build
+    AutomateProject:
+      title: AutomateProject
+      type: object
+      required:
+      - id
+      - name
+      - user_id
+      - group_id
+      - sub_group_id
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: number
+          description: ID of your project
+          example: 866256
+        name:
+          type: string
+          description: Name of your project
+          example: pricing_project
+        user_id:
+          type: number
+          description: Identifier for the user
+          example: 256454
+        group_id:
+          type: number
+          description: Identifier for your account or group
+          example: 2
+        sub_group_id:
+          type: number
+          description: Identifier for a team in a group
+          example: 0
+        created_at:
+          type: string
+          description: Time at which the project was created on BrowserStack servers
+          example: '2020-03-11T10:14:36.000Z'
+        updated_at:
+          type: string
+          description: Time at which the project was updated on BrowserStack servers
+          example: '2020-09-18T09:45:57.000Z'
