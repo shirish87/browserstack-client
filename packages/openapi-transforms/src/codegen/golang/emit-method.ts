@@ -3,6 +3,7 @@ import { toPascalCase } from "./case";
 export interface GoMethodInput {
   operationId: string;
   methodName: string;
+  cliAction?: string;
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
   pathParams: Array<{ name: string; goType: string }>;
@@ -62,14 +63,16 @@ export function emitGoMethod(input: GoMethodInput): string {
 
   const httpMethod = input.method.charAt(0).toUpperCase() + input.method.slice(1).toLowerCase();
 
+  const docComment = input.cliAction ? `/**\n * CLI Command: ${input.cliAction}\n */\n` : "";
+
   if (isTextResponse) {
-    return `func (c *${input.className}) ${fnName}(${paramsList}) (string, error) {
+    return `${docComment}func (c *${input.className}) ${fnName}(${paramsList}) (string, error) {
 \treturn c.http.GetText(ctx, ${urlExpr}, ${queryExpr})
 }`;
   }
 
   if (isMultipart) {
-    return `func (c *${input.className}) ${fnName}(${paramsList}) (*${input.responseType}, error) {
+    return `${docComment}func (c *${input.className}) ${fnName}(${paramsList}) (*${input.responseType}, error) {
 \tvar out ${input.responseType}
 \tif err := c.http.PostMultipart(ctx, ${urlExpr}, file, fileName, fields, &out); err != nil {
 \t\treturn nil, err
@@ -86,7 +89,7 @@ export function emitGoMethod(input: GoMethodInput): string {
         ? `${urlExpr}, body, &out`
         : `${urlExpr}, nil, &out`;
 
-  return `func (c *${input.className}) ${fnName}(${paramsList}) (*${input.responseType}, error) {
+  return `${docComment}func (c *${input.className}) ${fnName}(${paramsList}) (*${input.responseType}, error) {
 \tvar out ${input.responseType}
 \tif err := c.http.${httpMethod}(ctx, ${methodArgs}); err != nil {
 \t\treturn nil, err

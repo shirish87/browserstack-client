@@ -210,6 +210,7 @@ export async function generateGoModule(
       const input: GoMethodInput = {
         operationId: op.operationId,
         methodName: stripOperationPrefix(op.operationId, opts.product),
+        cliAction: op.operationId,
         method: method.toUpperCase() as GoMethodInput["method"],
         path,
         pathParams,
