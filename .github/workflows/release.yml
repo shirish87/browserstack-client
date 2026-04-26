@@ -14,6 +14,9 @@ concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # ── Go CLI: native binaries for all platforms ────────────────────────────────
   build-go:
@@ -27,7 +30,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: packages/cli/golang/go.mod
-          cache-dependency-path: packages/cli/golang/go.sum
+          # cache-dependency-path: packages/cli/golang/go.sum
 
       - uses: pnpm/action-setup@v4
 
@@ -51,7 +54,7 @@ jobs:
         with:
           name: go-binaries
           path: packages/cli/golang/dist/browserstack-client-*
-          if_no_files_found: error
+          if-no-files-found: error
           retention-days: 1
 
   # ── TypeScript CLI: Node.js-bundled binaries ─────────────────────────────────
@@ -89,7 +92,7 @@ jobs:
             packages/cli/typescript/dist-binary/browserstack-client-ts-darwin-amd64
             packages/cli/typescript/dist-binary/browserstack-client-ts-darwin-arm64
             packages/cli/typescript/dist-binary/browserstack-client-ts-windows-amd64.exe
-          if_no_files_found: error
+          if-no-files-found: error
           retention-days: 1
 
   # ── SDK packages: npm tarballs ───────────────────────────────────────────────
@@ -129,7 +132,7 @@ jobs:
         with:
           name: sdk-tarballs
           path: release-tarballs/*.tgz
-          if_no_files_found: error
+          if-no-files-found: error
           retention-days: 1
 
   # ── Create GitHub Release ────────────────────────────────────────────────────
