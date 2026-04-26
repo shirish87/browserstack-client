@@ -5,6 +5,7 @@ describe("emitMethod", () => {
   it("emits a GET method with path params and json-unwrap codec", () => {
     const src = emitMethod({
       operationId: "getAutomateProject",
+      methodName: "getAutomateProject",
       method: "GET",
       path: "/automate/projects/{projectId}.json",
       pathParams: [{ name: "projectId", tsType: "number" }],
@@ -31,6 +32,7 @@ describe("emitMethod", () => {
   it("camelizes snake_case path params in signature", () => {
     const src = emitMethod({
       operationId: "getAutomateSession",
+      methodName: "getAutomateSession",
       method: "GET",
       path: "/automate/sessions/{session_id}",
       pathParams: [{ name: "session_id", tsType: "string" }],
@@ -48,6 +50,7 @@ describe("emitMethod", () => {
   it("wraps requestInput with toSnakeCase when hasRequestBody is true", () => {
     const src = emitMethod({
       operationId: "updateBuild",
+      methodName: "updateBuild",
       method: "PUT",
       path: "/automate/builds/{build_id}",
       pathParams: [{ name: "build_id", tsType: "string" }],
@@ -64,6 +67,7 @@ describe("emitMethod", () => {
   it("wraps response with toCamelCase", () => {
     const src = emitMethod({
       operationId: "getAutomatePlan",
+      methodName: "getAutomatePlan",
       method: "GET",
       path: "/automate/plan.json",
       pathParams: [],
@@ -80,6 +84,7 @@ describe("emitMethod", () => {
   it("inverts request overrides for toSnakeCase", () => {
     const src = emitMethod({
       operationId: "uploadApp",
+      methodName: "uploadApp",
       method: "POST",
       path: "/app-automate/upload",
       pathParams: [],

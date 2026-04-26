@@ -16,8 +16,8 @@ describe("emitGoFile", () => {
   it("emits client struct and New constructor", () => {
     const result = emitGoFile("automate", "AutomateClient", "github.com/browserstack/browserstack-client");
     expect(result).toContain("type AutomateClient struct {");
-    expect(result).toContain("http *bshttp.Client");
-    expect(result).toContain("func New(c *bshttp.Client) *AutomateClient {");
+    expect(result).toContain("http *browserstackhttp.Client");
+    expect(result).toContain("func New(c *browserstackhttp.Client) *AutomateClient {");
     expect(result).toContain("return &AutomateClient{http: c}");
   });
 

@@ -4,6 +4,7 @@ import { emitGoFile } from "./emit-file";
 import { emitGoMethod, type GoMethodInput } from "./emit-method";
 import { emitGoTypes } from "./emit-types";
 import { toPascalCase } from "./case";
+import { stripOperationPrefix } from "../shared/operation";
 
 export interface GenerateGoModuleOptions {
   specPath: string;
@@ -168,6 +169,7 @@ export async function generateGoModule(
 
       const input: GoMethodInput = {
         operationId: op.operationId,
+        methodName: stripOperationPrefix(op.operationId, opts.product),
         method: method.toUpperCase() as GoMethodInput["method"],
         path,
         pathParams,

@@ -6,9 +6,11 @@ import { emitModule } from "./emit-module";
 import type { EmitMethodInput } from "./emit-method";
 import { deriveReturnType } from "./derive-return-type";
 import { loadFieldOverrides, type FieldOverrides } from "./field-overrides";
+import { stripOperationPrefix } from "../shared/operation";
 
 export interface GenerateClientOptions {
   specPath: string;
+  product: string;
   className: string;
   typesImportPath: string;
   registry: CodecRegistry;
@@ -31,6 +33,8 @@ interface SpecDoc {
 }
 interface SpecOp {
   operationId?: string;
+  summary?: string;
+  description?: string;
   parameters?: Array<SpecParam>;
   requestBody?: unknown;
   responses?: Record<string, { content?: Record<string, unknown> }>;
@@ -78,9 +82,11 @@ export async function generateClientModule(opts: GenerateClientOptions): Promise
         return { name: p.name, baseName, tsType, required: false };
       });
       methods.push({
-        operationId, method: method.toUpperCase() as EmitMethodInput["method"], path,
+        operationId, methodName: stripOperationPrefix(operationId, opts.product),
+        method: method.toUpperCase() as EmitMethodInput["method"], path,
         pathParams, queryParams, hasRequestBody: Boolean(op.requestBody),
         operationsKey: operationId, returnType, annotations, baseUrl: (op["x-base-url"] ?? opts.baseUrl) as "sdk" | "sdkCloud",
+        summary: op.summary, description: op.description,
       });
       const errorStatuses = Object.keys(op.responses ?? {}).map(Number)
         .filter((s) => Number.isFinite(s) && s >= 400);

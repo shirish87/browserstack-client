@@ -2,6 +2,7 @@ import { toPascalCase } from "./case";
 
 export interface GoMethodInput {
   operationId: string;
+  methodName: string;
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
   pathParams: Array<{ name: string; goType: string }>;
@@ -42,7 +43,7 @@ function buildQueryExpr(queryParams: Array<{ name: string; goType: string }>): s
 }
 
 export function emitGoMethod(input: GoMethodInput): string {
-  const fnName = toPascalCase(input.operationId);
+  const fnName = toPascalCase(input.methodName);
   const isTextResponse = input.responseType === "string";
   const isMultipart = input.requestCodec === "multipart";
   const urlExpr = buildUrlExpr(input.path, input.pathParams);

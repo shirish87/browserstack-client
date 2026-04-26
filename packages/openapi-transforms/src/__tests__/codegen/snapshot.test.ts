@@ -11,6 +11,7 @@ describe("codegen snapshot", () => {
     registerAllBuiltins(r);
     const actual = await generateClientModule({
       specPath: path.resolve(__dirname, "../fixtures/tiny-spec.yml"),
+      product: "tiny",
       className: "TinyClient",
       typesImportPath: "./tiny-types",
       registry: r,

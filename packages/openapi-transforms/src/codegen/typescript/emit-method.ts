@@ -4,6 +4,7 @@ import { camelize } from "../../transforms/case";
 
 export interface EmitMethodInput {
   operationId: string;
+  methodName: string;
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
   pathParams: Array<{ name: string; tsType: string }>;
@@ -14,6 +15,8 @@ export interface EmitMethodInput {
   annotations: OperationAnnotations;
   baseUrl: "sdk" | "sdkCloud";
   overrides?: OperationOverrides;
+  summary?: string;
+  description?: string;
 }
 
 export function emitMethod(input: EmitMethodInput): string {
@@ -73,8 +76,13 @@ export function emitMethod(input: EmitMethodInput): string {
     ? `toSnakeCase(body, ${reqOverrideLit})`
     : "undefined";
 
+  const docText = input.description ?? input.summary;
+  const jsdoc = docText
+    ? `/** ${docText.replace(/\*\//g, "* /")} */\n  `
+    : "";
+
   return `
-  ${input.operationId}(${params}): Promise<DeepCamelCase<${input.returnType}>> {
+  ${jsdoc}${input.methodName}(${params}): Promise<DeepCamelCase<${input.returnType}>> {
     return (this.execute({
       path: "${input.path}",
       params: ${paramsArg},

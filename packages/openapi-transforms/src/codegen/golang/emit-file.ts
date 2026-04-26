@@ -7,14 +7,14 @@ export function emitGoFile(product: string, className: string, modulePath: strin
 
 import (
 \t"context"
-${strconvImport}\tbshttp "${modulePath}/internal/http"
+${strconvImport}\tbrowserstackhttp "${modulePath}/internal/http"
 )
 
 type ${className} struct {
-\thttp *bshttp.Client
+\thttp *browserstackhttp.Client
 }
 
-func New(c *bshttp.Client) *${className} {
+func New(c *browserstackhttp.Client) *${className} {
 \treturn &${className}{http: c}
 }
 `;

@@ -4,6 +4,7 @@ const PACKAGE_EXCEPTIONS: Record<string, string> = {
   "app-automate": "appautomate",
 };
 
+
 export function toPascalCase(s: string): string {
   return s
     .split(/[-_ .]/)

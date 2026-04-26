@@ -4,14 +4,14 @@ import (
 	"context"
 	"strconv"
 
-	bshttp "github.com/browserstack/browserstack-client/internal/http"
+	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 )
 
 type AutomateClient struct {
-	http *bshttp.Client
+	http *browserstackhttp.Client
 }
 
-func New(c *bshttp.Client) *AutomateClient {
+func New(c *browserstackhttp.Client) *AutomateClient {
 	return &AutomateClient{http: c}
 }
 

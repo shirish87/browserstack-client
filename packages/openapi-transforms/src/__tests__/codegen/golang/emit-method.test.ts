@@ -5,6 +5,7 @@ describe("emitGoMethod", () => {
   it("emits a GET with no params", () => {
     const input: GoMethodInput = {
       operationId: "getAutomateBuilds",
+      methodName: "getAutomateBuilds",
       method: "GET",
       path: "/automate/builds.json",
       pathParams: [],
@@ -22,6 +23,7 @@ describe("emitGoMethod", () => {
   it("emits a GET with path param", () => {
     const input: GoMethodInput = {
       operationId: "getAutomateBuild",
+      methodName: "getAutomateBuild",
       method: "GET",
       path: "/automate/builds/{buildId}.json",
       pathParams: [{ name: "buildId", goType: "string" }],
@@ -39,6 +41,7 @@ describe("emitGoMethod", () => {
   it("emits a GET with query params", () => {
     const input: GoMethodInput = {
       operationId: "getAutomateBuilds",
+      methodName: "getAutomateBuilds",
       method: "GET",
       path: "/automate/builds.json",
       pathParams: [],
@@ -56,6 +59,7 @@ describe("emitGoMethod", () => {
   it("emits a POST with JSON body", () => {
     const input: GoMethodInput = {
       operationId: "updateAutomateBuild",
+      methodName: "updateAutomateBuild",
       method: "PATCH",
       path: "/automate/builds/{buildId}.json",
       pathParams: [{ name: "buildId", goType: "string" }],
@@ -75,6 +79,7 @@ describe("emitGoMethod", () => {
   it("emits a multipart upload", () => {
     const input: GoMethodInput = {
       operationId: "uploadAutomateMediaFile",
+      methodName: "uploadAutomateMediaFile",
       method: "POST",
       path: "/automate/upload",
       pathParams: [],
@@ -92,6 +97,7 @@ describe("emitGoMethod", () => {
   it("emits a text response as string return", () => {
     const input: GoMethodInput = {
       operationId: "getAutomateSessionLogs",
+      methodName: "getAutomateSessionLogs",
       method: "GET",
       path: "/automate/sessions/{sessionId}/logs",
       pathParams: [{ name: "sessionId", goType: "string" }],
