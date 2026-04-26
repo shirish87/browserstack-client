@@ -30,5 +30,4 @@ export type {
 } from "./error";
 export { buildBasicAuthHeader } from "./auth";
 export { env, versions, currentPlatform, currentArch } from "./env";
-export type { Dict } from "./env";
 export { makePkgInfo } from "./pkginfo";

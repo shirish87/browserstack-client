@@ -1,16 +1,12 @@
 // for compatibility with nodejs and deno
 
-export interface Dict<T> {
-  [key: string]: T | undefined;
-}
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const proc = globalThis.process ?? { env: {}, versions: {} };
 
-export const env: Dict<string> = { ...proc?.env };
+export const env: Record<string, string | undefined> = { ...proc?.env };
 
-export const versions: Dict<string> = {
+export const versions: Record<string, string | undefined> = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   node: "unknown",
