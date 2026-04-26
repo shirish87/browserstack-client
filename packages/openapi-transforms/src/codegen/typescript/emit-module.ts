@@ -41,7 +41,7 @@ import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
       return m ? m[1] : null;
     })
     .filter((n): n is string => n !== null);
-  const preventInlineTags = aliasNames.map((n) => ` * @preventInline ${n}`).join("\n");
+  const preventInlineTags = aliasNames.map((n) => ` * @_preventInline ${n}`).join("\n");
   const classJsDoc = aliasNames.length
     ? `/**\n${preventInlineTags}\n */\n`
     : "";
