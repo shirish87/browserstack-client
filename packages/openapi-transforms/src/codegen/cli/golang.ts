@@ -55,17 +55,15 @@ export function generateGoDispatch(m: CLIMetadata): string {
 
       const pathParams = actionMeta.parameters.filter((p: any) => p.in === "path");
       const queryParams = actionMeta.parameters.filter((p: any) => p.in === "query");
-      const allParams = [...pathParams, ...queryParams];
+      const requiredQueryParams = queryParams.filter((p: any) => p.required);
+      
+      const totalRequired = pathParams.length + requiredQueryParams.length;
 
-      if (allParams.length > 0) {
-        // Only path params are strictly required; query params are optional positional
-        const requiredCount = pathParams.length;
-        if (requiredCount > 0) {
-          out += `\t\tif len(args) < ${requiredCount} {\n`;
-          const argNames = [...pathParams, ...queryParams].map((p: any) => `<${p.name}>`).join(" ");
-          out += `\t\t\treturn nil, fmt.Errorf("usage: ${m.product} ${action} ${argNames}")\n`;
-          out += `\t\t}\n`;
-        }
+      if (pathParams.length > 0 || requiredQueryParams.length > 0) {
+        out += `\t\tif len(args) < ${totalRequired} {\n`;
+        const argNames = [...pathParams, ...requiredQueryParams, ...queryParams.filter((p: any) => !p.required)].map((p: any) => `<${p.name}>`).join(" ");
+        out += `\t\t\treturn nil, fmt.Errorf("usage: ${m.product} ${action} ${argNames}")\n`;
+        out += `\t\t}\n`;
       }
 
       const callArgs = ["ctx"];
