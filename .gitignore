@@ -17,6 +17,21 @@ dist-binary
 dist-ssr
 *.local
 
+# TypeScript build info
+*.tsbuildinfo
+
+# Go build output
+packages/cli/golang/dist/
+packages/cli/golang/browserstack
+packages/cli/golang/browserstack-client
+
+# Sonar / CI artefacts
+docker-compose.sonarqube.yml
+sonar-project.properties
+sample-junit.xml
+generate_yaml.cjs
+generate_yaml.js
+
 docs/api/
 docs/.vitepress/dist/
 docs/.vitepress/cache/

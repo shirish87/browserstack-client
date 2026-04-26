@@ -138,35 +138,35 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
 
-  packages/cli:
+  packages/cli/typescript:
     dependencies:
       '@browserstack-client/accessibility':
         specifier: workspace:*
-        version: link:../accessibility
+        version: link:../../accessibility
       '@browserstack-client/app-automate':
         specifier: workspace:*
-        version: link:../app-automate
+        version: link:../../app-automate
       '@browserstack-client/automate':
         specifier: workspace:*
-        version: link:../automate
+        version: link:../../automate
       '@browserstack-client/core':
         specifier: workspace:*
-        version: link:../core
+        version: link:../../core
       '@browserstack-client/local-testing':
         specifier: workspace:*
-        version: link:../local-testing
+        version: link:../../local-testing
       '@browserstack-client/local-testing-binary':
         specifier: workspace:*
-        version: link:../local-testing-binary
+        version: link:../../local-testing-binary
       '@browserstack-client/openapi-transforms':
         specifier: workspace:*
-        version: link:../openapi-transforms
+        version: link:../../openapi-transforms
       '@browserstack-client/test-management':
         specifier: workspace:*
-        version: link:../test-management
+        version: link:../../test-management
       '@browserstack-client/test-reporting':
         specifier: workspace:*
-        version: link:../test-reporting
+        version: link:../../test-reporting
       signal-exit:
         specifier: ^4.1.0
         version: 4.1.0
