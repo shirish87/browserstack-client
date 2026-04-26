@@ -53,7 +53,7 @@ export async function main(
         throw new BrowserStackError(`No schema found for action: ${action}`);
     }
 
-    const parsed = parseArgs(schemaConfig.schema, rest);
+    const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);
 
     // Special handling for upload
     if (action === TestReporting.Action.UploadReport) {

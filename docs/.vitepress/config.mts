@@ -10,7 +10,7 @@ export default defineConfig({
   description: "BrowserStack API client library for node.js",
   themeConfig: {
     nav: [
-      { text: "Home", link: isCI ? "/" : "/api/" },
+      { text: "Home", link: "/" },
       { text: "Recipes", link: "/recipes/" },
       {
         text: "Github",

@@ -117,10 +117,10 @@ export function generateTSSchemas(metadata: CLIMetadata[]): string {
                 out += `  export const ${resourceName}${actionPascal}Args = z.object({\n`;
                 out += `    positional: z.tuple([\n`;
                 for (const p of pathParams) {
-                    out += `      ${openApiToZod(p.schema, true)},\n`;
+                    out += `      ${openApiToZod(p.schema, true)}.describe(${JSON.stringify(p.name)}),\n`;
                 }
                 for (const p of queryParams) {
-                    out += `      ${openApiToZod(p.schema, false)},\n`;
+                    out += `      ${openApiToZod(p.schema, false)}.describe(${JSON.stringify(p.name)}),\n`;
                 }
                 out += `    ]),\n`;
 
@@ -134,17 +134,19 @@ export function generateTSSchemas(metadata: CLIMetadata[]): string {
             // Generate ActionSchemaMap
             const enumName = resource === "default" ? `Constants.${productPascal}.Action` : `Constants.${productPascal}.${resourceName}Action`;
             const mapName = `${resourceName}ActionSchemaMap`;
-            out += `  export const ${mapName}: Record<string, { schema: z.ZodObject<any>, call: (client: any, data: any) => Promise<any> }> = {\n`;
+            out += `  export const ${mapName}: Record<string, { schema: z.ZodObject<any>, argNames: string[], call: (client: any, data: any) => Promise<any> }> = {\n`;
             for (const [action, actionMeta] of Object.entries(resMeta.actions)) {
                 const actionPascal = toPascalCase(action);
                 const schemaName = `${resourceName}${actionPascal}Args`;
                 
                 // Construct call arguments
                 const callArgs = [];
+                const argNames = [];
                 // 1. Path params (positional)
                 const pathParamNames2 = (actionMeta.path.match(/\{([^}]+)\}/g) || []).map((s: string) => s.slice(1, -1));
                 for (let i = 0; i < pathParamNames2.length; i++) {
                     callArgs.push(`data.positional[${i}]`);
+                    argNames.push(pathParamNames2[i]);
                 }
                 // 2. Request body
                 if (actionMeta.requestBody) {
@@ -154,12 +156,14 @@ export function generateTSSchemas(metadata: CLIMetadata[]): string {
                 const queryParams2 = actionMeta.parameters.filter((p: any) => p.in === "query");
                 for (let i = 0; i < queryParams2.length; i++) {
                     callArgs.push(`data.positional[${pathParamNames2.length + i}]`);
+                    argNames.push(queryParams2[i].name);
                 }
 
                 const clientDataArg = callArgs.length > 0 ? "data" : "_data";
 
                 out += `    [${enumName}.${actionPascal}]: {\n`;
                 out += `      schema: ${schemaName},\n`;
+                out += `      argNames: ${JSON.stringify(argNames)},\n`;
                 out += `      call: (client, ${clientDataArg}) => client.${actionMeta.methodName}(${callArgs.join(", ")})\n`;
                 out += `    },\n`;
             }

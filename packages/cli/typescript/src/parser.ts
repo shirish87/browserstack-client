@@ -4,7 +4,7 @@ import { BrowserStackError } from "@browserstack-client/core";
 /**
  * Parses raw CLI arguments into a structured object matching the generated Zod schema.
  */
-export function parseArgs(schema: z.ZodObject<any>, args: string[]): any {
+export function parseArgs(schema: z.ZodObject<any>, args: string[], argNames?: string[]): any {
   const positionalSchema = schema.shape.positional as z.ZodTuple<any>;
   const positionalCount = positionalSchema._def.items.length;
   
@@ -64,8 +64,25 @@ export function parseArgs(schema: z.ZodObject<any>, args: string[]): any {
   } catch (err) {
     if (err instanceof z.ZodError) {
       const issues = err.issues.map(i => {
-        const path = i.path.join(".");
-        return `${path}: ${i.message}`;
+        let label = i.path.join(".");
+        if (i.path[0] === "positional" && typeof i.path[1] === "number") {
+          const name = argNames?.[i.path[1]];
+          label = name ? `<${name}>` : `argument ${i.path[1]}`;
+        } else if (i.path[0] === "body") {
+          label = i.path.length > 1 ? `body.${i.path.slice(1).join(".")}` : "request body";
+        } else if (i.path[0] === "options") {
+          label = i.path.length > 1 ? `--${i.path.slice(1).join(".")}` : "options";
+        }
+
+        let message = i.message;
+        if (message === "Required" || 
+            message.toLowerCase().includes("expected string, received undefined") ||
+            message.toLowerCase().includes("expected number, received undefined") ||
+            message.toLowerCase().includes("expected boolean, received undefined")) {
+          message = "is required";
+        }
+
+        return `${label}: ${message}`;
       }).join("\n");
       throw new BrowserStackError(`Argument validation failed:\n${issues}`);
     }

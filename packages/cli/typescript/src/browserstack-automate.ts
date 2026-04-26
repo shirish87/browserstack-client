@@ -51,7 +51,7 @@ export async function main(
         throw new BrowserStackError(`No schema found for action: ${action}`);
     }
 
-    const parsed = parseArgs(schemaConfig.schema, rest);
+    const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);
     
     // Some actions need manual file reading or special handling before call
     if (action === Automate.Action.UploadMediaFile) {

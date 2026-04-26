@@ -46,11 +46,10 @@ export async function main(
 
     const schemaConfig = ScreenshotsSchemas.ActionSchemaMap[action];
     if (!schemaConfig) {
-      throw new BrowserStackError(`No schema found for action: ${action}`);
+        throw new BrowserStackError(`No schema found for action: ${action}`);
     }
 
-    const parsed = parseArgs(schemaConfig.schema, rest);
-    const result = await schemaConfig.call(client, parsed);
+    const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);    const result = await schemaConfig.call(client, parsed);
 
     logger.info(JSON.stringify(result, null, 2));
   } catch (err) {

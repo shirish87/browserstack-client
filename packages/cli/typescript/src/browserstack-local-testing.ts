@@ -44,7 +44,7 @@ export async function main(
         throw new BrowserStackError(`No schema found for action: ${action}`);
     }
 
-    const parsed = parseArgs(schemaConfig.schema, rest);
+    const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);
     const result = await schemaConfig.call(client, parsed);
 
     logger.info(JSON.stringify(result, null, 2));
