@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate types (codegen)
+        run: pnpm build:types
+
       - name: Cross-compile for all platforms
         working-directory: packages/cli/golang
         run: make build-all-platforms
