@@ -1,5 +1,5 @@
-import { TestManagementClient, BrowserStackOptions } from "../index";
-import { resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { BrowserStackOptions, resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { TestManagementClient } from "../index";
 import { assert } from "vitest";
 
 export interface TestManagementTestContext {

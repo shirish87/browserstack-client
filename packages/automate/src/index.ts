@@ -1,8 +1,6 @@
 import { BrowserStackOptions } from "@browserstack-client/core";
 import { GeneratedAutomateClient } from "@browserstack-client/openapi/automate/client";
 
-export type { BrowserStackOptions } from "@browserstack-client/core";
-
 export class AutomateClient extends GeneratedAutomateClient {
   constructor(options?: BrowserStackOptions) {
     super(

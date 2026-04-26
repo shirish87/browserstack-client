@@ -55,7 +55,7 @@ describe("AccessibilityClient", () => {
       });
     }, TIMEOUT);
 
-    test.skip("createAccessibilityWebsiteScannerAuthConfig", async () => {
+    test("createAccessibilityWebsiteScannerAuthConfig", async () => {
       const { client } = accessibilityContext;
       await executeTest(() => client.createWebsiteScannerAuthConfig({
         name: `test-auth-${Date.now()}`,
@@ -82,7 +82,7 @@ describe("AccessibilityClient", () => {
       });
     }, TIMEOUT);
 
-    test.skip("createAccessibilityWebsiteScannerScan", async () => {
+    test("createAccessibilityWebsiteScannerScan", async () => {
       const { client } = accessibilityContext;
       await executeTest(() => client.createWebsiteScannerScan({
         scanUrl: "https://example.com",

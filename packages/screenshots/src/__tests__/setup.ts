@@ -1,8 +1,7 @@
 import {
   ScreenshotsClient,
-  BrowserStackOptions,
 } from "@browserstack-client/screenshots";
-import { resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { BrowserStackOptions, resolveAccessKey, resolveUsername } from "@browserstack-client/core";
 
 export interface BrowserStackTestContext {
   screenshots: {

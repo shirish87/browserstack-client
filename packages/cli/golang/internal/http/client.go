@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type Client struct {
@@ -24,6 +25,13 @@ type APIError struct {
 }
 
 func (e *APIError) Error() string {
+	status := e.Status
+	if status == "" {
+		status = http.StatusText(e.StatusCode)
+	}
+
+	prefix := fmt.Sprintf("Error: %d %s", e.StatusCode, strings.TrimPrefix(status, fmt.Sprintf("%d ", e.StatusCode)))
+
 	if len(e.Body) > 0 {
 		trimmed := bytes.TrimSpace([]byte(e.Body))
 		lowerBody := bytes.ToLower(trimmed)
@@ -31,7 +39,7 @@ func (e *APIError) Error() string {
 			bytes.HasPrefix(lowerBody, []byte("<!doctype")) ||
 			bytes.Contains(lowerBody, []byte("<head")) ||
 			bytes.Contains(lowerBody, []byte("<body")) {
-			return fmt.Sprintf("HTTP %d %s", e.StatusCode, e.Status)
+			return prefix
 		}
 
 		// If it's JSON, try to extract error or message field
@@ -39,7 +47,7 @@ func (e *APIError) Error() string {
 		if err := json.Unmarshal(trimmed, &parsed); err == nil {
 			for _, key := range []string{"error", "message", "detail", "description"} {
 				if val, ok := parsed[key].(string); ok && val != "" {
-					return fmt.Sprintf("HTTP %d %s: %s", e.StatusCode, e.Status, val)
+					return fmt.Sprintf("%s: %s", prefix, val)
 				}
 			}
 		}
@@ -49,9 +57,9 @@ func (e *APIError) Error() string {
 		if len(bodyStr) > 512 {
 			bodyStr = bodyStr[:512] + "..."
 		}
-		return fmt.Sprintf("HTTP %d %s: %s", e.StatusCode, e.Status, bodyStr)
+		return fmt.Sprintf("%s: %s", prefix, bodyStr)
 	}
-	return fmt.Sprintf("HTTP %d %s", e.StatusCode, e.Status)
+	return prefix
 }
 
 func New(baseURL, username, accessKey string) *Client {

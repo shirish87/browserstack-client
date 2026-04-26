@@ -1,5 +1,6 @@
 import { vi } from "vitest";
-import { ScreenshotsClient, type BrowserStackOptions } from "../index";
+import { type BrowserStackOptions } from "@browserstack-client/core";
+import { ScreenshotsClient } from "../index";
 import * as fixtures from "./fixtures";
 
 export function createMockScreenshotsClient(

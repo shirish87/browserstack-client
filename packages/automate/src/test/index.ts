@@ -1,5 +1,6 @@
 import { vi } from "vitest";
-import { AutomateClient, type BrowserStackOptions } from "../index";
+import { type BrowserStackOptions } from "@browserstack-client/core";
+import { AutomateClient } from "../index";
 import * as fixtures from "./fixtures";
 
 export function createMockAutomateClient(

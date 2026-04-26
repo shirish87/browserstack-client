@@ -1,8 +1,6 @@
 import { BrowserStackOptions } from "@browserstack-client/core";
 import { GeneratedAccessibilityClient } from "@browserstack-client/openapi/accessibility/client";
 
-export type { BrowserStackOptions } from "@browserstack-client/core";
-
 export class AccessibilityClient extends GeneratedAccessibilityClient {
   constructor(options?: BrowserStackOptions) {
     super(

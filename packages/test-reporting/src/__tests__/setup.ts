@@ -1,5 +1,5 @@
-import { TestReportingClient, BrowserStackOptions } from "../index";
-import { resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { BrowserStackOptions, resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { TestReportingClient } from "../index";
 import { assert } from "vitest";
 
 export interface TestReportingTestContext {

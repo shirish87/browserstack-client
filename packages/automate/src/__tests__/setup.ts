@@ -1,5 +1,5 @@
-import { AutomateClient, BrowserStackOptions } from "../index";
-import { resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { BrowserStackOptions, resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { AutomateClient } from "../index";
 import { assert } from "vitest";
 
 export interface BrowserStackTestContext {

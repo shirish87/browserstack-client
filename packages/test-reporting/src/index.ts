@@ -1,8 +1,6 @@
 import { BrowserStackOptions } from "@browserstack-client/core";
 import { GeneratedTestReportingClient } from "@browserstack-client/openapi/test-reporting/client";
 
-export type { BrowserStackOptions } from "@browserstack-client/core";
-
 export class TestReportingClient extends GeneratedTestReportingClient {
   constructor(options?: BrowserStackOptions & { uploadBaseUrl?: string }) {
     super(
