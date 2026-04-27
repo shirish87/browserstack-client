@@ -8,8 +8,16 @@ const execFileAsync = promisify(execFile);
 const __dirname = new URL(".", import.meta.url).pathname;
 const monorepoRoot = resolve(__dirname, "../../../../..");
 
-const tsBinary = join(monorepoRoot, "packages/cli/typescript/dist-binary/browserstack-client-ts-linux-amd64");
-const goBinary = join(monorepoRoot, "packages/cli/golang/dist/browserstack-client-linux-amd64");
+const isWindows = process.platform === "win32";
+const platform = isWindows ? "windows" : process.platform === "darwin" ? "darwin" : "linux";
+const arch = "amd64"; // We currently only build amd64 for tests
+const ext = isWindows ? ".exe" : "";
+
+const tsBinaryName = `browserstack-client-ts-${platform}-${arch}${ext}`;
+const goBinaryName = `browserstack-client-${platform}-${arch}${ext}`;
+
+const tsBinary = join(monorepoRoot, "packages/cli/typescript/dist-binary", tsBinaryName);
+const goBinary = join(monorepoRoot, "packages/cli/golang/dist", goBinaryName);
 
 const binaries = [
   { name: "TypeScript CLI", path: tsBinary },
