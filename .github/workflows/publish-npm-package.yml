@@ -29,11 +29,11 @@ jobs:
     if: github.event_name == 'release' || github.event.inputs.confirm == 'publish'
     environment: BrowserStackEnv
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
