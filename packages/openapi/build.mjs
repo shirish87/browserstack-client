@@ -4,10 +4,10 @@ import path from "node:path";
 import openapiTS, { astToString } from "openapi-typescript";
 import ts from "typescript";
 import { fileURLToPath } from "node:url";
-import { CodecRegistry, registerAllBuiltins } from "@browserstack-client/openapi-transforms";
-import { generateClientModule } from "@browserstack-client/openapi-transforms/codegen/typescript";
-import { generateGoModule } from "@browserstack-client/openapi-transforms/codegen/golang";
-import { extractCLIMetadata, generateTSConstants, generateTSSchemas, generateGoConstants, generateGoDispatch } from "@browserstack-client/openapi-transforms/codegen/cli";
+import { CodecRegistry, registerAllBuiltins } from "@dot-slash/browserstack-openapi-transforms";
+import { generateClientModule } from "@dot-slash/browserstack-openapi-transforms/codegen/typescript";
+import { generateGoModule } from "@dot-slash/browserstack-openapi-transforms/codegen/golang";
+import { extractCLIMetadata, generateTSConstants, generateTSSchemas, generateGoConstants, generateGoDispatch } from "@dot-slash/browserstack-openapi-transforms/codegen/cli";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

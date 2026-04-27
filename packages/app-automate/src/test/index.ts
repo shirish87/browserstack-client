@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { type BrowserStackOptions } from "@browserstack-client/core";
+import { type BrowserStackOptions } from "@dot-slash/browserstack-core";
 import { AppAutomateClient } from "../index";
 import * as fixtures from "./fixtures";
 

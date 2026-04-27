@@ -1,8 +1,8 @@
 /* AUTO-GENERATED — do not edit */
 import type { operations } from "./test-management";
-import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
-import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
-import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
+import { APIClient, type ExecuteOptions } from "@dot-slash/browserstack-core";
+import { HttpError, toCamelCase, toSnakeCase } from "@dot-slash/browserstack-openapi-transforms";
+import type { DeepCamelCase } from "@dot-slash/browserstack-openapi-transforms";
 
 export type GetTestManagementProjectsError = HttpError<
   | (operations["getTestManagementProjects"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -326,47 +326,6 @@ export type CreateTestManagementCustomFieldResult = DeepCamelCase<(operations["c
 /** @interface */
 export type UpdateTestManagementCustomFieldResult = DeepCamelCase<((operations["updateTestManagementCustomField"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"] & Record<"custom_field", unknown>)["custom_field"]>;
 
-/**
- * @preventInline GetTestManagementProjectsResult
- * @preventInline CreateTestManagementProjectResult
- * @preventInline GetTestManagementProjectResult
- * @preventInline UpdateTestManagementProjectResult
- * @preventInline GetTestManagementFoldersResult
- * @preventInline CreateTestManagementFolderResult
- * @preventInline GetTestManagementFolderResult
- * @preventInline UpdateTestManagementFolderResult
- * @preventInline MoveTestManagementFolderResult
- * @preventInline GetTestManagementTestCasesResult
- * @preventInline CreateTestManagementTestCaseResult
- * @preventInline UpdateTestManagementTestCaseResult
- * @preventInline ArchiveTestManagementTestCaseResult
- * @preventInline UnarchiveTestManagementTestCaseResult
- * @preventInline MoveTestManagementTestCaseResult
- * @preventInline GetTestManagementTestCaseAttachmentsResult
- * @preventInline AddTestManagementTestCaseAttachmentResult
- * @preventInline GetTestManagementTestCaseResultsResult
- * @preventInline GetTestManagementTestRunsResult
- * @preventInline CreateTestManagementTestRunResult
- * @preventInline GetTestManagementTestRunResult
- * @preventInline GetTestManagementTestRunTestCasesResult
- * @preventInline UpdateTestManagementTestRunResult
- * @preventInline PatchTestManagementTestRunResult
- * @preventInline CloseTestManagementTestRunResult
- * @preventInline GetTestManagementTestRunResultsResult
- * @preventInline GetTestManagementTestRunTestCaseResultsResult
- * @preventInline GetTestManagementTestResultAttachmentsResult
- * @preventInline AddTestManagementTestResultAttachmentResult
- * @preventInline GetTestManagementTestPlansResult
- * @preventInline CreateTestManagementTestPlanResult
- * @preventInline GetTestManagementTestPlanResult
- * @preventInline UpdateTestManagementTestPlanResult
- * @preventInline GetTestManagementTestPlanTestRunsResult
- * @preventInline GetTestManagementConfigurationsResult
- * @preventInline GetTestManagementConfigurationResult
- * @preventInline GetTestManagementCustomFieldsResult
- * @preventInline CreateTestManagementCustomFieldResult
- * @preventInline UpdateTestManagementCustomFieldResult
- */
 export class GeneratedTestManagementClient extends APIClient {
 /** Get list of projects */
   getProjects(p?: number, pageSize?: number, options?: ExecuteOptions): Promise<GetTestManagementProjectsResult> {

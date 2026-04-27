@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { APIClient } from "../api-client";
-import { HttpError } from "@browserstack-client/openapi-transforms";
+import { HttpError } from "@dot-slash/browserstack-openapi-transforms";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 

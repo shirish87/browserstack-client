@@ -8,7 +8,7 @@
  * Example:
  * ```ts
  * import axios from 'axios';
- * import { createAxiosAdapter } from '@browserstack-client/core/adapters';
+ * import { createAxiosAdapter } from '@dot-slash/browserstack-core/adapters';
  *
  * const axiosInstance = axios.create({
  *   // proxy config, interceptors, etc.

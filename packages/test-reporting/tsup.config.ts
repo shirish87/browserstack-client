@@ -5,9 +5,9 @@ export default defineConfig({
   define: { __PKG_VERSION__: JSON.stringify(pkg.version) },
   entry: ["src/index.ts"],
   noExternal: [
-    "@browserstack-client/core",
-    "@browserstack-client/openapi",
-    "@browserstack-client/openapi-transforms",
+    "@dot-slash/browserstack-core",
+    "@dot-slash/browserstack-openapi",
+    "@dot-slash/browserstack-openapi-transforms",
   ],
   format: ["esm", "cjs"],
   platform: "browser",

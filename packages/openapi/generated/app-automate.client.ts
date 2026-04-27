@@ -1,8 +1,8 @@
 /* AUTO-GENERATED — do not edit */
 import type { operations } from "./app-automate";
-import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
-import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
-import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
+import { APIClient, type ExecuteOptions } from "@dot-slash/browserstack-core";
+import { HttpError, toCamelCase, toSnakeCase } from "@dot-slash/browserstack-openapi-transforms";
+import type { DeepCamelCase } from "@dot-slash/browserstack-openapi-transforms";
 
 export type GetAppAutomateBuildError = HttpError<
   | (operations["getAppAutomateBuild"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -433,22 +433,6 @@ export type GetAppAutomateBuildsResult = Array<GetAppAutomateBuildsResultItem>;
 /** @interface */
 export type GetAppAutomateFlutteriOSAppResult = DeepCamelCase<(operations["getAppAutomateFlutteriOSApp"]["responses"][200]["content"]["application/json"] & Record<"test_package", unknown>)["test_package"]>;
 
-/**
- * @preventInline GetAppAutomateBuildResult
- * @preventInline GetAppAutomateXCUITestAppResult
- * @preventInline GetAppAutomateXCUITestAppsResult
- * @preventInline GetAppAutomateProjectResult
- * @preventInline GetAppAutomateFlutterAndroidAppResult
- * @preventInline GetAppAutomateEspressoAppsResult
- * @preventInline GetAppAutomateSessionResult
- * @preventInline UpdateAppAutomateSessionResult
- * @preventInline GetAppAutomateEspressoAppResult
- * @preventInline GetAppAutomateFlutteriOSAppsResult
- * @preventInline GetAppAutomateFlutterAndroidAppsResult
- * @preventInline GetAppAutomateBuildsResultItem
- * @preventInline GetAppAutomateBuildsResult
- * @preventInline GetAppAutomateFlutteriOSAppResult
- */
 export class GeneratedAppAutomateClient extends APIClient {
 /** Fetches a build */
   getBuild(buildId: string, options?: ExecuteOptions): Promise<GetAppAutomateBuildResult> {

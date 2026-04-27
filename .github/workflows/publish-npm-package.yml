@@ -1,9 +1,17 @@
 name: Publish npm package
-# Disabled — npm publishing is not active. Re-enable by restoring the trigger below.
+
 on:
-  push:
-    branches:
-      - '__disabled__'
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Confirm publish by typing "publish"'
+        required: true
+      tag:
+        description: 'NPM tag'
+        required: true
+        default: 'latest'
 
 concurrency:
   group: publish-npm-package
@@ -17,7 +25,7 @@ jobs:
   publish-node-lts:
     name: "node.js lts"
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.confirm == 'publish' }}
+    if: github.event_name == 'release' || github.event.inputs.confirm == 'publish'
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@v4
@@ -33,19 +41,21 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build and test
         run: pnpm build:types && pnpm build && pnpm test
 
-      - name: npm publish @next
-        run: pnpm publish --tag next --filter "./packages/*" --no-git-checks
-        if: ${{ github.event.release.prerelease }}
-        env:
-          NODE_AUTH_TOKEN: "${{ secrets.NPM_PUBLISH_TOKEN }}"
-
       - name: npm publish
-        run: pnpm publish --filter "./packages/*" --no-git-checks
-        if: ${{ !github.event.release.prerelease }}
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG="latest"
+            if [ "${{ github.event.release.prerelease }}" = "true" ]; then
+              TAG="next"
+            fi
+          else
+            TAG="${{ github.event.inputs.tag }}"
+          fi
+          pnpm publish -r --tag $TAG --no-git-checks
         env:
           NODE_AUTH_TOKEN: "${{ secrets.NPM_PUBLISH_TOKEN }}"

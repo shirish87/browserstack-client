@@ -1,5 +1,5 @@
-import { BrowserStackOptions } from "@browserstack-client/core";
-import { GeneratedAccessibilityClient } from "@browserstack-client/openapi/accessibility/client";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
+import { GeneratedAccessibilityClient } from "@dot-slash/browserstack-openapi/accessibility/client";
 
 export class AccessibilityClient extends GeneratedAccessibilityClient {
   constructor(options?: BrowserStackOptions) {
@@ -7,7 +7,7 @@ export class AccessibilityClient extends GeneratedAccessibilityClient {
       options ?? {},
       options?.baseUrl ?? "https://api-accessibility.browserstack.com",
       "https://api-accessibility.browserstack.com",
-      "@browserstack-client/accessibility",
+      "@dot-slash/browserstack-accessibility",
       __PKG_VERSION__
     );
   }

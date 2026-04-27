@@ -2,10 +2,10 @@ import {
   ExecuteOptions,
   BrowserStackOptions,
   resolveAccessKey,
-} from "@browserstack-client/core";
-import { BrowserStackError, OpenAPIError } from "@browserstack-client/core";
-import { operations, components } from "@browserstack-client/openapi/local-testing";
-import { GeneratedLocalTestingClient } from "@browserstack-client/openapi/local-testing/client";
+} from "@dot-slash/browserstack-core";
+import { BrowserStackError, OpenAPIError } from "@dot-slash/browserstack-core";
+import { operations, components } from "@dot-slash/browserstack-openapi/local-testing";
+import { GeneratedLocalTestingClient } from "@dot-slash/browserstack-openapi/local-testing/client";
 import { unzipSync } from "fflate";
 
 export type LocalTestingOptions = Omit<BrowserStackOptions, "username">;
@@ -21,7 +21,7 @@ export class LocalTestingClient extends GeneratedLocalTestingClient {
       },
       options?.baseUrl ?? "https://www.browserstack.com",
       "https://api-cloud.browserstack.com",
-      "@browserstack-client/local-testing",
+      "@dot-slash/browserstack-local-testing-api",
       "6.0.0"
     );
 

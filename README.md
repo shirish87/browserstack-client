@@ -10,19 +10,19 @@ Install the specific product client you need:
 
 ```bash
 # Automate
-$ npm i @browserstack-client/automate
+$ npm i @dot-slash/browserstack-automate
 
 # App Automate
-$ npm i @browserstack-client/app-automate
+$ npm i @dot-slash/browserstack-app-automate
 
 # Accessibility
-$ npm i @browserstack-client/accessibility
+$ npm i @dot-slash/browserstack-accessibility
 
 # Test Management
-$ npm i @browserstack-client/test-management
+$ npm i @dot-slash/browserstack-test-management
 
 # Local Testing (API & Binary)
-$ npm i @browserstack-client/local-testing @browserstack-client/local-testing-binary
+$ npm i @dot-slash/browserstack-local-testing-api @dot-slash/browserstack-local-testing
 ```
 
 ## Requirements
@@ -43,10 +43,10 @@ You may also supply these credentials in code when creating an instance of an AP
 Each client is exported from its own package:
 
 ```ts
-import { AutomateClient } from "@browserstack-client/automate";
-import { AccessibilityClient } from "@browserstack-client/accessibility";
-import { AppAutomateClient } from "@browserstack-client/app-automate";
-import { TestManagementClient } from "@browserstack-client/test-management";
+import { AutomateClient } from "@dot-slash/browserstack-automate";
+import { AccessibilityClient } from "@dot-slash/browserstack-accessibility";
+import { AppAutomateClient } from "@dot-slash/browserstack-app-automate";
+import { TestManagementClient } from "@dot-slash/browserstack-test-management";
 
 // BrowserStack Automate API
 const automateClient = new AutomateClient();
@@ -69,7 +69,7 @@ console.log(projects);
 ### App Automate
 
 ```ts
-import { AppAutomateClient } from "@browserstack-client/app-automate";
+import { AppAutomateClient } from "@dot-slash/browserstack-app-automate";
 
 const appAutomateClient = new AppAutomateClient();
 const projects = await appAutomateClient.getProjects();
@@ -80,7 +80,7 @@ console.log(builds);
 ### Test Reporting
 
 ```ts
-import { TestReportingClient } from "@browserstack-client/test-reporting";
+import { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
 
 const trClient = new TestReportingClient();
 
@@ -98,7 +98,7 @@ await trClient.finishBuild(build.buildHashedId, { status: "passed" });
 ### Screenshots
 
 ```ts
-import { ScreenshotsClient } from "@browserstack-client/screenshots";
+import { ScreenshotsClient } from "@dot-slash/browserstack-screenshots";
 
 const screenshotsClient = new ScreenshotsClient();
 
@@ -116,16 +116,16 @@ const screenshots = await screenshotsClient.launch(
 The monorepo also provides a unified CLI:
 
 ```bash
-$ npx @browserstack-client/cli accessibility workflow-analyzer list
-$ npx @browserstack-client/cli automate list-projects
+$ npx @dot-slash/browserstack-cli accessibility workflow-analyzer list
+$ npx @dot-slash/browserstack-cli automate list-projects
 ```
 
 ## Additional Features (Node.js only)
 
-Running the [BrowserStackLocal](https://www.browserstack.com/docs/local-testing/releases-and-downloads) binary requires the `@browserstack-client/local-testing-binary` package.
+Running the [BrowserStackLocal](https://www.browserstack.com/docs/local-testing/releases-and-downloads) binary requires the `@dot-slash/browserstack-local-testing` package.
 
 ```ts
-import { LocalTestingBinary } from "@browserstack-client/local-testing-binary";
+import { LocalTestingBinary } from "@dot-slash/browserstack-local-testing";
 
 const localTestingBinary = new LocalTestingBinary({
   accessKey: "<your-access-key>",

@@ -1,5 +1,5 @@
-import { BrowserStackOptions } from "@browserstack-client/core";
-import { GeneratedTestManagementClient } from "@browserstack-client/openapi/test-management/client";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
+import { GeneratedTestManagementClient } from "@dot-slash/browserstack-openapi/test-management/client";
 
 export class TestManagementClient extends GeneratedTestManagementClient {
   constructor(options?: BrowserStackOptions) {
@@ -7,7 +7,7 @@ export class TestManagementClient extends GeneratedTestManagementClient {
       options ?? {},
       options?.baseUrl ?? "https://test-management.browserstack.com",
       "https://test-management.browserstack.com",
-      "@browserstack-client/test-management",
+      "@dot-slash/browserstack-test-management",
       __PKG_VERSION__
     );
   }

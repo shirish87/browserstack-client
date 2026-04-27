@@ -15,6 +15,7 @@ export default defineConfig({
   clean: true,
   splitting: false,
   platform: "node",
+  shims: true,
   outDir: "dist-binary",
   noExternal: [/.*/],
   define: {

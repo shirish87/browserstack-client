@@ -1,8 +1,8 @@
 import {
   LocalTestingBinary,
   LocalTestingBinaryOptions,
-} from "@browserstack-client/local-testing-binary";
-import { resolveAccessKey } from "@browserstack-client/core";
+} from "@dot-slash/browserstack-local-testing";
+import { resolveAccessKey } from "@dot-slash/browserstack-core";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";

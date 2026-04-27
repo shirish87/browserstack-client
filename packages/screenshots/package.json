@@ -1,7 +1,9 @@
 {
   "name": "@dot-slash/browserstack-screenshots",
-  "publishConfig": { "access": "public" },
-  "version": "6.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "6.0.0-alpha.0",
   "type": "module",
   "description": "BrowserStack Screenshots API client for cross-browser screenshot automation",
   "engines": {
@@ -9,24 +11,24 @@
   },
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     },
     "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
       "import": "./dist/schemas/index.js",
-      "require": "./dist/schemas/index.cjs",
-      "types": "./dist/schemas/index.d.ts"
+      "require": "./dist/schemas/index.cjs"
     },
     "./schemas/v5": {
+      "types": "./dist/schemas/v5/index.d.ts",
       "import": "./dist/schemas/v5/index.js",
-      "require": "./dist/schemas/v5/index.cjs",
-      "types": "./dist/schemas/v5/index.d.ts"
+      "require": "./dist/schemas/v5/index.cjs"
     },
     "./test": {
+      "types": "./dist/test/index.d.ts",
       "import": "./dist/test/index.js",
-      "require": "./dist/test/index.cjs",
-      "types": "./dist/test/index.d.ts"
+      "require": "./dist/test/index.cjs"
     },
     "./package.json": "./package.json"
   },

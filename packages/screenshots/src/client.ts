@@ -1,11 +1,11 @@
 import {
   ExecuteOptions,
   BrowserStackOptions,
-} from "@browserstack-client/core";
-import { BrowserStackError, OpenAPIError } from "@browserstack-client/core";
-import type { components, operations } from "@browserstack-client/openapi/screenshots";
-import { GeneratedScreenshotsClient } from "@browserstack-client/openapi/screenshots/client";
-import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
+} from "@dot-slash/browserstack-core";
+import { BrowserStackError, OpenAPIError } from "@dot-slash/browserstack-core";
+import type { components, operations } from "@dot-slash/browserstack-openapi/screenshots";
+import { GeneratedScreenshotsClient } from "@dot-slash/browserstack-openapi/screenshots/client";
+import type { DeepCamelCase } from "@dot-slash/browserstack-openapi-transforms";
 
 type ScreenshotsJobCC = DeepCamelCase<operations["createScreenshotsJob"]["responses"][200]["content"]["application/json"]>;
 type GetJobCC = DeepCamelCase<operations["getScreenshotsJob"]["responses"][200]["content"]["application/json"]>;
@@ -19,7 +19,7 @@ export class ScreenshotsClient extends GeneratedScreenshotsClient {
       options ?? {},
       options?.baseUrl ?? "https://www.browserstack.com",
       "https://api-cloud.browserstack.com",
-      "@browserstack-client/screenshots",
+      "@dot-slash/browserstack-screenshots",
       "6.0.0"
     );
   }

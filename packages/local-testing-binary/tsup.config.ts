@@ -11,7 +11,7 @@ export default defineConfig({
   splitting: false,
   platform: "node",
   external: [
-    "@browserstack-client/local-testing",
+    "@dot-slash/browserstack-local-testing-api",
     "fflate",
     "signal-exit",
   ],

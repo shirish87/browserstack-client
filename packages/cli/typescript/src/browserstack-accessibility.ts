@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { ensureAccessKeyExists, ensureUsernameExists } from "./utils.ts";
-import { BrowserStackError } from "@browserstack-client/core";
-import { AccessibilityClient } from "@browserstack-client/accessibility";
-import { BrowserStackOptions } from "@browserstack-client/core";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
+import { AccessibilityClient } from "@dot-slash/browserstack-accessibility";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
 import process from "node:process";
 import { Accessibility } from "./constants.generated.ts";
 import { AccessibilitySchemas } from "./schemas.generated.ts";

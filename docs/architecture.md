@@ -22,7 +22,7 @@ graph TD
     end
 
     subgraph "TypeScript SDKs"
-        SDK_TS["Product SDKs (TS)<br/>(@browserstack-client/automate, etc.)"]
+        SDK_TS["Product SDKs (TS)<br/>(@dot-slash/browserstack-automate, etc.)"]
     end
 
     subgraph "Command Line Interfaces"

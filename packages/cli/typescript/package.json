@@ -1,6 +1,9 @@
 {
-  "name": "@browserstack-client/cli",
-  "version": "6.0.0",
+  "name": "@dot-slash/browserstack-cli",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "6.0.0-alpha.0",
   "type": "module",
   "description": "Command-line interface for BrowserStack Local Testing and App Automate",
   "engines": {
@@ -13,39 +16,48 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./client": {
       "types": "./dist/browserstack-client.d.ts",
-      "import": "./dist/browserstack-client.js"
+      "import": "./dist/browserstack-client.js",
+      "require": "./dist/browserstack-client.cjs"
     },
     "./local": {
       "types": "./dist/browserstack-local.d.ts",
-      "import": "./dist/browserstack-local.js"
+      "import": "./dist/browserstack-local.js",
+      "require": "./dist/browserstack-local.cjs"
     },
     "./app-automate": {
       "types": "./dist/browserstack-app-automate.d.ts",
-      "import": "./dist/browserstack-app-automate.js"
+      "import": "./dist/browserstack-app-automate.js",
+      "require": "./dist/browserstack-app-automate.cjs"
     },
     "./automate": {
       "types": "./dist/browserstack-automate.d.ts",
-      "import": "./dist/browserstack-automate.js"
+      "import": "./dist/browserstack-automate.js",
+      "require": "./dist/browserstack-automate.cjs"
     },
     "./local-testing": {
       "types": "./dist/browserstack-local-testing.d.ts",
-      "import": "./dist/browserstack-local-testing.js"
+      "import": "./dist/browserstack-local-testing.js",
+      "require": "./dist/browserstack-local-testing.cjs"
     },
     "./test-management": {
       "types": "./dist/browserstack-test-management.d.ts",
-      "import": "./dist/browserstack-test-management.js"
+      "import": "./dist/browserstack-test-management.js",
+      "require": "./dist/browserstack-test-management.cjs"
     },
     "./accessibility": {
       "types": "./dist/browserstack-accessibility.d.ts",
-      "import": "./dist/browserstack-accessibility.js"
+      "import": "./dist/browserstack-accessibility.js",
+      "require": "./dist/browserstack-accessibility.cjs"
     },
     "./test-reporting": {
       "types": "./dist/browserstack-test-reporting.d.ts",
-      "import": "./dist/browserstack-test-reporting.js"
+      "import": "./dist/browserstack-test-reporting.js",
+      "require": "./dist/browserstack-test-reporting.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -63,16 +75,16 @@
     "scripts": []
   },
   "dependencies": {
-    "@browserstack-client/accessibility": "workspace:*",
-    "@browserstack-client/app-automate": "workspace:*",
-    "@browserstack-client/automate": "workspace:*",
-    "@browserstack-client/core": "workspace:*",
-    "@browserstack-client/local-testing": "workspace:*",
-    "@browserstack-client/local-testing-binary": "workspace:*",
-    "@browserstack-client/openapi-transforms": "workspace:*",
-    "@browserstack-client/screenshots": "workspace:*",
-    "@browserstack-client/test-management": "workspace:*",
-    "@browserstack-client/test-reporting": "workspace:*",
+    "@dot-slash/browserstack-accessibility": "workspace:*",
+    "@dot-slash/browserstack-app-automate": "workspace:*",
+    "@dot-slash/browserstack-automate": "workspace:*",
+    "@dot-slash/browserstack-core": "workspace:*",
+    "@dot-slash/browserstack-local-testing-api": "workspace:*",
+    "@dot-slash/browserstack-local-testing": "workspace:*",
+    "@dot-slash/browserstack-openapi-transforms": "workspace:*",
+    "@dot-slash/browserstack-screenshots": "workspace:*",
+    "@dot-slash/browserstack-test-management": "workspace:*",
+    "@dot-slash/browserstack-test-reporting": "workspace:*",
     "signal-exit": "^4.1.0",
     "zod": "^4.3.6"
   },

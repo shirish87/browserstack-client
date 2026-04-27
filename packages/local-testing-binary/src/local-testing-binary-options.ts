@@ -1,4 +1,4 @@
-import { BrowserStackOptions } from "@browserstack-client/core";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
 
 export type LocalTestingBinaryOptions = Omit<BrowserStackOptions, "username"> &
   LocalBinaryFlags & {

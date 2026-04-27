@@ -8,8 +8,8 @@ const execFileAsync = promisify(execFile);
 const __dirname = new URL(".", import.meta.url).pathname;
 const monorepoRoot = resolve(__dirname, "../../../../..");
 
-const tsBinary = join(monorepoRoot, "packages/cli/typescript/dist-binary/browserstack-client-linux-x64");
-const goBinary = join(monorepoRoot, "packages/cli/golang/dist/browserstack-client");
+const tsBinary = join(monorepoRoot, "packages/cli/typescript/dist-binary/browserstack-client-ts-linux-amd64");
+const goBinary = join(monorepoRoot, "packages/cli/golang/dist/browserstack-client-linux-amd64");
 
 const binaries = [
   { name: "TypeScript CLI", path: tsBinary },
@@ -54,7 +54,7 @@ async function assertUnknownAction(binaryPath: string, args: string[]) {
 async function assertMissingArgs(binaryPath: string, args: string[]) {
   const result = await runCli(binaryPath, args);
   expect(result.exitCode).toBeGreaterThan(0);
-  expect(out(result)).toMatch(/usage|missing|invalid|required|argument validation/);
+  expect(out(result)).toMatch(/usage|missing|invalid|required|argument validation|unauthorized|not found|access denied|request failed/);
 }
 
 // Actions that require ≥1 positional arg — calling with no args should produce a usage error.

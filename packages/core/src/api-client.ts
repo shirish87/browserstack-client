@@ -9,7 +9,7 @@ import {
   registerAllBuiltins,
   type ResponseCodec,
   type RequestCodec,
-} from "@browserstack-client/openapi-transforms";
+} from "@dot-slash/browserstack-openapi-transforms";
 
 function nonEmpty(value: string | undefined): string | undefined {
   return value?.trim?.()?.length ? value.trim() : undefined;

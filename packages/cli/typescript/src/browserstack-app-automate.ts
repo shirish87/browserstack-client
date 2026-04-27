@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { ensureAccessKeyExists, ensureUsernameExists, formatError } from "./utils.ts";
-import { BrowserStackError } from "@browserstack-client/core";
-import { AppAutomateClient } from "@browserstack-client/app-automate";
-import { BrowserStackOptions } from "@browserstack-client/core";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
+import { AppAutomateClient } from "@dot-slash/browserstack-app-automate";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
 import { readFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 import process from "node:process";
@@ -75,6 +75,6 @@ export async function main(
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && import.meta.url === `file://${process.argv[1]}`) {
   main();
 }

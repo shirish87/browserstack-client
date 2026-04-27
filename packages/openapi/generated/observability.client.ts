@@ -1,8 +1,8 @@
 /* AUTO-GENERATED — do not edit */
 import type { operations } from "./observability";
-import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
-import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
-import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
+import { APIClient, type ExecuteOptions } from "@dot-slash/browserstack-core";
+import { HttpError, toCamelCase, toSnakeCase } from "@dot-slash/browserstack-openapi-transforms";
+import type { DeepCamelCase } from "@dot-slash/browserstack-openapi-transforms";
 
 export type GetObservabilityProjectsError = HttpError<unknown>;
 

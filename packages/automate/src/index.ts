@@ -1,6 +1,6 @@
-import { BrowserStackOptions } from "@browserstack-client/core";
-import { GeneratedAutomateClient } from "@browserstack-client/openapi/automate/client";
-export type * from "@browserstack-client/openapi/automate/client";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
+import { GeneratedAutomateClient } from "@dot-slash/browserstack-openapi/automate/client";
+export type * from "@dot-slash/browserstack-openapi/automate/client";
 
 export class AutomateClient extends GeneratedAutomateClient {
   constructor(options?: BrowserStackOptions) {
@@ -8,7 +8,7 @@ export class AutomateClient extends GeneratedAutomateClient {
       options ?? {},
       options?.baseUrl ?? "https://api.browserstack.com",
       "https://api-cloud.browserstack.com",
-      "@browserstack-client/automate",
+      "@dot-slash/browserstack-automate",
       __PKG_VERSION__
     );
   }

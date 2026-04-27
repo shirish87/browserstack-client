@@ -1,4 +1,4 @@
-import { resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { resolveAccessKey, resolveUsername } from "@dot-slash/browserstack-core";
 
 export interface BrowserStackTestContext {
   env: {

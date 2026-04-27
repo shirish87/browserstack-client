@@ -25,6 +25,6 @@
   "typeDeclarationFormat": "table",
   "indexFormat": "table",
   "blockTags": ["@param", "@returns", "@throws", "@example", "@see", "@deprecated", "@since", "@module", "@internal", "@packageDocumentation", "@default", "@description"],
-  "modifierTags": ["@description", "@preventInline"],
+  "modifierTags": ["@description"],
   "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"]
 }

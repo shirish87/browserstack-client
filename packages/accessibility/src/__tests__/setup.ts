@@ -1,4 +1,4 @@
-import { BrowserStackOptions, resolveAccessKey, resolveUsername } from "@browserstack-client/core";
+import { BrowserStackOptions, resolveAccessKey, resolveUsername } from "@dot-slash/browserstack-core";
 import { AccessibilityClient } from "../index";
 
 export interface AccessibilityTestContext {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BrowserStackError } from "@browserstack-client/core";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
 
 /**
  * Parses raw CLI arguments into a structured object matching the generated Zod schema.

@@ -1,5 +1,5 @@
-import { BrowserStackOptions } from "@browserstack-client/core";
-import { GeneratedTestReportingClient } from "@browserstack-client/openapi/test-reporting/client";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
+import { GeneratedTestReportingClient } from "@dot-slash/browserstack-openapi/test-reporting/client";
 
 export class TestReportingClient extends GeneratedTestReportingClient {
   constructor(options?: BrowserStackOptions & { uploadBaseUrl?: string }) {
@@ -7,7 +7,7 @@ export class TestReportingClient extends GeneratedTestReportingClient {
       options ?? {},
       options?.baseUrl ?? "https://api-automation.browserstack.com/ext/v1",
       options?.uploadBaseUrl ?? "https://upload-automation.browserstack.com",
-      "@browserstack-client/test-reporting",
+      "@dot-slash/browserstack-test-reporting",
       __PKG_VERSION__
     );
   }

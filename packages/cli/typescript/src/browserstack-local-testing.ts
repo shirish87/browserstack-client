@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { ensureAccessKeyExists } from "./utils.ts";
-import { BrowserStackError } from "@browserstack-client/core";
-import { LocalTestingClient } from "@browserstack-client/local-testing";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
+import { LocalTestingClient } from "@dot-slash/browserstack-local-testing-api";
 import process from "node:process";
 import { LocalTesting } from "./constants.generated.ts";
 import { LocalTestingSchemas } from "./schemas.generated.ts";
@@ -60,6 +60,6 @@ export async function main(
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && import.meta.url === `file://${process.argv[1]}`) {
   main();
 }

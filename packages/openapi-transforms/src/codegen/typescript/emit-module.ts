@@ -34,13 +34,6 @@ import type { DeepCamelCase } from "@dot-slash/browserstack-openapi-transforms";
       if (!seen.has(alias)) { seen.add(alias); returnTypeAliases.push(alias); }
     }
   }
-  // Extract alias names for @preventInline so TypeDoc shows them as named types in signatures
-  const aliasNames = returnTypeAliases
-    .map((a) => {
-      const m = a.match(/export type ([A-Za-z][A-Za-z0-9]*) =/);
-      return m ? m[1] : null;
-    })
-    .filter((n): n is string => n !== null);
   const classJsDoc = "";
   const body = `${classJsDoc}export class ${input.className} extends APIClient {
 ${methods.map(emitMethod).join("\n\n")}

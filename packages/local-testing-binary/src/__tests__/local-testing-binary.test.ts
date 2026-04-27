@@ -1,7 +1,7 @@
-import { env } from "@browserstack-client/core";
-import { LocalTestingBinary } from "@browserstack-client/local-testing-binary";
+import { env } from "@dot-slash/browserstack-core";
+import { LocalTestingBinary } from "@dot-slash/browserstack-local-testing";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
-import type { BrowserStackTestContext } from "@browserstack-client/core/__tests__/test-utils";
+import type { BrowserStackTestContext } from "@dot-slash/browserstack-core/__tests__/test-utils";
 import { localTestingBinaryContext } from "./setup.ts";
 
 const LONG_TIMEOUT = 60_000;

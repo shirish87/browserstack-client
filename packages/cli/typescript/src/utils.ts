@@ -1,6 +1,6 @@
-import { resolveAccessKey, resolveUsername } from "@browserstack-client/core";
-import { BrowserStackError } from "@browserstack-client/core";
-import { isHttpError } from "@browserstack-client/openapi-transforms";
+import { resolveAccessKey, resolveUsername } from "@dot-slash/browserstack-core";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
+import { isHttpError } from "@dot-slash/browserstack-openapi-transforms";
 
 /**
  * Ensures that an access key exists and returns it.

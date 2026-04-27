@@ -42,9 +42,9 @@ export {
   isDecodeError,
   isTransformError,
   isClientError,
-} from "@browserstack-client/openapi-transforms";
+} from "@dot-slash/browserstack-openapi-transforms";
 export type {
   CodecContext,
   ErrorKind,
   ErrorBody,
-} from "@browserstack-client/openapi-transforms";
+} from "@dot-slash/browserstack-openapi-transforms";

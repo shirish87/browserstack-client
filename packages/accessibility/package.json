@@ -1,20 +1,24 @@
 {
   "name": "@dot-slash/browserstack-accessibility",
-  "publishConfig": { "access": "public" },
-  "version": "6.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "6.0.0-alpha.0",
   "type": "module",
   "description": "BrowserStack Accessibility API client",
-  "engines": { "node": ">=18.0.0" },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     },
     "./test": {
+      "types": "./dist/test/index.d.ts",
       "import": "./dist/test/index.js",
-      "require": "./dist/test/index.cjs",
-      "types": "./dist/test/index.d.ts"
+      "require": "./dist/test/index.cjs"
     },
     "./package.json": "./package.json"
   },

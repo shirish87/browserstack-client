@@ -16,9 +16,9 @@ export default defineConfig({
   clean: true,
   splitting: false,
   noExternal: [
-    "@browserstack-client/core",
-    "@browserstack-client/openapi",
-    "@browserstack-client/openapi-transforms",
+    "@dot-slash/browserstack-core",
+    "@dot-slash/browserstack-openapi",
+    "@dot-slash/browserstack-openapi-transforms",
   ],
   external: [
     "vitest",

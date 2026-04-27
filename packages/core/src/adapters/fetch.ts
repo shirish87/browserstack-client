@@ -5,7 +5,7 @@
  * Example:
  * ```ts
  * import fetch from 'node-fetch';
- * import { createFetchAdapter } from '@browserstack-client/core/adapters';
+ * import { createFetchAdapter } from '@dot-slash/browserstack-core/adapters';
  *
  * const client = new AutomateClient({
  *   username: 'user',

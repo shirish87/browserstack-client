@@ -124,7 +124,7 @@ jobs:
         run: |
           mkdir -p release-tarballs
           for pkg in automate app-automate screenshots local-testing local-testing-binary accessibility test-management test-reporting; do
-            pnpm --filter "@browserstack-client/$pkg" pack --pack-destination release-tarballs
+            pnpm --filter "@dot-slash/browserstack-$pkg" pack --pack-destination release-tarballs
           done
 
       - name: Upload SDK tarballs

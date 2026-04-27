@@ -1,7 +1,7 @@
 {
   "name": "@dot-slash/browserstack-local-testing-api",
   "private": true,
-  "version": "6.0.0",
+  "version": "6.0.0-alpha.0",
   "type": "module",
   "description": "BrowserStack Local Testing API client for local development",
   "engines": {
@@ -10,19 +10,23 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./schemas": {
       "types": "./dist/schemas/index.d.ts",
-      "import": "./dist/schemas/index.js"
+      "import": "./dist/schemas/index.js",
+      "require": "./dist/schemas/index.cjs"
     },
     "./schemas/v5": {
       "types": "./dist/schemas/v5/index.d.ts",
-      "import": "./dist/schemas/v5/index.js"
+      "import": "./dist/schemas/v5/index.js",
+      "require": "./dist/schemas/v5/index.cjs"
     },
     "./test": {
       "types": "./dist/test/index.d.ts",
-      "import": "./dist/test/index.js"
+      "import": "./dist/test/index.js",
+      "require": "./dist/test/index.cjs"
     },
     "./package.json": "./package.json"
   },

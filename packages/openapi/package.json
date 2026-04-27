@@ -1,7 +1,9 @@
 {
   "name": "@dot-slash/browserstack-openapi",
-  "publishConfig": { "access": "public" },
-  "version": "6.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "6.0.0-alpha.0",
   "type": "module",
   "description": "OpenAPI specs and generated TypeScript types for BrowserStack APIs",
   "files": [

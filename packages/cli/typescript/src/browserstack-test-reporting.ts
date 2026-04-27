@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { ensureAccessKeyExists, ensureUsernameExists } from "./utils.ts";
-import { BrowserStackError } from "@browserstack-client/core";
-import { TestReportingClient } from "@browserstack-client/test-reporting";
-import { BrowserStackOptions } from "@browserstack-client/core";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
+import { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
 import { readFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 import process from "node:process";
@@ -87,6 +87,6 @@ const isMain =
   import.meta.url === `file://${process.argv[1]}` ||
   import.meta.url === `file://${resolve(process.argv[1])}`;
 
-if (isMain) {
+if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && isMain) {
   main();
 }

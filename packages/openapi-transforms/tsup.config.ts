@@ -7,7 +7,7 @@ export default defineConfig({
     "src/codegen/golang/index.ts",
     "src/codegen/cli/index.ts",
   ],
-  format: ["esm"],
+  format: ["esm", "cjs"],
   bundle: true,
   dts: true,
   clean: true,

@@ -1,8 +1,8 @@
 /* AUTO-GENERATED — do not edit */
 import type { operations } from "./accessibility";
-import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
-import { HttpError, toCamelCase, toSnakeCase } from "@browserstack-client/openapi-transforms";
-import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
+import { APIClient, type ExecuteOptions } from "@dot-slash/browserstack-core";
+import { HttpError, toCamelCase, toSnakeCase } from "@dot-slash/browserstack-openapi-transforms";
+import type { DeepCamelCase } from "@dot-slash/browserstack-openapi-transforms";
 
 export type GetAccessibilityWorkflowAnalyzerReportsError = HttpError<unknown>;
 
@@ -69,17 +69,6 @@ export type GetAccessibilityAutomatedTestBuildSummaryResult = DeepCamelCase<(ope
 /** @interface */
 export type GetAccessibilityAutomatedTestBuildTestCaseSummaryResult = DeepCamelCase<(operations["getAccessibilityAutomatedTestBuildTestCaseSummary"]["responses"][200]["content"]["application/json"] & Record<"data", unknown>)["data"]>;
 
-/**
- * @preventInline GetAccessibilityWebsiteScannerAuthConfigsResult
- * @preventInline CreateAccessibilityWebsiteScannerAuthConfigResult
- * @preventInline CreateAccessibilityWebsiteScannerScanResult
- * @preventInline GetAccessibilityWebsiteScannerScanOverviewResult
- * @preventInline GetAccessibilityWebsiteScannerScanRunStatusResult
- * @preventInline GetAccessibilityWebsiteScannerScanRunLogsResult
- * @preventInline GetAccessibilityAutomatedTestBuildTestCasesResult
- * @preventInline GetAccessibilityAutomatedTestBuildSummaryResult
- * @preventInline GetAccessibilityAutomatedTestBuildTestCaseSummaryResult
- */
 export class GeneratedAccessibilityClient extends APIClient {
 /** Returns a paginated list of all Workflow Analyzer accessibility reports for your account. */
   getWorkflowAnalyzerReports(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getAccessibilityWorkflowAnalyzerReports"]["responses"][200]["content"]["application/json"]>> {

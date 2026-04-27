@@ -1,5 +1,5 @@
-import { env } from "@browserstack-client/core";
-import { BrowserStackError } from "@browserstack-client/core";
+import { env } from "@dot-slash/browserstack-core";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
 import {
   binaryPath,
   currentOSArch,
@@ -11,7 +11,7 @@ import {
   LocalTestingBinaryOptions,
   ProxyParams,
 } from "./local-testing-binary-options.ts";
-import { LocalTestingClient } from "@browserstack-client/local-testing";
+import { LocalTestingClient } from "@dot-slash/browserstack-local-testing-api";
 import cp from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { unlink } from "node:fs/promises";

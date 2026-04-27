@@ -74,13 +74,13 @@ importers:
 
   packages/accessibility:
     dependencies:
-      '@browserstack-client/core':
+      '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
-      '@browserstack-client/openapi':
+      '@dot-slash/browserstack-openapi':
         specifier: workspace:*
         version: link:../openapi
-      '@browserstack-client/openapi-transforms':
+      '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
     devDependencies:
@@ -99,13 +99,13 @@ importers:
 
   packages/app-automate:
     dependencies:
-      '@browserstack-client/core':
+      '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
-      '@browserstack-client/openapi':
+      '@dot-slash/browserstack-openapi':
         specifier: workspace:*
         version: link:../openapi
-      '@browserstack-client/openapi-transforms':
+      '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
     devDependencies:
@@ -130,13 +130,13 @@ importers:
 
   packages/automate:
     dependencies:
-      '@browserstack-client/core':
+      '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
-      '@browserstack-client/openapi':
+      '@dot-slash/browserstack-openapi':
         specifier: workspace:*
         version: link:../openapi
-      '@browserstack-client/openapi-transforms':
+      '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
     devDependencies:
@@ -158,34 +158,34 @@ importers:
 
   packages/cli/typescript:
     dependencies:
-      '@browserstack-client/accessibility':
+      '@dot-slash/browserstack-accessibility':
         specifier: workspace:*
         version: link:../../accessibility
-      '@browserstack-client/app-automate':
+      '@dot-slash/browserstack-app-automate':
         specifier: workspace:*
         version: link:../../app-automate
-      '@browserstack-client/automate':
+      '@dot-slash/browserstack-automate':
         specifier: workspace:*
         version: link:../../automate
-      '@browserstack-client/core':
+      '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../../core
-      '@browserstack-client/local-testing':
-        specifier: workspace:*
-        version: link:../../local-testing
-      '@browserstack-client/local-testing-binary':
+      '@dot-slash/browserstack-local-testing':
         specifier: workspace:*
         version: link:../../local-testing-binary
-      '@browserstack-client/openapi-transforms':
+      '@dot-slash/browserstack-local-testing-api':
+        specifier: workspace:*
+        version: link:../../local-testing
+      '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../../openapi-transforms
-      '@browserstack-client/screenshots':
+      '@dot-slash/browserstack-screenshots':
         specifier: workspace:*
         version: link:../../screenshots
-      '@browserstack-client/test-management':
+      '@dot-slash/browserstack-test-management':
         specifier: workspace:*
         version: link:../../test-management
-      '@browserstack-client/test-reporting':
+      '@dot-slash/browserstack-test-reporting':
         specifier: workspace:*
         version: link:../../test-reporting
       signal-exit:
@@ -210,11 +210,11 @@ importers:
 
   packages/core:
     dependencies:
-      '@browserstack-client/openapi-transforms':
+      '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
     devDependencies:
-      '@browserstack-client/openapi':
+      '@dot-slash/browserstack-openapi':
         specifier: workspace:*
         version: link:../openapi
       '@types/node':
@@ -229,10 +229,10 @@ importers:
 
   packages/local-testing:
     dependencies:
-      '@browserstack-client/core':
+      '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
-      '@browserstack-client/openapi':
+      '@dot-slash/browserstack-openapi':
         specifier: workspace:*
         version: link:../openapi
       fflate:
@@ -257,10 +257,10 @@ importers:
 
   packages/local-testing-binary:
     dependencies:
-      '@browserstack-client/core':
+      '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
-      '@browserstack-client/local-testing':
+      '@dot-slash/browserstack-local-testing-api':
         specifier: workspace:*
         version: link:../local-testing
       fflate:
@@ -270,7 +270,7 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
     devDependencies:
-      '@browserstack-client/openapi':
+      '@dot-slash/browserstack-openapi':
         specifier: workspace:*
         version: link:../openapi
       '@types/node':
@@ -285,7 +285,7 @@ importers:
 
   packages/openapi:
     dependencies:
-      '@browserstack-client/openapi-transforms':
+      '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
     devDependencies:
@@ -329,13 +329,13 @@ importers:
 
   packages/screenshots:
     dependencies:
-      '@browserstack-client/core':
+      '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
-      '@browserstack-client/openapi':
+      '@dot-slash/browserstack-openapi':
         specifier: workspace:*
         version: link:../openapi
-      '@browserstack-client/openapi-transforms':
+      '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
     devDependencies:
@@ -357,13 +357,13 @@ importers:
 
   packages/test-management:
     dependencies:
-      '@browserstack-client/core':
+      '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
-      '@browserstack-client/openapi':
+      '@dot-slash/browserstack-openapi':
         specifier: workspace:*
         version: link:../openapi
-      '@browserstack-client/openapi-transforms':
+      '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
     devDependencies:
@@ -382,13 +382,13 @@ importers:
 
   packages/test-reporting:
     dependencies:
-      '@browserstack-client/core':
+      '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
-      '@browserstack-client/openapi':
+      '@dot-slash/browserstack-openapi':
         specifier: workspace:*
         version: link:../openapi
-      '@browserstack-client/openapi-transforms':
+      '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
     devDependencies:

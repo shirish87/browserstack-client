@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { ensureAccessKeyExists, ensureUsernameExists, formatError } from "./utils.ts";
-import { BrowserStackError } from "@browserstack-client/core";
-import { TestManagementClient } from "@browserstack-client/test-management";
-import { BrowserStackOptions } from "@browserstack-client/core";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
+import { TestManagementClient } from "@dot-slash/browserstack-test-management";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
 import { resolve } from "node:path";
 import process from "node:process";
 import { TestManagementSchemas } from "./schemas.generated.ts";
@@ -70,6 +70,6 @@ const isMain =
   import.meta.url === `file://${process.argv[1]}` ||
   import.meta.url === `file://${resolve(process.argv[1])}`;
 
-if (isMain) {
+if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && isMain) {
   main();
 }

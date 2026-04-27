@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-import { BrowserStackError } from "@browserstack-client/core";
-import { ensureDirExists } from "@browserstack-client/local-testing-binary";
-import { LocalTestingBinary, LocalTestingBinaryOptions } from "@browserstack-client/local-testing-binary";
-import { BufferEncoding, writeFileAtomic } from "@browserstack-client/local-testing-binary";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
+import { ensureDirExists } from "@dot-slash/browserstack-local-testing";
+import { LocalTestingBinary, LocalTestingBinaryOptions } from "@dot-slash/browserstack-local-testing";
+import { BufferEncoding, writeFileAtomic } from "@dot-slash/browserstack-local-testing";
 import cp from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";
 import { onExit } from "signal-exit";
-import { env, resolveAccessKey } from "@browserstack-client/core";
+import { env, resolveAccessKey } from "@dot-slash/browserstack-core";
 
 enum BrowserStackLocalAction {
   start = "start",
@@ -470,6 +470,6 @@ export async function main(
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && import.meta.url === `file://${process.argv[1]}`) {
   main(process.argv.slice(2), globalThis.console, "--", true);
 }

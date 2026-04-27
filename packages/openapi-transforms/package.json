@@ -1,7 +1,9 @@
 {
   "name": "@dot-slash/browserstack-openapi-transforms",
-  "publishConfig": { "access": "public" },
-  "version": "0.1.0-dev",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.1.0-alpha.0",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -9,19 +11,23 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./codegen/typescript": {
       "types": "./dist/codegen/typescript/index.d.ts",
-      "import": "./dist/codegen/typescript/index.js"
+      "import": "./dist/codegen/typescript/index.js",
+      "require": "./dist/codegen/typescript/index.cjs"
     },
     "./codegen/golang": {
       "types": "./dist/codegen/golang/index.d.ts",
-      "import": "./dist/codegen/golang/index.js"
+      "import": "./dist/codegen/golang/index.js",
+      "require": "./dist/codegen/golang/index.cjs"
     },
     "./codegen/cli": {
       "types": "./dist/codegen/cli/index.d.ts",
-      "import": "./dist/codegen/cli/index.js"
+      "import": "./dist/codegen/cli/index.js",
+      "require": "./dist/codegen/cli/index.cjs"
     }
   },
   "files": [

@@ -1,5 +1,5 @@
-import { runLocalCli } from "@browserstack-client/cli";
-import { env } from "@browserstack-client/core";
+import { runLocalCli } from "@dot-slash/browserstack-cli";
+import { env } from "@dot-slash/browserstack-core";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { cliContext } from "./setup.ts";
 

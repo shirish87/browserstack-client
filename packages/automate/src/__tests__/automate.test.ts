@@ -1,5 +1,5 @@
-import { components } from "@browserstack-client/openapi";
-import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
+import { components } from "@dot-slash/browserstack-openapi";
+import type { DeepCamelCase } from "@dot-slash/browserstack-openapi-transforms";
 import { describe, expect, expectTypeOf, test } from "vitest";
 import { automateContext } from "./setup.ts";
 

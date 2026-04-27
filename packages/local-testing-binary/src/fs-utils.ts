@@ -1,6 +1,6 @@
-import { currentArch, currentPlatform } from "@browserstack-client/core";
-import { BrowserStackError } from "@browserstack-client/core";
-import { operations } from "@browserstack-client/openapi/local-testing";
+import { currentArch, currentPlatform } from "@dot-slash/browserstack-core";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
+import { operations } from "@dot-slash/browserstack-openapi/local-testing";
 import { writeFileAtomic } from "./write-file-atomic.ts";
 import { Buffer } from "node:buffer";
 import { spawnSync } from "node:child_process";

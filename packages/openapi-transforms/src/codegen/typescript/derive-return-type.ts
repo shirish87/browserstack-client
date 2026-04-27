@@ -62,7 +62,7 @@ function namedAlias(inner: DerivedReturnType, operationId: string, suffix: strin
   // If inner.type is already a plain alias name (no angle brackets / operators), return as-is
   if (/^[A-Za-z][A-Za-z0-9]*$/.test(inner.type)) return inner;
   const aliases = [...inner.aliases];
-  // Array<ElemAlias> — wrap in a list alias so @preventInline works on the whole array type too
+  // Array<ElemAlias> — wrap in a list alias so TypeDoc shows a named type for the array
   if (/^Array<[A-Za-z][A-Za-z0-9]*>$/.test(inner.type)) {
     const listAliasName = `${toPascalCase(operationId)}${suffix}`;
     if (!aliases.some((a) => a.includes(`type ${listAliasName} `))) {

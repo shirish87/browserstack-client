@@ -1,6 +1,6 @@
-import { binaryPath } from "@browserstack-client/local-testing-binary";
-import { components } from "@browserstack-client/openapi";
-import { LocalTestingBinary } from "@browserstack-client/local-testing-binary";
+import { binaryPath } from "@dot-slash/browserstack-local-testing";
+import { components } from "@dot-slash/browserstack-openapi";
+import { LocalTestingBinary } from "@dot-slash/browserstack-local-testing";
 import { unlink } from "node:fs/promises";
 import { join } from "node:path";
 import process from "node:process";

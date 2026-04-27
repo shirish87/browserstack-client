@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { testManagementContext } from "./setup.ts";
-import { resolveUsername } from "@browserstack-client/core";
+import { resolveUsername } from "@dot-slash/browserstack-core";
 
 const TIMEOUT = 30_000;
 const LONG_TIMEOUT = 60_000;

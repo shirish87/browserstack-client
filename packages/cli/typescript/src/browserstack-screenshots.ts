@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { ensureAccessKeyExists, ensureUsernameExists, formatError } from "./utils.ts";
-import { BrowserStackError } from "@browserstack-client/core";
-import { ScreenshotsClient } from "@browserstack-client/screenshots";
-import { BrowserStackOptions } from "@browserstack-client/core";
+import { BrowserStackError } from "@dot-slash/browserstack-core";
+import { ScreenshotsClient } from "@dot-slash/browserstack-screenshots";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
 import { resolve } from "node:path";
 import process from "node:process";
 import { Screenshots } from "./constants.generated.ts";
@@ -62,6 +62,6 @@ const isMain =
   import.meta.url === `file://${process.argv[1]}` ||
   import.meta.url === `file://${resolve(process.argv[1])}`;
 
-if (isMain) {
+if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && isMain) {
   main();
 }

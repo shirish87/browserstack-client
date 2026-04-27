@@ -1,5 +1,5 @@
-import { BrowserStackOptions } from "@browserstack-client/core";
-import { GeneratedAppAutomateClient } from "@browserstack-client/openapi/app-automate/client";
+import { BrowserStackOptions } from "@dot-slash/browserstack-core";
+import { GeneratedAppAutomateClient } from "@dot-slash/browserstack-openapi/app-automate/client";
 
 export class AppAutomateClient extends GeneratedAppAutomateClient {
   static readonly FlutterPlatform = {
@@ -12,7 +12,7 @@ export class AppAutomateClient extends GeneratedAppAutomateClient {
       options ?? {},
       options?.baseUrl ?? "https://api.browserstack.com",
       "https://api-cloud.browserstack.com",
-      "@browserstack-client/app-automate",
+      "@dot-slash/browserstack-app-automate",
       __PKG_VERSION__
     );
   }

@@ -4,7 +4,7 @@
  * Example:
  * ```ts
  * import got from 'got';
- * import { createGotAdapter } from '@browserstack-client/core/adapters';
+ * import { createGotAdapter } from '@dot-slash/browserstack-core/adapters';
  *
  * const gotInstance = got.extend({
  *   // proxy config, hooks, etc.
