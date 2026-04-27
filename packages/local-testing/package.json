@@ -1,7 +1,7 @@
 {
   "name": "@dot-slash/browserstack-local-testing-api",
   "private": true,
-  "version": "4.1.0-alpha.1",
+  "version": "4.1.0-alpha.2",
   "type": "module",
   "description": "BrowserStack Local Testing API client for local development",
   "engines": {

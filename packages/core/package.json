@@ -1,7 +1,7 @@
 {
   "name": "@dot-slash/browserstack-core",
   "private": true,
-  "version": "4.1.0-alpha.1",
+  "version": "4.1.0-alpha.2",
   "type": "module",
   "description": "Shared runtime utilities: APIClient base, auth, error handling, HTTP adapters",
   "engines": {
