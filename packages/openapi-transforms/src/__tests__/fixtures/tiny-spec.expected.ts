@@ -10,8 +10,11 @@ export type GetProjectError = HttpError<
 
 export type GetLogsError = HttpError<unknown>;
 
+/** @interface */
+export type GetProjectResult = DeepCamelCase<(operations["getProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>;
+
 export class TinyClient extends APIClient {
-getProject(projectId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(operations["getProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>> {
+getProject(projectId: number, options?: ExecuteOptions): Promise<GetProjectResult> {
     return (this.execute({
       path: "/projects/{projectId}",
       params: { path: { projectId: projectId } },
@@ -24,10 +27,10 @@ getProject(projectId: number, options?: ExecuteOptions): Promise<DeepCamelCase<(
       operationId: "getProject",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<(operations["getProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetProjectResult>;
   }
 
-getLogs(options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
+getLogs(options?: ExecuteOptions): Promise<string> {
     return (this.execute({
       path: "/logs",
       params: undefined,
@@ -40,6 +43,6 @@ getLogs(options?: ExecuteOptions): Promise<DeepCamelCase<string>> {
       operationId: "getLogs",
       method: "GET" as const,
       signal: options?.signal,
-    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<string>>;
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
   }
 }

@@ -19,8 +19,10 @@ describe("deriveReturnType", () => {
       ann("json-unwrap", { path: "$.foo" }),
       "getX",
     );
-    expect(result.type).toBe(`(operations["getX"]["responses"][200]["content"]["application/json"] & Record<"foo", unknown>)["foo"]`);
-    expect(result.aliases).toEqual([]);
+    expect(result.type).toBe("GetXResult");
+    expect(result.aliases).toEqual([
+      `/** @interface */\nexport type GetXResult = DeepCamelCase<(operations["getX"]["responses"][200]["content"]["application/json"] & Record<"foo", unknown>)["foo"]>;`,
+    ]);
   });
   it("applies $[*].bar against T[] shape as array of bar — emits named element+list aliases", () => {
     const result = deriveReturnType(

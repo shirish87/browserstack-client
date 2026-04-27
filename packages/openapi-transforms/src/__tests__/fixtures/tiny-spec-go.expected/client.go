@@ -15,6 +15,9 @@ func New(c *browserstackhttp.Client) *AutomateClient {
 	return &AutomateClient{http: c}
 }
 
+/**
+ * CLI Command: automate get-project
+ */
 func (c *AutomateClient) GetProject(ctx context.Context, projectId string) (*Envelope, error) {
 	var out Envelope
 	if err := c.http.Get(ctx, "/projects/" + url.PathEscape(projectId), nil, &out); err != nil {
@@ -23,6 +26,9 @@ func (c *AutomateClient) GetProject(ctx context.Context, projectId string) (*Env
 	return &out, nil
 }
 
+/**
+ * CLI Command: automate get-logs
+ */
 func (c *AutomateClient) GetLogs(ctx context.Context) (string, error) {
 	return c.http.GetText(ctx, "/logs", nil)
 }
