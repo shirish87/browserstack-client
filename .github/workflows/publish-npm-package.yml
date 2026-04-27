@@ -3,6 +3,9 @@ name: Publish npm package
 on:
   release:
     types: [published]
+  push:
+    branches:
+      - 'trigger-npm-publish'
   workflow_dispatch:
     inputs:
       confirm:
@@ -26,7 +29,7 @@ jobs:
   publish-node-lts:
     name: "node.js lts"
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' || github.event.inputs.confirm == 'publish'
+    if: github.event_name == 'release' || github.event_name == 'push' || github.event.inputs.confirm == 'publish'
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -52,6 +55,8 @@ jobs:
             if [ "${{ github.event.release.prerelease }}" = "true" ]; then
               TAG="next"
             fi
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            TAG="next"
           else
             TAG="${{ github.event.inputs.tag }}"
           fi
