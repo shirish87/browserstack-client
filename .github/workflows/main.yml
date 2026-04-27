@@ -39,7 +39,7 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm build:types && pnpm build
+        run: pnpm build:types && pnpm build && pnpm run build:cli:ts
 
       - name: Test CLI
         run: pnpm test -- --project cli -t "LocalCLI"
@@ -62,7 +62,7 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm build:types && pnpm build
+        run: pnpm build:types && pnpm build && pnpm run build:cli:ts
 
       - name: Test
         run: pnpm test
@@ -86,7 +86,7 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm build:types && pnpm build
+        run: pnpm build:types && pnpm build && pnpm run build:cli:ts
 
       - name: Test
         run: pnpm test
@@ -115,7 +115,7 @@ jobs:
         run: pnpm install
 
       - name: Build and Coverage
-        run: pnpm build:types && pnpm build && pnpm coverage
+        run: pnpm build:types && pnpm build && pnpm run build:cli:ts && pnpm coverage
 
       - name: Wait for SonarQube to be ready
         run: |
