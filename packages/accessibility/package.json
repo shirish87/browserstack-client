@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "6.0.0-alpha.0",
+  "version": "4.0.0-alpha.0",
   "type": "module",
   "description": "BrowserStack Accessibility API client",
   "engines": {
