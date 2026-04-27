@@ -2,7 +2,11 @@ name: CI
 on:
   push:
     branches:
-      - '__disabled__'
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
