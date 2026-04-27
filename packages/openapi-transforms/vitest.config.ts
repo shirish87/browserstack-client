@@ -1,7 +1,7 @@
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  define: { __PKG_VERSION__: '"4.0.0-test"' },
+  define: { __PKG_VERSION__: '"4.1.0-test"' },
   test: {
     globals: true,
     name: "openapi-transforms",

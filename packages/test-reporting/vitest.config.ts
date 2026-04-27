@@ -6,7 +6,7 @@ import path from "path";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  define: { __PKG_VERSION__: '"4.0.0-test"' },
+  define: { __PKG_VERSION__: '"4.1.0-test"' },
   test: {
     globals: true,
     name: "test-reporting",

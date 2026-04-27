@@ -36,7 +36,7 @@ const sharedAliases = {
 
 const projectBase = {
   define: {
-    __PKG_VERSION__: '"4.0.0-test"',
+    __PKG_VERSION__: '"4.1.0-test"',
   },
   test: {
     globals: true,
