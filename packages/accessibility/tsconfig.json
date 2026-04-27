@@ -5,10 +5,10 @@
     "ignoreDeprecations": "6.0",
     "noEmit": true,
     "paths": {
-      "@browserstack-client/core": ["../core/src/index.ts"],
-      "@browserstack-client/openapi": ["../openapi/generated/index.ts"],
-      "@browserstack-client/openapi/*": ["../openapi/generated/*.ts"],
-      "@browserstack-client/openapi-transforms": ["../openapi-transforms/src/index.ts"]
+      "@dot-slash/browserstack-core": ["../core/src/index.ts"],
+      "@dot-slash/browserstack-openapi": ["../openapi/generated/index.ts"],
+      "@dot-slash/browserstack-openapi/*": ["../openapi/generated/*.ts"],
+      "@dot-slash/browserstack-openapi-transforms": ["../openapi-transforms/src/index.ts"]
     }
   },
   "include": ["src"]

@@ -20,8 +20,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@browserstack-client/openapi/*": ["packages/openapi/generated/*.ts"],
-      "@browserstack-client/*": ["packages/*/src/index.ts"]
+      "@dot-slash/browserstack-openapi/*": ["packages/openapi/generated/*.ts"],
+      "@dot-slash/browserstack-*": ["packages/*/src/index.ts"]
     }
   },
   "include": ["packages/*/src"]

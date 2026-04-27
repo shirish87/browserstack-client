@@ -6,7 +6,7 @@
     "noEmit": true,
     "types": ["node"],
     "paths": {
-      "@browserstack-client/openapi": ["../openapi/generated/index.ts"]
+      "@dot-slash/browserstack-openapi": ["../openapi/generated/index.ts"]
     }
   },
   "include": ["src"]

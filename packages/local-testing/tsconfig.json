@@ -4,11 +4,11 @@
     "baseUrl": ".",
     "noEmit": true,
     "paths": {
-      "@browserstack-client/local-testing": ["./src/index.ts"],
-      "@browserstack-client/local-testing-binary": ["../local-testing-binary/src/index.ts"],
-      "@browserstack-client/core": ["../core/src/index.ts"],
-      "@browserstack-client/openapi": ["../openapi/generated/index.ts"],
-      "@browserstack-client/openapi/*": ["../openapi/generated/*.ts"]
+      "@dot-slash/browserstack-local-testing-api": ["./src/index.ts"],
+      "@dot-slash/browserstack-local-testing": ["../local-testing-binary/src/index.ts"],
+      "@dot-slash/browserstack-core": ["../core/src/index.ts"],
+      "@dot-slash/browserstack-openapi": ["../openapi/generated/index.ts"],
+      "@dot-slash/browserstack-openapi/*": ["../openapi/generated/*.ts"]
     }
   },
   "include": ["src"]

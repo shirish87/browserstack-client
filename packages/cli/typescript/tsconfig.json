@@ -4,19 +4,19 @@
     "baseUrl": ".",
     "noEmit": true,
     "paths": {
-      "@browserstack-client/cli": ["./src/index.ts"],
-      "@browserstack-client/core": ["../../core/src/index.ts"],
-      "@browserstack-client/local-testing": ["../../local-testing/src/index.ts"],
-      "@browserstack-client/local-testing-binary": ["../../local-testing-binary/src/index.ts"],
-      "@browserstack-client/app-automate": ["../../app-automate/src/index.ts"],
-      "@browserstack-client/automate": ["../../automate/src/index.ts"],
-      "@browserstack-client/test-management": ["../../test-management/src/index.ts"],
-      "@browserstack-client/accessibility": ["../../accessibility/src/index.ts"],
-      "@browserstack-client/test-reporting": ["../../test-reporting/src/index.ts"],
-      "@browserstack-client/openapi": ["../../openapi/generated/index.ts"],
-      "@browserstack-client/openapi/*": ["../../openapi/generated/*.ts"],
-      "@browserstack-client/openapi-transforms": ["../../openapi-transforms/src/index.ts"],
-      "@browserstack-client/screenshots": ["../../screenshots/src/index.ts"]
+      "@dot-slash/browserstack-cli": ["./src/index.ts"],
+      "@dot-slash/browserstack-core": ["../../core/src/index.ts"],
+      "@dot-slash/browserstack-local-testing-api": ["../../local-testing/src/index.ts"],
+      "@dot-slash/browserstack-local-testing": ["../../local-testing-binary/src/index.ts"],
+      "@dot-slash/browserstack-app-automate": ["../../app-automate/src/index.ts"],
+      "@dot-slash/browserstack-automate": ["../../automate/src/index.ts"],
+      "@dot-slash/browserstack-test-management": ["../../test-management/src/index.ts"],
+      "@dot-slash/browserstack-accessibility": ["../../accessibility/src/index.ts"],
+      "@dot-slash/browserstack-test-reporting": ["../../test-reporting/src/index.ts"],
+      "@dot-slash/browserstack-openapi": ["../../openapi/generated/index.ts"],
+      "@dot-slash/browserstack-openapi/*": ["../../openapi/generated/*.ts"],
+      "@dot-slash/browserstack-openapi-transforms": ["../../openapi-transforms/src/index.ts"],
+      "@dot-slash/browserstack-screenshots": ["../../screenshots/src/index.ts"]
     }
   },
   "include": ["src"]
