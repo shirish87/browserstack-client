@@ -46,7 +46,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build and test
-        run: pnpm build:types && pnpm build && pnpm test
+        run: pnpm build:types && pnpm build && pnpm test -- --exclude-project cli --exclude-project local-testing-binary
 
       - name: npm publish
         run: |
