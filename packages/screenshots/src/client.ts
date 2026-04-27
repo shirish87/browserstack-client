@@ -20,7 +20,7 @@ export class ScreenshotsClient extends GeneratedScreenshotsClient {
       options?.baseUrl ?? "https://www.browserstack.com",
       "https://api-cloud.browserstack.com",
       "@dot-slash/browserstack-screenshots",
-      "6.0.0"
+      __PKG_VERSION__
     );
   }
 

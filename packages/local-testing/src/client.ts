@@ -22,7 +22,7 @@ export class LocalTestingClient extends GeneratedLocalTestingClient {
       options?.baseUrl ?? "https://www.browserstack.com",
       "https://api-cloud.browserstack.com",
       "@dot-slash/browserstack-local-testing-api",
-      "6.0.0"
+      __PKG_VERSION__
     );
 
     const authToken = resolveAccessKey(options?.accessKey);
