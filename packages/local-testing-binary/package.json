@@ -1,5 +1,6 @@
 {
-  "name": "@browserstack-client/local-testing-binary",
+  "name": "@dot-slash/browserstack-local-testing",
+  "publishConfig": { "access": "public" },
   "version": "6.0.0",
   "type": "module",
   "description": "BrowserStack Local Testing binary management and spawning for Node.js",
@@ -21,13 +22,13 @@
     "typecheck": "tsc --noEmit || true"
   },
   "dependencies": {
-    "@browserstack-client/core": "workspace:*",
-    "@browserstack-client/local-testing": "workspace:*",
+    "@dot-slash/browserstack-core": "workspace:*",
+    "@dot-slash/browserstack-local-testing-api": "workspace:*",
     "fflate": "^0.8.2",
     "signal-exit": "^4.1.0"
   },
   "devDependencies": {
-    "@browserstack-client/openapi": "workspace:*",
+    "@dot-slash/browserstack-openapi": "workspace:*",
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"

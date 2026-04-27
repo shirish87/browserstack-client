@@ -1,5 +1,6 @@
 {
-  "name": "@browserstack-client/local-testing",
+  "name": "@dot-slash/browserstack-local-testing-api",
+  "private": true,
   "version": "6.0.0",
   "type": "module",
   "description": "BrowserStack Local Testing API client for local development",
@@ -33,8 +34,8 @@
     "typecheck": "tsc --noEmit || true"
   },
   "dependencies": {
-    "@browserstack-client/core": "workspace:*",
-    "@browserstack-client/openapi": "workspace:*",
+    "@dot-slash/browserstack-core": "workspace:*",
+    "@dot-slash/browserstack-openapi": "workspace:*",
     "fflate": "^0.8.2"
   },
   "devDependencies": {

@@ -1,5 +1,6 @@
 {
-  "name": "@browserstack-client/core",
+  "name": "@dot-slash/browserstack-core",
+  "private": true,
   "version": "6.0.0",
   "type": "module",
   "description": "Shared runtime utilities: APIClient base, auth, error handling, HTTP adapters",
@@ -25,10 +26,10 @@
     "typecheck": "tsc --noEmit || true"
   },
   "dependencies": {
-    "@browserstack-client/openapi-transforms": "workspace:*"
+    "@dot-slash/browserstack-openapi-transforms": "workspace:*"
   },
   "devDependencies": {
-    "@browserstack-client/openapi": "workspace:*",
+    "@dot-slash/browserstack-openapi": "workspace:*",
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"

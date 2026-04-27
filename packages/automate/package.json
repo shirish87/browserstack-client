@@ -1,5 +1,6 @@
 {
-  "name": "@browserstack-client/automate",
+  "name": "@dot-slash/browserstack-automate",
+  "publishConfig": { "access": "public" },
   "version": "6.0.0",
   "type": "module",
   "description": "BrowserStack Automate API client for browser automation testing",
@@ -33,9 +34,9 @@
     "typecheck": "tsc --noEmit || true"
   },
   "dependencies": {
-    "@browserstack-client/core": "workspace:*",
-    "@browserstack-client/openapi": "workspace:*",
-    "@browserstack-client/openapi-transforms": "workspace:*"
+    "@dot-slash/browserstack-core": "workspace:*",
+    "@dot-slash/browserstack-openapi": "workspace:*",
+    "@dot-slash/browserstack-openapi-transforms": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

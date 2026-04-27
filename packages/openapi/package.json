@@ -1,5 +1,6 @@
 {
-  "name": "@browserstack-client/openapi",
+  "name": "@dot-slash/browserstack-openapi",
+  "publishConfig": { "access": "public" },
   "version": "6.0.0",
   "type": "module",
   "description": "OpenAPI specs and generated TypeScript types for BrowserStack APIs",
@@ -40,6 +41,6 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@browserstack-client/openapi-transforms": "workspace:*"
+    "@dot-slash/browserstack-openapi-transforms": "workspace:*"
   }
 }

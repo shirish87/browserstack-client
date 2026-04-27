@@ -1,5 +1,6 @@
 {
-  "name": "@browserstack-client/test-management",
+  "name": "@dot-slash/browserstack-test-management",
+  "publishConfig": { "access": "public" },
   "version": "6.0.0",
   "type": "module",
   "description": "BrowserStack Test Management API client",
@@ -25,9 +26,9 @@
     "typecheck": "tsc --noEmit || true"
   },
   "dependencies": {
-    "@browserstack-client/core": "workspace:*",
-    "@browserstack-client/openapi": "workspace:*",
-    "@browserstack-client/openapi-transforms": "workspace:*"
+    "@dot-slash/browserstack-core": "workspace:*",
+    "@dot-slash/browserstack-openapi": "workspace:*",
+    "@dot-slash/browserstack-openapi-transforms": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

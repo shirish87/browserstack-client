@@ -1,5 +1,6 @@
 {
-  "name": "@browserstack-client/openapi-transforms",
+  "name": "@dot-slash/browserstack-openapi-transforms",
+  "publishConfig": { "access": "public" },
   "version": "0.1.0-dev",
   "type": "module",
   "main": "./dist/index.js",
