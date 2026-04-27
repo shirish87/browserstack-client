@@ -1,1 +1,0 @@
-{"root":["../../build.d.ts","./src/api-client.ts","./src/auth.ts","./src/env.ts","./src/error.ts","./src/index.ts","./src/pkginfo.ts","./src/__tests__/api-client-execute.test.ts","./src/__tests__/setup.ts","./src/__tests__/test-utils.ts","./src/adapters/axios.ts","./src/adapters/fetch.ts","./src/adapters/got.ts","./src/adapters/index.ts"],"version":"6.0.3"}

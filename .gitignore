@@ -21,6 +21,9 @@ dist-ssr
 *.tsbuildinfo
 .turbo/
 
+# Vitest results
+results.json
+
 # Go build output
 packages/cli/golang/dist/
 packages/cli/golang/browserstack
