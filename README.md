@@ -50,18 +50,65 @@ import { TestManagementClient } from "@browserstack-client/test-management";
 
 // BrowserStack Automate API
 const automateClient = new AutomateClient();
-const plan = await automateClient.getAutomatePlan();
+const plan = await automateClient.getPlan();
 console.log(plan);
 
 // BrowserStack Accessibility API
 const accessibilityClient = new AccessibilityClient();
-const reports = await accessibilityClient.getAccessibilityWorkflowAnalyzerReports();
+const reports = await accessibilityClient.getWorkflowAnalyzerReports();
 console.log(reports);
 
 // BrowserStack Test Management API
 const tmClient = new TestManagementClient();
-const projects = await tmClient.getTestManagementProjects();
+const projects = await tmClient.getProjects();
 console.log(projects);
+```
+
+## More Clients
+
+### App Automate
+
+```ts
+import { AppAutomateClient } from "@browserstack-client/app-automate";
+
+const appAutomateClient = new AppAutomateClient();
+const projects = await appAutomateClient.getProjects();
+const builds = await appAutomateClient.getBuilds(projects[0].id);
+console.log(builds);
+```
+
+### Test Reporting
+
+```ts
+import { TestReportingClient } from "@browserstack-client/test-reporting";
+
+const trClient = new TestReportingClient();
+
+const build = await trClient.startBuild({
+  projectName: "my-project",
+  buildName: "my-build",
+  framework: "playwright",
+});
+
+// ... run tests, report results ...
+
+await trClient.finishBuild(build.buildHashedId, { status: "passed" });
+```
+
+### Screenshots
+
+```ts
+import { ScreenshotsClient } from "@browserstack-client/screenshots";
+
+const screenshotsClient = new ScreenshotsClient();
+
+const screenshots = await screenshotsClient.launch(
+  {
+    url: "https://example.com",
+    browsers: [{ browser: "chrome", browser_version: "latest", os: "Windows", os_version: "11" }],
+  },
+  (screenshot) => console.log("captured:", screenshot.imageUrl)
+);
 ```
 
 ## CLI Usage
