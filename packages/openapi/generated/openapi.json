@@ -2,7 +2,7 @@
   "openapi": "3.0.2",
   "info": {
     "title": "BrowserStack Client",
-    "version": "4.1.0-alpha.0",
+    "version": "4.1.0-alpha.1",
     "description": "BrowserStack is a cloud web and mobile testing platform that provides developers with the ability to test their websites and mobile applications across on-demand browsers, operating systems and real mobile devices. This document is an (unofficial) OpenAPI reference for BrowserStack products: Automate, App Automate, JavaScript Testing, Screenshots, and others. For more information, visit https://www.browserstack.com/docs/",
     "license": {
       "name": "MIT License",

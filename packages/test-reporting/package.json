@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "4.1.0-alpha.0",
+  "version": "4.1.0-alpha.1",
   "type": "module",
   "description": "BrowserStack Test Reporting & Analytics API client",
   "engines": {
@@ -25,12 +25,11 @@
     "typecheck": "tsc --noEmit || true",
     "test": "vitest run"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@dot-slash/browserstack-core": "workspace:*",
     "@dot-slash/browserstack-openapi": "workspace:*",
-    "@dot-slash/browserstack-openapi-transforms": "workspace:*"
-  },
-  "devDependencies": {
+    "@dot-slash/browserstack-openapi-transforms": "workspace:*",
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",

@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "4.1.0-alpha.0",
+  "version": "4.1.0-alpha.1",
   "type": "module",
   "description": "BrowserStack Local Testing binary management and spawning for Node.js",
   "engines": {
@@ -25,12 +25,12 @@
     "typecheck": "tsc --noEmit || true"
   },
   "dependencies": {
-    "@dot-slash/browserstack-core": "workspace:*",
-    "@dot-slash/browserstack-local-testing-api": "workspace:*",
     "fflate": "^0.8.2",
     "signal-exit": "^4.1.0"
   },
   "devDependencies": {
+    "@dot-slash/browserstack-core": "workspace:*",
+    "@dot-slash/browserstack-local-testing-api": "workspace:*",
     "@dot-slash/browserstack-openapi": "workspace:*",
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",

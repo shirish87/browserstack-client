@@ -10,8 +10,12 @@ export default defineConfig({
   clean: true,
   splitting: false,
   platform: "node",
-  external: [
+  noExternal: [
+    "@dot-slash/browserstack-core",
     "@dot-slash/browserstack-local-testing-api",
+    "@dot-slash/browserstack-openapi",
+  ],
+  external: [
     "fflate",
     "signal-exit",
   ],

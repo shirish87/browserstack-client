@@ -113,11 +113,22 @@ const screenshots = await screenshotsClient.launch(
 
 ## CLI Usage
 
-The monorepo also provides a unified CLI:
+The monorepo also provides a unified CLI for interacting with various BrowserStack products and managing Local Testing:
 
 ```bash
-$ npx @dot-slash/browserstack-cli accessibility workflow-analyzer list
+# List projects in Automate
 $ npx @dot-slash/browserstack-cli automate list-projects
+
+# List Accessibility workflow analyzer reports
+$ npx @dot-slash/browserstack-cli accessibility workflow-analyzer list
+
+# Local Testing
+$ npx @dot-slash/browserstack-cli local start
+$ npx @dot-slash/browserstack-cli local stop
+$ npx @dot-slash/browserstack-cli local list
+
+# Run a command with Local Testing automatically managed
+$ npx @dot-slash/browserstack-cli local run-with -- npm test
 ```
 
 ## Additional Features (Node.js only)

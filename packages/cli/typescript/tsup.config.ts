@@ -19,7 +19,7 @@ export default defineConfig({
   splitting: false,
   platform: "node",
   shims: true,
-  external: [
+  noExternal: [
     "@dot-slash/browserstack-core",
     "@dot-slash/browserstack-local-testing",
     "@dot-slash/browserstack-app-automate",
@@ -28,6 +28,10 @@ export default defineConfig({
     "@dot-slash/browserstack-test-management",
     "@dot-slash/browserstack-accessibility",
     "@dot-slash/browserstack-test-reporting",
+    "@dot-slash/browserstack-screenshots",
+    "@dot-slash/browserstack-openapi-transforms",
+  ],
+  external: [
     "signal-exit",
   ],
 });

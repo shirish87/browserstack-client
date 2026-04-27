@@ -1,13 +1,16 @@
 {
   "name": "@dot-slash/browserstack-cli",
-  "private": true,
-  "version": "4.1.0-alpha.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "4.1.0-alpha.1",
   "type": "module",
   "description": "Command-line interface for BrowserStack Local Testing and App Automate",
   "engines": {
     "node": ">=18.0.0"
   },
   "bin": {
+    "browserstack-cli": "./dist/browserstack-client.js",
     "browserstack-client": "./dist/browserstack-client.js",
     "browserstack-test-reporting": "./dist/browserstack-test-reporting.js"
   },
@@ -73,6 +76,10 @@
     "scripts": []
   },
   "dependencies": {
+    "signal-exit": "^4.1.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
     "@dot-slash/browserstack-accessibility": "workspace:*",
     "@dot-slash/browserstack-app-automate": "workspace:*",
     "@dot-slash/browserstack-automate": "workspace:*",
@@ -83,10 +90,6 @@
     "@dot-slash/browserstack-screenshots": "workspace:*",
     "@dot-slash/browserstack-test-management": "workspace:*",
     "@dot-slash/browserstack-test-reporting": "workspace:*",
-    "signal-exit": "^4.1.0",
-    "zod": "^4.3.6"
-  },
-  "devDependencies": {
     "@types/node": "^25.6.0",
     "@yao-pkg/pkg": "^6.18.2",
     "tsup": "^8.5.1",
