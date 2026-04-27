@@ -6,8 +6,16 @@
   "description": "BrowserStack Accessibility API client",
   "engines": { "node": ">=18.0.0" },
   "exports": {
-    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
-    "./test": { "types": "./dist/test/index.d.ts", "import": "./dist/test/index.js" },
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./test": {
+      "import": "./dist/test/index.js",
+      "require": "./dist/test/index.cjs",
+      "types": "./dist/test/index.d.ts"
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
