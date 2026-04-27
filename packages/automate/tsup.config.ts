@@ -9,7 +9,8 @@ export default defineConfig({
     "schemas/v5/index": "src/schemas/v5/index.ts",
     "test/index": "src/test/index.ts",
   },
-  format: ["esm"],
+  format: ["esm", "cjs"],
+  platform: "browser",
   dts: false, // DTS generation handled separately
   sourcemap: true,
   clean: true,

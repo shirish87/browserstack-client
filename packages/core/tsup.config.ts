@@ -5,7 +5,8 @@ export default defineConfig({
     index: "src/index.ts",
     "adapters/index": "src/adapters/index.ts",
   },
-  format: ["esm"],
+  format: ["esm", "cjs"],
+  platform: "browser",
   dts: false, // DTS generation handled separately
   sourcemap: true,
   clean: true,
