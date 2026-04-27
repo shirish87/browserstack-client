@@ -17,9 +17,9 @@ export function emitModule(input: EmitModuleInput): string {
     : "toCamelCase";
   const header = `/* AUTO-GENERATED — do not edit */
 import type { operations } from "${input.typesImportPath}";
-import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
-import { HttpError, ${transformImports} } from "@browserstack-client/openapi-transforms";
-import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
+import { APIClient, type ExecuteOptions } from "@dot-slash/browserstack-core";
+import { HttpError, ${transformImports} } from "@dot-slash/browserstack-openapi-transforms";
+import type { DeepCamelCase } from "@dot-slash/browserstack-openapi-transforms";
 `;
   const methods = input.methods.map((m) => ({
     ...m,

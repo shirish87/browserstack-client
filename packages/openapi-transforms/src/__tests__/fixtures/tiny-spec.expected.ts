@@ -1,8 +1,8 @@
 /* AUTO-GENERATED — do not edit */
 import type { operations } from "./tiny-types";
-import { APIClient, type ExecuteOptions } from "@browserstack-client/core";
-import { HttpError, toCamelCase } from "@browserstack-client/openapi-transforms";
-import type { DeepCamelCase } from "@browserstack-client/openapi-transforms";
+import { APIClient, type ExecuteOptions } from "@dot-slash/browserstack-core";
+import { HttpError, toCamelCase } from "@dot-slash/browserstack-openapi-transforms";
+import type { DeepCamelCase } from "@dot-slash/browserstack-openapi-transforms";
 
 export type GetProjectError = HttpError<
   | (operations["getProject"]["responses"][404] extends { content: { "application/json": infer E } } ? E : unknown)
