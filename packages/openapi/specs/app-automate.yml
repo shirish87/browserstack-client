@@ -2570,6 +2570,58 @@ components:
           description: Shareable ID allows members of other teams to use the media
             files in their tests.
           example: steve/SampleMedia
+    AppAutomateAppProfilingV1:
+      title: AppAutomateAppProfilingV1
+      type: object
+      properties:
+        timestamp:
+          type: string
+        cpu_usage:
+          type: number
+        memory_usage:
+          type: number
+        battery_level:
+          type: number
+        network_received:
+          type: number
+        network_sent:
+          type: number
+    AppAutomateAppProfilingV2:
+      title: AppAutomateAppProfilingV2
+      type: object
+      properties:
+        timestamp:
+          type: string
+        cpu_usage:
+          type: number
+        memory_usage:
+          type: number
+        battery_level:
+          type: number
+        network_received:
+          type: number
+        network_sent:
+          type: number
+        app_size_installed:
+          type: number
+        ui_rendering:
+          type: number
+    AppAutomateSessionAppDetails:
+      title: AppAutomateSessionAppDetails
+      type: object
+      properties:
+        app_name:
+          type: string
+          description: Package name of the app
+          example: com.sample.loginapplication
+        app_version:
+          type: string
+        app_url:
+          type: string
+        app_custom_id:
+          type: string
+        uploaded_at:
+          type: string
     AppAutomateSession:
       title: AppAutomateSession
       allOf:
@@ -2580,30 +2632,7 @@ components:
         - app_details
         properties:
           app_details:
-            type: object
-            properties:
-              app_name:
-                type: string
-                description: Package name of the app.
-                example: com.sample.loginapplication
-              app_version:
-                type: string
-                description: Version of the app.
-                example: '1.0'
-              app_url:
-                type: string
-                description: Unique identifier returned upon successful upload of
-                  your app on BrowserStack. This value can be used later to specify
-                  the application under test in your Appium test scripts."
-                example: media://90c7a8h8dc82308108734e9a46c24d8f01de12881
-              app_custom_id:
-                type: string
-                description: Custom ID defined for the uploaded app.
-                example: LoginApp
-              uploaded_at:
-                type: string
-                description: Timestamp of the app upload.
-                example: '2021-09-30T10:00:00.000Z'
+            $ref: '#/components/schemas/AppAutomateSessionAppDetails'
     AppAutomateTestPackage:
       title: AppAutomateTestPackage
       type: object

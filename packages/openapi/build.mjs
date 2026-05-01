@@ -4,6 +4,7 @@ import path from "node:path";
 import openapiTS, { astToString } from "openapi-typescript";
 import ts from "typescript";
 import { fileURLToPath } from "node:url";
+import yaml from "yaml";
 import { CodecRegistry, registerAllBuiltins } from "@dot-slash/browserstack-openapi-transforms";
 import { generateClientModule } from "@dot-slash/browserstack-openapi-transforms/codegen/typescript";
 import { generateGoModule } from "@dot-slash/browserstack-openapi-transforms/codegen/golang";
@@ -192,6 +193,18 @@ for (const { product, baseUrl } of productSpecs) {
 
 function toPascal(s) { return s.split(/[-_]/).map(w => w[0].toUpperCase() + w.slice(1)).join(""); }
 
+async function loadSpecWithShared(specPath) {
+  const sharedPath = path.join(__dirname, "specs/shared.yml");
+  const raw = await fs.readFile(specPath, "utf8");
+  const doc = yaml.parse(raw);
+  const sharedRaw = await fs.readFile(sharedPath, "utf8");
+  const shared = yaml.parse(sharedRaw);
+  doc.components = doc.components ?? {};
+  // shared schemas are the base; product schemas override on collision
+  doc.components.schemas = { ...(shared.components?.schemas ?? {}), ...doc.components.schemas };
+  return doc;
+}
+
 console.log("Generating Go client modules...");
 
 async function generateGoModules() {
@@ -199,8 +212,10 @@ async function generateGoModules() {
   for (const { product } of productSpecs) {
     const specFile = path.join(__dirname, "specs", `${product}.yml`);
     try {
+      const mergedDoc = await loadSpecWithShared(specFile);
       const { typesGo, clientGo } = await generateGoModule({
         specPath: specFile,
+        specDoc: mergedDoc,
         product,
         modulePath: "github.com/browserstack/browserstack-client",
       });

@@ -430,6 +430,145 @@ components:
               type: string
               description: Browser version.
               example: '80.0'
+    AutomatePlan:
+      title: AutomatePlan
+      type: object
+      required:
+      - automate_plan
+      - parallel_sessions_running
+      - parallel_sessions_max_allowed
+      - team_parallel_sessions_max_allowed
+      - queued_sessions
+      - queued_sessions_max_allowed
+      properties:
+        automate_plan:
+          type: string
+          description: Specifies your Automate plan name
+          example: Automate Mobile
+        terminal_access:
+          type: string
+          description: Terminal access level
+          example: Public
+        parallel_sessions_running:
+          type: number
+          description: Number of parallel sessions currently running
+          example: 0
+        parallel_sessions_max_allowed:
+          type: number
+          description: Maximum number of parallel sessions you can run
+          example: 0
+        team_parallel_sessions_max_allowed:
+          type: number
+          description: Maximum number of parallel sessions allowed in a team
+          example: 250
+        queued_sessions:
+          type: number
+          description: Number of sessions currently queued
+          example: 10
+        queued_sessions_max_allowed:
+          type: number
+          description: Maximum number of sessions that can be queued
+          example: 240
+    AutomateSession:
+      title: AutomateSession
+      allOf:
+      - $ref: '#/components/schemas/BrowserPlatform'
+      - type: object
+        required:
+        - hashed_id
+        - name
+        - duration
+        - status
+        - browserstack_status
+        - reason
+        - build_name
+        - project_name
+        - logs
+        - browser_url
+        - public_url
+        - appium_logs_url
+        - video_url
+        - browser_console_logs_url
+        - har_logs_url
+        - selenium_logs_url
+        - selenium_telemetry_logs_url
+        - created_at
+        properties:
+          hashed_id:
+            type: string
+            description: Hashed ID of the session
+            example: 4207442b2b0567368956dba064c22a3235a76214
+          name:
+            type: string
+            description: Name of your session
+            example: pricing_project_build
+          duration:
+            type: number
+            description: Duration of session execution
+            example: 10
+          status:
+            type: string
+            description: Status of the session
+            enum:
+            - running
+            - timeout
+            - failed
+            - done
+          browserstack_status:
+            type: string
+            description: Execution status of the session
+          reason:
+            type: string
+            description: Reason for test status
+            example: CLIENT_STOPPED_SESSION
+          build_name:
+            type: string
+            description: Name of the build
+            example: pricing_project_build
+          project_name:
+            type: string
+            description: Name of the project
+            example: pricing_project
+          logs:
+            type: string
+            description: Link to the session logs
+            example: https://automate.browserstack.com/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/logs
+          browser_url:
+            type: string
+            description: URL to view the session on Automate dashboard
+            example: https://automate.browserstack.com/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe
+          public_url:
+            type: string
+            description: URL to view the session publicly
+            example: https://automate.browserstack.com/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe?auth_token=01df4e51ba67eb743484a08b024a44601a2ae0399c5c011a68d9564147be1387
+          appium_logs_url:
+            type: string
+            description: URL to view the Appium logs
+            example: https://api.browserstack.com/automate/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/appiumlogs
+          video_url:
+            type: string
+            description: URL to view session video
+            example: https://automate.browserstack.com/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/video
+          browser_console_logs_url:
+            type: string
+            description: URL to view browser console logs
+            example: https://automate.browserstack.com/s3-upload/bs-selenium-logs-aps/s3.ap-south-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-console-logs-v2.txt
+          har_logs_url:
+            type: string
+            description: URL to view browser logs
+            example: https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-har-logs.txt
+          selenium_logs_url:
+            type: string
+            description: URL to view selenium logs
+            example: https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-selenium-logs.txt
+          selenium_telemetry_logs_url:
+            type: string
+            description: URL to view telemetry logs if it is enabled in your Selenium 4 session
+            example: https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-selenium-logs.txt
+          created_at:
+            type: string
+            description: Timestamp at which the session started executing
+            example: '2020-03-11T10:14:36.000Z'
     Status:
       title: Status
       type: object

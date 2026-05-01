@@ -8,6 +8,7 @@ import { stripOperationPrefix } from "../shared/operation";
 
 export interface GenerateGoModuleOptions {
   specPath: string;
+  specDoc?: SpecDoc;  // if provided, skip the file read
   product: string;
   modulePath?: string;
 }
@@ -252,8 +253,7 @@ export async function generateGoModule(
 ): Promise<{ typesGo: string; clientGo: string }> {
   const modulePath =
     opts.modulePath ?? "github.com/browserstack/browserstack-client";
-  const raw = await fs.readFile(opts.specPath, "utf8");
-  const doc = yaml.parse(raw) as SpecDoc;
+  const doc = opts.specDoc ?? (yaml.parse(await fs.readFile(opts.specPath, "utf8")) as SpecDoc);
 
   const className = toPascalCase(opts.product) + "Client";
   const componentSchemas = (doc.components?.schemas ?? {}) as Record<
