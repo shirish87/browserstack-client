@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import { BrowserStackError, HttpError, env } from "@dot-slash/browserstack-core";
 import { makeClient, makeErrorResponse } from "./setup.ts";
 import { AutomateClient } from "../index.ts";
@@ -33,11 +33,11 @@ const DELETE_MEDIA = { success: true, message: "Media with id abc123media has be
 
 describe("AutomateClient", () => {
   describe("Credentials", () => {
-    test("accepts valid username and accessKey", () => {
+    it("accepts valid username and accessKey", () => {
       expect(() => new AutomateClient({ username: "user", accessKey: "key" })).not.toThrow();
     });
 
-    test("makeClient helper creates a client with mock fetch", () => {
+    it("makeClient helper creates a client with mock fetch", () => {
       const client = makeClient();
       expect(client).toBeInstanceOf(AutomateClient);
     });
@@ -60,7 +60,7 @@ describe("AutomateClient", () => {
   });
 
   describe("getPlan", () => {
-    test("returns camelCase plan data", async () => {
+    it("returns camelCase plan data", async () => {
       const client = makeClient(PLAN);
       const data = await client.getPlan();
       expect(data).toBeDefined();
@@ -69,14 +69,14 @@ describe("AutomateClient", () => {
       expect(data.parallelSessionsRunning).toBe(0);
     });
 
-    test("throws HttpError on 401", async () => {
+    it("throws HttpError on 401", async () => {
       const client = makeClient(makeErrorResponse(401, "Unauthorized"));
       await expect(client.getPlan()).rejects.toThrow(HttpError);
     });
   });
 
   describe("getBrowsers", () => {
-    test("returns array of browser objects", async () => {
+    it("returns array of browser objects", async () => {
       const client = makeClient(BROWSERS);
       const data = await client.getBrowsers();
       expect(data).toBeInstanceOf(Array);
@@ -86,14 +86,14 @@ describe("AutomateClient", () => {
       expect(data[1].browser).toBe("chrome");
     });
 
-    test("throws HttpError on 401", async () => {
+    it("throws HttpError on 401", async () => {
       const client = makeClient(makeErrorResponse(401, "Unauthorized"));
       await expect(client.getBrowsers()).rejects.toThrow(HttpError);
     });
   });
 
   describe("Projects", () => {
-    test("getProjects returns array of projects", async () => {
+    it("getProjects returns array of projects", async () => {
       const client = makeClient(PROJECTS);
       const data = await client.getProjects();
       expect(data).toBeInstanceOf(Array);
@@ -102,7 +102,7 @@ describe("AutomateClient", () => {
       expect(data[0].name).toBe("mock-project");
     });
 
-    test("getProject returns camelCase project with builds", async () => {
+    it("getProject returns camelCase project with builds", async () => {
       const client = makeClient(PROJECT_WIRE);
       const data = await client.getProject("17053335");
       expect(data).toBeDefined();
@@ -111,7 +111,7 @@ describe("AutomateClient", () => {
       expect(data.groupId).toBe(2259240);
     });
 
-    test("updateProject returns updated project", async () => {
+    it("updateProject returns updated project", async () => {
       const client = makeClient(UPDATE_PROJECT);
       const data = await client.updateProject("17053335", { name: "updated-project" });
       expect(data).toBeDefined();
@@ -119,14 +119,14 @@ describe("AutomateClient", () => {
       expect(data.id).toBe(17053335);
     });
 
-    test("deleteProject returns status ok", async () => {
+    it("deleteProject returns status ok", async () => {
       const client = makeClient(DELETE_PROJECT);
       const data = await client.deleteProject("17053335");
       expect(data).toBeDefined();
       expect(data.status).toBe("ok");
     });
 
-    test("getProjectBadgeKey returns badge key string", async () => {
+    it("getProjectBadgeKey returns badge key string", async () => {
       const client = makeClient(BADGE_KEY);
       const data = await client.getProjectBadgeKey("17053335");
       expect(typeof data).toBe("string");
@@ -134,14 +134,14 @@ describe("AutomateClient", () => {
       expect(data).toBe(BADGE_KEY);
     });
 
-    test("getProject throws HttpError on 404", async () => {
+    it("getProject throws HttpError on 404", async () => {
       const client = makeClient(makeErrorResponse(404, "Project not found"));
       await expect(client.getProject("99999")).rejects.toThrow(HttpError);
     });
   });
 
   describe("Builds", () => {
-    test("getBuilds returns unwrapped array of builds", async () => {
+    it("getBuilds returns unwrapped array of builds", async () => {
       const client = makeClient(BUILDS_WIRE);
       const data = await client.getBuilds();
       expect(data).toBeInstanceOf(Array);
@@ -154,7 +154,7 @@ describe("AutomateClient", () => {
       expect(data[1].status).toBe("running");
     });
 
-    test("getBuild returns composed build with sessions", async () => {
+    it("getBuild returns composed build with sessions", async () => {
       const client = makeClient(BUILD_WIRE);
       const data = await client.getBuild("abc123build");
       expect(data).toBeDefined();
@@ -166,44 +166,40 @@ describe("AutomateClient", () => {
       expect(data.sessions[0].hashedId).toBe("abc123session");
     });
 
-    test("updateBuild returns automation_build wrapper", async () => {
-      const client = makeClient(UPDATE_BUILD);
-      const data = await client.updateBuild("abc123build", { name: "updated-build" });
-      expect(data).toBeDefined();
-      // updateBuild uses json codec - returns raw response with camelCase transform
+    it("returns updated build wrapped in automationBuild", async () => {
+      const data = await makeClient(UPDATE_BUILD).updateBuild("abc123build", { name: "updated-build" });
       expect(data).toHaveProperty("automationBuild");
-      if ("automationBuild" in data && data.automationBuild) {
-        expect((data.automationBuild as Record<string, unknown>).name).toBe("updated-build");
-      }
+      const build = (data as { automationBuild: { name: string } }).automationBuild;
+      expect(build.name).toBe("updated-build");
     });
 
-    test("deleteBuild returns status ok", async () => {
+    it("deleteBuild returns status ok", async () => {
       const client = makeClient(DELETE_BUILD);
       const data = await client.deleteBuild("abc123");
       expect(data).toBeDefined();
       expect(data.status).toBe("ok");
     });
 
-    test("deleteBuilds returns status ok", async () => {
+    it("deleteBuilds returns status ok", async () => {
       const client = makeClient(DELETE_BUILDS);
       const data = await client.deleteBuilds(["abc123"]);
       expect(data).toBeDefined();
       expect(data.status).toBe("ok");
     });
 
-    test("getBuilds throws HttpError on 401", async () => {
+    it("getBuilds throws HttpError on 401", async () => {
       const client = makeClient(makeErrorResponse(401, "Unauthorized"));
       await expect(client.getBuilds()).rejects.toThrow(HttpError);
     });
 
-    test("getBuild throws HttpError on 404", async () => {
+    it("getBuild throws HttpError on 404", async () => {
       const client = makeClient(makeErrorResponse(404, "Build not found"));
       await expect(client.getBuild("notexist")).rejects.toThrow(HttpError);
     });
   });
 
   describe("Sessions", () => {
-    test("getSessions returns unwrapped array of sessions", async () => {
+    it("getSessions returns unwrapped array of sessions", async () => {
       const client = makeClient(SESSIONS_WIRE);
       const data = await client.getSessions("abc123build");
       expect(data).toBeInstanceOf(Array);
@@ -213,7 +209,7 @@ describe("AutomateClient", () => {
       expect(data[0].browser).toBe("chrome");
     });
 
-    test("getSession returns unwrapped session", async () => {
+    it("getSession returns unwrapped session", async () => {
       const client = makeClient(SESSION_WIRE);
       const data = await client.getSession("abc123session");
       expect(data).toBeDefined();
@@ -223,7 +219,7 @@ describe("AutomateClient", () => {
       expect(data.publicUrl).toBeDefined();
     });
 
-    test("updateSession returns updated session data", async () => {
+    it("updateSession returns updated session data", async () => {
       const client = makeClient(UPDATE_SESSION_WIRE);
       const data = await client.updateSession("abc123session", { status: "failed", reason: "Session failed" });
       expect(data).toBeDefined();
@@ -231,21 +227,21 @@ describe("AutomateClient", () => {
       expect(data.hashedId).toBe("abc123session");
     });
 
-    test("deleteSession returns status ok", async () => {
+    it("deleteSession returns status ok", async () => {
       const client = makeClient(DELETE_SESSION);
       const data = await client.deleteSession("abc123session");
       expect(data).toBeDefined();
       expect(data.status).toBe("ok");
     });
 
-    test("deleteSessions returns status ok", async () => {
+    it("deleteSessions returns status ok", async () => {
       const client = makeClient(DELETE_SESSIONS);
       const data = await client.deleteSessions(["abc123session"]);
       expect(data).toBeDefined();
       expect(data.status).toBe("ok");
     });
 
-    test("getSession throws HttpError on 404", async () => {
+    it("getSession throws HttpError on 404", async () => {
       const client = makeClient(makeErrorResponse(404, "Session not found"));
       await expect(client.getSession("notexist")).rejects.toThrow(HttpError);
     });
@@ -257,7 +253,7 @@ describe("AutomateClient", () => {
   });
 
   describe("Session logs", () => {
-    test("getSessionLogs returns text log string", async () => {
+    it("getSessionLogs returns text log string", async () => {
       const client = makeClient(SESSION_LOGS);
       const data = await client.getSessionLogs("abc123session");
       expect(typeof data).toBe("string");
@@ -265,35 +261,35 @@ describe("AutomateClient", () => {
       expect(data).toContain("RESPONSE");
     });
 
-    test("getSessionConsoleLogs returns text string", async () => {
+    it("getSessionConsoleLogs returns text string", async () => {
       const client = makeClient("console log line 1\nconsole log line 2\n");
       const data = await client.getSessionConsoleLogs("abc123session");
       expect(typeof data).toBe("string");
       expect(data).toContain("console log");
     });
 
-    test("getSessionSeleniumLogs returns text string", async () => {
+    it("getSessionSeleniumLogs returns text string", async () => {
       const client = makeClient("selenium log line 1\n");
       const data = await client.getSessionSeleniumLogs("abc123session");
       expect(typeof data).toBe("string");
       expect(data).toContain("selenium log");
     });
 
-    test("getSessionAppiumLogs returns text string", async () => {
+    it("getSessionAppiumLogs returns text string", async () => {
       const client = makeClient("appium log line 1\n");
       const data = await client.getSessionAppiumLogs("abc123session");
       expect(typeof data).toBe("string");
       expect(data).toContain("appium log");
     });
 
-    test("getSessionLogs throws HttpError on 404", async () => {
+    it("getSessionLogs throws HttpError on 404", async () => {
       const client = makeClient(makeErrorResponse(404, "Session not found"));
       await expect(client.getSessionLogs("notexist")).rejects.toThrow(HttpError);
     });
   });
 
   describe("Terminal log uploads", () => {
-    test("uploadSessionTerminalLogs returns text response", async () => {
+    it("uploadSessionTerminalLogs returns text response", async () => {
       const client = makeClient(TERMINAL_LOGS_RESPONSE);
       const data = await client.uploadSessionTerminalLogs("abc123session", {
         file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
@@ -303,7 +299,7 @@ describe("AutomateClient", () => {
       expect(data.length).toBeGreaterThan(0);
     });
 
-    test("uploadBuildTerminalLogs returns text response", async () => {
+    it("uploadBuildTerminalLogs returns text response", async () => {
       const client = makeClient(TERMINAL_LOGS_RESPONSE);
       const data = await client.uploadBuildTerminalLogs("abc123build", {
         file: new Blob(["Logs Logs Logs"], { type: "text/plain" }),
@@ -313,7 +309,7 @@ describe("AutomateClient", () => {
       expect(data.length).toBeGreaterThan(0);
     });
 
-    test("uploadSessionTerminalLogs throws HttpError on 401", async () => {
+    it("uploadSessionTerminalLogs throws HttpError on 401", async () => {
       const client = makeClient(makeErrorResponse(401, "Unauthorized"));
       await expect(
         client.uploadSessionTerminalLogs("abc123session", {
@@ -325,7 +321,7 @@ describe("AutomateClient", () => {
   });
 
   describe("Media files", () => {
-    test("getMediaFiles returns array of media files", async () => {
+    it("getMediaFiles returns array of media files", async () => {
       const client = makeClient(MEDIA_FILES);
       const data = await client.getMediaFiles();
       expect(data).toBeInstanceOf(Array);
@@ -335,7 +331,7 @@ describe("AutomateClient", () => {
       expect(data[0].mediaName).toBe("test.txt");
     });
 
-    test("uploadMediaFile returns media url and id", async () => {
+    it("uploadMediaFile returns media url and id", async () => {
       const client = makeClient(UPLOAD_MEDIA);
       const data = await client.uploadMediaFile({
         file: new Blob(["test"], { type: "text/plain" }),
@@ -346,7 +342,7 @@ describe("AutomateClient", () => {
       expect(data.mediaId).toBe("abc123media");
     });
 
-    test("deleteMediaFile returns success true", async () => {
+    it("deleteMediaFile returns success true", async () => {
       const client = makeClient(DELETE_MEDIA);
       const data = await client.deleteMediaFile("abc123media");
       expect(data).toBeDefined();
@@ -354,12 +350,12 @@ describe("AutomateClient", () => {
       expect(data.message).toContain("abc123media");
     });
 
-    test("getMediaFiles throws HttpError on 401", async () => {
+    it("getMediaFiles throws HttpError on 401", async () => {
       const client = makeClient(makeErrorResponse(401, "Unauthorized"));
       await expect(client.getMediaFiles()).rejects.toThrow(HttpError);
     });
 
-    test("deleteMediaFile throws HttpError on 404", async () => {
+    it("deleteMediaFile throws HttpError on 404", async () => {
       const client = makeClient(makeErrorResponse(404, "Media not found"));
       await expect(client.deleteMediaFile("notexist")).rejects.toThrow(HttpError);
     });
