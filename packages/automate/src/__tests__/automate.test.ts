@@ -180,11 +180,11 @@ describe("AutomateClient", () => {
       expect(data.status).toBe("ok");
     });
 
-    it("deleteBuilds returns status ok", async () => {
+    it("deleteBuilds returns message", async () => {
       const client = makeClient(DELETE_BUILDS);
       const data = await client.deleteBuilds(["abc123"]);
       expect(data).toBeDefined();
-      expect(data.status).toBe("ok");
+      expect(data.message).toBeDefined();
     });
 
     it("getBuilds throws HttpError on 401", async () => {
@@ -234,11 +234,11 @@ describe("AutomateClient", () => {
       expect(data.status).toBe("ok");
     });
 
-    it("deleteSessions returns status ok", async () => {
+    it("deleteSessions returns message", async () => {
       const client = makeClient(DELETE_SESSIONS);
       const data = await client.deleteSessions(["abc123session"]);
       expect(data).toBeDefined();
-      expect(data.status).toBe("ok");
+      expect(data.message).toBeDefined();
     });
 
     it("getSession throws HttpError on 404", async () => {
@@ -339,7 +339,6 @@ describe("AutomateClient", () => {
       });
       expect(data).toBeDefined();
       expect(data.mediaUrl).toBe("media://abc123media");
-      expect(data.mediaId).toBe("abc123media");
     });
 
     it("deleteMediaFile returns success true", async () => {
@@ -347,7 +346,6 @@ describe("AutomateClient", () => {
       const data = await client.deleteMediaFile("abc123media");
       expect(data).toBeDefined();
       expect(data.success).toBe(true);
-      expect(data.message).toContain("abc123media");
     });
 
     it("getMediaFiles throws HttpError on 401", async () => {

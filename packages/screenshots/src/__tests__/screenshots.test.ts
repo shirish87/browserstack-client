@@ -1,3 +1,4 @@
+import { assert } from "vitest";
 import { describe, expect, it } from "vitest";
 import { BrowserStackError, HttpError, env } from "@dot-slash/browserstack-core";
 import { makeClient, makeErrorResponse } from "./setup.ts";
@@ -89,11 +90,11 @@ describe("ScreenshotsClient", () => {
     it("returns array of browser objects", async () => {
       const client = makeClient(BROWSERS);
       const data = await client.getBrowsers();
-      expect(data).toBeInstanceOf(Array);
+      assert(Array.isArray(data));
       expect(data).toHaveLength(2);
-      expect((data as typeof BROWSERS)[0].os).toBe("Windows");
-      expect((data as typeof BROWSERS)[0].browser).toBe("opera");
-      expect((data as typeof BROWSERS)[1].browser).toBe("chrome");
+      expect(data[0].os).toBe("Windows");
+      expect(data[0].browser).toBe("opera");
+      expect(data[1].browser).toBe("chrome");
     });
 
     it("throws HttpError on 401", async () => {
@@ -107,7 +108,7 @@ describe("ScreenshotsClient", () => {
       const client = makeClient(CREATE_JOB);
       const data = await client.createJob({
         url: "https://example.com",
-        browsers: [{ os: "Windows", osVersion: "11", browser: "chrome", browserVersion: "147.0", device: null }],
+        browsers: [{ os: "Windows", osVersion: "11", browser: "chrome", browserVersion: "147.0", device: undefined }],
       });
       expect(data).toBeDefined();
       expect(data.jobId).toBe("scjob123");
@@ -119,7 +120,7 @@ describe("ScreenshotsClient", () => {
       await expect(
         client.createJob({
           url: "https://example.com",
-          browsers: [{ os: "Windows", osVersion: "11", browser: "chrome", browserVersion: "147.0", device: null }],
+          browsers: [{ os: "Windows", osVersion: "11", browser: "chrome", browserVersion: "147.0", device: undefined }],
         })
       ).rejects.toThrow(HttpError);
     });

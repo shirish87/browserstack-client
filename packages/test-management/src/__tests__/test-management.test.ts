@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { assert, describe, expect, it } from "vitest";
 import { BrowserStackError, HttpError, env } from "@dot-slash/browserstack-core";
 import { makeClient, makeErrorResponse } from "./setup.ts";
 import { TestManagementClient } from "../index.ts";
@@ -99,7 +99,7 @@ const TEST_CASES_WIRE = {
       template: "test_case_steps",
       description: null,
       preconditions: null,
-      title: "mock-test-case",
+      name: "mock-test-case",
       is_shared: false,
       identifier: "TC-157",
       automation_status: "not_automated",
@@ -131,7 +131,7 @@ const CREATE_TEST_CASE_WIRE = {
       template: "test_case_steps",
       description: null,
       preconditions: null,
-      title: "new-test-case",
+      name: "new-test-case",
       is_shared: false,
       identifier: "TC-200",
       automation_status: "not_automated",
@@ -302,7 +302,7 @@ describe("TestManagementClient", () => {
     it("getProjects returns camelCase array of projects", async () => {
       const client = makeClient(PROJECTS_WIRE);
       const data = await client.getProjects();
-      expect(data).toBeInstanceOf(Array);
+      assert(Array.isArray(data));
       expect(data).toHaveLength(1);
       expect(data[0]!.identifier).toBe("PR-4");
       expect(data[0]!.name).toBe("API Tests");
@@ -339,7 +339,7 @@ describe("TestManagementClient", () => {
     it("getFolders returns camelCase array of folders", async () => {
       const client = makeClient(FOLDERS_WIRE);
       const data = await client.getFolders("PR-4");
-      expect(data).toBeInstanceOf(Array);
+      assert(Array.isArray(data));
       expect(data).toHaveLength(1);
       expect(data[0]!.id).toBe(45480002);
       expect(data[0]!.name).toBe("mock-folder");
@@ -376,10 +376,10 @@ describe("TestManagementClient", () => {
     it("getTestCases returns camelCase array of test cases", async () => {
       const client = makeClient(TEST_CASES_WIRE);
       const data = await client.getTestCases("PR-4");
-      expect(data).toBeInstanceOf(Array);
+      assert(Array.isArray(data));
       expect(data).toHaveLength(1);
       expect(data[0]!.identifier).toBe("TC-157");
-      expect(data[0]!.title).toBe("mock-test-case");
+      expect(data[0]!.name).toBe("mock-test-case");
     });
 
     it("getTestCases throws HttpError on 401", async () => {
@@ -390,7 +390,7 @@ describe("TestManagementClient", () => {
     it("getTestCases with folderId filter returns filtered results", async () => {
       const client = makeClient(TEST_CASES_WIRE);
       const data = await client.getTestCases("PR-4", undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, 45480002);
-      expect(data).toBeInstanceOf(Array);
+      assert(Array.isArray(data));
       expect(data[0]!.folderId).toBe(45480002);
     });
 
@@ -398,8 +398,9 @@ describe("TestManagementClient", () => {
       const client = makeClient(CREATE_TEST_CASE_WIRE);
       const data = await client.createTestCase("PR-4", 45480002, { testCase: { name: "new-test-case" } });
       expect(data).toBeDefined();
-      expect(data!.identifier).toBe("TC-200");
-      expect(data!.title).toBe("new-test-case");
+      assert(data !== undefined);
+      expect(data.identifier).toBe("TC-200");
+      expect(data.name).toBe("new-test-case");
     });
   });
 
@@ -407,7 +408,7 @@ describe("TestManagementClient", () => {
     it("getTestRuns returns camelCase array of test runs", async () => {
       const client = makeClient(TEST_RUNS_WIRE);
       const data = await client.getTestRuns("PR-4");
-      expect(data).toBeInstanceOf(Array);
+      assert(Array.isArray(data));
       expect(data).toHaveLength(1);
       expect(data[0]!.identifier).toBe("TR-1");
       expect(data[0]!.name).toBe("mock-test-run");
@@ -444,7 +445,7 @@ describe("TestManagementClient", () => {
     it("getTestPlans returns camelCase array of test plans", async () => {
       const client = makeClient(TEST_PLANS_WIRE);
       const data = await client.getTestPlans("PR-4");
-      expect(data).toBeInstanceOf(Array);
+      assert(Array.isArray(data));
       expect(data).toHaveLength(1);
       expect(data[0]!.identifier).toBe("TP-1");
       expect(data[0]!.name).toBe("mock-test-plan");
@@ -463,7 +464,7 @@ describe("TestManagementClient", () => {
     it("getConfigurations returns camelCase array of configurations", async () => {
       const client = makeClient(CONFIGURATIONS_WIRE);
       const data = await client.getConfigurations();
-      expect(data).toBeInstanceOf(Array);
+      assert(Array.isArray(data));
       expect(data).toHaveLength(2);
       expect(data[0]!.id).toBe(1001);
       expect(data[0]!.name).toBe("Chrome on Windows");
@@ -480,7 +481,7 @@ describe("TestManagementClient", () => {
     it("getCustomFields returns camelCase array of custom fields", async () => {
       const client = makeClient(CUSTOM_FIELDS_WIRE);
       const data = await client.getCustomFields();
-      expect(data).toBeInstanceOf(Array);
+      assert(Array.isArray(data));
       expect(data).toHaveLength(2);
       expect(data[0]!.fieldName).toBe("automation_framework");
       expect(data[0]!.fieldType).toBe("string");

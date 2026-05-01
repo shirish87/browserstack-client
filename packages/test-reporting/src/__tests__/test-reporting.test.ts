@@ -132,6 +132,7 @@ describe("TestReportingClient", () => {
         name: "my-build",
         projectName: "sdk-integration-tests",
         startedAt: "2026-04-27T10:00:00.000Z",
+        framework: { name: "vitest", version: "1.0.0" },
       });
       expect(data).toBeDefined();
       expect((data as { success?: boolean }).success).toBe(true);
@@ -141,7 +142,7 @@ describe("TestReportingClient", () => {
     it("throws HttpError on 422", async () => {
       const client = makeClient(makeErrorResponse(422, "Unprocessable Entity"));
       await expect(
-        client.startBuild({ name: "", projectName: "", startedAt: "" })
+        client.startBuild({ name: "", projectName: "", startedAt: "", framework: { name: "vitest", version: "1.0.0" } })
       ).rejects.toThrow(HttpError);
     });
   });
@@ -171,6 +172,8 @@ describe("TestReportingClient", () => {
       const data = await client.startTestRun("bld_newbuild123", {
         name: "sdk test run",
         startedAt: "2026-04-27T10:00:00.000Z",
+        fileName: "sdk.test.ts",
+        scopes: ["integration"],
       });
       expect(data).toBeDefined();
       expect((data as { success?: boolean }).success).toBe(true);

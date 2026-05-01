@@ -3,20 +3,20 @@ import { BrowserStackError, HttpError, env } from "@dot-slash/browserstack-core"
 import { makeClient, makeErrorResponse } from "./setup.ts";
 import { LocalTestingClient } from "../client.ts";
 
-// Fixture data (wire-format snake_case)
+// Fixture data — fields match LocalBinaryInstance schema (already camelCase in spec)
 const INSTANCES = {
   api_version: "v1",
   meta_data: { params: { controller: "local/v1/local_api", action: "list", format: "json" } },
   instances: [
-    { id: "lt-inst-abc123", status: "running", started_at: "2026-05-01T09:00:00.000Z", expires_at: "2026-05-01T11:00:00.000Z" },
-    { id: "lt-inst-def456", status: "running", started_at: "2026-05-01T08:00:00.000Z", expires_at: "2026-05-01T10:00:00.000Z" },
+    { id: "lt-inst-abc123", email: "user@example.com", lastActiveOn: "2026-05-01T09:00:00.000Z", startTime: "2026-05-01T09:00:00.000Z", localIdentifier: "ident-abc123" },
+    { id: "lt-inst-def456", email: "user@example.com", lastActiveOn: "2026-05-01T08:00:00.000Z", startTime: "2026-05-01T08:00:00.000Z", localIdentifier: "ident-def456" },
   ],
 };
 
 const INSTANCE = {
   api_version: "v1",
   instances: [
-    { id: "lt-inst-abc123", status: "running", started_at: "2026-05-01T09:00:00.000Z", expires_at: "2026-05-01T11:00:00.000Z" },
+    { id: "lt-inst-abc123", email: "user@example.com", lastActiveOn: "2026-05-01T09:00:00.000Z", startTime: "2026-05-01T09:00:00.000Z", localIdentifier: "ident-abc123" },
   ],
 };
 
@@ -48,15 +48,15 @@ describe("LocalTestingClient", () => {
   });
 
   describe("getBinaryInstances", () => {
-    it("returns array of instances with id and status fields", async () => {
+    it("returns array of instances with id and localIdentifier fields", async () => {
       const client = makeClient(INSTANCES);
       const data = await client.getBinaryInstances();
       expect(data).toBeInstanceOf(Array);
       expect(data).toHaveLength(2);
       expect(data[0].id).toBe("lt-inst-abc123");
-      expect(data[0].status).toBe("running");
+      expect(data[0].localIdentifier).toBe("ident-abc123");
       expect(data[1].id).toBe("lt-inst-def456");
-      expect(data[1].status).toBe("running");
+      expect(data[1].localIdentifier).toBe("ident-def456");
     });
 
     it("returns empty array when no instances", async () => {
@@ -78,7 +78,7 @@ describe("LocalTestingClient", () => {
       const data = await client.getBinaryInstance("lt-inst-abc123");
       expect(data).toBeDefined();
       expect(data.id).toBe("lt-inst-abc123");
-      expect(data.status).toBe("running");
+      expect(data.localIdentifier).toBe("ident-abc123");
     });
 
     it("throws BrowserStackError when instances array is empty", async () => {
