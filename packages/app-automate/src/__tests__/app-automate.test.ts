@@ -247,7 +247,7 @@ describe("AppAutomateClient", () => {
 
     it("getSession throws HttpError on 401", async () => {
       await expect(makeClient(makeErrorResponse(401, "HTTP Basic: Access denied.")).getSession("abc"))
-        .rejects.toMatchObject({ status: 401 });
+        .rejects.toThrow(HttpError);
     });
   });
 
