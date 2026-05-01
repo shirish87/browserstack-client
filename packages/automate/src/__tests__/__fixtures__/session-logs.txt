@@ -1,0 +1,2 @@
+2026-04-20 19:18:46:0 REQUEST [2026-04-20 19:18:46:0] POST /session/abc123session/url {"url":"https://www.google.com"}
+2026-04-20 19:18:46:0 RESPONSE {"state":"success","sessionId":"abc123session"}

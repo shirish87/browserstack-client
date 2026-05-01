@@ -1,0 +1,1 @@
+[{"automation_build":{"name":"mock-build","hashed_id":"abc123build","duration":37,"status":"failed","build_tag":"mock-tag","public_url":"https://automate.browserstack.com/dashboard/v2/public-build/mock"}},{"automation_build":{"name":"mock-build-2","hashed_id":"def456build","duration":null,"status":"running","build_tag":null,"public_url":null}}]
