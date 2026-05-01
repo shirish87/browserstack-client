@@ -46,10 +46,13 @@ const projectBase = {
 };
 
 export default defineConfig({
+  define: {
+    __PKG_VERSION__: '"4.1.0-test"',
+  },
   test: {
     projects: [
       { ...projectBase, test: { ...projectBase.test, name: "automate", optimizeDeps: { include: ["openapi-fetch", "openapi-typescript-helpers"] } }, root: "./packages/automate" },
-      { ...projectBase, test: { ...projectBase.test, name: "app-automate" }, root: "./packages/app-automate" },
+      { ...projectBase, test: { ...projectBase.test, name: "app-automate", optimizeDeps: { include: ["openapi-fetch", "openapi-typescript-helpers"] } }, root: "./packages/app-automate" },
       { ...projectBase, test: { ...projectBase.test, name: "local-testing" }, root: "./packages/local-testing" },
       { ...projectBase, test: { ...projectBase.test, name: "screenshots" }, root: "./packages/screenshots" },
       { ...projectBase, test: { ...projectBase.test, name: "local-testing-binary" }, root: "./packages/local-testing-binary" },
