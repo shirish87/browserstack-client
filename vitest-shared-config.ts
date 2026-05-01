@@ -14,6 +14,8 @@ export function getSharedAliases(packageDir: string) {
     "@dot-slash/browserstack-openapi/test-reporting": path.resolve(packageDir, "../openapi/generated/test-reporting.ts"),
     "@dot-slash/browserstack-openapi/local-testing/client": path.resolve(packageDir, "../openapi/generated/local-testing.client.ts"),
     "@dot-slash/browserstack-openapi/local-testing": path.resolve(packageDir, "../openapi/generated/local-testing.ts"),
+    "@dot-slash/browserstack-openapi/screenshots/client": path.resolve(packageDir, "../openapi/generated/screenshots.client.ts"),
+    "@dot-slash/browserstack-openapi/screenshots": path.resolve(packageDir, "../openapi/generated/screenshots.ts"),
     "@dot-slash/browserstack-openapi": path.resolve(packageDir, "../openapi/generated/index.ts"),
     "@dot-slash/browserstack-app-automate": path.resolve(packageDir, "../app-automate/src/index.ts"),
     "@dot-slash/browserstack-automate": path.resolve(packageDir, "../automate/src/index.ts"),

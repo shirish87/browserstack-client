@@ -1,21 +1,8 @@
-import {
-  ScreenshotsClient,
-} from "@dot-slash/browserstack-screenshots";
-import { BrowserStackOptions, resolveAccessKey, resolveUsername } from "@dot-slash/browserstack-core";
+import { mockFetch, makeErrorResponse, type MockEntry } from "../../../core/src/__tests__/mock-fetch.ts";
+import { ScreenshotsClient } from "../client.ts";
 
-export interface BrowserStackTestContext {
-  screenshots: {
-    client: ScreenshotsClient;
-  };
+export function makeClient(...responses: MockEntry[]) {
+  return new ScreenshotsClient({ username: "u", accessKey: "k", fetchFn: mockFetch(responses) });
 }
 
-const getOptions = (): BrowserStackOptions => ({
-  username: resolveUsername(),
-  accessKey: resolveAccessKey(),
-});
-
-const screenshots = new ScreenshotsClient(getOptions());
-
-export const screenshotsContext: BrowserStackTestContext["screenshots"] = {
-  client: screenshots,
-};
+export { mockFetch, makeErrorResponse };
