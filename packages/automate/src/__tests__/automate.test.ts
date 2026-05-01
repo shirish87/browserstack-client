@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
-import { BrowserStackError, HttpError } from "@dot-slash/browserstack-core";
+import { describe, expect, it, test } from "vitest";
+import { BrowserStackError, HttpError, env } from "@dot-slash/browserstack-core";
 import { makeClient, makeErrorResponse } from "./setup.ts";
 import { AutomateClient } from "../index.ts";
 
@@ -40,6 +40,22 @@ describe("AutomateClient", () => {
     test("makeClient helper creates a client with mock fetch", () => {
       const client = makeClient();
       expect(client).toBeInstanceOf(AutomateClient);
+    });
+
+    it("throws BrowserStackError when no credentials available", () => {
+      const savedUser = env.BROWSERSTACK_USERNAME;
+      const savedKey = env.BROWSERSTACK_ACCESS_KEY;
+      const savedKeyAlt = env.BROWSERSTACK_KEY;
+      delete env.BROWSERSTACK_USERNAME;
+      delete env.BROWSERSTACK_ACCESS_KEY;
+      delete env.BROWSERSTACK_KEY;
+      try {
+        expect(() => new AutomateClient({ username: "", accessKey: "" })).toThrow(BrowserStackError);
+      } finally {
+        env.BROWSERSTACK_USERNAME = savedUser;
+        env.BROWSERSTACK_ACCESS_KEY = savedKey;
+        env.BROWSERSTACK_KEY = savedKeyAlt;
+      }
     });
   });
 
@@ -232,6 +248,11 @@ describe("AutomateClient", () => {
     test("getSession throws HttpError on 404", async () => {
       const client = makeClient(makeErrorResponse(404, "Session not found"));
       await expect(client.getSession("notexist")).rejects.toThrow(HttpError);
+    });
+
+    it("throws HttpError 401 on bad credentials", async () => {
+      await expect(makeClient(makeErrorResponse(401, "HTTP Basic: Access denied.")).getSession("abc"))
+        .rejects.toMatchObject({ status: 401 });
     });
   });
 
