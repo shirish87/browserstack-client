@@ -16,7 +16,7 @@ func New(c *browserstackhttp.Client) *AutomateClient {
 }
 
 /**
- * CLI Command: automate get-project
+ * CLI Command: get-project
  */
 func (c *AutomateClient) GetProject(ctx context.Context, projectId string) (*Envelope, error) {
 	var out Envelope
@@ -27,7 +27,7 @@ func (c *AutomateClient) GetProject(ctx context.Context, projectId string) (*Env
 }
 
 /**
- * CLI Command: automate get-logs
+ * CLI Command: list-logs
  */
 func (c *AutomateClient) GetLogs(ctx context.Context) (string, error) {
 	return c.http.GetText(ctx, "/logs", nil)

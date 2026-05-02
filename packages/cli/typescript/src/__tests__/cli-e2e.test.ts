@@ -18,6 +18,9 @@ const binaries = [
   { name: "Golang CLI", path: goBinary, type: "binary" },
 ];
 
+const TEST_TIMEOUT_DEFAULT = 5000;
+const TEST_TIMEOUT_SLOW_API = 30000;
+
 async function runCli(binary: typeof binaries[number], args: string[]) {
   const spawnPath = binary.type === "node" ? "node" : binary.path;
   const spawnArgs = binary.type === "node" ? [binary.entry!, ...args] : args;
@@ -294,8 +297,6 @@ describe("CLI E2E Orchestrator", () => {
     // ─── Surface Reachability (Actions with no required args) ───────────────
 
     const surfaceActions = [
-      ["automate", "list-browsers"],
-      ["automate", "get-plan"],
       ["app-automate", "list-devices"],
       ["app-automate", "get-plan"],
       ["screenshots", "list-browsers"],
@@ -312,7 +313,7 @@ describe("CLI E2E Orchestrator", () => {
         const action = cmdArgs[1];
         const rest = cmdArgs.slice(2);
         const result = await runCli(binary, [product, action, ...rest]);
-        
+
         // screenshots list-browsers might be public and return exit 0
         if (product === "screenshots" && action === "list-browsers") {
           expect(result.exitCode).toBe(0);
@@ -323,6 +324,20 @@ describe("CLI E2E Orchestrator", () => {
         // which confirms the dispatch logic worked and it tried to call the API.
         await assertError(result, /unauthorized|request failed|access denied|invalid key|401|403/);
       }
+    );
+
+    const slowSurfaceActions = [
+      ["automate", "list-browsers"],
+      ["automate", "get-plan"],
+    ];
+
+    it.each(slowSurfaceActions)(
+      "should reach API call phase for %s %s",
+      async (...cmdArgs) => {
+        const result = await runCli(binary, cmdArgs);
+        await assertError(result, /unauthorized|request failed|access denied|invalid key|401|403/);
+      },
+      TEST_TIMEOUT_SLOW_API
     );
 
     // ─── local ───────────────────────────────────────────────────────────────

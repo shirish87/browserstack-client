@@ -1,6 +1,7 @@
 import { defineConfig } from "vitest/config";
 import path from "path";
 import { fileURLToPath } from "url";
+import { readFileSync } from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,9 +36,6 @@ const sharedAliases = {
 };
 
 const projectBase = {
-  define: {
-    __PKG_VERSION__: '"4.1.0-test"',
-  },
   test: {
     globals: true,
     environment: "node",
@@ -45,23 +43,23 @@ const projectBase = {
   resolve: { alias: sharedAliases },
 };
 
+const readPkgVersion = (pkgPath: string) =>
+  JSON.stringify(JSON.parse(readFileSync(path.resolve(__dirname, pkgPath), "utf-8")).version);
+
 export default defineConfig({
-  define: {
-    __PKG_VERSION__: '"4.1.0-test"',
-  },
   test: {
     projects: [
-      { ...projectBase, test: { ...projectBase.test, name: "automate", optimizeDeps: { include: ["openapi-fetch", "openapi-typescript-helpers"] } }, root: "./packages/automate" },
-      { ...projectBase, test: { ...projectBase.test, name: "app-automate", optimizeDeps: { include: ["openapi-fetch", "openapi-typescript-helpers"] } }, root: "./packages/app-automate" },
-      { ...projectBase, test: { ...projectBase.test, name: "local-testing" }, root: "./packages/local-testing" },
-      { ...projectBase, test: { ...projectBase.test, name: "screenshots" }, root: "./packages/screenshots" },
-      { ...projectBase, test: { ...projectBase.test, name: "local-testing-binary" }, root: "./packages/local-testing-binary" },
-      { ...projectBase, test: { ...projectBase.test, name: "cli" }, root: "./packages/cli/typescript" },
-      { ...projectBase, test: { ...projectBase.test, name: "openapi-transforms", include: ["src/**/*.test.ts"], exclude: ["dist/**", "node_modules/**"] }, root: "./packages/openapi-transforms" },
-      { ...projectBase, test: { ...projectBase.test, name: "core" }, root: "./packages/core" },
-      { ...projectBase, test: { ...projectBase.test, name: "test-management" }, root: "./packages/test-management" },
-      { ...projectBase, test: { ...projectBase.test, name: "accessibility" }, root: "./packages/accessibility" },
-      { ...projectBase, test: { ...projectBase.test, name: "test-reporting" }, root: "./packages/test-reporting" },
+      { ...projectBase, name: "automate", root: "./packages/automate", define: { __PKG_VERSION__: readPkgVersion("packages/automate/package.json") } },
+      { ...projectBase, name: "app-automate", root: "./packages/app-automate", define: { __PKG_VERSION__: readPkgVersion("packages/app-automate/package.json") } },
+      { ...projectBase, name: "local-testing", root: "./packages/local-testing", define: { __PKG_VERSION__: readPkgVersion("packages/local-testing/package.json") } },
+      { ...projectBase, name: "screenshots", root: "./packages/screenshots", define: { __PKG_VERSION__: readPkgVersion("packages/screenshots/package.json") } },
+      { ...projectBase, name: "local-testing-binary", root: "./packages/local-testing-binary", define: { __PKG_VERSION__: readPkgVersion("packages/local-testing-binary/package.json") } },
+      { ...projectBase, name: "cli", root: "./packages/cli/typescript", define: { __PKG_VERSION__: readPkgVersion("packages/cli/typescript/package.json") } },
+      { ...projectBase, name: "openapi-transforms", root: "./packages/openapi-transforms", define: { __PKG_VERSION__: readPkgVersion("packages/openapi-transforms/package.json") } },
+      { ...projectBase, name: "core", root: "./packages/core", define: { __PKG_VERSION__: readPkgVersion("packages/core/package.json") } },
+      { ...projectBase, name: "test-management", root: "./packages/test-management", define: { __PKG_VERSION__: readPkgVersion("packages/test-management/package.json") } },
+      { ...projectBase, name: "accessibility", root: "./packages/accessibility", define: { __PKG_VERSION__: readPkgVersion("packages/accessibility/package.json") } },
+      { ...projectBase, name: "test-reporting", root: "./packages/test-reporting", define: { __PKG_VERSION__: readPkgVersion("packages/test-reporting/package.json") } },
     ],
   },
 });

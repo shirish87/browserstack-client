@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "4.1.0-alpha.2",
+  "version": "6.1.0-alpha.1",
   "type": "module",
   "description": "BrowserStack App Automate API client for mobile app automation testing",
   "engines": {

@@ -18,7 +18,7 @@ describe("LocalCLI", () => {
       await runLocalCli(["stop"], {
         info() {},
         error() {},
-      });
+      }, "--", false);
     }
   );
 
@@ -32,7 +32,7 @@ describe("LocalCLI", () => {
         error(message) {
           expect(message).toBeFalsy();
         },
-      });
+      }, "--", false);
       expect(output).toContain("Usage: local <action> [args...]");
       expect(output).toContain("Actions: start, stop, list, run-with");
     });
@@ -57,7 +57,9 @@ describe("LocalCLI", () => {
           error(message) {
             expect(message).toBeFalsy();
           },
-        }
+        },
+        "--",
+        false
       );
     });
   });
@@ -74,7 +76,7 @@ describe("LocalCLI", () => {
         error(message) {
           expect(message).toBeFalsy();
         },
-      });
+      }, "--", false);
     });
 
     test("list", async () => {
@@ -85,7 +87,7 @@ describe("LocalCLI", () => {
         error(message) {
           expect(message).toBeFalsy();
         },
-      });
+      }, "--", false);
     });
 
     test("stop", async () => {
@@ -101,7 +103,7 @@ describe("LocalCLI", () => {
             /[0-9a-z]+: BrowserStackLocal process instance not found/
           );
         },
-      });
+      }, "--", false);
     });
   });
 }, LONG_TIMEOUT);
