@@ -54,14 +54,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: pnpm/action-setup@5280c022466e8e5ea34ea201e2fda33875aeefdb # v6
+      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: "lts/*"
           cache: "pnpm"
 
-      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version-file: packages/cli/golang/go.mod
           cache-dependency-path: packages/cli/golang/go.mod
@@ -79,6 +79,7 @@ jobs:
           path: |
             packages/*/dist/**
             packages/cli/typescript/dist-binary/**
+            packages/cli/typescript/src/*.generated.ts
             packages/cli/golang/dist/**
           retention-days: 1
 
@@ -90,7 +91,7 @@ jobs:
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: pnpm/action-setup@5280c022466e8e5ea34ea201e2fda33875aeefdb # v6
+      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
@@ -112,7 +113,7 @@ jobs:
   # ── 2b. CLI binary tests on each OS platform ─────────────────────────────────
   test-cli:
     name: "Test CLI (${{ matrix.os }})"
-    needs: [build]
+    needs: [build, test-sdk]
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -120,7 +121,7 @@ jobs:
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: pnpm/action-setup@5280c022466e8e5ea34ea201e2fda33875aeefdb # v6
+      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
@@ -153,7 +154,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@5280c022466e8e5ea34ea201e2fda33875aeefdb # v6
+      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
@@ -179,7 +180,7 @@ jobs:
           done
 
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@299e4b793aaa83bf2aba7c9c14bedbb485688ec4 # v7
+        uses: sonarsource/sonarqube-scan-action@59db25f34e16620e48ab4bb9e4a5dce155cb5432 # v8
         with:
           args: >
             -Dsonar.host.url=http://localhost:9000
@@ -219,7 +220,7 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: pnpm/action-setup@5280c022466e8e5ea34ea201e2fda33875aeefdb # v6
+      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
@@ -265,7 +266,7 @@ jobs:
     environment: BrowserStackEnv
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: pnpm/action-setup@5280c022466e8e5ea34ea201e2fda33875aeefdb # v6
+      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
