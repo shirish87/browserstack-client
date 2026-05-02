@@ -69,9 +69,11 @@ paths:
         content:
           application/json:
             schema:
+              title: CreateTestManagementProjectRequest
               type: object
               properties:
                 project:
+                  title: CreateProjectInput
                   type: object
                   required: [name]
                   properties:
@@ -127,9 +129,11 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateTestManagementProjectRequest
               type: object
               properties:
                 project:
+                  title: UpdateProjectInput
                   type: object
                   properties:
                     name: { type: string }
@@ -213,9 +217,11 @@ paths:
         content:
           application/json:
             schema:
+              title: CreateTestManagementFolderRequest
               type: object
               properties:
                 folder:
+                  title: CreateFolderData
                   type: object
                   required: [name, description]
                   properties:
@@ -274,9 +280,11 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateTestManagementFolderRequest
               type: object
               properties:
                 folder:
+                  title: UpdateFolderData
                   type: object
                   properties:
                     name: { type: string }
@@ -398,6 +406,7 @@ paths:
         content:
           application/json:
             schema:
+              title: BulkEditTestManagementTestCasesRequest
               type: object
               required: [ids, test_case]
               properties:
@@ -405,12 +414,13 @@ paths:
                   type: array
                   items: { type: string }
                 test_case:
+                  title: BulkEditTestCaseData
                   type: object
                   properties:
                     preconditions: { type: string }
                     owner: { type: string }
                     tags: { type: array, items: { type: string } }
-                    custom_fields: { type: object }
+                    custom_fields: { type: object, additionalProperties: true }
                     automation_status: { type: string }
                     case_type: { type: string }
                     priority: { type: string }
@@ -525,6 +535,7 @@ paths:
         content:
           application/json:
             schema:
+              title: BulkEditTestManagementTestCasesWithOperationsRequest
               type: object
               required: [ids, test_case]
               properties:
@@ -532,6 +543,7 @@ paths:
                   type: array
                   items: { type: string }
                 test_case:
+                  title: BulkEditTestCaseData
                   type: object
       responses:
         '200':
@@ -561,9 +573,11 @@ paths:
         content:
           application/json:
             schema:
+              title: CreateTestManagementTestCaseRequest
               type: object
               properties:
                 test_case:
+                  title: CreateTestCaseData
                   type: object
                   properties:
                     name: { type: string }
@@ -582,16 +596,13 @@ paths:
                       type: array
                       items: { type: string }
                     issue_tracker:
-                      type: object
-                      properties:
-                        name: { type: string }
-                        host: { type: string }
+                      $ref: '#/components/schemas/IssueTracker'
                     tags:
                       type: array
                       items: { type: string }
                     case_type: { type: string }
                     priority: { type: string }
-                    custom_fields: { type: object }
+                    custom_fields: { type: object, additionalProperties: true }
                     feature: { type: string }
                     scenario: { type: string }
                     background: { type: string }
@@ -601,10 +612,12 @@ paths:
           content:
             application/json:
               schema:
+                title: CreateTestManagementTestCaseResponse
                 type: object
                 properties:
                   success: { type: boolean }
                   data:
+                    title: CreateTestCaseResponseData
                     type: object
                     properties:
                       test_case: { $ref: '#/components/schemas/TestCase' }
@@ -627,9 +640,11 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateTestManagementTestCaseRequest
               type: object
               properties:
                 test_case:
+                  title: UpdateTestCaseData
                   type: object
                   properties:
                     name: { type: string }
@@ -650,14 +665,11 @@ paths:
                       type: array
                       items: { type: string }
                     issue_tracker:
-                      type: object
-                      properties:
-                        name: { type: string }
-                        host: { type: string }
+                      $ref: '#/components/schemas/IssueTracker'
                     tags:
                       type: array
                       items: { type: string }
-                    custom_fields: { type: object }
+                    custom_fields: { type: object, additionalProperties: true }
                     automation_status: { type: string }
                     feature: { type: string }
                     scenario: { type: string }
@@ -668,10 +680,12 @@ paths:
           content:
             application/json:
               schema:
+                title: UpdateTestManagementTestCaseResponse
                 type: object
                 properties:
                   success: { type: boolean }
                   data:
+                    title: UpdateTestCaseResponseData
                     type: object
                     properties:
                       test_case: { $ref: '#/components/schemas/TestCase' }
@@ -718,9 +732,7 @@ paths:
                 properties:
                   success: { type: boolean }
                   data:
-                    type: object
-                    properties:
-                      test_case: { $ref: '#/components/schemas/TestCase' }
+                    $ref: '#/components/schemas/TestCaseResponseData'
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -746,9 +758,7 @@ paths:
                 properties:
                   success: { type: boolean }
                   data:
-                    type: object
-                    properties:
-                      test_case: { $ref: '#/components/schemas/TestCase' }
+                    $ref: '#/components/schemas/TestCaseResponseData'
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -783,9 +793,7 @@ paths:
                 properties:
                   success: { type: boolean }
                   data:
-                    type: object
-                    properties:
-                      test_case: { $ref: '#/components/schemas/TestCase' }
+                    $ref: '#/components/schemas/TestCaseResponseData'
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -1409,14 +1417,7 @@ paths:
               type: object
               properties:
                 test_plan:
-                  type: object
-                  required: [name]
-                  properties:
-                    name: { type: string }
-                    plan_status: { type: string }
-                    description: { type: string }
-                    start_date: { type: string }
-                    end_date: { type: string, nullable: true }
+                  $ref: '#/components/schemas/CreateTestRunInput'
       responses:
         '200':
           description: Successful operation
@@ -1471,9 +1472,11 @@ paths:
         content:
           application/json:
             schema:
+              title: UpdateTestManagementTestPlanRequest
               type: object
               properties:
                 test_plan:
+                  title: CreateTestPlanData
                   type: object
                   properties:
                     name: { type: string }
@@ -1706,9 +1709,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    type: object
-                    properties:
-                      custom_field: { $ref: '#/components/schemas/CustomField' }
+                    $ref: '#/components/schemas/CustomFieldResponseData'
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
     delete:
@@ -1828,6 +1829,58 @@ components:
           type: array
           items: { type: integer }
 
+    CustomFieldResponseData:
+      type: object
+      properties:
+        custom_field: { $ref: '#/components/schemas/CustomField' }
+    TestCaseResponseData:
+      type: object
+      properties:
+        test_case: { $ref: '#/components/schemas/TestCase' }
+    TestRunCount:
+      type: object
+      properties:
+        active: { type: integer }
+        closed: { type: integer }
+    TestCaseFilter:
+      type: object
+      properties:
+        status: { type: array, items: { type: string } }
+        priority: { type: array, items: { type: string } }
+        case_type: { type: array, items: { type: string } }
+        owner: { type: array, items: { type: string } }
+        tags: { type: array, items: { type: string } }
+        custom_fields: { type: object, additionalProperties: true }
+    IssueTracker:
+      type: object
+      properties:
+        name: { type: string }
+        host: { type: string }
+    TestRunPlanSummary:
+      type: object
+      nullable: true
+      properties:
+        identifier: { type: string }
+        name: { type: string }
+    TestRunLinks:
+      type: object
+      additionalProperties: true
+    TestRunProgress:
+      type: object
+      additionalProperties: true
+    CreateTestRunInput:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+        plan_status: { type: string }
+        description: { type: string }
+        start_date: { type: string }
+        end_date: { type: string, nullable: true }
+    FolderLinks:
+      type: object
+      properties:
+        sub_folders: { type: string }
     FolderSummary:
       type: object
       properties:
@@ -1836,9 +1889,7 @@ components:
         parent_id: { type: integer, nullable: true }
         sub_folders_count: { type: integer }
         links:
-          type: object
-          properties:
-            sub_folders: { type: string }
+          $ref: '#/components/schemas/FolderLinks'
 
     Folder:
       type: object
@@ -1850,9 +1901,7 @@ components:
         cases_count: { type: integer }
         sub_folders_count: { type: integer }
         links:
-          type: object
-          properties:
-            sub_folders: { type: string }
+          $ref: '#/components/schemas/FolderLinks'
 
     TestCaseStep:
       type: object
@@ -1886,7 +1935,7 @@ components:
         issues:
           type: array
           items: { type: string }
-        custom_fields: { type: object }
+        custom_fields: { type: object, additionalProperties: true }
         created_at: { type: string }
         updated_at: { type: string }
         feature: { type: string }
@@ -1928,11 +1977,7 @@ components:
           type: array
           items: { type: string }
         test_plan:
-          type: object
-          nullable: true
-          properties:
-            identifier: { type: string }
-            name: { type: string }
+          $ref: '#/components/schemas/TestRunPlanSummary'
 
     TestRunDetail:
       allOf:
@@ -1945,10 +1990,12 @@ components:
             test_cases:
               type: array
               items: { $ref: '#/components/schemas/TestRunTestCase' }
-            links: { type: object }
+            links:
+              $ref: '#/components/schemas/TestRunLinks'
             passed_count: { type: integer }
             failed_count: { type: integer }
-            overall_progress: { type: object }
+            overall_progress:
+              $ref: '#/components/schemas/TestRunProgress'
 
     TestRunTestCase:
       type: object
@@ -1996,10 +2043,7 @@ components:
           type: array
           items: { type: string }
         issue_tracker:
-          type: object
-          properties:
-            name: { type: string }
-            host: { type: string }
+          $ref: '#/components/schemas/IssueTracker'
         test_plan_id: { type: string }
         configurations:
           type: array
@@ -2025,14 +2069,7 @@ components:
           items: { type: integer }
         include_all: { type: boolean }
         filter_test_cases:
-          type: object
-          properties:
-            status: { type: array, items: { type: string } }
-            priority: { type: array, items: { type: string } }
-            case_type: { type: array, items: { type: string } }
-            owner: { type: array, items: { type: string } }
-            tags: { type: array, items: { type: string } }
-            custom_fields: { type: object }
+          $ref: '#/components/schemas/TestCaseFilter'
 
     TestRunPatchInput:
       type: object
@@ -2059,13 +2096,7 @@ components:
                 type: array
                 items: { type: integer }
         filter_test_cases:
-          type: object
-          properties:
-            status: { type: array, items: { type: string } }
-            priority: { type: array, items: { type: string } }
-            case_type: { type: array, items: { type: string } }
-            owner: { type: array, items: { type: string } }
-            tags: { type: array, items: { type: string } }
+          $ref: '#/components/schemas/TestCaseFilter'
 
     TestPlan:
       type: object
@@ -2080,10 +2111,7 @@ components:
         end_date: { type: string, nullable: true }
         created_at: { type: string }
         test_runs_count:
-          type: object
-          properties:
-            active: { type: integer }
-            closed: { type: integer }
+          $ref: '#/components/schemas/TestRunCount'
 
     TestPlanDetail:
       allOf:
@@ -2112,7 +2140,7 @@ components:
         issues:
           type: array
           items: { type: string }
-        custom_fields: { type: object }
+        custom_fields: { type: object, additionalProperties: true }
 
     TestResultInput:
       type: object
@@ -2125,11 +2153,8 @@ components:
           type: array
           items: { type: string }
         issue_tracker:
-          type: object
-          properties:
-            name: { type: string }
-            host: { type: string }
-        custom_fields: { type: object }
+          $ref: '#/components/schemas/IssueTracker'
+        custom_fields: { type: object, additionalProperties: true }
 
     Attachment:
       type: object

@@ -717,6 +717,31 @@ components:
         observability_url: { type: string }
         tcm_test_run_identifier: { type: string }
 
+    BuildDetailsSmartTags:
+      type: object
+      properties:
+        is_flaky: { type: integer }
+        is_always_failing: { type: integer }
+        is_performance_anomaly: { type: integer }
+        is_new_failure: { type: integer }
+    BuildDetailsVcsInfo:
+      type: object
+      properties:
+        name: { type: string }
+        sha: { type: string }
+        branch: { type: string }
+    BuildDetailsCiInfo:
+      type: object
+      properties:
+        job_name: { type: string }
+        name: { type: string }
+        build_number: { type: string }
+        build_url: { type: string }
+    BuildDetailsHostInfo:
+      type: object
+      properties:
+        hostname: { type: string }
+        os: { type: string }
     BuildDetails:
       type: object
       properties:
@@ -737,32 +762,15 @@ components:
           type: object
           additionalProperties: { type: integer }
         smart_tags:
-          type: object
-          properties:
-            is_flaky: { type: integer }
-            is_always_failing: { type: integer }
-            is_performance_anomaly: { type: integer }
-            is_new_failure: { type: integer }
+          $ref: '#/components/schemas/BuildDetailsSmartTags'
         is_archived: { type: boolean }
         observability_url: { type: string }
         vcs_info:
-          type: object
-          properties:
-            name: { type: string }
-            sha: { type: string }
-            branch: { type: string }
+          $ref: '#/components/schemas/BuildDetailsVcsInfo'
         ci_info:
-          type: object
-          properties:
-            job_name: { type: string }
-            name: { type: string }
-            build_number: { type: string }
-            build_url: { type: string }
+          $ref: '#/components/schemas/BuildDetailsCiInfo'
         host_info:
-          type: object
-          properties:
-            hostname: { type: string }
-            os: { type: string }
+          $ref: '#/components/schemas/BuildDetailsHostInfo'
 
     TestRunsResponse:
       type: object
@@ -783,6 +791,44 @@ components:
         pagination:
           $ref: '#/components/schemas/Pagination'
 
+    ApplicableBuilds:
+      type: object
+      properties:
+        all_builds: { type: boolean }
+        build_tags: { type: array, items: { type: string } }
+        build_names: { type: array, items: { type: string } }
+    StartBuildFramework:
+      type: object
+      required: [name, version]
+      properties:
+        name: { type: string }
+        version: { type: string }
+    StartBuildHostInfo:
+      type: object
+      properties:
+        hostname: { type: string }
+        platform: { type: string }
+        type: { type: string }
+        version: { type: string }
+        arch: { type: string }
+    StartBuildCiInfo:
+      type: object
+      properties:
+        name: { type: string }
+        build_url: { type: string }
+        url: { type: string }
+        build_number: { type: string }
+        job_name: { type: string }
+    StartBuildVersionControl:
+      type: object
+      properties:
+        name: { type: string }
+        sha: { type: string }
+        branch: { type: string }
+        tag: { type: string }
+        commit_message: { type: string }
+        committer_email: { type: string }
+        committer_name: { type: string }
     StartBuildRequest:
       type: object
       required: [name, project_name, started_at, framework]
@@ -793,30 +839,14 @@ components:
         tags: { type: array, items: { type: string } }
         build_run_identifier: { type: string, maxLength: 64 }
         host_info:
-          type: object
-          properties:
-            hostname: { type: string }
-            platform: { type: string }
-            type: { type: string }
-            version: { type: string }
-            arch: { type: string }
+          $ref: '#/components/schemas/StartBuildHostInfo'
         ci_info:
-          type: object
-          properties:
-            name: { type: string }
-            build_url: { type: string }
-            url: { type: string }
-            build_number: { type: string }
-            job_name: { type: string }
+          $ref: '#/components/schemas/StartBuildCiInfo'
         version_control:
           type: object
           additionalProperties: true
         framework:
-          type: object
-          required: [name, version]
-          properties:
-            name: { type: string }
-            version: { type: string }
+          $ref: '#/components/schemas/StartBuildFramework'
 
     StartTestRunRequest:
       type: object
@@ -940,11 +970,7 @@ components:
         is_global_profile: { type: boolean }
         rules: { type: array, items: { type: object, additionalProperties: true } }
         applicable_builds:
-          type: object
-          properties:
-            all_builds: { type: boolean }
-            build_tags: { type: array, items: { type: string } }
-            build_names: { type: array, items: { type: string } }
+          $ref: '#/components/schemas/ApplicableBuilds'
         rule_status: { type: string, enum: [pass, fail] }
         hooks_visibility: { type: string, enum: [failed, none, beforeFailed, all] }
 

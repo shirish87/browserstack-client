@@ -33,3 +33,43 @@ export function stripOperationPrefix(operationId: string, product: string): stri
   if (!rest) return operationId;
   return verb + rest.charAt(0).toUpperCase() + rest.slice(1);
 }
+
+/**
+ * Converts a method name (like getBrowsers) to a CLI-friendly action slug (get-browsers).
+ */
+export function toActionSlug(methodName: string): string {
+  return methodName
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
+    .toLowerCase();
+}
+
+/**
+ * Checks if a schema represents an array or a list.
+ */
+export function isArrayList(schema: any): boolean {
+  if (!schema) return false;
+  if (schema.type === "array") return true;
+  if (schema.oneOf) return schema.oneOf.some(isArrayList);
+  if (schema.anyOf) return schema.anyOf.some(isArrayList);
+  return false;
+}
+
+/**
+ * High-level helper to get a CLI action name from an operation.
+ */
+export function toCLIAction(methodName: string, responseSchema?: any): string {
+  let action = toActionSlug(methodName);
+
+  const isGet = action.startsWith("get-");
+  const isPlural = action.endsWith("s");
+  const returnsArray = isArrayList(responseSchema);
+
+  // CLI-friendly mapping: get-*s -> list-*
+  // Also map get-* that returns an array to list-*
+  if (isGet && (isPlural || returnsArray)) {
+    action = action.replace(/^get-/, "list-");
+  }
+
+  return action;
+}

@@ -7,10 +7,10 @@ import { BrowserStackOptions } from "@dot-slash/browserstack-core";
 import { readFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 import process from "node:process";
-import { randomBytes } from "node:crypto";
 import { AppAutomate } from "./constants.generated.ts";
 import { AppAutomateSchemas } from "./schemas.generated.ts";
 import { parseArgs } from "./parser.ts";
+import { randomBytes } from "node:crypto";
 
 interface Logger {
   info(message: string, ...params: unknown[]): void;
@@ -54,8 +54,8 @@ export async function main(
 
     const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);
     
-    // File upload handling
-    if (actionInput.includes("upload")) {
+    // Some actions need manual file reading or special handling before call
+    if (action === AppAutomate.Action.UploadApp || action === AppAutomate.Action.UploadEspressoApp || action === AppAutomate.Action.UploadXcuiTestApp || action === AppAutomate.Action.UploadMediaFile) {
         if (!rest[0]) throw new BrowserStackError("Missing <file-path>");
         const filePath = resolve(rest[0]);
         const filename = basename(filePath);
@@ -68,13 +68,8 @@ export async function main(
 
     const result = await schemaConfig.call(client, parsed);
     logger.info(JSON.stringify(result, null, 2));
-
   } catch (err) {
     logger.error(formatError(err));
     process.exit(1);
   }
-}
-
-if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && import.meta.url === `file://${process.argv[1]}`) {
-  main();
 }

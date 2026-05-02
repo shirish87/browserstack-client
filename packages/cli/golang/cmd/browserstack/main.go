@@ -54,6 +54,9 @@ func main() {
 	}
 
 	apiClient := browserstackhttp.New("https://api.browserstack.com", username, accessKey)
+	accessibilityClient := browserstackhttp.New("https://api-accessibility.browserstack.com", username, accessKey)
+	testManagementClient := browserstackhttp.New("https://test-management.browserstack.com", username, accessKey)
+	screenshotsClient := browserstackhttp.New("https://www.browserstack.com", username, accessKey)
 
 	var err error
 	switch product {
@@ -62,13 +65,13 @@ func main() {
 	case appautomate.ProductAppAutomate:
 		err = runAppAutomate(apiClient, action, args)
 	case screenshots.ProductScreenshots:
-		err = runScreenshots(apiClient, action, args)
+		err = runScreenshots(screenshotsClient, action, args)
 	case localtesting.ProductLocalTesting:
 		err = runLocalTesting(apiClient, action, args)
 	case accessibility.ProductAccessibility:
-		err = runAccessibility(apiClient, action, args)
+		err = runAccessibility(accessibilityClient, action, args)
 	case testmanagement.ProductTestManagement:
-		err = runTestManagement(apiClient, action, args)
+		err = runTestManagement(testManagementClient, action, args)
 	case testreporting.ProductTestReporting:
 		// test-reporting uses a different base URL; its handler creates its own client
 		err = runTestReporting(username, accessKey, action, args)

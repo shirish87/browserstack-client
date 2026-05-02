@@ -23,16 +23,10 @@ func runTestReporting(username, accessKey, action string, args []string) error {
 		return nil
 	}
 
-	result, err := testreporting.Dispatch(client, ctx, action, args)
+	res, err := testreporting.Dispatch(client, ctx, action, args)
 	if err != nil {
 		return err
 	}
 
-	// Handle string output directly, otherwise print as JSON
-	if strResult, ok := result.(string); ok {
-		fmt.Println(strResult)
-		return nil
-	}
-
-	return output.Print(result)
+	return output.Print(res)
 }

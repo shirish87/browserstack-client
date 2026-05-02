@@ -20,44 +20,27 @@ func runAppAutomate(c *browserstackhttp.Client, action string, args []string) er
 		return nil
 	}
 
-	result, err := appautomate.Dispatch(client, ctx, action, args)
+	res, err := appautomate.Dispatch(client, ctx, action, args)
 	if err != nil {
 		return err
 	}
 
-	// Handle string output directly, otherwise print as JSON
-	if strResult, ok := result.(string); ok {
-		fmt.Println(strResult)
-		return nil
-	}
-
-	// Handle custom formatting for specific actions
 	switch action {
-	case "list-builds":
-		if list, ok := result.(*appautomate.GetAppAutomateBuildsResponse); ok {
-			for _, b := range *list {
+	case appautomate.ActionListBuilds:
+		if res.ListBuilds != nil {
+			for _, b := range *res.ListBuilds {
 				fmt.Printf("%s %s %s\n", b.AutomationBuild.HashedId, b.AutomationBuild.Name, b.AutomationBuild.Status)
 			}
 			return nil
 		}
-	case "list-projects":
-		if list, ok := result.(*[]appautomate.AutomateProject); ok {
-			for _, p := range *list {
+	case appautomate.ActionListProjects:
+		if res.ListProjects != nil {
+			for _, p := range *res.ListProjects {
 				fmt.Printf("%.0f %s\n", p.Id, p.Name)
 			}
 			return nil
 		}
-	case "list-apps":
-		// GetApps returns *map[string]any currently
-		if res, ok := result.(*map[string]any); ok {
-			return output.Print(res)
-		}
-	case "list-media-files":
-		// GetMediaFiles returns *map[string]any currently
-		if res, ok := result.(*map[string]any); ok {
-			return output.Print(res)
-		}
 	}
 
-	return output.Print(result)
+	return output.Print(res)
 }

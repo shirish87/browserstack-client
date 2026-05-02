@@ -469,7 +469,3 @@ export async function main(
     }
   }
 }
-
-if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && import.meta.url === `file://${process.argv[1]}`) {
-  main(process.argv.slice(2), globalThis.console, "--", true);
-}

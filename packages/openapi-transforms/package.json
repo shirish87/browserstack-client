@@ -1,9 +1,10 @@
 {
   "name": "@dot-slash/browserstack-openapi-transforms",
+  "private": true,
   "publishConfig": {
     "access": "public"
   },
-  "version": "4.1.0-alpha.0",
+  "version": "4.1.0-alpha.2",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

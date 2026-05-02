@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "4.1.0-alpha.0",
+  "version": "4.1.0-alpha.2",
   "type": "module",
   "description": "BrowserStack App Automate API client for mobile app automation testing",
   "engines": {
@@ -39,12 +39,11 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit || true"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@dot-slash/browserstack-core": "workspace:*",
     "@dot-slash/browserstack-openapi": "workspace:*",
-    "@dot-slash/browserstack-openapi-transforms": "workspace:*"
-  },
-  "devDependencies": {
+    "@dot-slash/browserstack-openapi-transforms": "workspace:*",
     "@types/node": "^25.6.0",
     "fflate": "^0.8.2",
     "tsup": "^8.5.1",

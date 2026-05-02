@@ -34,29 +34,34 @@ const sharedAliases = {
   "@dot-slash/browserstack-openapi-transforms": path.resolve(__dirname, "packages/openapi-transforms/src/index.ts"),
 };
 
-const define = {
-  __PKG_VERSION__: '"4.1.0-test"',
-};
-
-const testBase = {
-  globals: true,
-  environment: "node" as const,
+const projectBase = {
+  define: {
+    __PKG_VERSION__: '"4.1.0-test"',
+  },
+  test: {
+    globals: true,
+    environment: "node",
+  },
+  resolve: { alias: sharedAliases },
 };
 
 export default defineConfig({
+  define: {
+    __PKG_VERSION__: '"4.1.0-test"',
+  },
   test: {
     projects: [
-      { define, test: { ...testBase, name: "automate", optimizeDeps: { include: ["openapi-fetch", "openapi-typescript-helpers"] } }, resolve: { alias: sharedAliases }, root: "./packages/automate" },
-      { define, test: { ...testBase, name: "app-automate" }, resolve: { alias: sharedAliases }, root: "./packages/app-automate" },
-      { define, test: { ...testBase, name: "local-testing" }, resolve: { alias: sharedAliases }, root: "./packages/local-testing" },
-      { define, test: { ...testBase, name: "screenshots" }, resolve: { alias: sharedAliases }, root: "./packages/screenshots" },
-      { define, test: { ...testBase, name: "local-testing-binary" }, resolve: { alias: sharedAliases }, root: "./packages/local-testing-binary" },
-      { define, test: { ...testBase, name: "cli" }, resolve: { alias: sharedAliases }, root: "./packages/cli/typescript" },
-      { define, test: { ...testBase, name: "openapi-transforms", include: ["src/**/*.test.ts"], exclude: ["dist/**", "node_modules/**"] }, resolve: { alias: sharedAliases }, root: "./packages/openapi-transforms" },
-      { define, test: { ...testBase, name: "core" }, resolve: { alias: sharedAliases }, root: "./packages/core" },
-      { define, test: { ...testBase, name: "test-management" }, resolve: { alias: sharedAliases }, root: "./packages/test-management" },
-      { define, test: { ...testBase, name: "accessibility" }, resolve: { alias: sharedAliases }, root: "./packages/accessibility" },
-      { define, test: { ...testBase, name: "test-reporting" }, resolve: { alias: sharedAliases }, root: "./packages/test-reporting" },
+      { ...projectBase, test: { ...projectBase.test, name: "automate", optimizeDeps: { include: ["openapi-fetch", "openapi-typescript-helpers"] } }, root: "./packages/automate" },
+      { ...projectBase, test: { ...projectBase.test, name: "app-automate", optimizeDeps: { include: ["openapi-fetch", "openapi-typescript-helpers"] } }, root: "./packages/app-automate" },
+      { ...projectBase, test: { ...projectBase.test, name: "local-testing" }, root: "./packages/local-testing" },
+      { ...projectBase, test: { ...projectBase.test, name: "screenshots" }, root: "./packages/screenshots" },
+      { ...projectBase, test: { ...projectBase.test, name: "local-testing-binary" }, root: "./packages/local-testing-binary" },
+      { ...projectBase, test: { ...projectBase.test, name: "cli" }, root: "./packages/cli/typescript" },
+      { ...projectBase, test: { ...projectBase.test, name: "openapi-transforms", include: ["src/**/*.test.ts"], exclude: ["dist/**", "node_modules/**"] }, root: "./packages/openapi-transforms" },
+      { ...projectBase, test: { ...projectBase.test, name: "core" }, root: "./packages/core" },
+      { ...projectBase, test: { ...projectBase.test, name: "test-management" }, root: "./packages/test-management" },
+      { ...projectBase, test: { ...projectBase.test, name: "accessibility" }, root: "./packages/accessibility" },
+      { ...projectBase, test: { ...projectBase.test, name: "test-reporting" }, root: "./packages/test-reporting" },
     ],
   },
 });

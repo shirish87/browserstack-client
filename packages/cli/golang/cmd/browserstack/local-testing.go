@@ -20,16 +20,20 @@ func runLocalTesting(c *browserstackhttp.Client, action string, args []string) e
 		return nil
 	}
 
-	result, err := localtesting.Dispatch(client, ctx, action, args)
+	res, err := localtesting.Dispatch(client, ctx, action, args)
 	if err != nil {
 		return err
 	}
 
-	// Handle string output directly, otherwise print as JSON
-	if strResult, ok := result.(string); ok {
-		fmt.Println(strResult)
-		return nil
+	switch action {
+	case "list-instances":
+		if res.ListInstances != nil {
+			for _, inst := range res.ListInstances.Instances {
+				fmt.Printf("%s %s %s\n", inst.Id, inst.LocalIdentifier, inst.StartTime)
+			}
+			return nil
+		}
 	}
 
-	return output.Print(result)
+	return output.Print(res)
 }

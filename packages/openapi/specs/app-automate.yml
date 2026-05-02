@@ -54,22 +54,7 @@ paths:
                 - build
                 properties:
                   build:
-                    type: object
-                    required:
-                    - automation_build
-                    - sessions
-                    properties:
-                      automation_build:
-                        $ref: '#/components/schemas/AutomateBuild'
-                      sessions:
-                        type: array
-                        items:
-                          type: object
-                          required:
-                          - automation_session
-                          properties:
-                            automation_session:
-                              $ref: '#/components/schemas/AutomateSession'
+                    $ref: '#/components/schemas/AppAutomateBuildContainer'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -195,6 +180,7 @@ paths:
       summary: Fetches list of uploaded media files by custom ID
       description: Fetches list of recently uploaded media files by custom ID
       operationId: getAppAutomateMediaFilesByCustomId
+      x-cli-action: list-media-files-by-custom-id
       parameters:
       - name: customId
         in: path
@@ -413,6 +399,7 @@ paths:
                 - success
                 properties:
                   success:
+                    title: AppDeleteSuccessMessage
                     type: object
                     required:
                     - message
@@ -819,6 +806,7 @@ paths:
       description: Upload the application under test (AUT) for Flutter iOS testing
         in .zip format.
       operationId: uploadAppAutomateFlutteriOSApp
+      x-cli-action: upload-flutter-ios-app
       x-request-transform:
         codec: multipart
         config:
@@ -1037,16 +1025,7 @@ paths:
                 - project
                 properties:
                   project:
-                    allOf:
-                    - $ref: '#/components/schemas/AutomateProject'
-                    - type: object
-                      required:
-                      - builds
-                      properties:
-                        builds:
-                          type: array
-                          items:
-                            $ref: '#/components/schemas/AutomateBuild'
+                    $ref: '#/components/schemas/AppAutomateProjectWithBuilds'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -1326,6 +1305,7 @@ paths:
                 - success
                 properties:
                   success:
+                    title: AppDeleteSuccessMessage
                     type: object
                     required:
                     - message
@@ -1796,6 +1776,7 @@ paths:
                 - success
                 properties:
                   success:
+                    title: AppDeleteSuccessMessage
                     type: object
                     required:
                     - message
@@ -1857,6 +1838,7 @@ paths:
       summary: Fetches list of uploaded Flutter iOS test packages
       description: Fetches list of recently uploaded Flutter iOS test packages
       operationId: getAppAutomateFlutteriOSApps
+      x-cli-action: list-flutter-ios-apps
       parameters:
       - name: scope
         in: query
@@ -2311,12 +2293,7 @@ paths:
                 title: GetAppAutomateBuildsResponse
                 type: array
                 items:
-                  type: object
-                  required:
-                  - automation_build
-                  properties:
-                    automation_build:
-                      $ref: '#/components/schemas/AutomateBuild'
+                  $ref: '#/components/schemas/AppAutomateBuildWrap'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -2335,6 +2312,7 @@ paths:
       summary: Get details of an uploaded Flutter iOS test package
       description: Get details of an uploaded Flutter iOS test package
       operationId: getAppAutomateFlutteriOSApp
+      x-cli-action: get-flutter-ios-app
       parameters:
       - name: appId
         in: path
@@ -2374,6 +2352,7 @@ paths:
       description: Delete a Flutter iOS test package that was previously uploaded
         to BrowserStack. Note that apps once deleted cannot be recovered.
       operationId: deleteAppAutomateFlutteriOSApp
+      x-cli-action: delete-flutter-ios-app
       parameters:
       - name: appId
         in: path
@@ -2394,6 +2373,7 @@ paths:
                 - success
                 properties:
                   success:
+                    title: AppDeleteSuccessMessage
                     type: object
                     required:
                     - message
@@ -2456,6 +2436,47 @@ components:
       type: http
       scheme: basic
   schemas:
+    AppAutomateProjectWithBuilds:
+      title: AppAutomateProjectWithBuilds
+      allOf:
+      - $ref: '#/components/schemas/AutomateProject'
+      - type: object
+        required:
+        - builds
+        properties:
+          builds:
+            type: array
+            items:
+              $ref: '#/components/schemas/AutomateBuild'
+    AppAutomateBuildWrap:
+      title: AppAutomateBuildWrap
+      type: object
+      required:
+      - automation_build
+      properties:
+        automation_build:
+          $ref: '#/components/schemas/AutomateBuild'
+    AppAutomateBuildContainer:
+      title: AppAutomateBuildContainer
+      type: object
+      required:
+      - automation_build
+      - sessions
+      properties:
+        automation_build:
+          $ref: '#/components/schemas/AutomateBuild'
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppAutomateSessionContainer'
+    AppAutomateSessionContainer:
+      title: AppAutomateSessionContainer
+      type: object
+      required:
+      - automation_session
+      properties:
+        automation_session:
+          $ref: '#/components/schemas/AutomateSession'
     400.BadRequest:
       description: Bad request.
     401.Unauthorized:
@@ -2570,6 +2591,58 @@ components:
           description: Shareable ID allows members of other teams to use the media
             files in their tests.
           example: steve/SampleMedia
+    AppAutomateAppProfilingV1:
+      title: AppAutomateAppProfilingV1
+      type: object
+      properties:
+        timestamp:
+          type: string
+        cpu_usage:
+          type: number
+        memory_usage:
+          type: number
+        battery_level:
+          type: number
+        network_received:
+          type: number
+        network_sent:
+          type: number
+    AppAutomateAppProfilingV2:
+      title: AppAutomateAppProfilingV2
+      type: object
+      properties:
+        timestamp:
+          type: string
+        cpu_usage:
+          type: number
+        memory_usage:
+          type: number
+        battery_level:
+          type: number
+        network_received:
+          type: number
+        network_sent:
+          type: number
+        app_size_installed:
+          type: number
+        ui_rendering:
+          type: number
+    AppAutomateSessionAppDetails:
+      title: AppAutomateSessionAppDetails
+      type: object
+      properties:
+        app_name:
+          type: string
+          description: Package name of the app
+          example: com.sample.loginapplication
+        app_version:
+          type: string
+        app_url:
+          type: string
+        app_custom_id:
+          type: string
+        uploaded_at:
+          type: string
     AppAutomateSession:
       title: AppAutomateSession
       allOf:
@@ -2580,30 +2653,7 @@ components:
         - app_details
         properties:
           app_details:
-            type: object
-            properties:
-              app_name:
-                type: string
-                description: Package name of the app.
-                example: com.sample.loginapplication
-              app_version:
-                type: string
-                description: Version of the app.
-                example: '1.0'
-              app_url:
-                type: string
-                description: Unique identifier returned upon successful upload of
-                  your app on BrowserStack. This value can be used later to specify
-                  the application under test in your Appium test scripts."
-                example: media://90c7a8h8dc82308108734e9a46c24d8f01de12881
-              app_custom_id:
-                type: string
-                description: Custom ID defined for the uploaded app.
-                example: LoginApp
-              uploaded_at:
-                type: string
-                description: Timestamp of the app upload.
-                example: '2021-09-30T10:00:00.000Z'
+            $ref: '#/components/schemas/AppAutomateSessionAppDetails'
     AppAutomateTestPackage:
       title: AppAutomateTestPackage
       type: object
@@ -2679,240 +2729,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/BrowserPlatform'
-    BrowserMap:
-      title: BrowserMap
-      type: object
-      properties:
-        Windows:
-          type: object
-          required:
-          - XP
-          - '7'
-          - '8'
-          - '8.1'
-          - '10'
-          - '11'
-          properties:
-            XP:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            '7':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            '8':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            '8.1':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            '10':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            '11':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/BrowserPlatform'
-        OS X:
-          type: object
-          required:
-          - Snow Leopard
-          - Lion
-          - Mountain Lion
-          - Mavericks
-          - Yosemite
-          - El Capitan
-          - Sierra
-          - High Sierra
-          - Mojave
-          - Catalina
-          - Big Sur
-          - Monterey
-          - Ventura
-          - Sonoma
-          properties:
-            Snow Leopard:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Lion:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Mountain Lion:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Mavericks:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Yosemite:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            El Capitan:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Sierra:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            High Sierra:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Mojave:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Catalina:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Big Sur:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Monterey:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Ventura:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Sonoma:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            additionalProperties:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-        winphone:
-          type: object
-          required:
-          - '8.1'
-          properties:
-            '8.1':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-        android:
-          type: object
-          required:
-          - '14.0'
-          - '13.0'
-          - '12.0'
-          - '11.0'
-          - '10.0'
-          - '9.0'
-          - '8.1'
-          - '8.0'
-          - '7.1'
-          - '7.0'
-          - '6.0'
-          - '5.0'
-          - '4.4'
-          - '4.3'
-          - '4.2'
-          - '4.1'
-          - '4.0'
-          - '2.3'
-          - '2.2'
-          properties:
-            '14.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '13.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '12.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '11.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '10.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '9.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '8.1':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '8.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '7.1':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '7.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '6.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '5.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '4.4':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '4.3':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '4.2':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '4.1':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '4.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '2.3':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '2.2':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            additionalProperties:
-              type: array
-              items:
-                oneOf:
-                - $ref: '#/components/schemas/BrowserRealDevice'
-                - $ref: '#/components/schemas/BrowserDevice'
     BrowserPlatform:
       title: BrowserPlatform
       allOf:
@@ -3069,6 +2885,7 @@ components:
             description: ID of the worker.
             example: 122326697
           sessionId:
+            type: string
             description: ID of the session.
             example: 550709149fe79e949363b581e774d5ebffa1b8fe
           status:

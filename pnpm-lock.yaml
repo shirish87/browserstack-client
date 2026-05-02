@@ -73,7 +73,7 @@ importers:
         version: 4.3.6
 
   packages/accessibility:
-    dependencies:
+    devDependencies:
       '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
@@ -83,7 +83,6 @@ importers:
       '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
-    devDependencies:
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -98,7 +97,7 @@ importers:
         version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(yaml@2.8.3))
 
   packages/app-automate:
-    dependencies:
+    devDependencies:
       '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
@@ -108,7 +107,6 @@ importers:
       '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
-    devDependencies:
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -129,7 +127,7 @@ importers:
         version: 4.3.6
 
   packages/automate:
-    dependencies:
+    devDependencies:
       '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
@@ -139,7 +137,6 @@ importers:
       '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
-    devDependencies:
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -158,6 +155,13 @@ importers:
 
   packages/cli/typescript:
     dependencies:
+      signal-exit:
+        specifier: ^4.1.0
+        version: 4.1.0
+      zod:
+        specifier: ^3.24.2
+        version: 3.25.76
+    devDependencies:
       '@dot-slash/browserstack-accessibility':
         specifier: workspace:*
         version: link:../../accessibility
@@ -188,13 +192,6 @@ importers:
       '@dot-slash/browserstack-test-reporting':
         specifier: workspace:*
         version: link:../../test-reporting
-      signal-exit:
-        specifier: ^4.1.0
-        version: 4.1.0
-      zod:
-        specifier: ^4.3.6
-        version: 4.3.6
-    devDependencies:
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -257,12 +254,6 @@ importers:
 
   packages/local-testing-binary:
     dependencies:
-      '@dot-slash/browserstack-core':
-        specifier: workspace:*
-        version: link:../core
-      '@dot-slash/browserstack-local-testing-api':
-        specifier: workspace:*
-        version: link:../local-testing
       fflate:
         specifier: ^0.8.2
         version: 0.8.2
@@ -270,6 +261,12 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
     devDependencies:
+      '@dot-slash/browserstack-core':
+        specifier: workspace:*
+        version: link:../core
+      '@dot-slash/browserstack-local-testing-api':
+        specifier: workspace:*
+        version: link:../local-testing
       '@dot-slash/browserstack-openapi':
         specifier: workspace:*
         version: link:../openapi
@@ -298,6 +295,9 @@ importers:
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
+      yaml:
+        specifier: ^2.8.3
+        version: 2.8.3
 
   packages/openapi-transforms:
     dependencies:
@@ -328,7 +328,7 @@ importers:
         version: 2.8.3
 
   packages/screenshots:
-    dependencies:
+    devDependencies:
       '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
@@ -338,7 +338,6 @@ importers:
       '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
-    devDependencies:
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -356,7 +355,7 @@ importers:
         version: 4.3.6
 
   packages/test-management:
-    dependencies:
+    devDependencies:
       '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
@@ -366,7 +365,6 @@ importers:
       '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
-    devDependencies:
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -381,7 +379,7 @@ importers:
         version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(yaml@2.8.3))
 
   packages/test-reporting:
-    dependencies:
+    devDependencies:
       '@dot-slash/browserstack-core':
         specifier: workspace:*
         version: link:../core
@@ -391,7 +389,6 @@ importers:
       '@dot-slash/browserstack-openapi-transforms':
         specifier: workspace:*
         version: link:../openapi-transforms
-    devDependencies:
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -3401,6 +3398,9 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
   zod@4.3.6:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
@@ -6417,6 +6417,8 @@ snapshots:
       yargs-parser: 20.2.9
 
   yocto-queue@0.1.0: {}
+
+  zod@3.25.76: {}
 
   zod@4.3.6: {}
 

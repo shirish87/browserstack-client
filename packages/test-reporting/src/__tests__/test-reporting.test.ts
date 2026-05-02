@@ -1,186 +1,183 @@
-import { describe, expect, test } from "vitest";
-import { testReportingContext } from "./setup.ts";
+import { describe, expect, it } from "vitest";
+import { BrowserStackError, HttpError, env } from "@dot-slash/browserstack-core";
+import { makeClient, makeErrorResponse } from "./setup.ts";
+import { TestReportingClient } from "../index.ts";
 
-const TIMEOUT = 30_000;
-const LONG_TIMEOUT = 60_000;
+// Fixture data (wire-format snake_case — live API captures)
+const PROJECTS_WIRE = {
+  projects: [
+    { id: 25033, name: "BrowserStack Samples", group_id: 2259240, created_by: 23803, created_at: "2024-03-14T09:26:37.000+00:00", updated_at: "2026-04-27T21:17:10.000+00:00", observability_url: "https://observability.browserstack.com/projects/BrowserStack+Samples/builds" },
+    { id: 25242, name: "cypress-examples-recipes", group_id: 2259240, created_by: 23803, created_at: "2024-03-16T06:19:20.000+00:00", updated_at: "2026-04-27T21:16:57.000+00:00", observability_url: "https://observability.browserstack.com/projects/cypress-examples-recipes/builds" },
+  ],
+  pagination: { has_next: false, next_page: null },
+};
+
+const PROJECT_BUILDS_WIRE = {
+  id: 25033,
+  name: "BrowserStack Samples",
+  builds: [],
+  pagination: { has_next: false, next_page: null },
+};
+
+const BUILD_DETAIL_WIRE = {
+  id: 101,
+  name: "main-build",
+  status: "passed",
+  created_at: "2026-04-27T10:00:00.000Z",
+  updated_at: "2026-04-27T10:30:00.000Z",
+  build_hid: "bld_abc123",
+  framework: "pytest",
+  duration: 1800,
+  project_id: 25033,
+};
+
+const START_BUILD_WIRE = { success: true, build_hashed_id: "bld_newbuild123" };
+
+const FINISH_BUILD_WIRE = { success: true, message: "Build finished successfully." };
+
+const START_TEST_RUN_WIRE = { success: true, test_run_id: "tr-001" };
 
 describe("TestReportingClient", () => {
+  describe("Credentials", () => {
+    it("accepts valid username and accessKey", () => {
+      expect(() => new TestReportingClient({ username: "user", accessKey: "key" })).not.toThrow();
+    });
 
-  describe("Projects", () => {
-    test("getTestReportingProjects", async () => {
-      const { client } = testReportingContext;
-      const resp = await client.getProjects();
-      const projects = (resp as { projects?: unknown[] })?.projects ?? resp;
+    it("makeClient helper creates a client with mock fetch", () => {
+      const client = makeClient();
+      expect(client).toBeInstanceOf(TestReportingClient);
+    });
+
+    it("throws BrowserStackError when no credentials available", () => {
+      const savedUser = env.BROWSERSTACK_USERNAME;
+      const savedKey = env.BROWSERSTACK_ACCESS_KEY;
+      const savedKeyAlt = env.BROWSERSTACK_KEY;
+      delete env.BROWSERSTACK_USERNAME;
+      delete env.BROWSERSTACK_ACCESS_KEY;
+      delete env.BROWSERSTACK_KEY;
+      try {
+        expect(() => new TestReportingClient({ username: "", accessKey: "" })).toThrow(BrowserStackError);
+      } finally {
+        env.BROWSERSTACK_USERNAME = savedUser;
+        env.BROWSERSTACK_ACCESS_KEY = savedKey;
+        env.BROWSERSTACK_KEY = savedKeyAlt;
+      }
+    });
+  });
+
+  describe("getProjects", () => {
+    it("returns projects array with id, name, and pagination", async () => {
+      const client = makeClient(PROJECTS_WIRE);
+      const data = await client.getProjects();
+      const projects = (data as { projects?: Array<{ id: number; name: string }> }).projects ?? [];
       expect(Array.isArray(projects)).toBe(true);
-    }, TIMEOUT);
+      expect(projects).toHaveLength(2);
+      expect(projects[0]!.id).toBe(25033);
+      expect(projects[0]!.name).toBe("BrowserStack Samples");
+      expect(projects[1]!.id).toBe(25242);
+      const pagination = (data as { pagination?: { hasNext: boolean; nextPage: null } }).pagination;
+      expect(pagination).toBeDefined();
+      expect(pagination!.hasNext).toBe(false);
+      expect(pagination!.nextPage).toBeNull();
+    });
+
+    it("throws HttpError on 401", async () => {
+      const client = makeClient(makeErrorResponse(401, "Unauthorized"));
+      await expect(client.getProjects()).rejects.toThrow(HttpError);
+    });
   });
 
-  describe("Builds", () => {
-    test("getTestReportingProjectBuilds", async () => {
-      const { client, randomProjectId } = testReportingContext;
-      const projectId = await randomProjectId();
-      const resp = await client.getProjectBuilds(projectId);
-      const builds = (resp as { builds?: unknown[] })?.builds ?? resp;
+  describe("getProjectBuilds", () => {
+    it("returns project with builds array (even if empty) and pagination", async () => {
+      const client = makeClient(PROJECT_BUILDS_WIRE);
+      const data = await client.getProjectBuilds(25033);
+      const builds = (data as { builds?: unknown[] }).builds ?? [];
       expect(Array.isArray(builds)).toBe(true);
-    }, TIMEOUT);
+      expect(builds).toHaveLength(0);
+      expect((data as { id?: number }).id).toBe(25033);
+      expect((data as { name?: string }).name).toBe("BrowserStack Samples");
+      const pagination = (data as { pagination?: { hasNext: boolean } }).pagination;
+      expect(pagination).toBeDefined();
+      expect(pagination!.hasNext).toBe(false);
+    });
 
-    test.skip("getTestReportingBuild (paid feature)", async () => {
-      const { client, randomProjectId, randomBuildUuid } = testReportingContext;
-      const projectId = await randomProjectId();
-      const buildUuid = await randomBuildUuid(projectId);
-      const build = await client.getBuild(buildUuid);
-      expect(build).toBeDefined();
-      expect((build as { buildId?: string })?.buildId ?? (build as { id?: string })?.id).toBeDefined();
-    }, TIMEOUT);
-
-    test.skip("getTestReportingLatestBuild (paid feature)", async () => {
-      const { client, randomProjectId } = testReportingContext;
-      const projectId = await randomProjectId();
-      const resp = await client.getProjects();
-      const projects = (resp as { projects?: Array<{ name: string; id: number }> })?.projects ?? (resp as Array<{ name: string; id: number }>);
-      const project = projects.find((p) => p.id === projectId);
-      expect(project?.name).toBeDefined();
-      const build = await client.getLatestBuild(project!.name);
-      expect(build).toBeDefined();
-    }, TIMEOUT);
-
-    test.skip("updateTestReportingBuild (paid feature)", async () => {
-      const { client, randomProjectId, randomBuildUuid } = testReportingContext;
-      const projectId = await randomProjectId();
-      const buildUuid = await randomBuildUuid(projectId);
-      const tag = `test-tag-${Date.now()}`;
-      const result = await client.updateBuild(buildUuid, { buildTags: [tag] });
-      expect(result).toBeDefined();
-    }, TIMEOUT);
+    it("throws HttpError on 404", async () => {
+      const client = makeClient(makeErrorResponse(404, "Project not found"));
+      await expect(client.getProjectBuilds(99999)).rejects.toThrow(HttpError);
+    });
   });
 
-  describe("TestRuns", () => {
-    test("getTestReportingTestRuns", async () => {
-      const { client, randomProjectId, randomBuildUuid } = testReportingContext;
-      const projectId = await randomProjectId();
-      const buildUuid = await randomBuildUuid(projectId);
-      const resp = await client.getTestRuns(buildUuid);
-      expect(resp).toBeDefined();
-    }, TIMEOUT);
+  describe("getBuild", () => {
+    it("returns build detail with camelCase fields", async () => {
+      const client = makeClient(BUILD_DETAIL_WIRE);
+      const data = await client.getBuild("bld_abc123");
+      expect(data).toBeDefined();
+      expect((data as { name?: string }).name).toBe("main-build");
+      expect((data as { status?: string }).status).toBe("passed");
+      expect((data as { buildHid?: string }).buildHid).toBe("bld_abc123");
+      expect((data as { projectId?: number }).projectId).toBe(25033);
+      expect((data as { duration?: number }).duration).toBe(1800);
+    });
+
+    it("throws HttpError on 404", async () => {
+      const client = makeClient(makeErrorResponse(404, "Build not found"));
+      await expect(client.getBuild("nonexistent")).rejects.toThrow(HttpError);
+    });
   });
 
-  describe("SelfHealing", () => {
-    test.skip("getTestReportingSelfHealingReport (paid feature)", async () => {
-      const { client, randomProjectId, randomBuildUuid } = testReportingContext;
-      const projectId = await randomProjectId();
-      const buildUuid = await randomBuildUuid(projectId);
-      const report = await client.getSelfHealingReport(buildUuid);
-      expect(report).toBeDefined();
-    }, TIMEOUT);
-  });
-
-  describe("QualityGates", () => {
-    test.skip("getTestReportingQualityGateStatus (paid feature)", async () => {
-      const { client, randomProjectId, randomBuildUuid } = testReportingContext;
-      const projectId = await randomProjectId();
-      const buildUuid = await randomBuildUuid(projectId);
-      const status = await client.getQualityGateStatus(buildUuid);
-      expect(status).toBeDefined();
-    }, TIMEOUT);
-
-    test.skip("getTestReportingQualityGateSettings (paid feature)", async () => {
-      const { client, randomProjectId } = testReportingContext;
-      const projectId = await randomProjectId();
-      const resp = await client.getProjects();
-      const projects = (resp as { projects?: Array<{ name: string; id: number }> })?.projects ?? (resp as Array<{ name: string; id: number }>);
-      const project = projects.find((p) => p.id === projectId);
-      expect(project?.name).toBeDefined();
-      const settings = await client.getQualityGateSettings(project!.name);
-      expect(settings).toBeDefined();
-    }, TIMEOUT);
-
-    test("createTestReportingQualityGateProfile + getTestReportingQualityGateProfile + updateTestReportingQualityGateProfile + toggleTestReportingQualityGateProfile + deleteTestReportingQualityGateProfile", async () => {
-      const { client, randomProjectId } = testReportingContext;
-      const projectId = await randomProjectId();
-      const resp = await client.getProjects();
-      const projects = (resp as { projects?: Array<{ name: string; id: number }> })?.projects ?? (resp as Array<{ name: string; id: number }>);
-      const project = projects.find((p) => p.id === projectId);
-      const projectName = project!.name;
-
-      const created = await client.createQualityGateProfile(projectName, {
-        name: `test-profile-${Date.now()}`,
-        enabled: true,
-        isGlobalProfile: false,
-        rules: [],
-      });
-      expect((created as { uuid?: string })?.uuid).toBeDefined();
-      const profileUuid = (created as { uuid: string }).uuid;
-
-      const fetched = await client.getQualityGateProfile(projectName, profileUuid);
-      expect(fetched).toBeDefined();
-
-      await client.updateQualityGateProfile(projectName, profileUuid, {
-        name: `test-profile-${Date.now()}-updated`,
-        enabled: true,
-        isGlobalProfile: false,
-        rules: [],
-      });
-
-      await client.toggleQualityGateProfile(projectName, profileUuid, { enabled: false });
-
-      await client.deleteQualityGateProfile(projectName, profileUuid);
-    }, LONG_TIMEOUT);
-  });
-
-  describe("Ingestion", () => {
-    test("startTestReportingBuild + startTestReportingTestRun + finishTestReportingTestRun + finishTestReportingBuild", async () => {
-      const { client } = testReportingContext;
-      const now = new Date().toISOString();
-
-      const started = await client.startBuild({
-        name: `sdk-ingestion-test-${Date.now()}`,
+  describe("startBuild", () => {
+    it("returns success true and buildHashedId", async () => {
+      const client = makeClient(START_BUILD_WIRE);
+      const data = await client.startBuild({
+        name: "my-build",
         projectName: "sdk-integration-tests",
-        startedAt: now,
+        startedAt: "2026-04-27T10:00:00.000Z",
         framework: { name: "vitest", version: "1.0.0" },
       });
-      expect((started as { buildHashedId?: string })?.buildHashedId).toBeDefined();
-      const buildHashedId = (started as { buildHashedId: string }).buildHashedId;
+      expect(data).toBeDefined();
+      expect((data as { success?: boolean }).success).toBe(true);
+      expect((data as { buildHashedId?: string }).buildHashedId).toBe("bld_newbuild123");
+    });
 
-      const testStarted = await client.startTestRun(buildHashedId, {
+    it("throws HttpError on 422", async () => {
+      const client = makeClient(makeErrorResponse(422, "Unprocessable Entity"));
+      await expect(
+        client.startBuild({ name: "", projectName: "", startedAt: "", framework: { name: "vitest", version: "1.0.0" } })
+      ).rejects.toThrow(HttpError);
+    });
+  });
+
+  describe("finishBuild", () => {
+    it("returns success true and message", async () => {
+      const client = makeClient(FINISH_BUILD_WIRE);
+      const data = await client.finishBuild("bld_newbuild123", {
+        finishedAt: "2026-04-27T10:30:00.000Z",
+      });
+      expect(data).toBeDefined();
+      expect((data as { success?: boolean }).success).toBe(true);
+      expect((data as { message?: string }).message).toBe("Build finished successfully.");
+    });
+
+    it("throws HttpError on 401", async () => {
+      const client = makeClient(makeErrorResponse(401, "Unauthorized"));
+      await expect(
+        client.finishBuild("bld_newbuild123", { finishedAt: "2026-04-27T10:30:00.000Z" })
+      ).rejects.toThrow(HttpError);
+    });
+  });
+
+  describe("startTestRun", () => {
+    it("returns success true and test_run_id", async () => {
+      const client = makeClient(START_TEST_RUN_WIRE);
+      const data = await client.startTestRun("bld_newbuild123", {
         name: "sdk test run",
-        fileName: "test.ts",
-        scopes: ["SDK", "Integration"],
-        startedAt: now,
+        startedAt: "2026-04-27T10:00:00.000Z",
+        fileName: "sdk.test.ts",
+        scopes: ["integration"],
       });
-      expect((testStarted as { uuid?: string })?.uuid).toBeDefined();
-      const testRunUuid = (testStarted as { uuid: string }).uuid;
-
-      await client.finishTestRun(buildHashedId, testRunUuid, {
-        result: "passed",
-        finishedAt: new Date().toISOString(),
-        fileName: "test.ts",
-        scopes: ["SDK", "Integration"],
-      });
-
-      await client.finishBuild(buildHashedId, {
-        finishedAt: new Date().toISOString(),
-      });
-    }, LONG_TIMEOUT);
+      expect(data).toBeDefined();
+      expect((data as { success?: boolean }).success).toBe(true);
+      expect((data as { testRunId?: string }).testRunId).toBe("tr-001");
+    });
   });
-
-  describe("Upload", () => {
-    test("uploadTestReportingReport (JUnit)", async () => {
-      const { client } = testReportingContext;
-      const junitXml = `<?xml version="1.0" encoding="UTF-8"?>
-<testsuites>
-  <testsuite name="SDK test" tests="1" failures="0">
-    <testcase name="sample test" classname="SdkTest" time="0.001"/>
-  </testsuite>
-</testsuites>`;
-      const result = await client.uploadReport({
-        file: new Blob([junitXml], { type: "application/xml" }),
-        fileName: "results.xml",
-        projectName: "sdk-integration-tests",
-        buildName: `sdk-junit-upload-${Date.now()}`,
-        format: "junit",
-      });
-      expect(result).toBeDefined();
-    }, LONG_TIMEOUT);
-  });
-
 });

@@ -137,9 +137,11 @@ paths:
           content:
             application/json:
               schema:
+                title: GetAccessibilityWebsiteScannerAuthConfigsResponse
                 type: object
                 properties:
                   data:
+                    title: AuthConfigsData
                     type: object
                     properties:
                       authConfigs:
@@ -159,19 +161,13 @@ paths:
         content:
           application/json:
             schema:
+              title: CreateAccessibilityWebsiteScannerAuthConfigRequest
               type: object
               properties:
                 name: { type: string }
                 type: { type: string }
                 authData:
-                  type: object
-                  properties:
-                    url: { type: string }
-                    username: { type: string }
-                    password: { type: string }
-                    usernameSelector: { type: string }
-                    passwordSelector: { type: string }
-                    submitSelector: { type: string }
+                  $ref: '#/components/schemas/AuthConfigData'
       responses:
         '200':
           description: Successful response
@@ -611,20 +607,18 @@ components:
           type: integer
         hidden:
           type: integer
+    IssueCountBySeverity:
+      type: object
+      properties:
+        minor: { type: integer }
+        serious: { type: integer }
+        critical: { type: integer }
+        moderate: { type: integer }
     IssueCount:
       type: object
       properties:
         issueCountBySeverity:
-          type: object
-          properties:
-            minor:
-              type: integer
-            serious:
-              type: integer
-            critical:
-              type: integer
-            moderate:
-              type: integer
+          $ref: '#/components/schemas/IssueCountBySeverity'
         issueCountByURL:
           type: array
           items:
@@ -637,54 +631,42 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/IssueCountByCategory'
+    IssueCountSeverity:
+      type: object
+      properties:
+        critical: { type: integer }
+        serious: { type: integer }
+        moderate: { type: integer }
+        minor: { type: integer }
+    IssueCountSeverityDetailed:
+      type: object
+      properties:
+        critical: { type: integer }
+        criticalPassed: { type: integer }
+        criticalFailed: { type: integer }
+        serious: { type: integer }
+        seriousPassed: { type: integer }
+        seriousFailed: { type: integer }
+        moderate: { type: integer }
+        moderatePassed: { type: integer }
+        moderateFailed: { type: integer }
+        minor: { type: integer }
+        minorPassed: { type: integer }
+        minorFailed: { type: integer }
     ScoreData:
       type: object
       properties:
         score:
           type: integer
         impact:
-          type: object
-          properties:
-            critical:
-              type: integer
-            serious:
-              type: integer
-            moderate:
-              type: integer
-            minor:
-              type: integer
+          $ref: '#/components/schemas/IssueCountSeverity'
     ScoreDataDetailed:
       type: object
       properties:
         score:
           type: integer
         impact:
-          type: object
-          properties:
-            critical:
-              type: integer
-            criticalPassed:
-              type: integer
-            criticalFailed:
-              type: integer
-            serious:
-              type: integer
-            seriousPassed:
-              type: integer
-            seriousFailed:
-              type: integer
-            moderate:
-              type: integer
-            moderatePassed:
-              type: integer
-            moderateFailed:
-              type: integer
-            minor:
-              type: integer
-            minorPassed:
-              type: integer
-            minorFailed:
-              type: integer
+          $ref: '#/components/schemas/IssueCountSeverityDetailed'
     ChangesSinceLastRun:
       type: object
       properties:
@@ -713,6 +695,89 @@ components:
           type: string
         logo:
           type: string
+    SessionDataFramework:
+      type: object
+      properties:
+        name: { type: string }
+        version: { type: string }
+    SessionData:
+      type: object
+      properties:
+        browser:
+          type: array
+          items:
+            $ref: '#/components/schemas/BrowserData'
+        os:
+          type: array
+          items:
+            $ref: '#/components/schemas/OsData'
+        framework:
+          $ref: '#/components/schemas/SessionDataFramework'
+    HealthSummary:
+      type: object
+      properties:
+        failed: { type: integer }
+        passed: { type: integer }
+        skipped: { type: integer }
+        total: { type: integer }
+    TestCaseSummaryBreakdown:
+      type: object
+      properties:
+        minor: { type: integer }
+        serious: { type: integer }
+        critical: { type: integer }
+        moderate: { type: integer }
+    TestCaseSummary:
+      type: object
+      properties:
+        pageCount: { type: integer }
+        componentCount: { type: integer }
+        issueCount: { type: integer }
+        severityBreakdown:
+          $ref: '#/components/schemas/TestCaseSummaryBreakdown'
+    ScanConfigCreatedBy:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+    ScanConfigInfo:
+      type: object
+      properties:
+        name: { type: string }
+        scanConfigId: { type: integer }
+        createdBy:
+          $ref: '#/components/schemas/ScanConfigCreatedBy'
+        wcagVersion: { type: string }
+        needsReview: { type: boolean }
+        bestPractices: { type: boolean }
+        recurring: { type: boolean }
+        advanced: { type: boolean }
+        pageCount: { type: integer }
+        nextScanDate: { type: string }
+        active: { type: boolean }
+        isProcessing: { type: boolean }
+        authEnabled: { type: boolean }
+        localTestingEnabled: { type: boolean }
+    ScanEngineInfo:
+      type: object
+      properties:
+        testEngine:
+          $ref: '#/components/schemas/ScanEngineInfo'
+    AuthConfigData:
+      type: object
+      properties:
+        url: { type: string }
+        username: { type: string }
+        password: { type: string }
+        usernameSelector: { type: string }
+        passwordSelector: { type: string }
+        submitSelector: { type: string }
+    WorkflowAnalyzerCreatedBy:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
     AuthConfig:
       type: object
       properties:
@@ -723,20 +788,7 @@ components:
         type:
           type: string
         authData:
-          type: object
-          properties:
-            url:
-              type: string
-            username:
-              type: string
-            password:
-              type: string
-            usernameSelector:
-              type: string
-            passwordSelector:
-              type: string
-            submitSelector:
-              type: string
+          $ref: '#/components/schemas/AuthConfigData'
     WorkflowAnalyzerReportItem:
       type: object
       properties:
@@ -745,12 +797,7 @@ components:
         name:
           type: string
         createdBy:
-          type: object
-          properties:
-            user_id:
-              type: integer
-            name:
-              type: string
+          $ref: '#/components/schemas/WorkflowAnalyzerCreatedBy'
         wcagVersion:
           type: string
         status:
@@ -764,24 +811,9 @@ components:
         scanType:
           type: string
         engineInfo:
-          type: object
-          properties:
-            testEngine:
-              type: object
-              properties:
-                name:
-                  type: string
-                version:
-                  type: string
+          $ref: '#/components/schemas/ScanEngineInfo'
         issueSummary:
-          type: object
-          properties:
-            componentCount:
-              type: integer
-            issueCount:
-              type: integer
-            pageCount:
-              type: integer
+          $ref: '#/components/schemas/IssueSummary'
     WorkflowAnalyzerReportList:
       type: object
       properties:
@@ -799,12 +831,7 @@ components:
         name:
           type: string
         createdBy:
-          type: object
-          properties:
-            user_id:
-              type: integer
-            name:
-              type: string
+          $ref: '#/components/schemas/WorkflowAnalyzerCreatedBy'
         time:
           type: string
         wcagVersion:
@@ -820,7 +847,7 @@ components:
         scanType:
           type: string
         engineInfo:
-          $ref: '#/components/schemas/EngineInfo'
+          $ref: '#/components/schemas/ScanEngineInfo'
         scoreData:
           $ref: '#/components/schemas/ScoreData'
         issueSummary:
@@ -849,7 +876,7 @@ components:
         scanType:
           type: string
         engineInfo:
-          $ref: '#/components/schemas/EngineInfo'
+          $ref: '#/components/schemas/ScanEngineInfo'
         report_link:
           type: string
         pagination:
@@ -862,12 +889,7 @@ components:
         name:
           type: string
         createdBy:
-          type: object
-          properties:
-            user_id:
-              type: integer
-            name:
-              type: string
+          $ref: '#/components/schemas/WorkflowAnalyzerCreatedBy'
         wcagVersion:
           type: string
         status:
@@ -881,24 +903,9 @@ components:
         scanType:
           type: string
         engineInfo:
-          type: object
-          properties:
-            testEngine:
-              type: object
-              properties:
-                name:
-                  type: string
-                version:
-                  type: string
+          $ref: '#/components/schemas/ScanEngineInfo'
         issueSummary:
-          type: object
-          properties:
-            componentCount:
-              type: integer
-            issueCount:
-              type: integer
-            pageCount:
-              type: integer
+          $ref: '#/components/schemas/IssueSummary'
         assistedTestType:
           type: string
     AssistedTestReportList:
@@ -918,12 +925,7 @@ components:
         name:
           type: string
         createdBy:
-          type: object
-          properties:
-            user_id:
-              type: integer
-            name:
-              type: string
+          $ref: '#/components/schemas/WorkflowAnalyzerCreatedBy'
         time:
           type: string
         wcagVersion:
@@ -939,7 +941,7 @@ components:
         scanType:
           type: string
         engineInfo:
-          $ref: '#/components/schemas/EngineInfo'
+          $ref: '#/components/schemas/ScanEngineInfo'
         scoreData:
           $ref: '#/components/schemas/ScoreData'
         issueSummary:
@@ -970,7 +972,7 @@ components:
         scanType:
           type: string
         engineInfo:
-          $ref: '#/components/schemas/EngineInfo'
+          $ref: '#/components/schemas/ScanEngineInfo'
         report_link:
           type: string
         pagination:
@@ -1049,41 +1051,7 @@ components:
       type: object
       properties:
         scanConfigInfo:
-          type: object
-          properties:
-            name:
-              type: string
-            scanConfigId:
-              type: integer
-            createdBy:
-              type: object
-              properties:
-                id:
-                  type: integer
-                name:
-                  type: string
-            wcagVersion:
-              type: string
-            needsReview:
-              type: boolean
-            bestPractices:
-              type: boolean
-            recurring:
-              type: boolean
-            advanced:
-              type: boolean
-            pageCount:
-              type: integer
-            nextScanDate:
-              type: string
-            active:
-              type: boolean
-            isProcessing:
-              type: boolean
-            authEnabled:
-              type: boolean
-            localTestingEnabled:
-              type: boolean
+          $ref: '#/components/schemas/ScanConfigInfo'
         urlList:
           type: array
           items:
@@ -1147,7 +1115,7 @@ components:
         wcagVersion:
           type: string
         engineInfo:
-          $ref: '#/components/schemas/EngineInfo'
+          $ref: '#/components/schemas/ScanEngineInfo'
         authEnabled:
           type: boolean
         localTestingEnabled:
@@ -1189,7 +1157,7 @@ components:
         advanced:
           type: boolean
         engineInfo:
-          $ref: '#/components/schemas/EngineInfo'
+          $ref: '#/components/schemas/ScanEngineInfo'
         wcagVersion:
           type: string
         report_link:
@@ -1258,12 +1226,7 @@ components:
         pageCount:
           type: integer
         createdBy:
-          type: object
-          properties:
-            id:
-              type: integer
-            name:
-              type: string
+          $ref: '#/components/schemas/WorkflowAnalyzerCreatedBy'
         projectId:
           type: integer
         thBuildId:
@@ -1289,25 +1252,7 @@ components:
         time:
           type: string
         summary:
-          type: object
-          properties:
-            pageCount:
-              type: integer
-            componentCount:
-              type: integer
-            issueCount:
-              type: integer
-            severityBreakdown:
-              type: object
-              properties:
-                minor:
-                  type: integer
-                serious:
-                  type: integer
-                critical:
-                  type: integer
-                moderate:
-                  type: integer
+          $ref: '#/components/schemas/TestCaseSummary'
         file:
           type: string
         osData:
@@ -1347,7 +1292,7 @@ components:
         wcagVersion:
           type: string
         testEngine:
-          $ref: '#/components/schemas/EngineInfo'
+          $ref: '#/components/schemas/ScanEngineInfo'
         changesSinceLastRun:
           $ref: '#/components/schemas/ChangesSinceLastRun'
         scoreData:
@@ -1361,34 +1306,9 @@ components:
         bestPractice:
           type: boolean
         sessionData:
-          type: object
-          properties:
-            browser:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserData'
-            os:
-              type: array
-              items:
-                $ref: '#/components/schemas/OsData'
-            framework:
-              type: object
-              properties:
-                name:
-                  type: string
-                version:
-                  type: string
+          $ref: '#/components/schemas/SessionData'
         healthSummary:
-          type: object
-          properties:
-            failed:
-              type: integer
-            passed:
-              type: integer
-            skipped:
-              type: integer
-            total:
-              type: integer
+          $ref: '#/components/schemas/HealthSummary'
         issueSummary:
           $ref: '#/components/schemas/IssueSummaryFull'
         issueCount:
@@ -1405,7 +1325,7 @@ components:
         wcagVersion:
           type: string
         testEngine:
-          $ref: '#/components/schemas/EngineInfo'
+          $ref: '#/components/schemas/ScanEngineInfo'
         time:
           type: string
         advanced:
