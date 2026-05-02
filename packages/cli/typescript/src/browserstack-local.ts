@@ -10,6 +10,7 @@ import { join } from "node:path";
 import process from "node:process";
 import { onExit } from "signal-exit";
 import { env, resolveAccessKey } from "@dot-slash/browserstack-core";
+import { formatError } from "./utils.ts";
 
 enum BrowserStackLocalAction {
   start = "start",
@@ -402,7 +403,7 @@ export async function main(
   inputArgs: string[] = process.argv.slice(2),
   logger: Logger = globalThis.console,
   cmdSeparator: string = "--",
-  exitOnError: boolean = false
+  exitOnError: boolean = true
 ) {
   try {
     const args = inputArgs.map((arg) => arg.trim());
@@ -458,11 +459,7 @@ export async function main(
         );
     }
   } catch (err) {
-    if (err instanceof Error) {
-      logger.error(err.message);
-    } else {
-      logger.error(`An unexpected error occurred: ${err}`);
-    }
+    logger.error(formatError(err));
 
     if (exitOnError) {
       process.exit(1);

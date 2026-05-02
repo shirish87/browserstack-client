@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { ensureAccessKeyExists, ensureUsernameExists } from "./utils.ts";
+import { ensureAccessKeyExists, ensureUsernameExists, formatError } from "./utils.ts";
 import { BrowserStackError } from "@dot-slash/browserstack-core";
 import { AccessibilityClient } from "@dot-slash/browserstack-accessibility";
 import { BrowserStackOptions } from "@dot-slash/browserstack-core";
@@ -56,11 +56,7 @@ export async function main(args: string[]): Promise<void> {
     logger.info(JSON.stringify(result, null, 2));
 
   } catch (error) {
-    if (error instanceof BrowserStackError) {
-      logger.error(error.message);
-    } else {
-      logger.error("An unexpected error occurred:", error);
-    }
+    logger.error(formatError(error));
     process.exit(1);
   }
 }

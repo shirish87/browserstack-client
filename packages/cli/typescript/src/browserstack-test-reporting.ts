@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { ensureAccessKeyExists, ensureUsernameExists } from "./utils.ts";
+import { ensureAccessKeyExists, ensureUsernameExists, formatError } from "./utils.ts";
 import { BrowserStackError } from "@dot-slash/browserstack-core";
 import { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
 import { BrowserStackOptions } from "@dot-slash/browserstack-core";
@@ -78,7 +78,7 @@ export async function main(
     logger.info(JSON.stringify(result, null, 2));
 
   } catch (err) {
-    logger.error(err instanceof Error ? err.message : String(err));
+    logger.error(formatError(err));
     process.exit(1);
   }
 }

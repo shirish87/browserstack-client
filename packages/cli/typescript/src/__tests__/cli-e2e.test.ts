@@ -46,20 +46,27 @@ function out(result: { stdout: string; stderr: string }) {
 
 async function assertHelp(binary: typeof binaries[number], args: string[]) {
   const result = await runCli(binary, args);
+  // Help is not an error, it should exit with 0 or 1 (some CLIs use 1 for help)
+  // and can be in either stdout or stderr depending on implementation.
   expect(result.exitCode).toBeLessThanOrEqual(1);
   expect(out(result)).toContain("usage");
 }
 
+async function assertError(result: { stdout: string; stderr: string, exitCode: number }, pattern: RegExp) {
+  expect(result.exitCode).toBe(1);
+  expect(result.stderr.toLowerCase()).toMatch(pattern);
+  // Errors should NOT be in stdout
+  expect(result.stdout.trim()).toBe("");
+}
+
 async function assertUnknownAction(binary: typeof binaries[number], args: string[]) {
   const result = await runCli(binary, args);
-  expect(result.exitCode).toBeGreaterThan(0);
-  expect(out(result)).toMatch(/unknown action|invalid action|invalid/);
+  await assertError(result, /unknown action|invalid action|invalid/);
 }
 
 async function assertMissingArgs(binary: typeof binaries[number], args: string[]) {
   const result = await runCli(binary, args);
-  expect(result.exitCode).toBeGreaterThan(0);
-  expect(out(result)).toMatch(/usage|missing|invalid|required|argument validation|unauthorized|not found|access denied|request failed/);
+  await assertError(result, /usage|missing|invalid|required|argument validation|unauthorized|not found|access denied|request failed/);
 }
 
 // Actions that require ≥1 positional arg — calling with no args should produce a usage error.
@@ -314,8 +321,7 @@ describe("CLI E2E Orchestrator", () => {
 
         // Since we use dummy-key, it should fail with unauthorized or request failed,
         // which confirms the dispatch logic worked and it tried to call the API.
-        expect(result.exitCode).toBeGreaterThan(0);
-        expect(out(result)).toMatch(/unauthorized|request failed|access denied|invalid key|401|403/);
+        await assertError(result, /unauthorized|request failed|access denied|invalid key|401|403/);
       }
     );
 
