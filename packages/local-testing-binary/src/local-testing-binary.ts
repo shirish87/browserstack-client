@@ -177,7 +177,9 @@ export class LocalTestingBinary extends LocalTestingClient {
       });
 
       const data = child.stdout?.toString?.("utf8")?.trim?.();
-      const version = data?.match(/\s+version\s+(.*)$/i)?.[1]?.trim();
+      const versionMarker = "version ";
+      const markerIdx = data?.toLowerCase().indexOf(versionMarker) ?? -1;
+      const version = markerIdx !== -1 ? data!.slice(markerIdx + versionMarker.length).trim() : undefined;
       if (typeof version === "string") {
         return resolve(version);
       }

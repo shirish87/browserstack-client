@@ -60,10 +60,25 @@ export function deriveReturnType(baseType: string, ann: OperationAnnotations, op
   }
 }
 
+function isSimpleIdentifier(s: string): boolean {
+  if (!s.length) return false;
+  const first = s.charCodeAt(0);
+  if (!((first >= 65 && first <= 90) || (first >= 97 && first <= 122))) return false;
+  for (let i = 1; i < s.length; i++) {
+    const c = s.charCodeAt(i);
+    if (!((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57))) return false;
+  }
+  return true;
+}
+
+function isArrayOfSimpleIdentifier(s: string): boolean {
+  return s.startsWith("Array<") && s.endsWith(">") && isSimpleIdentifier(s.slice(6, -1));
+}
+
 function namedAlias(inner: DerivedReturnType, operationId: string, suffix: string): DerivedReturnType {
-  if (/^[A-Za-z][A-Za-z0-9]*$/.test(inner.type)) return inner;
+  if (isSimpleIdentifier(inner.type)) return inner;
   const aliases = [...inner.aliases];
-  if (/^Array<[A-Za-z][A-Za-z0-9]*>$/.test(inner.type)) {
+  if (isArrayOfSimpleIdentifier(inner.type)) {
     const listAliasName = `${toPascalCase(operationId)}${suffix}`;
     if (!aliases.some((a) => a.includes(`type ${listAliasName} `))) {
       aliases.push(`export type ${listAliasName} = ${inner.type};`);

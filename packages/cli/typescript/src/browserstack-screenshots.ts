@@ -4,7 +4,6 @@ import { ensureAccessKeyExists, ensureUsernameExists, formatError } from "./util
 import { BrowserStackError } from "@dot-slash/browserstack-core";
 import { ScreenshotsClient } from "@dot-slash/browserstack-screenshots";
 import { BrowserStackOptions } from "@dot-slash/browserstack-core";
-import { resolve } from "node:path";
 import process from "node:process";
 import { Screenshots } from "./constants.generated.ts";
 import { ScreenshotsSchemas } from "./schemas.generated.ts";

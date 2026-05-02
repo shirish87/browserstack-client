@@ -52,18 +52,6 @@ function makeFetch(body: unknown, status = 200, contentType = "application/json"
   ) as unknown as typeof fetch;
 }
 
-/** Build a queue-based fetch mock — each call consumes the next entry. */
-function makeFetchQueue(responses: Array<{ body: unknown; contentType?: string }>) {
-  const queue = [...responses];
-  return vi.fn(async () => {
-    const entry = queue.shift();
-    if (!entry) throw new Error("makeFetchQueue: more calls than responses");
-    const ct = entry.contentType ?? "application/json";
-    const body = ct === "application/json" ? JSON.stringify(entry.body) : String(entry.body);
-    return new Response(body, { status: 200, headers: { "content-type": ct } });
-  }) as unknown as typeof fetch;
-}
-
 // ── wire-format fixtures ──────────────────────────────────────────────────────
 
 const AUTOMATE_PROJECTS_WIRE = [

@@ -1,7 +1,7 @@
 import { defineConfig } from "vitest/config";
-import path from "path";
-import { fileURLToPath } from "url";
-import { readFileSync } from "fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

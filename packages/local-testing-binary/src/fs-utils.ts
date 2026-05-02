@@ -3,7 +3,6 @@ import { BrowserStackError } from "@dot-slash/browserstack-core";
 import { operations } from "@dot-slash/browserstack-openapi/local-testing";
 import { writeFileAtomic } from "./write-file-atomic.ts";
 import { Buffer } from "node:buffer";
-import { spawnSync } from "node:child_process";
 import {
   chmod,
   constants,
@@ -14,6 +13,10 @@ import {
 } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import process from "node:process";
+
+function isRootDir(dir: string): boolean {
+  return dir === "/" || (dir.length === 3 && dir[1] === ":" && dir[2] === "\\");
+}
 
 export async function binaryPath(
   binHome: string,
@@ -131,12 +134,8 @@ export async function currentOSArch(): Promise<
         }
 
         try {
-          // const { spawnSync } = await import("node:child_process");
-          if (
-            spawnSync("ldd", ["--version"])
-              .stderr.toString("utf8")
-              .indexOf("musl") !== -1
-          ) {
+          const maps = await readFile("/proc/self/maps", "utf8");
+          if (maps.includes("musl")) {
             return "alpine";
           }
         } catch {
@@ -208,7 +207,7 @@ export async function findPackageId(
   let dir = process.cwd();
   let cnt = Math.max(1, maxDepth);
 
-  while (!dir.match(/^(\w:\\|\/)$/) && cnt > 0) {
+  while (!isRootDir(dir) && cnt > 0) {
     const pkgPath = join(dir, "package.json");
     dir = resolve(dir, "..");
     cnt--;

@@ -22,7 +22,6 @@ const binaries = [
   { name: "Golang CLI", path: goBinary, type: "binary" },
 ];
 
-const TEST_TIMEOUT_DEFAULT = 5000;
 const TEST_TIMEOUT_SLOW_API = 30000;
 
 async function runCli(binary: typeof binaries[number], args: string[]) {

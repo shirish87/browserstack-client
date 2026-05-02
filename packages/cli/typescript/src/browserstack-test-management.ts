@@ -4,7 +4,6 @@ import { ensureAccessKeyExists, ensureUsernameExists, formatError } from "./util
 import { BrowserStackError } from "@dot-slash/browserstack-core";
 import { TestManagementClient } from "@dot-slash/browserstack-test-management";
 import { BrowserStackOptions } from "@dot-slash/browserstack-core";
-import { resolve } from "node:path";
 import process from "node:process";
 import { TestManagementSchemas } from "./schemas.generated.ts";
 import { parseArgs } from "./parser.ts";

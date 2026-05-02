@@ -1,9 +1,13 @@
 import type { PathAst, PathNode } from "./types";
 
+function isIdentChar(code: number): boolean {
+  return (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || (code >= 48 && code <= 57) || code === 95;
+}
+
 function consumeField(input: string, i: number): { name: string; i: number } {
   let name = "";
   let pos = i;
-  while (pos < input.length && /[A-Za-z0-9_]/.test(input[pos]!)) { name += input[pos]!; pos++; }
+  while (pos < input.length && isIdentChar(input.charCodeAt(pos))) { name += input[pos]!; pos++; }
   if (!name) throw new Error(`expected field name after . at offset ${pos}`);
   return { name, i: pos };
 }
