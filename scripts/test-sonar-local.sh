@@ -54,7 +54,8 @@ docker run --rm \
 
 # 5. Generate Report inside the SonarQube container
 echo "Generating Report via sonar-cnes-report 5.0.4..."
-docker exec sonarqube-local sh -c "mkdir -p /home/sonarqube/.cnesreport/log && chown -R sonarqube /home/sonarqube/.cnesreport" 2>/dev/null || true
+docker exec sonarqube-local bash -c "mkdir -p /home/sonarqube/.cnesreport/log && chown -R sonarqube:sonarqube /home/sonarqube/.cnesreport" 2>/dev/null || \
+  docker exec -u root sonarqube-local sh -c "mkdir -p /home/sonarqube/.cnesreport/log && chown -R sonarqube /home/sonarqube/.cnesreport" 2>/dev/null || true
 docker exec -u sonarqube sonarqube-local sh -c "
   curl -L -s -o /tmp/cnes.jar https://github.com/cnescatlab/sonar-cnes-report/releases/download/5.0.4/sonar-cnes-report-5.0.4.jar
   java -jar /tmp/cnes.jar \
