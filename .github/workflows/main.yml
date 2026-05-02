@@ -54,11 +54,6 @@ jobs:
   build:
     name: "Build"
     runs-on: ubuntu-latest
-    services:
-      sonarqube:
-        image: sonarqube:community
-        ports:
-          - 9000:9000
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
@@ -93,34 +88,118 @@ jobs:
             packages/cli/golang/dist/**
           retention-days: 1
 
+      - name: Start Lean SonarQube
+        run: |
+          # 1. Prepare Lean Extensions (TS, JS, Go only)
+          mkdir -p scripts/.sonar-lean-plugins
+          docker run --rm -v "$(pwd)/scripts/.sonar-lean-plugins:/target" sonarqube:community sh -c "
+            cp /opt/sonarqube/lib/extensions/sonar-javascript-plugin-*.jar /target/
+            cp /opt/sonarqube/lib/extensions/sonar-go-plugin-*.jar /target/
+            cp /opt/sonarqube/lib/extensions/sonar-text-plugin-*.jar /target/
+          "
+          
+          # 2. Start via Docker Compose
+          docker compose -f scripts/docker-compose.sonarqube.yml up -d
+
       - name: Wait for SonarQube to be ready
         run: |
-          until curl -s -f http://localhost:9000/api/system/status | grep -q '"status":"UP"'; do
+          echo "Waiting for SonarQube to be operational..."
+          for i in {1..60}; do
+            if curl -s -f http://localhost:9000/api/system/status | grep -q '"status":"UP"'; then
+              if docker logs sonarqube-local 2>&1 | grep -q "SonarQube is operational"; then
+                echo "SonarQube is READY!"
+                break
+              fi
+            fi
             sleep 5
           done
 
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@59db25f34e16620e48ab4bb9e4a5dce155cb5432 # v8
-        with:
-          args: >
-            -Dsonar.host.url=http://localhost:9000
-            -Dsonar.login=admin
-            -Dsonar.password=admin
+        run: |
+          # 1. Generate strong session password with special characters
+          SONAR_ADMIN_PASS=$(openssl rand -base64 24 | tr -dc 'A-Za-z0-9' | head -c 20)"!A1"
+          
+          # 2. Change default password to enable API access
+          echo "Securing SonarQube..."
+          curl -s -u admin:admin -X POST "http://localhost:9000/api/users/change_password?login=admin&previousPassword=admin&password=$SONAR_ADMIN_PASS"
+          
+          # 3. Generate ephemeral scan token
+          TOKEN_JSON=$(curl -s -u admin:$SONAR_ADMIN_PASS -X POST "http://localhost:9000/api/user_tokens/generate?name=scanner-token")
+          SONAR_TOKEN=$(echo $TOKEN_JSON | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+          
+          # 4. Disable forceAuthentication for Playwright
+          curl -s -u admin:$SONAR_ADMIN_PASS -X POST "http://localhost:9000/api/settings/set?key=sonar.forceAuthentication&value=false"
+          
+          echo "Running Scan..."
+          docker run --rm \
+            --network="host" \
+            -v "$(pwd):/usr/src" \
+            sonarsource/sonar-scanner-cli \
+            -Dsonar.projectKey=browserstack-client \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.token=$SONAR_TOKEN
+          
+          # Export for next steps
+          echo "SONAR_ADMIN_PASS=$SONAR_ADMIN_PASS" >> $GITHUB_ENV
+          echo "SONAR_TOKEN_LOCAL=$SONAR_TOKEN" >> $GITHUB_ENV
 
       - name: Export SonarQube results
         if: always()
         run: |
-          curl -u admin:admin "http://localhost:9000/api/issues/search?componentKeys=browserstack-client&ps=500" > sonarqube-issues.json
-          curl -u admin:admin "http://localhost:9000/api/measures/component?component=browserstack-client&metricKeys=bugs,vulnerabilities,code_smells,coverage" > sonarqube-summary.json
+          # Wait for CE to process the report
+          sleep 20
+          curl -u admin:${{ env.SONAR_ADMIN_PASS }} "http://localhost:9000/api/issues/search?componentKeys=browserstack-client&ps=500" > sonarqube-issues.json
+          curl -u admin:${{ env.SONAR_ADMIN_PASS }} "http://localhost:9000/api/measures/component?component=browserstack-client&metricKeys=bugs,vulnerabilities,code_smells,coverage" > sonarqube-summary.json
+
+      - name: Install LibreOffice
+        if: always()
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libreoffice-writer libreoffice-calc --no-install-recommends
+
+      - name: Generate CNES Report
+        if: always()
+        run: |
+          # 1. Generate report using Java inside the already running SonarQube container
+          docker exec sonarqube-local sh -c "
+            curl -L -s -o /tmp/cnes.jar https://github.com/cnescatlab/sonar-cnes-report/releases/download/5.0.4/sonar-cnes-report-5.0.4.jar
+            java -jar /tmp/cnes.jar \
+              -s http://localhost:9000 \
+              -t ${{ env.SONAR_TOKEN_LOCAL }} \
+              -p browserstack-client \
+              -o /opt/sonarqube/temp
+          "
+          
+          # 2. Copy the reports out to the runner
+          mkdir -p sonarqube-reports
+          docker cp sonarqube-local:/opt/sonarqube/temp/. sonarqube-reports/
+          
+          # 3. Convert DOCX to PDF
+          echo "Converting DOCX report to PDF..."
+          DOCX_FILE=$(ls sonarqube-reports/*-analysis-report.docx | head -n 1)
+          if [ -f "$DOCX_FILE" ]; then
+            libreoffice --headless --convert-to pdf "$DOCX_FILE" --outdir sonarqube-reports/
+          fi
+          
+          # 4. Shutdown SonarQube
+          docker compose -f scripts/docker-compose.sonarqube.yml down -v
+
+      - name: Add Report to Summary
+        if: always()
+        run: |
+          REPORT_FILE=$(ls sonarqube-reports/*-analysis-report.md | head -n 1)
+          if [ -f "$REPORT_FILE" ]; then
+            echo "## SonarQube Analysis Report" >> $GITHUB_STEP_SUMMARY
+            cat "$REPORT_FILE" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Upload SonarQube results
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: sonarqube-reports
-          path: |
-            sonarqube-issues.json
-            sonarqube-summary.json
+          path: sonarqube-reports/
 
   # ── 2a. Full test suite on Linux (SDK + CLI) ─────────────────────────────────
   test-sdk:

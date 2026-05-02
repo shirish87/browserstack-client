@@ -1,0 +1,19 @@
+services:
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube-local
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      - SONAR_TELEMETRY_ENABLE=false
+      - SONAR_SEARCH_JAVAOPTS=-Xms512m -Xmx512m
+      # Disable forced password change on first login
+      - SONAR_WEB_JAVAOPTS=-Xms512m -Xmx512m -Dsonar.auth.password.forceChange=false
+      - SONAR_CE_JAVAOPTS=-Xms256m -Xmx256m
+      - >
+        SONAR_SEARCH_JAVAADDITIONALOPTS=
+        -Dnode.store.allow_mmap=false 
+        -Dcluster.routing.allocation.disk.threshold_enabled=false
+    volumes:
+      - ./.sonar-lean-plugins:/opt/sonarqube/lib/extensions
