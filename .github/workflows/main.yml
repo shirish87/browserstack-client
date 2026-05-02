@@ -1,37 +1,32 @@
 # Pipeline:
 #
-#              ┌──────────────────────────────┐
-#              │            build             │
-#              │  (ubuntu: SDK + all binaries)│
-#              └──────────┬───────────────────┘
-#                         │
-#                         ▼
-#              ┌──────────────────────────────┐
-#              │          test-sdk            │
-#              │  (linux: SDK + CLI, all      │
-#              │   projects incl. cli binary) │
-#              └──────────┬───────────────────┘
-#                         │
-#               ┌─────────┴─────────┐
-#               ▼                   ▼
-#      ┌────────────────┐  ┌────────────────┐
-#      │   test-cli     │  │   test-cli     │
-#      │   (macos)      │  │   (windows)    │
-#      └───────┬────────┘  └────────┬───────┘
-#              └──────────┬─────────┘
-#                         │  (both must pass)
-#                         ▼
-#                  ┌──────────────┐
-#                  │  sonarqube   │  (non-blocking on quality
-#                  │              │   metrics for now, but gates
-#                  └──────┬───────┘   publish steps)
-#                         │
-#               ┌─────────┴──────────┐
-#               ▼                    ▼
-#      ┌──────────────────┐  ┌──────────────────┐
-#      │  publish-docs    │  │  publish-npm     │
-#      │  (main only)     │  │  (main only)     │
-#      └──────────────────┘  └──────────────────┘
+#    ┌──────────────────────────────────────────┐
+#    │                  build                   │
+#    │  (ubuntu: SDK + all binaries + SonarQube)│
+#    └──────────────────┬───────────────────────┘
+#                       │
+#                       ▼
+#            ┌──────────────────────────────┐
+#            │          test-sdk            │
+#            │  (linux: SDK + CLI, all      │
+#            │   projects incl. cli binary) │
+#            └──────────┬───────────────────┘
+#                       │
+#             ┌─────────┴─────────┐
+#             ▼                   ▼
+#    ┌────────────────┐  ┌────────────────┐
+#    │   test-cli     │  │   test-cli     │
+#    │   (macos)      │  │   (windows)    │
+#    └───────┬────────┘  └────────┬───────┘
+#            └──────────┬─────────┘
+#                       │  (both must pass)
+#                       ▼
+#             ┌─────────┴──────────┐
+#             ▼                    ▼
+#    ┌──────────────────┐  ┌──────────────────┐
+#    │  publish-docs    │  │  publish-npm     │
+#    │  (main only)     │  │  (main only)     │
+#    └──────────────────┘  └──────────────────┘
 #
 name: CI
 on:
@@ -55,12 +50,19 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  # ── 1. Build everything once ─────────────────────────────────────────────────
+  # ── 1. Build everything once + SonarQube scan ────────────────────────────────
   build:
     name: "Build"
     runs-on: ubuntu-latest
+    services:
+      sonarqube:
+        image: sonarqube:community
+        ports:
+          - 9000:9000
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
@@ -90,6 +92,35 @@ jobs:
             packages/cli/typescript/src/*.generated.ts
             packages/cli/golang/dist/**
           retention-days: 1
+
+      - name: Wait for SonarQube to be ready
+        run: |
+          until curl -s -f http://localhost:9000/api/system/status | grep -q '"status":"UP"'; do
+            sleep 5
+          done
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@59db25f34e16620e48ab4bb9e4a5dce155cb5432 # v8
+        with:
+          args: >
+            -Dsonar.host.url=http://localhost:9000
+            -Dsonar.login=admin
+            -Dsonar.password=admin
+
+      - name: Export SonarQube results
+        if: always()
+        run: |
+          curl -u admin:admin "http://localhost:9000/api/issues/search?componentKeys=browserstack-client&ps=500" > sonarqube-issues.json
+          curl -u admin:admin "http://localhost:9000/api/measures/component?component=browserstack-client&metricKeys=bugs,vulnerabilities,code_smells,coverage" > sonarqube-summary.json
+
+      - name: Upload SonarQube results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: sonarqube-reports
+          path: |
+            sonarqube-issues.json
+            sonarqube-summary.json
 
   # ── 2a. Full test suite on Linux (SDK + CLI) ─────────────────────────────────
   test-sdk:
@@ -164,73 +195,11 @@ jobs:
       - name: Test CLI
         run: pnpm test -- --project cli -t "LocalCLI"
 
-  # ── 3. SonarQube scan ────────────────────────────────────────────────────────
-  sonarqube:
-    name: "SonarQube Scan"
-    runs-on: ubuntu-latest
-    needs: [test-sdk, test-cli]
-    services:
-      sonarqube:
-        image: sonarqube:community
-        ports:
-          - 9000:9000
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-        with:
-          fetch-depth: 0
-      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
-
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-        with:
-          node-version: "lts/*"
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: build-artifacts
-          path: packages
-
-      - name: Coverage
-        run: pnpm coverage
-
-      - name: Wait for SonarQube to be ready
-        run: |
-          until curl -s -f http://localhost:9000/api/system/status | grep -q '"status":"UP"'; do
-            sleep 5
-          done
-
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@59db25f34e16620e48ab4bb9e4a5dce155cb5432 # v8
-        with:
-          args: >
-            -Dsonar.host.url=http://localhost:9000
-            -Dsonar.login=admin
-            -Dsonar.password=admin
-
-      - name: Export SonarQube results
-        if: always()
-        run: |
-          curl -u admin:admin "http://localhost:9000/api/issues/search?componentKeys=browserstack-client&ps=500" > sonarqube-issues.json
-          curl -u admin:admin "http://localhost:9000/api/measures/component?component=browserstack-client&metricKeys=bugs,vulnerabilities,code_smells,coverage" > sonarqube-summary.json
-
-      - name: Upload SonarQube results
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: sonarqube-reports
-          path: |
-            sonarqube-issues.json
-            sonarqube-summary.json
-
-  # ── 4. Publish docs (main branch only) ───────────────────────────────────────
+  # ── 3. Publish docs (main branch only) ───────────────────────────────────────
   publish-docs:
     name: "Publish Docs"
     runs-on: ubuntu-latest
-    needs: [sonarqube]
+    needs: [test-sdk, test-cli]
     if: github.event_name != 'pull_request'
     permissions:
       contents: read
@@ -285,7 +254,7 @@ jobs:
   publish-npm:
     name: "Publish npm"
     runs-on: ubuntu-latest
-    needs: [sonarqube]
+    needs: [test-sdk, test-cli]
     if: github.event_name != 'pull_request'
     environment: BrowserStackEnv
     steps:
