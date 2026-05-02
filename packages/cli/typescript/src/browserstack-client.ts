@@ -2,6 +2,7 @@
 
 import process from "node:process";
 import { resolve } from "node:path";
+import { realpathSync } from "node:fs";
 
 import { main as runLocal } from "./browserstack-local.ts";
 import { main as runAppAutomate } from "./browserstack-app-automate.ts";
@@ -56,6 +57,13 @@ export async function main(inputArgs: string[] = process.argv.slice(2)) {
 const isMain =
   import.meta.url === `file://${process.argv[1]}` ||
   import.meta.url === `file://${resolve(process.argv[1])}` ||
+  (() => {
+    try {
+      return import.meta.url === `file://${realpathSync(process.argv[1])}`;
+    } catch {
+      return false;
+    }
+  })() ||
   (globalThis as Record<string, unknown>)["__BUILD_TARGET__"] === "binary";
 
 if (isMain) {
