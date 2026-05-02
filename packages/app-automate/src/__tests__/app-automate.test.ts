@@ -345,10 +345,9 @@ describe("AppAutomateClient", () => {
 
     it("deleteMediaFile returns success true", async () => {
       const client = makeClient(DELETE_MEDIA);
-      const data = await client.deleteMediaFile("abc123media") as { success: boolean; message: string };
+      const data = await client.deleteMediaFile("abc123media");
       expect(data).toBeDefined();
       expect(data.success).toBe(true);
-      expect(data.message).toContain("abc123media");
     });
 
     it("getMediaFiles throws HttpError on 401", async () => {

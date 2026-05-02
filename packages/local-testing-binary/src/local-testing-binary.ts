@@ -94,10 +94,10 @@ function applyMiscFlags(args: string[], binaryFlags: LocalTestingBinaryOptions):
 }
 
 async function applyFolderOrLocalProxy(args: string[], binaryFlags: Record<string, unknown>): Promise<void> {
-  if ("folder" in binaryFlags && (await dirExists(binaryFlags.folder))) {
-    args.push("--folder", binaryFlags.folder);
+  if ("folder" in binaryFlags && (await dirExists(binaryFlags.folder as string))) {
+    args.push("--folder", binaryFlags.folder as string);
   } else if ("localProxy" in binaryFlags && binaryFlags.localProxy) {
-    await applyLocalProxyArgs(args, binaryFlags.localProxy);
+    await applyLocalProxyArgs(args, binaryFlags.localProxy as ProxyParams<number>);
   }
 }
 

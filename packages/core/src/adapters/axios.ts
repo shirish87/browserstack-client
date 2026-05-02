@@ -53,7 +53,7 @@ export function createAxiosAdapter(axios: AxiosLike): typeof fetch {
       data: init?.body,
       responseType: "arraybuffer",
       validateStatus: () => true, // Don't throw on any status
-      signal: init?.signal ?? undefined,
+      signal: init?.signal == null ? undefined : init.signal,
     });
 
     return new Response(axiosResp.data, {
