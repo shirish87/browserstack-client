@@ -184,39 +184,40 @@ export async function saveFile(
  *
  * @internal
  */
+async function readPackageId(
+  pkgPath: string,
+  includeVersion: boolean
+): Promise<string | undefined> {
+  const contents = await readFile(pkgPath, "utf-8");
+  const data = contents.charCodeAt(0) === 0xfeff ? contents.slice(1) : contents;
+  const pkg = JSON.parse(data);
+  if (pkg && "name" in pkg) {
+    const name = pkg.name?.trim?.();
+    const version = includeVersion && "version" in pkg ? pkg?.version?.trim?.() : undefined;
+    if (name && name.length) {
+      return `${name}${version ? `@${version}` : ""}`;
+    }
+  }
+  return undefined;
+}
+
 export async function findPackageId(
   includeVersion = false,
   maxDepth = 3
 ): Promise<string | undefined> {
   let dir = process.cwd();
-  let pkgPath: string | undefined;
   let cnt = Math.max(1, maxDepth);
 
   while (!dir.match(/^(\w:\\|\/)$/) && cnt > 0) {
-    pkgPath = join(dir, "package.json");
+    const pkgPath = join(dir, "package.json");
     dir = resolve(dir, "..");
     cnt--;
 
     try {
-      const contents = await readFile(pkgPath, "utf-8");
-      const data =
-        contents.charCodeAt(0) === 0xfeff ? contents.slice(1) : contents;
-
-      const pkg = JSON.parse(data);
-
-      if (pkg && "name" in pkg) {
-        const name = pkg.name?.trim?.();
-        const version =
-          includeVersion && "version" in pkg
-            ? pkg?.version?.trim?.()
-            : undefined;
-
-        if (name && name.length) {
-          return `${name}${version ? `@${version}` : ""}`;
-        }
-      }
+      const id = await readPackageId(pkgPath, includeVersion);
+      if (id) return id;
     } catch {
-      pkgPath = undefined;
+      // package.json not found at this level, continue upward
     }
   }
 }

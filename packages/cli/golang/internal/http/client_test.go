@@ -11,6 +11,12 @@ import (
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 )
 
+const (
+	contentTypeHeader = "Content-Type"
+	applicationJSON   = "application/json"
+	unexpectedErrFmt  = "unexpected error: %v"
+)
+
 func newTestClient(srv *httptest.Server) *browserstackhttp.Client {
 	return browserstackhttp.NewWithHTTPClient(srv.URL, "user", "key", srv.Client())
 }
@@ -24,7 +30,7 @@ func TestGet(t *testing.T) {
 		if !ok || u != "user" || p != "key" {
 			t.Error("missing or wrong basic auth")
 		}
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set(contentTypeHeader, applicationJSON)
 		json.NewEncoder(w).Encode(map[string]string{"name": "build-1"})
 	}))
 	defer srv.Close()
@@ -35,7 +41,7 @@ func TestGet(t *testing.T) {
 	var out Resp
 	err := newTestClient(srv).Get(context.Background(), "/automate/builds.json", nil, &out)
 	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+		t.Fatalf(unexpectedErrFmt, err)
 	}
 	if out.Name != "build-1" {
 		t.Errorf("expected name 'build-1', got '%s'", out.Name)
@@ -47,7 +53,7 @@ func TestGet_WithQuery(t *testing.T) {
 		if r.URL.Query().Get("limit") != "10" {
 			t.Errorf("expected query param limit=10, got %s", r.URL.RawQuery)
 		}
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set(contentTypeHeader, applicationJSON)
 		json.NewEncoder(w).Encode(map[string]string{})
 	}))
 	defer srv.Close()
@@ -55,7 +61,7 @@ func TestGet_WithQuery(t *testing.T) {
 	var out map[string]string
 	err := newTestClient(srv).Get(context.Background(), "/builds", map[string]string{"limit": "10"}, &out)
 	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+		t.Fatalf(unexpectedErrFmt, err)
 	}
 }
 
@@ -93,7 +99,7 @@ func TestPost(t *testing.T) {
 		if body["name"] != "my-build" {
 			t.Errorf("unexpected body: %v", body)
 		}
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set(contentTypeHeader, applicationJSON)
 		json.NewEncoder(w).Encode(map[string]string{"id": "123"})
 	}))
 	defer srv.Close()
@@ -102,7 +108,7 @@ func TestPost(t *testing.T) {
 	var out Resp
 	err := newTestClient(srv).Post(context.Background(), "/builds", map[string]string{"name": "my-build"}, &out)
 	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+		t.Fatalf(unexpectedErrFmt, err)
 	}
 	if out.Id != "123" {
 		t.Errorf("expected id '123', got '%s'", out.Id)
@@ -111,14 +117,14 @@ func TestPost(t *testing.T) {
 
 func TestGetText(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set(contentTypeHeader, "text/plain")
 		w.Write([]byte("log line 1\nlog line 2"))
 	}))
 	defer srv.Close()
 
 	text, err := newTestClient(srv).GetText(context.Background(), "/logs", nil)
 	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+		t.Fatalf(unexpectedErrFmt, err)
 	}
 	if !strings.Contains(text, "log line 1") {
 		t.Errorf("unexpected text: %q", text)

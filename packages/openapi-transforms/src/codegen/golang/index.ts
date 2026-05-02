@@ -76,6 +76,31 @@ function resolveJsonComposeResultName(operationId: string): string {
   return toPascalCase(operationId) + "Result";
 }
 
+function walkPath(node: SpecResponseSchema, segments: string[]): SpecResponseSchema | undefined {
+  let cur: SpecResponseSchema | undefined = node;
+  for (const seg of segments) {
+    cur = (cur?.properties as Record<string, SpecResponseSchema> | undefined)?.[seg];
+    if (!cur) return undefined;
+  }
+  return cur;
+}
+
+function resolveWildcardRef(
+  mergeNode: SpecResponseSchema,
+  parts: string[],
+  wildcardIdx: number
+): string | undefined {
+  const remaining = parts.slice(wildcardIdx + 1);
+  let itemNode: SpecResponseSchema | undefined = mergeNode.items;
+  for (const part of remaining) {
+    itemNode = (itemNode?.properties as Record<string, SpecResponseSchema> | undefined)?.[part];
+    if (!itemNode) break;
+  }
+  if (itemNode?.$ref) return itemNode.$ref.replace(/^.*\//, "");
+  if (!remaining.length && mergeNode.items?.$ref) return mergeNode.items.$ref.replace(/^.*\//, "");
+  return undefined;
+}
+
 function buildJsonComposeSchema(
   op: SpecOp,
   operationId: string
@@ -85,29 +110,19 @@ function buildJsonComposeSchema(
   const cfg = rt.config as { base?: string; merge?: Record<string, string> } | undefined;
   if (!cfg?.base) return undefined;
 
-  // Resolve base: e.g. "$.build.automation_build" → find the $ref at that path in the response schema
   const rawSchema = op.responses?.["200"]?.content?.["application/json"]?.schema;
   if (!rawSchema) return undefined;
 
-  // Walk the base path segments (skip leading "$.")
   const baseSegments = cfg.base.replace(/^\$\./, "").split(".");
-  let node: SpecResponseSchema | undefined = rawSchema;
-  for (const seg of baseSegments) {
-    node = (node?.properties as Record<string, SpecResponseSchema> | undefined)?.[seg];
-    if (!node) return undefined;
-  }
+  const node = walkPath(rawSchema, baseSegments);
   const baseRef = node?.$ref?.replace(/^.*\//, "");
   if (!baseRef) return undefined;
   const baseGoName = toPascalCase(baseRef);
 
-  // Build properties for result struct: embed base type + merge fields
   const props: InlineSchemas[string]["properties"] = {};
   const required: string[] = [];
 
-  // For each merge entry, resolve the element type
   for (const [field, path] of Object.entries(cfg.merge ?? {})) {
-    // e.g. "$.build.sessions[*].automation_session"
-    // split on "." then handle [*] segments
     const parts = path.replace(/^\$\./, "").split(".");
     let mergeNode: SpecResponseSchema | undefined = rawSchema;
     let reachedWildcard = false;
@@ -119,23 +134,10 @@ function buildJsonComposeSchema(
       if (!mergeNode) break;
       if (isWildcard) { reachedWildcard = true; break; }
     }
-    // After wildcard, remaining parts walk into items.properties to find the element $ref
     let itemRef: string | undefined;
     if (reachedWildcard && mergeNode) {
-      // Find index of the wildcard part
       const wildcardIdx = parts.findIndex((p) => p === "[*]" || p.endsWith("[*]"));
-      const remaining = parts.slice(wildcardIdx + 1);
-      // Start from items of the array schema
-      let itemNode: SpecResponseSchema | undefined = mergeNode.items;
-      for (const part of remaining) {
-        itemNode = (itemNode?.properties as Record<string, SpecResponseSchema> | undefined)?.[part];
-        if (!itemNode) break;
-      }
-      if (itemNode?.$ref) {
-        itemRef = itemNode.$ref.replace(/^.*\//, "");
-      } else if (!remaining.length && mergeNode.items?.$ref) {
-        itemRef = mergeNode.items.$ref.replace(/^.*\//, "");
-      }
+      itemRef = resolveWildcardRef(mergeNode, parts, wildcardIdx);
     } else if (mergeNode?.items?.$ref) {
       itemRef = mergeNode.items.$ref.replace(/^.*\//, "");
     }
@@ -157,6 +159,43 @@ function buildJsonComposeSchema(
   };
 }
 
+function resolvePrimitiveElemType(type: string | undefined): string {
+  switch (type) {
+    case "string":  return "string";
+    case "integer": return "int";
+    case "number":  return "float64";
+    case "boolean": return "bool";
+    default:        return "any";
+  }
+}
+
+function resolveArrayResponseType(
+  schema: SpecResponseSchema,
+  operationId: string,
+  knownSchemas: Set<string>
+): string {
+  if (!schema.items) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — array schema missing items`);
+  if (schema.title) {
+    const name = toPascalCase(schema.title);
+    if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — array response title "${name}" not in known schemas`);
+    return name;
+  }
+  let elemType = "any";
+  if (schema.items.$ref) {
+    const name = toPascalCase(schema.items.$ref.replace(/^.*\//, ""));
+    if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — array items $ref "${schema.items.$ref}" not in known schemas`);
+    elemType = name;
+  } else if (schema.items.type === "object" || schema.items.properties) {
+    const defaultName = toPascalCase(operationId) + "Response";
+    const name = toPascalCase(schema.items.title ?? (defaultName + "Item"));
+    if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — array items inline object type not in known schemas — extract to named schema`);
+    elemType = name;
+  } else {
+    elemType = resolvePrimitiveElemType(schema.items.type);
+  }
+  return "[]" + elemType;
+}
+
 function responseType(op: SpecOp, operationId: string, knownSchemas: Set<string>): string {
   const responseCodec = resolveResponseCodec(op);
   if (responseCodec === "text") return "string";
@@ -171,32 +210,7 @@ function responseType(op: SpecOp, operationId: string, knownSchemas: Set<string>
   const schema = op.responses?.["200"]?.content?.["application/json"]?.schema;
   if (!schema) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — no 200 response schema defined`);
 
-  if (schema.type === "array" && schema.items) {
-    if (schema.title) {
-      const name = toPascalCase(schema.title);
-      if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — array response title "${name}" not in known schemas`);
-      return name;
-    }
-
-    let elemType = "any";
-    if (schema.items.$ref) {
-      const name = toPascalCase(schema.items.$ref.replace(/^.*\//, ""));
-      if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — array items $ref "${schema.items.$ref}" not in known schemas`);
-      elemType = name;
-    } else if (schema.items.type === "object" || schema.items.properties) {
-      const defaultName = toPascalCase(operationId) + "Response";
-      const name = toPascalCase(schema.items.title ?? (defaultName + "Item"));
-      if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — array items inline object type not in known schemas — extract to named schema`);
-      elemType = name;
-    } else {
-      elemType = schema.items.type === "string" ? "string"
-        : schema.items.type === "integer" ? "int"
-        : schema.items.type === "number" ? "float64"
-        : schema.items.type === "boolean" ? "bool"
-        : "any";
-    }
-    return "[]" + elemType;
-  }
+  if (schema.type === "array" && schema.items) return resolveArrayResponseType(schema, operationId, knownSchemas);
 
   if (schema.$ref) {
     const refName = schema.$ref.replace(/^.*\//, "");
@@ -211,7 +225,6 @@ function responseType(op: SpecOp, operationId: string, knownSchemas: Set<string>
     return name;
   }
 
-  // oneOf/anyOf at response root: use the schema title as the named type (success branch is collected by collectInlineSchemas)
   if ((schema.oneOf || schema.anyOf) && schema.title) {
     const name = toPascalCase(schema.title);
     if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — oneOf/anyOf titled "${name}" not in known schemas`);
@@ -222,6 +235,57 @@ function responseType(op: SpecOp, operationId: string, knownSchemas: Set<string>
 }
 
 type InlineSchemas = Record<string, { type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string; $ref?: string } }>; required?: string[]; items?: { type?: string; $ref?: string; title?: string; properties?: Record<string, { type?: string; $ref?: string }>; required?: string[] }; _baseEmbed?: string }>;
+
+function collectInlineObjectProps(
+  props: Record<string, unknown>,
+  extra: InlineSchemas
+): void {
+  for (const [, propSchema] of Object.entries(props)) {
+    const p = propSchema as SpecResponseSchema;
+    if (p.title && (p.type === "object" || p.properties) && !p.$ref) {
+      const pName = toPascalCase(p.title);
+      extra[pName] = { type: "object", properties: p.properties as InlineSchemas[string]["properties"], required: p.required };
+    }
+  }
+}
+
+function collectFromResponseSchema(
+  respSchema: SpecResponseSchema,
+  operationId: string,
+  extra: InlineSchemas
+): void {
+  if (respSchema.type === "object" || respSchema.properties) {
+    const name = toPascalCase(respSchema.title ?? (toPascalCase(operationId) + "Response"));
+    extra[name] = { type: "object", properties: respSchema.properties, required: respSchema.required };
+    collectInlineObjectProps(respSchema.properties ?? {}, extra);
+  } else if (respSchema.type === "array") {
+    const name = toPascalCase(respSchema.title ?? (toPascalCase(operationId) + "Response"));
+    if (respSchema.title) {
+      extra[name] = { type: "array", items: respSchema.items };
+    }
+    if (respSchema.items && !respSchema.items.$ref && (respSchema.items.type === "object" || respSchema.items.properties)) {
+      const itemName = toPascalCase(respSchema.items.title ?? (name + "Item"));
+      extra[itemName] = { type: "object", properties: respSchema.items.properties, required: respSchema.items.required };
+    }
+  } else if ((respSchema.oneOf || respSchema.anyOf) && respSchema.title) {
+    const branches = (respSchema.oneOf ?? respSchema.anyOf) as Array<{ type?: string; properties?: Record<string, unknown>; required?: string[] }>;
+    const dataBranch = branches.find(b => b.properties && !Object.keys(b.properties).every(k => k === "error"));
+    if (dataBranch) {
+      const name = toPascalCase(respSchema.title);
+      extra[name] = { type: "object", properties: dataBranch.properties as InlineSchemas[string]["properties"], required: dataBranch.required };
+    }
+  }
+}
+
+function collectFromBodySchema(
+  bodySchema: SpecResponseSchema,
+  operationId: string,
+  extra: InlineSchemas
+): void {
+  const name = toPascalCase(bodySchema.title ?? (toPascalCase(operationId) + "Request"));
+  extra[name] = { type: "object", properties: bodySchema.properties, required: bodySchema.required };
+  collectInlineObjectProps(bodySchema.properties ?? {}, extra);
+}
 
 function collectInlineSchemas(
   paths: Record<string, Record<string, SpecOp | undefined>>
@@ -243,54 +307,31 @@ function collectInlineSchemas(
       if (responseCodec !== "text" && responseCodec !== "binary") {
         const respSchema = op.responses?.["200"]?.content?.["application/json"]?.schema;
         if (respSchema && !respSchema.$ref) {
-          if (respSchema.type === "object" || respSchema.properties) {
-            const name = toPascalCase(respSchema.title ?? (toPascalCase(op.operationId) + "Response"));
-            extra[name] = { type: "object", properties: respSchema.properties, required: respSchema.required };
-            // Collect titled inline objects within properties (one level deep)
-            for (const [, propSchema] of Object.entries(respSchema.properties ?? {})) {
-              const p = propSchema as SpecResponseSchema;
-              if (p.title && (p.type === "object" || p.properties) && !p.$ref) {
-                const pName = toPascalCase(p.title);
-                extra[pName] = { type: "object", properties: p.properties as InlineSchemas[string]["properties"], required: p.required };
-              }
-            }
-          } else if (respSchema.type === "array") {
-            const name = toPascalCase(respSchema.title ?? (toPascalCase(op.operationId) + "Response"));
-            if (respSchema.title) {
-              extra[name] = { type: "array", items: respSchema.items };
-            }
-            if (respSchema.items && !respSchema.items.$ref && (respSchema.items.type === "object" || respSchema.items.properties)) {
-              const itemName = toPascalCase(respSchema.items.title ?? (name + "Item"));
-              extra[itemName] = { type: "object", properties: respSchema.items.properties, required: respSchema.items.required };
-            }
-          } else if ((respSchema.oneOf || respSchema.anyOf) && respSchema.title) {
-            // oneOf/anyOf: pick the first branch that has real data properties (not error-only)
-            const branches = (respSchema.oneOf ?? respSchema.anyOf) as Array<{ type?: string; properties?: Record<string, unknown>; required?: string[] }>;
-            const dataBranch = branches.find(b => b.properties && !Object.keys(b.properties).every(k => k === "error"));
-            if (dataBranch) {
-              const name = toPascalCase(respSchema.title);
-              extra[name] = { type: "object", properties: dataBranch.properties as InlineSchemas[string]["properties"], required: dataBranch.required };
-            }
-          }
+          collectFromResponseSchema(respSchema, op.operationId, extra);
         }
       }
 
       const bodySchema = op.requestBody?.content?.["application/json"]?.schema;
       if (bodySchema && !bodySchema.$ref) {
-        const name = toPascalCase(bodySchema.title ?? (toPascalCase(op.operationId) + "Request"));
-        extra[name] = { type: "object", properties: bodySchema.properties, required: bodySchema.required };
-        // Collect titled inline objects within request body properties (one level deep)
-        for (const [, propSchema] of Object.entries(bodySchema.properties ?? {})) {
-          const p = propSchema as SpecResponseSchema;
-          if (p.title && (p.type === "object" || p.properties) && !p.$ref) {
-            const pName = toPascalCase(p.title);
-            extra[pName] = { type: "object", properties: p.properties as InlineSchemas[string]["properties"], required: p.required };
-          }
-        }
+        collectFromBodySchema(bodySchema, op.operationId, extra);
       }
     }
   }
   return extra;
+}
+
+function resolveRequestBodyType(
+  op: SpecOp,
+  bodySchema: SpecResponseSchema | undefined,
+  allKnownSchemas: Set<string>,
+  operationId: string
+): string | undefined {
+  if (!op.requestBody) return undefined;
+  if (bodySchema?.$ref) {
+    const n = toPascalCase(bodySchema.$ref.replace(/^.*\//, ""));
+    return allKnownSchemas.has(n) ? n : undefined;
+  }
+  return toPascalCase(operationId) + "Request";
 }
 
 export async function generateGoModule(
@@ -331,24 +372,20 @@ export async function generateGoModule(
         .filter((p) => p.in === "path")
         .map((p) => ({
           name: p.name,
-          goType: "string", // Always treat URL parameters as strings in Go
+          goType: "string",
         }));
 
       const queryParams = resolvedParams
         .filter((p) => p.in === "query")
         .map((p) => ({
           name: p.name.replace(/\[\]$/, ""),
-          goType: "string", // Always treat URL parameters as strings in Go
+          goType: "string",
         }));
 
       const requestCodec = resolveRequestCodec(op);
       const respType = responseType(op, op.operationId, allKnownSchemas);
       const bodySchema = op.requestBody?.content?.["application/json"]?.schema;
-      const requestBodyType = op.requestBody
-        ? bodySchema?.$ref
-          ? (() => { const n = toPascalCase(bodySchema.$ref.replace(/^.*\//, "")); return allKnownSchemas.has(n) ? n : undefined; })()
-          : toPascalCase(op.operationId) + "Request"
-        : undefined;
+      const requestBodyType = resolveRequestBodyType(op, bodySchema, allKnownSchemas, op.operationId);
 
       const input: GoMethodInput = {
         operationId: op.operationId,
@@ -367,7 +404,6 @@ export async function generateGoModule(
 
       methods.push(emitGoMethod(input));
 
-      // Derive CLI action slug (matches what generateGoConstants/generateGoDispatch emit)
       const actionSlug = input.cliAction || "";
       const fieldName = toPascalCase(actionSlug.replace(/-/g, "_"));
       dispatchActions.push({ fieldName, responseType: respType });

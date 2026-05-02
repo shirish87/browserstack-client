@@ -45,6 +45,32 @@ interface SpecOp {
   [key: string]: unknown;
 }
 
+function resolvePathQueryParams(resolvedParams: SpecParam[]): {
+  pathParams: Array<{ name: string; tsType: string }>;
+  queryParams: Array<{ name: string; baseName: string; tsType: string; required: boolean }>;
+} {
+  const pathParams = resolvedParams.filter((p) => p.in === "path").map((p) => ({
+    name: p.name, tsType: p.schema?.type === "integer" ? "number" : "string",
+  }));
+  const queryParams = resolvedParams.filter((p) => p.in === "query").map((p) => {
+    const isArray = p.name.endsWith("[]");
+    const baseName = isArray ? p.name.slice(0, -2) : p.name;
+    const itemType = p.schema?.type === "integer" ? "number" : "string";
+    const tsType = isArray ? `${itemType}[]` : itemType;
+    return { name: p.name, baseName, tsType, required: false };
+  });
+  return { pathParams, queryParams };
+}
+
+function resolveOpReturnType(op: SpecOp, opts: GenerateClientOptions, operationId: string) {
+  const successCT = op.responses?.["200"]?.content?.["application/json"]
+    ? `operations["${operationId}"]["responses"][200]["content"]["application/json"]`
+    : op.responses?.["200"]?.content?.["text/plain"] ? `string` : `void`;
+  const annotations = readAnnotations(op, opts.registry, operationId);
+  const derived = deriveReturnType(successCT, annotations, operationId);
+  return { annotations, derived, returnType: derived.type };
+}
+
 export async function generateClientModule(opts: GenerateClientOptions): Promise<string> {
   const raw = await fs.readFile(opts.specPath, "utf8");
   const doc = yaml.parse(raw) as SpecDoc;
@@ -57,14 +83,9 @@ export async function generateClientModule(opts: GenerateClientOptions): Promise
     for (const method of ["get", "post", "put", "patch", "delete"] as const) {
       const op = pathItem[method]; if (!op) continue;
       const operationId = op.operationId; if (!operationId) continue;
-      const annotations = readAnnotations(op, opts.registry, operationId);
+      const { annotations, derived, returnType } = resolveOpReturnType(op, opts, operationId);
       if (annotations.custom.response || annotations.custom.request) continue;
 
-      const successCT = op.responses?.["200"]?.content?.["application/json"]
-        ? `operations["${operationId}"]["responses"][200]["content"]["application/json"]`
-        : op.responses?.["200"]?.content?.["text/plain"] ? `string` : `void`;
-      const derived = deriveReturnType(successCT, annotations, operationId);
-      const returnType = derived.type;
       const resolvedParams = (op.parameters ?? []).map((p) => {
         if (p.$ref) {
           const refName = p.$ref.replace("#/components/parameters/", "");
@@ -72,16 +93,7 @@ export async function generateClientModule(opts: GenerateClientOptions): Promise
         }
         return p;
       });
-      const pathParams = resolvedParams.filter((p) => p.in === "path").map((p) => ({
-        name: p.name, tsType: p.schema?.type === "integer" ? "number" : "string",
-      }));
-      const queryParams = resolvedParams.filter((p) => p.in === "query").map((p) => {
-        const isArray = p.name.endsWith("[]");
-        const baseName = isArray ? p.name.slice(0, -2) : p.name;
-        const itemType = p.schema?.type === "integer" ? "number" : "string";
-        const tsType = isArray ? `${itemType}[]` : itemType;
-        return { name: p.name, baseName, tsType, required: false };
-      });
+      const { pathParams, queryParams } = resolvePathQueryParams(resolvedParams);
       methods.push({
         operationId, methodName: stripOperationPrefix(operationId, opts.product),
         method: method.toUpperCase() as EmitMethodInput["method"], path,

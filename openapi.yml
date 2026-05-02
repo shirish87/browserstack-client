@@ -786,9 +786,7 @@ paths:
             schema:
               title: UpdateAutomateBuildRequest
               type: object
-              anyOf:
-                - required: [name]
-                - required: [build_tag]
+              minProperties: 1
               properties:
                 name:
                   type: string

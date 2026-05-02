@@ -89,6 +89,44 @@ function isChownErrOk(err: Error): boolean {
   return false;
 }
 
+async function writeDataToFd(
+  fd: number,
+  data: string | Buffer | null,
+  encoding: BufferEncoding | undefined
+): Promise<void> {
+  if (Buffer.isBuffer(data)) {
+    await promisify(fs.write)(fd, data, 0, data.length, 0);
+  } else if (data != null) {
+    await promisify(fs.write)(fd, String(data), 0, encoding || "utf8");
+  }
+}
+
+async function applyFilePermissions(
+  tmpfile: string,
+  chown: { uid: number; gid: number } | undefined,
+  mode: number | undefined
+): Promise<void> {
+  if (chown) {
+    await promisify(fs.chown)(tmpfile, chown.uid, chown.gid).catch((err) => {
+      if (!isChownErrOk(err)) throw err;
+    });
+  }
+  if (mode) {
+    await promisify(fs.chmod)(tmpfile, mode).catch((err) => {
+      if (!isChownErrOk(err)) throw err;
+    });
+  }
+}
+
+function finalizeActiveFile(absoluteName: string): void {
+  activeFiles[absoluteName].shift(); // remove the element added by serializeSameFile
+  if (activeFiles[absoluteName].length > 0) {
+    activeFiles[absoluteName][0](); // start next job if one is pending
+  } else {
+    delete activeFiles[absoluteName];
+  }
+}
+
 export async function writeFileAtomic(
   filename: string,
   data: string | Buffer | null,
@@ -127,7 +165,6 @@ export async function writeFileAtomic(
         if (options.mode == null) {
           options.mode = stats.mode;
         }
-
         if (options.chown == null && process.getuid) {
           options.chown = { uid: stats.uid, gid: stats.gid };
         }
@@ -138,16 +175,7 @@ export async function writeFileAtomic(
     if (options.tmpfileCreated) {
       await options.tmpfileCreated(tmpfile);
     }
-    if (Buffer.isBuffer(data)) {
-      await promisify(fs.write)(fd, data, 0, data.length, 0);
-    } else if (data != null) {
-      await promisify(fs.write)(
-        fd,
-        String(data),
-        0,
-        options.encoding || "utf8"
-      );
-    }
+    await writeDataToFd(fd, data, options.encoding);
 
     if (options.fsync !== false) {
       await promisify(fs.fsync)(fd);
@@ -156,26 +184,7 @@ export async function writeFileAtomic(
     await promisify(fs.close)(fd);
     fd = undefined;
 
-    if (options.chown) {
-      await promisify(fs.chown)(
-        tmpfile,
-        options.chown.uid,
-        options.chown.gid
-      ).catch((err) => {
-        if (!isChownErrOk(err)) {
-          throw err;
-        }
-      });
-    }
-
-    if (options.mode) {
-      await promisify(fs.chmod)(tmpfile, options.mode).catch((err) => {
-        if (!isChownErrOk(err)) {
-          throw err;
-        }
-      });
-    }
-
+    await applyFilePermissions(tmpfile, options.chown, options.mode);
     await promisify(fs.rename)(tmpfile, truename);
   } finally {
     if (fd) {
@@ -190,11 +199,6 @@ export async function writeFileAtomic(
       await promisify(fs.unlink)(tmpfile).catch(() => {});
     }
 
-    activeFiles[absoluteName].shift(); // remove the element added by serializeSameFile
-    if (activeFiles[absoluteName].length > 0) {
-      activeFiles[absoluteName][0](); // start next job if one is pending
-    } else {
-      delete activeFiles[absoluteName];
-    }
+    finalizeActiveFile(absoluteName);
   }
 }

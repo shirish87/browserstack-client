@@ -26,6 +26,65 @@ export type {
   ProxyParams,
 } from "./local-testing-binary-options.ts";
 
+function parseJsonOutput(raw: string | undefined): Record<string, unknown> | undefined {
+  if (!raw) return undefined;
+  try {
+    const r = JSON.parse(raw);
+    if (r && typeof r === "object") return r as Record<string, unknown>;
+  } catch {
+    // non-JSON output from binary is unexpected
+  }
+  return undefined;
+}
+
+async function applyRootCAArgs(args: string[], rootCA: ProxyParams<number>["rootCA"]): Promise<void> {
+  if (rootCA && "useSystem" in rootCA && rootCA.useSystem === true) {
+    args.push("--use-system-installed-ca");
+  }
+  if (rootCA && "path" in rootCA && rootCA.path && (await fileExists(rootCA.path))) {
+    args.push("--use-ca-certificate", rootCA.path);
+  }
+}
+
+async function applyLocalProxyArgs(args: string[], localProxy: ProxyParams<number>): Promise<void> {
+  const { host, port, auth: { username, password } = { username: undefined, password: undefined } } = localProxy;
+  args.push("--local-proxy-host", host.trim());
+  if (port) args.push("--local-proxy-port", `${port}`);
+  if (username && password) {
+    args.push("--local-proxy-user", username.trim());
+    args.push("--local-proxy-pass", password.trim());
+  }
+  await applyRootCAArgs(args, localProxy.rootCA);
+}
+
+async function applyProxyArgs(args: string[], proxy: (ProxyParams<number> & { force?: boolean }) | string): Promise<void> {
+  if (typeof proxy === "string") {
+    if (await fileExists(proxy)) {
+      args.push("--proxy-pac", proxy);
+    } else {
+      throw new BrowserStackError(`Invalid proxy pac file: ${proxy}`);
+    }
+    return;
+  }
+  const { host, port, auth: { username, password } = { username: undefined, password: undefined }, force } = proxy;
+  args.push("--proxy-host", host.trim());
+  if (port) args.push("--proxy-port", `${port}`);
+  if (username && password) {
+    args.push("--proxy-user", username.trim());
+    args.push("--proxy-pass", password.trim());
+  }
+  if (force) args.push("--force-proxy");
+  await applyRootCAArgs(args, proxy.rootCA);
+}
+
+async function applyFolderOrLocalProxy(args: string[], binaryFlags: Record<string, unknown>): Promise<void> {
+  if ("folder" in binaryFlags && (await dirExists(binaryFlags.folder))) {
+    args.push("--folder", binaryFlags.folder);
+  } else if ("localProxy" in binaryFlags && binaryFlags.localProxy) {
+    await applyLocalProxyArgs(args, binaryFlags.localProxy);
+  }
+}
+
 /**
  * Represents a client for interacting with the BrowserStack Local binary and APIs.
  * Extends features of {@link LocalTestingClient} for the node.js runtime.
@@ -268,51 +327,35 @@ export class LocalTestingBinary extends LocalTestingClient {
       }
 
       const data = child.stdout?.toString?.("utf8")?.trim?.();
-      if (data) {
-        try {
-          const r = JSON.parse(data);
-          if (r && typeof r === "object") {
-            const { state, message } = this.parseOutput(r);
-
-            if (command.isSuccess(r, state, message)) {
-              this.state = command.successState;
-
-              if (command.action === "start") {
-                this.child.pid = r.pid ?? child.pid;
-                // remove --key
-                this.child.args = binArgs.slice(2);
-              } else if (command.action === "stop") {
-                this.child.pid = undefined;
-                this.child.args = [];
-              }
-
-              return resolve();
-            }
+      const stdoutJson = parseJsonOutput(data);
+      if (stdoutJson) {
+        const { state, message } = this.parseOutput(stdoutJson);
+        if (command.isSuccess(stdoutJson, state, message)) {
+          this.state = command.successState;
+          if (command.action === "start") {
+            this.child.pid = stdoutJson.pid as number ?? child.pid;
+            // remove --key
+            this.child.args = binArgs.slice(2);
+          } else if (command.action === "stop") {
+            this.child.pid = undefined;
+            this.child.args = [];
           }
-        } catch {
-          // non-JSON output from binary is unexpected
+          return resolve();
         }
       }
 
       const error = child.stderr?.toString?.("utf8")?.trim?.();
-      if (error) {
-        try {
-          const r = JSON.parse(error);
-          if (r && typeof r === "object") {
-            const { state, message } = this.parseOutput(r);
-
-            if (message) {
-              return reject(new BrowserStackError(`${message} state=${state}`));
-            }
-          }
-        } catch {
-          // non-JSON output from binary is unexpected
-          // we have an invalid binary
-          // download and retry run
-          return retryRun(new Error("Invalid binary: stderr"))
-            .then(resolve)
-            .catch(reject);
+      const stderrJson = parseJsonOutput(error);
+      if (stderrJson) {
+        const { state, message } = this.parseOutput(stderrJson);
+        if (message) {
+          return reject(new BrowserStackError(`${message} state=${state}`));
         }
+      } else if (error) {
+        // non-JSON stderr means invalid binary — download and retry
+        return retryRun(new Error("Invalid binary: stderr"))
+          .then(resolve)
+          .catch(reject);
       }
 
       return reject(new BrowserStackError(error ?? data));
@@ -349,21 +392,6 @@ export class LocalTestingBinary extends LocalTestingClient {
       return args;
     }
 
-    const addRootCAParams = async ({ rootCA }: ProxyParams<number>) => {
-      if (rootCA && "useSystem" in rootCA && rootCA.useSystem === true) {
-        args.push("--use-system-installed-ca");
-      }
-
-      if (
-        rootCA &&
-        "path" in rootCA &&
-        rootCA.path &&
-        (await fileExists(rootCA.path))
-      ) {
-        args.push("--use-ca-certificate", rootCA.path);
-      }
-    };
-
     // --force is pointless in daemon mode as it will kill all instances of the binary anyway
     // if (this.options?.localIdentifier?.force === true) {
     //   args.push("--force");
@@ -383,69 +411,10 @@ export class LocalTestingBinary extends LocalTestingClient {
       args.push("--only", only.join(","));
     }
 
-    if ("folder" in binaryFlags && (await dirExists(binaryFlags.folder))) {
-      args.push("--folder", binaryFlags.folder);
-    } else if ("localProxy" in binaryFlags && binaryFlags.localProxy) {
-      const {
-        host,
-        port,
-        auth: { username, password } = {
-          username: undefined,
-          password: undefined,
-        },
-      } = binaryFlags.localProxy;
+    await applyFolderOrLocalProxy(args, binaryFlags as Record<string, unknown>);
 
-      args.push("--local-proxy-host", host.trim());
-
-      if (port) {
-        args.push("--local-proxy-port", `${port}`);
-      }
-
-      if (username && password) {
-        args.push("--local-proxy-user", username.trim());
-        args.push("--local-proxy-pass", password.trim());
-      }
-
-      await addRootCAParams(binaryFlags.localProxy);
-    }
-
-    const proxy = binaryFlags?.proxy;
-    if (proxy) {
-      if (typeof proxy === "string") {
-        // pac-file
-        if (await fileExists(proxy)) {
-          args.push("--proxy-pac", proxy);
-        } else {
-          throw new BrowserStackError(`Invalid proxy pac file: ${proxy}`);
-        }
-      } else {
-        const {
-          host,
-          port,
-          auth: { username, password } = {
-            username: undefined,
-            password: undefined,
-          },
-          force,
-        } = proxy;
-
-        args.push("--proxy-host", host.trim());
-
-        if (port) {
-          args.push("--proxy-port", `${port}`);
-        }
-
-        if (username && password) {
-          args.push("--proxy-user", username.trim());
-          args.push("--proxy-pass", password.trim());
-        }
-
-        if (force) {
-          args.push("--force-proxy");
-        }
-
-        await addRootCAParams(proxy);
-      }
+    if (binaryFlags?.proxy) {
+      await applyProxyArgs(args, binaryFlags.proxy);
     }
 
     if (binaryFlags.onlyAutomate === true) {

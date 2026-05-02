@@ -21,6 +21,61 @@ type ClientOptions = Partial<BrowserStackOptions>;
 const USAGE = `Usage: automate <action> [args...]
 Actions: ${Object.values(Automate.Action).join(", ")}`;
 
+function printResult(action: string, result: unknown, logger: Logger): void {
+  switch (action) {
+    case Automate.Action.ListBuilds: {
+      const list = Array.isArray(result) ? result : [];
+      list.forEach((b) => logger.info(b.hashedId ?? "", b.name, b.status));
+      break;
+    }
+    case Automate.Action.ListSessions: {
+      const list = Array.isArray(result) ? result : [];
+      list.forEach((s) => logger.info(s.hashedId ?? "", s.name, s.status));
+      break;
+    }
+    case Automate.Action.ListSessionLogs:
+    case Automate.Action.ListSessionAppiumLogs:
+    case Automate.Action.ListSessionSeleniumLogs:
+    case Automate.Action.ListSessionConsoleLogs:
+      process.stdout.write(result as string);
+      break;
+    case Automate.Action.ListSessionTelemetryLogs: {
+      process.stdout.write(Buffer.from(result as ArrayBuffer));
+      break;
+    }
+    case Automate.Action.ListProjects: {
+      const list = Array.isArray(result) ? result : [];
+      list.forEach((p) => {
+        const proj = (p as { project?: typeof p }).project ?? p;
+        logger.info(
+          String((proj as { id?: unknown }).id ?? ""),
+          (proj as { name?: unknown }).name as string
+        );
+      });
+      break;
+    }
+    case Automate.Action.GetProjectBadgeKey: {
+      logger.info(result as string);
+      break;
+    }
+    case Automate.Action.ListMediaFiles: {
+      const list = Array.isArray(result) ? result : [];
+      list.forEach((f) =>
+        logger.info(
+          (f as { mediaUrl?: string }).mediaUrl ?? "",
+          (f as { uploadedAt?: string }).uploadedAt
+            ? new Date((f as { uploadedAt: string }).uploadedAt).toISOString()
+            : "",
+          (f as { mediaName?: string }).mediaName
+        )
+      );
+      break;
+    }
+    default:
+      logger.info(JSON.stringify(result, null, 2));
+  }
+}
+
 export async function main(
   inputArgs: string[] = process.argv.slice(2),
   logger: Logger = globalThis.console
@@ -40,7 +95,6 @@ export async function main(
       return;
     }
 
-    // Map input string to enum value
     const action = Object.values(Automate.Action).find((a: string) => a.toLowerCase() === actionInput);
     if (!action) {
       throw new BrowserStackError(`Invalid action: ${actionInput}\n${USAGE}`);
@@ -52,8 +106,7 @@ export async function main(
     }
 
     const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);
-    
-    // Some actions need manual file reading or special handling before call
+
     if (action === Automate.Action.UploadMediaFile) {
         if (!rest[0]) throw new BrowserStackError("Missing <file-path>");
         const filePath = resolve(rest[0]);
@@ -65,59 +118,7 @@ export async function main(
     }
 
     const result = await schemaConfig.call(client, parsed);
-
-    switch (action) {
-      case Automate.Action.ListBuilds: {
-        const list = Array.isArray(result) ? result : [];
-        list.forEach((b) => logger.info(b.hashedId ?? "", b.name, b.status));
-        break;
-      }
-      case Automate.Action.ListSessions: {
-        const list = Array.isArray(result) ? result : [];
-        list.forEach((s) => logger.info(s.hashedId ?? "", s.name, s.status));
-        break;
-      }
-      case Automate.Action.ListSessionLogs:
-      case Automate.Action.ListSessionAppiumLogs:
-      case Automate.Action.ListSessionSeleniumLogs:
-      case Automate.Action.ListSessionConsoleLogs:
-        process.stdout.write(result as string);
-        break;
-      case Automate.Action.ListSessionTelemetryLogs: {
-        process.stdout.write(Buffer.from(result as ArrayBuffer));
-        break;
-      }
-      case Automate.Action.ListProjects: {
-        const list = Array.isArray(result) ? result : [];
-        list.forEach((p) => {
-          const proj = (p as { project?: typeof p }).project ?? p;
-          logger.info(
-            String((proj as { id?: unknown }).id ?? ""),
-            (proj as { name?: unknown }).name as string
-          );
-        });
-        break;
-      }
-      case Automate.Action.GetProjectBadgeKey: {
-        logger.info(result as string);
-        break;
-      }
-      case Automate.Action.ListMediaFiles: {
-        const list = Array.isArray(result) ? result : [];
-        list.forEach((f) =>
-          logger.info(
-            (f as { mediaUrl?: string }).mediaUrl ?? "",
-            (f as { uploadedAt?: string }).uploadedAt
-              ? new Date((f as { uploadedAt: string }).uploadedAt).toISOString()
-              : "",
-            (f as { mediaName?: string }).mediaName
-          )
-        );
-        break;
-      }
-      default:
-        logger.info(JSON.stringify(result, null, 2));
-    }
+    printResult(action, result, logger);
   } catch (err) {
     logger.error(formatError(err));
     process.exit(1);

@@ -42,6 +42,24 @@ export interface CLIMetadata {
   }>;
 }
 
+function resolveAction(op: SpecOp, product: string): string {
+  const xCliAction = op["x-cli-action"] as string;
+  if (xCliAction) return xCliAction;
+  const rawAction = stripOperationPrefix(op.operationId!, product);
+  return toCLIAction(rawAction, op.responses?.["200"]?.content?.["application/json"]?.schema);
+}
+
+function resolveParams(pathItem: any, op: SpecOp, doc: any): any[] {
+  const allParamsRaw = [...(pathItem.parameters || []), ...(op.parameters || [])];
+  return allParamsRaw.map(p => {
+    if (p.$ref) {
+      const refName = p.$ref.replace("#/components/parameters/", "");
+      return doc.components?.parameters?.[refName] ?? p;
+    }
+    return p;
+  });
+}
+
 export async function extractCLIMetadata(specPath: string, product: string): Promise<CLIMetadata> {
   const raw = await fs.readFile(specPath, "utf8");
   const doc = yaml.parse(raw) as SpecDoc;
@@ -58,32 +76,16 @@ export async function extractCLIMetadata(specPath: string, product: string): Pro
       const rawResource = op["x-cli-resource"] as string || (op as any).tags?.[0] || "";
       const productNorm = product.replace(/-/g, "").toLowerCase();
       const resourceNorm = rawResource.replace(/-/g, "").replace(/\\s/g, "").toLowerCase();
-      
+
       const resource = (resourceNorm === productNorm) ? "" : rawResource;
-      
-      const xCliAction = op["x-cli-action"] as string;
-      let action: string;
-      
-      if (xCliAction) {
-        action = xCliAction;
-      } else {
-        const rawAction = stripOperationPrefix(op.operationId, product);
-        action = toCLIAction(rawAction, op.responses?.["200"]?.content?.["application/json"]?.schema);
-      }
+      const action = resolveAction(op, product);
 
       const resKey = resource || "default";
       if (!metadata.resources[resKey]) {
         metadata.resources[resKey] = { actions: {} };
       }
 
-      const allParamsRaw = [...((pathItem as any).parameters || []), ...(op.parameters || [])];
-      const allParams = allParamsRaw.map(p => {
-        if (p.$ref) {
-          const refName = p.$ref.replace("#/components/parameters/", "");
-          return (doc as any).components?.parameters?.[refName] ?? p;
-        }
-        return p;
-      });
+      const allParams = resolveParams(pathItem, op, doc);
 
       metadata.resources[resKey].actions[action] = {
         operationId: op.operationId,

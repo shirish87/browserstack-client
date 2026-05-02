@@ -31,6 +31,32 @@ type APIError struct {
 	Body       string
 }
 
+func extractBodyMessage(body string) string {
+	trimmed := bytes.TrimSpace([]byte(body))
+	lowerBody := bytes.ToLower(trimmed)
+	if bytes.HasPrefix(lowerBody, []byte("<html")) ||
+		bytes.HasPrefix(lowerBody, []byte("<!doctype")) ||
+		bytes.Contains(lowerBody, []byte("<head")) ||
+		bytes.Contains(lowerBody, []byte("<body")) {
+		return ""
+	}
+
+	var parsed map[string]any
+	if err := json.Unmarshal(trimmed, &parsed); err == nil {
+		for _, key := range []string{"error", "message", "detail", "description"} {
+			if val, ok := parsed[key].(string); ok && val != "" {
+				return val
+			}
+		}
+	}
+
+	bodyStr := body
+	if len(bodyStr) > 512 {
+		bodyStr = bodyStr[:512] + "..."
+	}
+	return bodyStr
+}
+
 func (e *APIError) Error() string {
 	status := e.Status
 	if status == "" {
@@ -40,31 +66,9 @@ func (e *APIError) Error() string {
 	prefix := fmt.Sprintf("Error: %d %s", e.StatusCode, strings.TrimPrefix(status, fmt.Sprintf("%d ", e.StatusCode)))
 
 	if len(e.Body) > 0 {
-		trimmed := bytes.TrimSpace([]byte(e.Body))
-		lowerBody := bytes.ToLower(trimmed)
-		if bytes.HasPrefix(lowerBody, []byte("<html")) ||
-			bytes.HasPrefix(lowerBody, []byte("<!doctype")) ||
-			bytes.Contains(lowerBody, []byte("<head")) ||
-			bytes.Contains(lowerBody, []byte("<body")) {
-			return prefix
+		if msg := extractBodyMessage(e.Body); msg != "" {
+			return fmt.Sprintf("%s: %s", prefix, msg)
 		}
-
-		// If it's JSON, try to extract error or message field
-		var parsed map[string]any
-		if err := json.Unmarshal(trimmed, &parsed); err == nil {
-			for _, key := range []string{"error", "message", "detail", "description"} {
-				if val, ok := parsed[key].(string); ok && val != "" {
-					return fmt.Sprintf("%s: %s", prefix, val)
-				}
-			}
-		}
-
-		// Limit the raw body length if we still decide to show it
-		bodyStr := e.Body
-		if len(bodyStr) > 512 {
-			bodyStr = bodyStr[:512] + "..."
-		}
-		return fmt.Sprintf("%s: %s", prefix, bodyStr)
 	}
 	return prefix
 }

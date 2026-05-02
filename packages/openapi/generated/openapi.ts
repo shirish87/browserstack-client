@@ -3091,7 +3091,7 @@ export interface operations {
                      * @example registration
                      */
                     build_tag?: string;
-                } | unknown | unknown;
+                };
             };
         };
         responses: {
