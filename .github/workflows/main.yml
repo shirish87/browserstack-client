@@ -5,12 +5,19 @@
 #              │  (ubuntu: SDK + all binaries)│
 #              └──────────┬───────────────────┘
 #                         │
+#                         ▼
+#              ┌──────────────────────────────┐
+#              │          test-sdk            │
+#              │  (linux: SDK + CLI, all      │
+#              │   projects incl. cli binary) │
+#              └──────────┬───────────────────┘
+#                         │
 #               ┌─────────┴─────────┐
 #               ▼                   ▼
-#      ┌────────────────┐  ┌──────────────────┐
-#      │   test-sdk     │  │    test-cli      │
-#      │ (linux, lts)   │  │ ubuntu/mac/win   │
-#      └───────┬────────┘  └────────┬─────────┘
+#      ┌────────────────┐  ┌────────────────┐
+#      │   test-cli     │  │   test-cli     │
+#      │   (macos)      │  │   (windows)    │
+#      └───────┬────────┘  └────────┬───────┘
 #              └──────────┬─────────┘
 #                         │  (both must pass)
 #                         ▼
@@ -83,9 +90,9 @@ jobs:
             packages/cli/golang/dist/**
           retention-days: 1
 
-  # ── 2a. Full SDK test suite on Linux ─────────────────────────────────────────
+  # ── 2a. Full test suite on Linux (SDK + CLI) ─────────────────────────────────
   test-sdk:
-    name: "Test SDK (linux, node.js lts)"
+    name: "Test (linux, node.js lts)"
     runs-on: ubuntu-latest
     needs: [build]
     environment: BrowserStackEnv
@@ -97,6 +104,11 @@ jobs:
         with:
           node-version: "lts/*"
           cache: "pnpm"
+
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
+        with:
+          go-version-file: packages/cli/golang/go.mod
+          cache-dependency-path: packages/cli/golang/go.mod
 
       - name: Install dependencies
         run: pnpm install
@@ -110,13 +122,13 @@ jobs:
       - name: Test
         run: pnpm test
 
-  # ── 2b. CLI binary tests on each OS platform ─────────────────────────────────
+  # ── 2b. CLI binary tests on macOS and Windows ────────────────────────────────
   test-cli:
     name: "Test CLI (${{ matrix.os }})"
     needs: [build, test-sdk]
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     environment: BrowserStackEnv
     steps:
