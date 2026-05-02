@@ -3,11 +3,11 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "6.1.0-alpha.1",
+  "version": "6.1.0",
   "type": "module",
   "description": "Command-line interface for BrowserStack Local Testing and App Automate",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "bin": {
     "browserstack-cli": "./dist/browserstack-client.js",
@@ -77,15 +77,15 @@
   },
   "dependencies": {
     "signal-exit": "^4.1.0",
-    "zod": "^3.24.2"
+    "zod": "^4.4.1"
   },
   "devDependencies": {
     "@dot-slash/browserstack-accessibility": "workspace:*",
     "@dot-slash/browserstack-app-automate": "workspace:*",
     "@dot-slash/browserstack-automate": "workspace:*",
     "@dot-slash/browserstack-core": "workspace:*",
-    "@dot-slash/browserstack-local-testing-api": "workspace:*",
     "@dot-slash/browserstack-local-testing": "workspace:*",
+    "@dot-slash/browserstack-local-testing-api": "workspace:*",
     "@dot-slash/browserstack-openapi-transforms": "workspace:*",
     "@dot-slash/browserstack-screenshots": "workspace:*",
     "@dot-slash/browserstack-test-management": "workspace:*",
