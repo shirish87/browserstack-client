@@ -93,7 +93,8 @@ jobs:
         run: |
           # 1. Prepare Lean Extensions (TS, JS, Go only)
           mkdir -p scripts/.sonar-lean-plugins
-          docker run --rm -v "$(pwd)/scripts/.sonar-lean-plugins:/target" sonarqube:community sh -c "
+          # Run as root to ensure we can write to the mounted volume
+          docker run --rm --user root -v "$(pwd)/scripts/.sonar-lean-plugins:/target" sonarqube:community sh -c "
             cp /opt/sonarqube/lib/extensions/sonar-javascript-plugin-*.jar /target/
             cp /opt/sonarqube/lib/extensions/sonar-go-plugin-*.jar /target/
             cp /opt/sonarqube/lib/extensions/sonar-text-plugin-*.jar /target/

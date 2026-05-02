@@ -13,7 +13,8 @@ echo "Session Password generated."
 if [ ! -d "$SCRIPT_DIR/.sonar-lean-plugins" ] || [ -z "$(ls -A "$SCRIPT_DIR/.sonar-lean-plugins")" ]; then
   echo "Extracting lean plugins (TS, JS, Go)..."
   mkdir -p "$SCRIPT_DIR/.sonar-lean-plugins"
-  docker run --rm -v "$SCRIPT_DIR/.sonar-lean-plugins:/target" sonarqube:community sh -c "
+  # Run as root to ensure we can write to the mounted volume
+  docker run --rm --user root -v "$SCRIPT_DIR/.sonar-lean-plugins:/target" sonarqube:community sh -c "
     cp /opt/sonarqube/lib/extensions/sonar-javascript-plugin-*.jar /target/
     cp /opt/sonarqube/lib/extensions/sonar-go-plugin-*.jar /target/
     cp /opt/sonarqube/lib/extensions/sonar-text-plugin-*.jar /target/
