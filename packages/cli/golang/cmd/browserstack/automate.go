@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/browserstack/browserstack-client/generated/automate"
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
@@ -109,6 +111,54 @@ func runAutomate(c *browserstackhttp.Client, action string, args []string) error
 	if action == "help" {
 		fmt.Println(usage)
 		return nil
+	}
+
+	// Special handling for upload actions
+	switch action {
+	case automate.ActionUploadMediaFile:
+		if len(args) < 1 {
+			return fmt.Errorf("usage: automate %s <file-path>", action)
+		}
+		filePath := args[0]
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			return fmt.Errorf("failed to read file: %w", err)
+		}
+		fileName := filepath.Base(filePath)
+		v, err := client.UploadMediaFile(ctx, data, fileName, nil)
+		if err != nil {
+			return err
+		}
+		return output.Print(&automate.DispatchResult{Action: action, UploadMediaFile: v})
+
+	case automate.ActionUploadBuildTerminalLogs, automate.ActionUploadSessionTerminalLogs:
+		if len(args) < 2 {
+			return fmt.Errorf("usage: automate %s <id> <file-path>", action)
+		}
+		id := args[0]
+		filePath := args[1]
+		data, err := os.ReadFile(filePath)
+		if err != nil {
+			return fmt.Errorf("failed to read file: %w", err)
+		}
+		fileName := filepath.Base(filePath)
+
+		var res *automate.DispatchResult
+		switch action {
+		case automate.ActionUploadBuildTerminalLogs:
+			v, err := client.UploadBuildTerminalLogs(ctx, id, data, fileName, nil)
+			if err != nil {
+				return err
+			}
+			res = &automate.DispatchResult{Action: action, UploadBuildTerminalLogs: &v}
+		case automate.ActionUploadSessionTerminalLogs:
+			v, err := client.UploadSessionTerminalLogs(ctx, id, data, fileName, nil)
+			if err != nil {
+				return err
+			}
+			res = &automate.DispatchResult{Action: action, UploadSessionTerminalLogs: &v}
+		}
+		return output.Print(res)
 	}
 
 	res, err := automate.Dispatch(client, ctx, action, args)
