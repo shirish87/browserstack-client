@@ -85,6 +85,7 @@ jobs:
           name: build-artifacts
           path: |
             packages/*/dist/**
+            packages/*/*/dist/**
             packages/cli/typescript/dist-binary/**
             packages/cli/typescript/src/*.generated.ts
             packages/cli/golang/dist/**
