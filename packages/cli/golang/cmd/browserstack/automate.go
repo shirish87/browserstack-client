@@ -11,6 +11,26 @@ import (
 
 const threeColFmt = "%s %s %s\n"
 
+func printSessionLog(res *automate.DispatchResult) bool {
+	if res.ListSessionLogs != nil {
+		fmt.Print(*res.ListSessionLogs)
+		return true
+	}
+	if res.ListSessionAppiumLogs != nil {
+		fmt.Print(*res.ListSessionAppiumLogs)
+		return true
+	}
+	if res.ListSessionSeleniumLogs != nil {
+		fmt.Print(*res.ListSessionSeleniumLogs)
+		return true
+	}
+	if res.ListSessionConsoleLogs != nil {
+		fmt.Print(*res.ListSessionConsoleLogs)
+		return true
+	}
+	return false
+}
+
 func printAutomateResult(res *automate.DispatchResult, action string) bool {
 	switch action {
 	case automate.ActionListBuilds:
@@ -50,22 +70,7 @@ func printAutomateResult(res *automate.DispatchResult, action string) bool {
 		automate.ActionListSessionAppiumLogs,
 		automate.ActionListSessionSeleniumLogs,
 		automate.ActionListSessionConsoleLogs:
-		if res.ListSessionLogs != nil {
-			fmt.Print(*res.ListSessionLogs)
-			return true
-		}
-		if res.ListSessionAppiumLogs != nil {
-			fmt.Print(*res.ListSessionAppiumLogs)
-			return true
-		}
-		if res.ListSessionSeleniumLogs != nil {
-			fmt.Print(*res.ListSessionSeleniumLogs)
-			return true
-		}
-		if res.ListSessionConsoleLogs != nil {
-			fmt.Print(*res.ListSessionConsoleLogs)
-			return true
-		}
+		return printSessionLog(res)
 	case automate.ActionListSessionTelemetryLogs:
 		if res.ListSessionTelemetryLogs != nil {
 			fmt.Print(string(*res.ListSessionTelemetryLogs))

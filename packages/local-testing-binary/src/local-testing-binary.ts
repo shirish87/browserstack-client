@@ -77,6 +77,22 @@ async function applyProxyArgs(args: string[], proxy: (ProxyParams<number> & { fo
   await applyRootCAArgs(args, proxy.rootCA);
 }
 
+function applyMiscFlags(args: string[], binaryFlags: LocalTestingBinaryOptions): void {
+  if (binaryFlags.onlyAutomate === true) args.push("--only-automate");
+  if (binaryFlags.debug) {
+    const { level, logFile } = binaryFlags.debug;
+    if (level) args.push("--verbose", `${level}`);
+    if (logFile) args.push("--log-file", logFile);
+  }
+  if (binaryFlags.timeout) args.push("--timeout", `${binaryFlags.timeout}`);
+  if (binaryFlags.parallelRuns) args.push("--parallel-runs", `${binaryFlags.parallelRuns}`);
+  if (binaryFlags.hosts) {
+    const { include, exclude } = binaryFlags.hosts;
+    if (Array.isArray(include) && include.length) args.push("--include-hosts", ...include);
+    if (Array.isArray(exclude) && exclude.length) args.push("--exclude-hosts", ...exclude);
+  }
+}
+
 async function applyFolderOrLocalProxy(args: string[], binaryFlags: Record<string, unknown>): Promise<void> {
   if ("folder" in binaryFlags && (await dirExists(binaryFlags.folder))) {
     args.push("--folder", binaryFlags.folder);
@@ -417,40 +433,7 @@ export class LocalTestingBinary extends LocalTestingClient {
       await applyProxyArgs(args, binaryFlags.proxy);
     }
 
-    if (binaryFlags.onlyAutomate === true) {
-      args.push("--only-automate");
-    }
-
-    if (binaryFlags.debug) {
-      const { level, logFile } = binaryFlags.debug;
-      if (level) {
-        args.push("--verbose", `${level}`);
-      }
-
-      if (logFile) {
-        args.push("--log-file", logFile);
-      }
-    }
-
-    if (binaryFlags.timeout) {
-      args.push("--timeout", `${binaryFlags.timeout}`);
-    }
-
-    if (binaryFlags.parallelRuns) {
-      args.push("--parallel-runs", `${binaryFlags.parallelRuns}`);
-    }
-
-    if (binaryFlags.hosts) {
-      const { include, exclude } = binaryFlags.hosts;
-
-      if (Array.isArray(include) && include.length) {
-        args.push("--include-hosts", ...include);
-      }
-
-      if (Array.isArray(exclude) && exclude.length) {
-        args.push("--exclude-hosts", ...exclude);
-      }
-    }
+    applyMiscFlags(args, binaryFlags);
 
     return args.concat(binaryFlags.more ?? []);
   }

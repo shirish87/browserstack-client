@@ -156,7 +156,8 @@ jobs:
         if: always()
         run: |
           # 1. Generate report using Java inside the already running SonarQube container
-          docker exec sonarqube-local sh -c "
+          docker exec sonarqube-local sh -c "mkdir -p /home/sonarqube/.cnesreport/log && chown -R sonarqube /home/sonarqube/.cnesreport" || true
+          docker exec -u sonarqube sonarqube-local sh -c "
             curl -L -s -o /tmp/cnes.jar https://github.com/cnescatlab/sonar-cnes-report/releases/download/5.0.4/sonar-cnes-report-5.0.4.jar
             java -jar /tmp/cnes.jar \
               -s http://localhost:9000 \
