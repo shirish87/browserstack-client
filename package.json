@@ -9,7 +9,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "build": "pnpm build:go && pnpm build:ts",
+    "build": "pnpm build:types && pnpm build:go && pnpm build:ts",
     "build:ts": "pnpm -r --filter='@dot-slash/browserstack-*' run build",
     "build:transforms": "pnpm --filter @dot-slash/browserstack-openapi-transforms run build",
     "build:types": "pnpm build:transforms && pnpm --filter @dot-slash/browserstack-openapi run build",

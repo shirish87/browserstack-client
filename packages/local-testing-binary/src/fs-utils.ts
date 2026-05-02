@@ -117,11 +117,10 @@ export async function currentOSArch(): Promise<
 > {
   if (["x64", "ia32", "arm64"].includes(currentArch)) {
     // BrowserStackLocal binaries: darwin-x64, win32, linux-x64, linux-ia32, alpine
-    // darwin/arm64 uses darwin-x64 via Rosetta 2
+    // No native arm64 binary exists; darwin/arm64 falls back to darwin-x64 (Rosetta 2)
 
     switch (currentPlatform) {
       case "darwin":
-        // arm64 falls back to darwin-x64 (Rosetta 2)
         return "darwin-x64";
       case "win32":
       case "cygwin":
