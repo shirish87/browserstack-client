@@ -155,12 +155,20 @@ jobs:
       - name: Generate CNES Report
         if: always()
         run: |
-          # 1. Generate report using Java inside the already running SonarQube container
-          docker exec sonarqube-local bash -c "mkdir -p /home/sonarqube/.cnesreport/log && chown -R sonarqube:sonarqube /home/sonarqube/.cnesreport" 2>/dev/null || \
-            docker exec -u root sonarqube-local sh -c "mkdir -p /home/sonarqube/.cnesreport/log && chown -R sonarqube /home/sonarqube/.cnesreport" 2>/dev/null || true
+          # 1. Wait for SonarQube to finish processing the analysis
+          echo "Waiting for SonarQube analysis processing to complete..."
+          for i in $(seq 1 30); do
+            TASK_STATUS=$(curl -s -u admin:${{ env.SONAR_ADMIN_PASS }} \
+              "http://localhost:9000/api/ce/component?component=browserstack-client" \
+              | grep -o '"status":"[^"]*"' | head -1 | cut -d'"' -f4)
+            if [ "$TASK_STATUS" = "SUCCESS" ]; then echo "Analysis processing complete."; break; fi
+            printf "."; sleep 5
+          done
+
+          # 2. Generate report using Java inside the already running SonarQube container
           docker exec -u sonarqube sonarqube-local sh -c "
             curl -L -s -o /tmp/cnes.jar https://github.com/cnescatlab/sonar-cnes-report/releases/download/5.0.4/sonar-cnes-report-5.0.4.jar
-            java -jar /tmp/cnes.jar \
+            java -Duser.home=/tmp -jar /tmp/cnes.jar \
               -s http://localhost:9000 \
               -t ${{ env.SONAR_TOKEN_LOCAL }} \
               -p browserstack-client \

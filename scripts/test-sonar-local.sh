@@ -52,20 +52,31 @@ docker run --rm \
   -Dsonar.host.url=http://localhost:9000 \
   -Dsonar.token=$SONAR_TOKEN
 
-# 5. Generate Report inside the SonarQube container
+# 5. Wait for SonarQube to finish processing the analysis before generating the report
+echo "Waiting for SonarQube analysis processing to complete..."
+for i in {1..30}; do
+  TASK_STATUS=$(curl -s -u admin:$SONAR_ADMIN_PASS \
+    "http://localhost:9000/api/ce/component?component=browserstack-client" \
+    | grep -o '"status":"[^"]*"' | head -1 | cut -d'"' -f4)
+  if [ "$TASK_STATUS" = "SUCCESS" ]; then
+    echo "Analysis processing complete."
+    break
+  fi
+  printf "."; sleep 5
+done
+
+# 6. Generate Report inside the SonarQube container
 echo "Generating Report via sonar-cnes-report 5.0.4..."
-docker exec sonarqube-local bash -c "mkdir -p /home/sonarqube/.cnesreport/log && chown -R sonarqube:sonarqube /home/sonarqube/.cnesreport" 2>/dev/null || \
-  docker exec -u root sonarqube-local sh -c "mkdir -p /home/sonarqube/.cnesreport/log && chown -R sonarqube /home/sonarqube/.cnesreport" 2>/dev/null || true
 docker exec -u sonarqube sonarqube-local sh -c "
   curl -L -s -o /tmp/cnes.jar https://github.com/cnescatlab/sonar-cnes-report/releases/download/5.0.4/sonar-cnes-report-5.0.4.jar
-  java -jar /tmp/cnes.jar \
+  java -Duser.home=/tmp -jar /tmp/cnes.jar \
     -s http://localhost:9000 \
     -t $SONAR_TOKEN \
     -p browserstack-client \
     -o /opt/sonarqube/temp
 "
 
-# 6. Copy the report out, convert to PDF, and Cleanup
+# 7. Copy the report out, convert to PDF, and Cleanup
 echo "Copying report to host..."
 mkdir -p "$PROJECT_ROOT/sonarqube-reports"
 docker cp sonarqube-local:/opt/sonarqube/temp/. "$PROJECT_ROOT/sonarqube-reports/"
