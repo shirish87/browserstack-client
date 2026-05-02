@@ -29,10 +29,11 @@ packages/cli/golang/dist/
 packages/cli/golang/browserstack
 packages/cli/golang/browserstack-client
 
-# Generated CLI files (produced by pnpm build:types)
+# Generated files (produced by pnpm build:types / pnpm build)
 packages/cli/golang/generated/
 packages/cli/typescript/src/constants.generated.ts
 packages/cli/typescript/src/schemas.generated.ts
+packages/openapi/generated/openapi.json
 
 # Sonar / CI artefacts
 docker-compose.sonarqube.yml
