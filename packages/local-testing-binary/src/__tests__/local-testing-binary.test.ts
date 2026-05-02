@@ -91,7 +91,7 @@ describe("LocalBinary", () => {
 
     test("stop-without-start throws", async () => {
       const { client  } = localTestingBinaryContext;
-      expect(client.stop()).rejects.toThrowError(
+      await expect(client.stop()).rejects.toThrowError(
         "BrowserStackLocal process instance not found"
       );
       expect(client.pid).toBeUndefined();
