@@ -254,6 +254,18 @@ const testManagementActions = {
 describe("CLI E2E Orchestrator", () => {
   describe.each(binaries)("Testing: $name", (binary) => {
 
+    // ─── Sanity Checks ──────────────────────────────────────────────────────
+
+    it("should never produce empty output for 'help'", async () => {
+      const result = await runCli(binary, ["help"]);
+      expect(result.stdout.trim() + result.stderr.trim()).not.toBe("");
+    });
+
+    it("should never produce empty output for 'version'", async () => {
+      const result = await runCli(binary, ["version"]);
+      expect(result.stdout.trim() + result.stderr.trim()).not.toBe("");
+    });
+
     // ─── Top-level ──────────────────────────────────────────────────────────
 
     it("should print usage when calling 'help'", async () => {
