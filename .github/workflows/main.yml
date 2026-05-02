@@ -37,11 +37,16 @@ jobs:
           node-version: "lts/*"
           cache: "pnpm"
 
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: packages/cli/golang/go.mod
+          cache-dependency-path: packages/cli/golang/go.mod
+
       - name: Install dependencies
         run: pnpm install
 
       - name: Build
-        run: pnpm build:types && pnpm build:ts && pnpm run build:cli:ts
+        run: pnpm build:types && pnpm build
 
       - name: Test CLI
         run: pnpm test -- --project cli -t "LocalCLI"
@@ -60,11 +65,16 @@ jobs:
           node-version: "lts/*"
           cache: "pnpm"
 
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: packages/cli/golang/go.mod
+          cache-dependency-path: packages/cli/golang/go.mod
+
       - name: Install dependencies
         run: pnpm install
 
       - name: Build
-        run: pnpm build:types && pnpm build:ts && pnpm run build:cli:ts
+        run: pnpm build:types && pnpm build
 
       - name: Test
         run: pnpm test
@@ -84,11 +94,16 @@ jobs:
           node-version: "18"
           cache: "pnpm"
 
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: packages/cli/golang/go.mod
+          cache-dependency-path: packages/cli/golang/go.mod
+
       - name: Install dependencies
         run: pnpm install
 
       - name: Build
-        run: pnpm build:types && pnpm build:ts && pnpm run build:cli:ts
+        run: pnpm build:types && pnpm build
 
       - name: Test
         run: pnpm test
@@ -113,11 +128,16 @@ jobs:
           node-version: "lts/*"
           cache: "pnpm"
 
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: packages/cli/golang/go.mod
+          cache-dependency-path: packages/cli/golang/go.mod
+
       - name: Install dependencies
         run: pnpm install
 
       - name: Build and Coverage
-        run: pnpm build:types && pnpm build:ts && pnpm run build:cli:ts && pnpm coverage
+        run: pnpm build:types && pnpm build && pnpm coverage
 
       - name: Wait for SonarQube to be ready
         run: |

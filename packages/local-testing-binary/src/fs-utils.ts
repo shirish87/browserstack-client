@@ -115,15 +115,14 @@ export async function ensureDirExists(
 export async function currentOSArch(): Promise<
   operations["downloadLocalBinary"]["parameters"]["path"]["osArch"] | undefined
 > {
-  if (["x64", "ia32"].includes(currentArch)) {
-    // at the moment, only darwin-x64, win32, linux-x64, linux-ia32, alpine binaries are listed
+  if (["x64", "ia32", "arm64"].includes(currentArch)) {
+    // BrowserStackLocal binaries: darwin-x64, win32, linux-x64, linux-ia32, alpine
+    // darwin/arm64 uses darwin-x64 via Rosetta 2
 
     switch (currentPlatform) {
       case "darwin":
-        if (currentArch === "x64") {
-          return "darwin-x64";
-        }
-        break;
+        // arm64 falls back to darwin-x64 (Rosetta 2)
+        return "darwin-x64";
       case "win32":
       case "cygwin":
         return "win32";
