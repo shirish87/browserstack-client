@@ -119,6 +119,11 @@ jobs:
           name: build-artifacts
           path: packages
 
+      - name: Restore binary permissions
+        run: |
+          chmod +x packages/cli/typescript/dist-binary/browserstack-client-ts-linux-*
+          chmod +x packages/cli/golang/dist/browserstack-client-linux-*
+
       - name: Test
         run: pnpm test
 
@@ -148,6 +153,12 @@ jobs:
         with:
           name: build-artifacts
           path: packages
+
+      - name: Restore binary permissions
+        if: runner.os != 'Windows'
+        run: |
+          chmod +x packages/cli/typescript/dist-binary/browserstack-client-ts-darwin-*
+          chmod +x packages/cli/golang/dist/browserstack-client-darwin-*
 
       - name: Test CLI
         run: pnpm test -- --project cli -t "LocalCLI"
