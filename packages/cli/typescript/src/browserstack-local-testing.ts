@@ -47,7 +47,17 @@ export async function main(
     const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);
     const result = await schemaConfig.call(client, parsed);
 
-    logger.info(JSON.stringify(result, null, 2));
+    switch (action) {
+      case LocalTesting.Action.ListInstances: {
+        const instances = (result as { instances: any[] }).instances ?? [];
+        instances.forEach((inst) =>
+          logger.info(`${inst.id} ${inst.localIdentifier} ${inst.startTime}`)
+        );
+        break;
+      }
+      default:
+        logger.info(JSON.stringify(result, null, 2));
+    }
 
   } catch (err) {
     if (err instanceof Error) {
@@ -60,6 +70,3 @@ export async function main(
   }
 }
 
-if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && import.meta.url === `file://${process.argv[1]}`) {
-  main();
-}

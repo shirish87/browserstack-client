@@ -9,16 +9,21 @@ const __dirname = new URL(".", import.meta.url).pathname;
 const monorepoRoot = resolve(__dirname, "../../../../..");
 
 const tsBinary = join(monorepoRoot, "packages/cli/typescript/dist-binary/browserstack-client-ts-linux-amd64");
+const tsNodeEntry = join(monorepoRoot, "packages/cli/typescript/dist/browserstack-client.js");
 const goBinary = join(monorepoRoot, "packages/cli/golang/dist/browserstack-client-linux-amd64");
 
 const binaries = [
-  { name: "TypeScript CLI", path: tsBinary },
-  { name: "Golang CLI", path: goBinary },
+  { name: "TypeScript CLI (Binary)", path: tsBinary, type: "binary" },
+  { name: "TypeScript CLI (Node)", path: "node", entry: tsNodeEntry, type: "node" },
+  { name: "Golang CLI", path: goBinary, type: "binary" },
 ];
 
-async function runCli(binaryPath: string, args: string[]) {
+async function runCli(binary: typeof binaries[number], args: string[]) {
+  const spawnPath = binary.type === "node" ? "node" : binary.path;
+  const spawnArgs = binary.type === "node" ? [binary.entry!, ...args] : args;
+
   try {
-    const { stdout, stderr } = await execFileAsync(binaryPath, args, {
+    const { stdout, stderr } = await execFileAsync(spawnPath, spawnArgs, {
       env: {
         ...process.env,
         BROWSERSTACK_ACCESS_KEY: "dummy-key",
@@ -39,20 +44,20 @@ function out(result: { stdout: string; stderr: string }) {
   return (result.stdout + result.stderr).toLowerCase();
 }
 
-async function assertHelp(binaryPath: string, args: string[]) {
-  const result = await runCli(binaryPath, args);
+async function assertHelp(binary: typeof binaries[number], args: string[]) {
+  const result = await runCli(binary, args);
   expect(result.exitCode).toBeLessThanOrEqual(1);
   expect(out(result)).toContain("usage");
 }
 
-async function assertUnknownAction(binaryPath: string, args: string[]) {
-  const result = await runCli(binaryPath, args);
+async function assertUnknownAction(binary: typeof binaries[number], args: string[]) {
+  const result = await runCli(binary, args);
   expect(result.exitCode).toBeGreaterThan(0);
   expect(out(result)).toMatch(/unknown action|invalid action|invalid/);
 }
 
-async function assertMissingArgs(binaryPath: string, args: string[]) {
-  const result = await runCli(binaryPath, args);
+async function assertMissingArgs(binary: typeof binaries[number], args: string[]) {
+  const result = await runCli(binary, args);
   expect(result.exitCode).toBeGreaterThan(0);
   expect(out(result)).toMatch(/usage|missing|invalid|required|argument validation|unauthorized|not found|access denied|request failed/);
 }
@@ -90,7 +95,7 @@ const appAutomateRequiredArgActions = [
   "get-build",
   "update-build",
   "delete-build",
-  "get-media-files-by-custom-id",
+  "list-media-files-by-custom-id",
   "list-session-logs",
   "get-xcui-test-app",
   "delete-xcui-test-app",
@@ -114,14 +119,14 @@ const appAutomateRequiredArgActions = [
   "delete-media-file",
   "get-espresso-app",
   "delete-espresso-app",
-  "list-flutteri-os-apps",
-  "get-apps-by-custom-id",
+  "list-flutter-ios-apps",
+  "list-apps-by-custom-id",
   "list-flutter-android-apps",
   "list-device-logs",
-  "get-app-profiling-data-v1",
+  "list-app-profiling-data-v1",
   "list-builds",
-  "get-flutteri-os-app",
-  "delete-flutteri-os-app",
+  "get-flutter-ios-app",
+  "delete-flutter-ios-app",
   "get-project-badge-key",
 ];
 
@@ -180,90 +185,143 @@ const testReportingRequiredArgActions = [
   "toggle-quality-gate-profile",
 ];
 
-// test-management: flat dispatch for both CLIs (TS updated to match Go)
-const testManagementRequiredArgActions = [
-  "get-project",
-  "update-project",
-  "delete-project",
-  "list-folders",
-  "create-folder",
-  "get-folder",
-  "update-folder",
-  "delete-folder",
-  "move-folder",
-  "list-test-cases",
-  "bulk-edit-test-cases",
-  "bulk-delete-test-cases",
-  "bulk-archive-test-cases",
-  "bulk-unarchive-test-cases",
-  "bulk-edit-test-cases-with-operations",
-  "create-test-case",
-  "update-test-case",
-  "delete-test-case",
-  "archive-test-case",
-  "unarchive-test-case",
-  "move-test-case",
-  "list-test-case-attachments",
-  "add-test-case-attachment",
-  "delete-test-case-attachment",
-  "list-test-result-attachments",
-  "add-test-result-attachment",
-  "delete-test-result-attachment",
-  "list-test-case-results",
-  "list-test-run-results",
-  "add-test-run-results",
-  "list-test-run-test-case-results",
-  "get-test-run",
-  "list-test-run-test-cases",
-  "patch-test-run",
-  "update-test-run",
-  "assign-test-run-test-cases",
-  "close-test-run",
-  "delete-test-run",
-  "get-test-plan",
-  "update-test-plan",
-  "list-test-plan-test-runs",
-  "get-configuration",
-  "update-custom-field",
-  "delete-custom-field",
-];
+// test-management: actions grouped by resource
+const testManagementActions = {
+  Projects: [
+    "get-project",
+    "update-project",
+    "delete-project",
+  ],
+  Folders: [
+    "list-folders",
+    "create-folder",
+    "get-folder",
+    "update-folder",
+    "delete-folder",
+    "move-folder",
+  ],
+  TestCases: [
+    "list-test-cases",
+    "bulk-edit-test-cases",
+    "bulk-delete-test-cases",
+    "bulk-archive-test-cases",
+    "bulk-unarchive-test-cases",
+    "bulk-edit-test-cases-with-operations",
+    "create-test-case",
+    "update-test-case",
+    "delete-test-case",
+    "archive-test-case",
+    "unarchive-test-case",
+    "move-test-case",
+  ],
+  Attachments: [
+    "list-test-case-attachments",
+    "add-test-case-attachment",
+    "delete-test-case-attachment",
+    "list-test-result-attachments",
+    "add-test-result-attachment",
+    "delete-test-result-attachment",
+  ],
+  TestResults: [
+    "list-test-case-results",
+    "list-test-run-results",
+    "add-test-run-results",
+    "list-test-run-test-case-results",
+  ],
+  TestRuns: [
+    "get-test-run",
+    "list-test-run-test-cases",
+    "patch-test-run",
+    "update-test-run",
+    "assign-test-run-test-cases",
+    "close-test-run",
+    "delete-test-run",
+  ],
+  TestPlans: [
+    "get-test-plan",
+    "update-test-plan",
+    "list-test-plan-test-runs",
+  ],
+  Configurations: [
+    "get-configuration",
+  ],
+  CustomFields: [
+    "update-custom-field",
+    "delete-custom-field",
+  ],
+};
 
 describe("CLI E2E Orchestrator", () => {
-  describe.each(binaries)("Testing binary: $name", ({ path: binaryPath }) => {
+  describe.each(binaries)("Testing: $name", (binary) => {
 
     // ─── Top-level ──────────────────────────────────────────────────────────
 
     it("should print usage when calling 'help'", async () => {
-      await assertHelp(binaryPath, ["help"]);
+      await assertHelp(binary, ["help"]);
     });
 
     it("should print version when calling 'version'", async () => {
-      const result = await runCli(binaryPath, ["version"]);
+      const result = await runCli(binary, ["version"]);
       expect(result.exitCode).toBeLessThanOrEqual(1);
       expect(out(result)).toContain("browserstack-client");
     });
 
     it("should fail with error on unknown product", async () => {
-      const result = await runCli(binaryPath, ["unknown-product-xyz", "help"]);
+      const result = await runCli(binary, ["unknown-product-xyz", "help"]);
       expect(result.exitCode).toBeGreaterThan(0);
       expect(out(result)).toMatch(/unknown|invalid/);
     });
+
+    // ─── Surface Reachability (Actions with no required args) ───────────────
+
+    const surfaceActions = [
+      ["automate", "list-browsers"],
+      ["automate", "get-plan"],
+      ["app-automate", "list-devices"],
+      ["app-automate", "get-plan"],
+      ["screenshots", "list-browsers"],
+      ["accessibility", "list-workflow-analyzer-reports"],
+      ["accessibility", "list-assisted-test-reports"],
+      ["test-management", "list-projects", "1", "10"],
+      ["test-reporting", "list-projects", "1"],
+    ];
+
+    it.each(surfaceActions)(
+      "should reach API call phase for %s %s",
+      async (...cmdArgs) => {
+        const product = cmdArgs[0];
+        const action = cmdArgs[1];
+        const rest = cmdArgs.slice(2);
+        const result = await runCli(binary, [product, action, ...rest]);
+        
+        // screenshots list-browsers might be public and return exit 0
+        if (product === "screenshots" && action === "list-browsers") {
+          expect(result.exitCode).toBe(0);
+          return;
+        }
+
+        // Since we use dummy-key, it should fail with unauthorized or request failed,
+        // which confirms the dispatch logic worked and it tried to call the API.
+        expect(result.exitCode).toBeGreaterThan(0);
+        expect(out(result)).toMatch(/unauthorized|request failed|access denied|invalid key|401|403/);
+      }
+    );
 
     // ─── automate ───────────────────────────────────────────────────────────
 
     describe("automate", () => {
       it("should print usage for 'automate help'", async () => {
-        await assertHelp(binaryPath, ["automate", "help"]);
+        await assertHelp(binary, ["automate", "help"]);
       });
 
       it("should fail on unknown automate action", async () => {
-        await assertUnknownAction(binaryPath, ["automate", "unknown-action-xyz"]);
+        await assertUnknownAction(binary, ["automate", "unknown-action-xyz"]);
       });
 
       it.each(automateRequiredArgActions)(
         "automate %s with no args should fail with usage hint",
         async (action) => {
-          await assertMissingArgs(binaryPath, ["automate", action]);
+          await assertMissingArgs(binary, ["automate", action]);
         }
       );
     });
@@ -272,17 +330,17 @@ describe("CLI E2E Orchestrator", () => {
 
     describe("app-automate", () => {
       it("should print usage for 'app-automate help'", async () => {
-        await assertHelp(binaryPath, ["app-automate", "help"]);
+        await assertHelp(binary, ["app-automate", "help"]);
       });
 
       it("should fail on unknown app-automate action", async () => {
-        await assertUnknownAction(binaryPath, ["app-automate", "unknown-action-xyz"]);
+        await assertUnknownAction(binary, ["app-automate", "unknown-action-xyz"]);
       });
 
       it.each(appAutomateRequiredArgActions)(
         "app-automate %s with no args should fail with usage hint",
         async (action) => {
-          await assertMissingArgs(binaryPath, ["app-automate", action]);
+          await assertMissingArgs(binary, ["app-automate", action]);
         }
       );
     });
@@ -291,17 +349,17 @@ describe("CLI E2E Orchestrator", () => {
 
     describe("screenshots", () => {
       it("should print usage for 'screenshots help'", async () => {
-        await assertHelp(binaryPath, ["screenshots", "help"]);
+        await assertHelp(binary, ["screenshots", "help"]);
       });
 
       it("should fail on unknown screenshots action", async () => {
-        await assertUnknownAction(binaryPath, ["screenshots", "unknown-action-xyz"]);
+        await assertUnknownAction(binary, ["screenshots", "unknown-action-xyz"]);
       });
 
       it.each(screenshotsRequiredArgActions)(
         "screenshots %s with no args should fail with usage hint",
         async (action) => {
-          await assertMissingArgs(binaryPath, ["screenshots", action]);
+          await assertMissingArgs(binary, ["screenshots", action]);
         }
       );
     });
@@ -310,17 +368,17 @@ describe("CLI E2E Orchestrator", () => {
 
     describe("local-testing", () => {
       it("should print usage for 'local-testing help'", async () => {
-        await assertHelp(binaryPath, ["local-testing", "help"]);
+        await assertHelp(binary, ["local-testing", "help"]);
       });
 
       it("should fail on unknown local-testing action", async () => {
-        await assertUnknownAction(binaryPath, ["local-testing", "unknown-action-xyz"]);
+        await assertUnknownAction(binary, ["local-testing", "unknown-action-xyz"]);
       });
 
       it.each(localTestingRequiredArgActions)(
         "local-testing %s with no args should fail with usage hint",
         async (action) => {
-          await assertMissingArgs(binaryPath, ["local-testing", action]);
+          await assertMissingArgs(binary, ["local-testing", action]);
         }
       );
     });
@@ -329,17 +387,17 @@ describe("CLI E2E Orchestrator", () => {
 
     describe("accessibility", () => {
       it("should print usage for 'accessibility help'", async () => {
-        await assertHelp(binaryPath, ["accessibility", "help"]);
+        await assertHelp(binary, ["accessibility", "help"]);
       });
 
       it("should fail on unknown accessibility action", async () => {
-        await assertUnknownAction(binaryPath, ["accessibility", "unknown-action-xyz"]);
+        await assertUnknownAction(binary, ["accessibility", "unknown-action-xyz"]);
       });
 
       it.each(accessibilityRequiredArgActions)(
         "accessibility %s with no args should fail with usage hint",
         async (action) => {
-          await assertMissingArgs(binaryPath, ["accessibility", action]);
+          await assertMissingArgs(binary, ["accessibility", action]);
         }
       );
     });
@@ -348,17 +406,17 @@ describe("CLI E2E Orchestrator", () => {
 
     describe("test-reporting", () => {
       it("should print usage for 'test-reporting help'", async () => {
-        await assertHelp(binaryPath, ["test-reporting", "help"]);
+        await assertHelp(binary, ["test-reporting", "help"]);
       });
 
       it("should fail on unknown test-reporting action", async () => {
-        await assertUnknownAction(binaryPath, ["test-reporting", "unknown-action-xyz"]);
+        await assertUnknownAction(binary, ["test-reporting", "unknown-action-xyz"]);
       });
 
       it.each(testReportingRequiredArgActions)(
         "test-reporting %s with no args should fail with usage hint",
         async (action) => {
-          await assertMissingArgs(binaryPath, ["test-reporting", action]);
+          await assertMissingArgs(binary, ["test-reporting", action]);
         }
       );
     });
@@ -367,17 +425,22 @@ describe("CLI E2E Orchestrator", () => {
 
     describe("test-management", () => {
       it("should print usage for 'test-management help'", async () => {
-        await assertHelp(binaryPath, ["test-management", "help"]);
+        await assertHelp(binary, ["test-management", "help"]);
       });
 
       it("should fail on unknown test-management action", async () => {
-        await assertUnknownAction(binaryPath, ["test-management", "unknown-action-xyz"]);
+        await assertUnknownAction(binary, ["test-management", "unknown-action-xyz"]);
       });
 
-      it.each(testManagementRequiredArgActions)(
-        "test-management %s with no args should fail with usage hint",
-        async (action) => {
-          await assertMissingArgs(binaryPath, ["test-management", action]);
+      describe.each(Object.entries(testManagementActions))(
+        "Resource: %s",
+        (_resource, actions) => {
+          it.each(actions)(
+            "test-management %s with no args should fail with usage hint",
+            async (action) => {
+              await assertMissingArgs(binary, ["test-management", action]);
+            }
+          );
         }
       );
     });

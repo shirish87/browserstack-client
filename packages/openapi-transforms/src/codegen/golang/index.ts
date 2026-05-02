@@ -4,6 +4,7 @@ import { emitGoFile } from "./emit-file";
 import { emitGoMethod, type GoMethodInput } from "./emit-method";
 import { emitGoTypes } from "./emit-types";
 import { emitDispatchResult, type DispatchAction } from "./emit-dispatch-result";
+import { toCLIAction } from "../shared/operation";
 
 export interface ActionResponseInfo {
   responseType: string;
@@ -352,7 +353,7 @@ export async function generateGoModule(
       const input: GoMethodInput = {
         operationId: op.operationId,
         methodName: stripOperationPrefix(op.operationId, opts.product),
-        cliAction: `${opts.product} ${op.operationId.replace(toPascalCase(opts.product), "").replace(/([A-Z])/g, "-$1").toLowerCase().replace(/^-/, "")}`,
+        cliAction: (op["x-cli-action"] as string) || toCLIAction(stripOperationPrefix(op.operationId, opts.product), op.responses?.["200"]?.content?.["application/json"]?.schema),
         method: method.toUpperCase() as GoMethodInput["method"],
         path,
         pathParams,
@@ -367,11 +368,7 @@ export async function generateGoModule(
       methods.push(emitGoMethod(input));
 
       // Derive CLI action slug (matches what generateGoConstants/generateGoDispatch emit)
-      const actionSlug = input.methodName
-        .replace(/([a-z])([A-Z])/g, "$1-$2")
-        .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
-        .toLowerCase()
-        .replace(/^get-(.+)s$/, "list-$1s"); // mirrors CLI-friendly mapping in extractCLIMetadata
+      const actionSlug = input.cliAction || "";
       const fieldName = toPascalCase(actionSlug.replace(/-/g, "_"));
       dispatchActions.push({ fieldName, responseType: respType });
       actionResponseTypes.set(actionSlug, { responseType: respType, fieldName });

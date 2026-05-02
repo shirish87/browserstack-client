@@ -19,6 +19,9 @@ export default defineConfig({
   splitting: false,
   platform: "node",
   shims: true,
+  define: {
+    __PKG_VERSION__: JSON.stringify(require("./package.json").version),
+  },
   noExternal: [
     "@dot-slash/browserstack-core",
     "@dot-slash/browserstack-local-testing",

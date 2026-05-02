@@ -65,11 +65,3 @@ export async function main(
     process.exit(1);
   }
 }
-
-const isMain =
-  import.meta.url === `file://${process.argv[1]}` ||
-  import.meta.url === `file://${resolve(process.argv[1])}`;
-
-if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && isMain) {
-  main();
-}

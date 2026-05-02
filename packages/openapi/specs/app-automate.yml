@@ -180,6 +180,7 @@ paths:
       summary: Fetches list of uploaded media files by custom ID
       description: Fetches list of recently uploaded media files by custom ID
       operationId: getAppAutomateMediaFilesByCustomId
+      x-cli-action: list-media-files-by-custom-id
       parameters:
       - name: customId
         in: path
@@ -805,6 +806,7 @@ paths:
       description: Upload the application under test (AUT) for Flutter iOS testing
         in .zip format.
       operationId: uploadAppAutomateFlutteriOSApp
+      x-cli-action: upload-flutter-ios-app
       x-request-transform:
         codec: multipart
         config:
@@ -1836,6 +1838,7 @@ paths:
       summary: Fetches list of uploaded Flutter iOS test packages
       description: Fetches list of recently uploaded Flutter iOS test packages
       operationId: getAppAutomateFlutteriOSApps
+      x-cli-action: list-flutter-ios-apps
       parameters:
       - name: scope
         in: query
@@ -2309,6 +2312,7 @@ paths:
       summary: Get details of an uploaded Flutter iOS test package
       description: Get details of an uploaded Flutter iOS test package
       operationId: getAppAutomateFlutteriOSApp
+      x-cli-action: get-flutter-ios-app
       parameters:
       - name: appId
         in: path
@@ -2348,6 +2352,7 @@ paths:
       description: Delete a Flutter iOS test package that was previously uploaded
         to BrowserStack. Note that apps once deleted cannot be recovered.
       operationId: deleteAppAutomateFlutteriOSApp
+      x-cli-action: delete-flutter-ios-app
       parameters:
       - name: appId
         in: path

@@ -96,15 +96,21 @@ export function generateGoDispatch(m: CLIMetadata): string {
 
       const callExpr = `client.${toPascalCase(actionMeta.methodName)}(${callArgs.join(", ")})`;
 
-      if (hasTypedResult && actionMeta.resultFieldName) {
-        const respType = actionMeta.responseGoType ?? "";
-        out += `\t\tv, err := ${callExpr}\n`;
-        out += `\t\tif err != nil { return nil, err }\n`;
-        if (respType === "string") {
-          // string is not addressable directly — store in var
-          out += `\t\treturn &DispatchResult{Action: action, ${actionMeta.resultFieldName}: &v}, nil\n`;
+      if (hasTypedResult) {
+        if (actionMeta.resultFieldName) {
+          const respType = actionMeta.responseGoType ?? "";
+          out += `\t\tv, err := ${callExpr}\n`;
+          out += `\t\tif err != nil { return nil, err }\n`;
+          if (respType === "string") {
+            // string is not addressable directly — store in var
+            out += `\t\treturn &DispatchResult{Action: action, ${actionMeta.resultFieldName}: &v}, nil\n`;
+          } else {
+            out += `\t\treturn &DispatchResult{Action: action, ${actionMeta.resultFieldName}: v}, nil\n`;
+          }
         } else {
-          out += `\t\treturn &DispatchResult{Action: action, ${actionMeta.resultFieldName}: v}, nil\n`;
+          out += `\t\t_, err := ${callExpr}\n`;
+          out += `\t\tif err != nil { return nil, err }\n`;
+          out += `\t\treturn &DispatchResult{Action: action}, nil\n`;
         }
       } else {
         out += `\t\treturn ${callExpr}\n`;

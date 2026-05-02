@@ -25,5 +25,15 @@ func runLocalTesting(c *browserstackhttp.Client, action string, args []string) e
 		return err
 	}
 
+	switch action {
+	case "list-instances":
+		if res.ListInstances != nil {
+			for _, inst := range res.ListInstances.Instances {
+				fmt.Printf("%s %s %s\n", inst.Id, inst.LocalIdentifier, inst.StartTime)
+			}
+			return nil
+		}
+	}
+
 	return output.Print(res)
 }

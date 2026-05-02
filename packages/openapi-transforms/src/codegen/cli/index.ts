@@ -1,6 +1,6 @@
 import yaml from "yaml";
 import fs from "node:fs/promises";
-import { stripOperationPrefix } from "../shared/operation";
+import { stripOperationPrefix, toCLIAction } from "../shared/operation";
 
 export * from "./typescript";
 export * from "./golang";
@@ -9,6 +9,11 @@ interface SpecOp {
   operationId?: string;
   parameters?: any[];
   requestBody?: any;
+  responses?: Record<string, {
+    content?: Record<string, {
+      schema?: any;
+    }>;
+  }>;
   "x-cli-action"?: string;
   "x-cli-resource"?: string;
 }
@@ -56,15 +61,14 @@ export async function extractCLIMetadata(specPath: string, product: string): Pro
       
       const resource = (resourceNorm === productNorm) ? "" : rawResource;
       
-      const rawAction = op["x-cli-action"] as string || stripOperationPrefix(op.operationId, product);
-      let action = rawAction
-        .replace(/([a-z])([A-Z])/g, "$1-$2")
-        .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
-        .toLowerCase();
-
-      // CLI-friendly mapping: get-*s -> list-*
-      if (action.startsWith("get-") && action.endsWith("s")) {
-        action = action.replace(/^get-/, "list-");
+      const xCliAction = op["x-cli-action"] as string;
+      let action: string;
+      
+      if (xCliAction) {
+        action = xCliAction;
+      } else {
+        const rawAction = stripOperationPrefix(op.operationId, product);
+        action = toCLIAction(rawAction, op.responses?.["200"]?.content?.["application/json"]?.schema);
       }
 
       const resKey = resource || "default";
