@@ -79,8 +79,8 @@ jobs:
       - name: Test
         run: pnpm test
 
-  test-node-v18:
-    name: "node.js v18"
+  test-node-v20:
+    name: "node.js v20"
     runs-on: ubuntu-latest
     if: ${{ always() }}
     needs: [test-node-lts]
@@ -91,7 +91,7 @@ jobs:
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
-          node-version: "18"
+          node-version: "20"
           cache: "pnpm"
 
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
