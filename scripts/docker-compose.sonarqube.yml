@@ -1,6 +1,8 @@
 services:
   sonarqube:
-    image: sonarqube:community
+    build:
+      context: .
+      dockerfile: sonarqube-lean.Dockerfile
     container_name: sonarqube-local
     ports:
       - "9000:9000"
@@ -15,5 +17,3 @@ services:
         SONAR_SEARCH_JAVAADDITIONALOPTS=
         -Dnode.store.allow_mmap=false 
         -Dcluster.routing.allocation.disk.threshold_enabled=false
-    volumes:
-      - ./.sonar-lean-plugins:/opt/sonarqube/lib/extensions

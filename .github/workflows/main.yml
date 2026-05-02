@@ -90,18 +90,7 @@ jobs:
           retention-days: 1
 
       - name: Start Lean SonarQube
-        run: |
-          # 1. Prepare Lean Extensions (TS, JS, Go only)
-          mkdir -p scripts/.sonar-lean-plugins
-          # Run as root to ensure we can write to the mounted volume
-          docker run --rm --user root -v "$(pwd)/scripts/.sonar-lean-plugins:/target" sonarqube:community sh -c "
-            cp /opt/sonarqube/lib/extensions/sonar-javascript-plugin-*.jar /target/
-            cp /opt/sonarqube/lib/extensions/sonar-go-plugin-*.jar /target/
-            cp /opt/sonarqube/lib/extensions/sonar-text-plugin-*.jar /target/
-          "
-          
-          # 2. Start via Docker Compose
-          docker compose -f scripts/docker-compose.sonarqube.yml up -d
+        run: docker compose -f scripts/docker-compose.sonarqube.yml up -d --build
 
       - name: Wait for SonarQube to be ready
         run: |
@@ -141,7 +130,7 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.tests=. \
             -Dsonar.test.inclusions="**/*.test.ts,**/*.spec.ts,**/*_test.go,**/__tests__/**,**/test/**" \
-            -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/dist-binary/**,scripts/.sonar-lean-plugins/**" \
+            -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/dist-binary/**" \
             -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.token=$SONAR_TOKEN
           
@@ -345,9 +334,18 @@ jobs:
     needs: [test-sdk, test-cli]
     if: github.event_name != 'pull_request'
     environment: BrowserStackEnv
+    outputs:
+      published: ${{ steps.check-version.outputs.already_published == 'false' }}
+      version: ${{ steps.get-version.outputs.version }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
+
+      - name: Get version
+        id: get-version
+        run: |
+          VERSION=$(node -e "process.stdout.write(require('./package.json').version)")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
@@ -364,9 +362,22 @@ jobs:
           name: build-artifacts
           path: packages
 
-      - name: Publish
+      - name: Check if version already exists
+        id: check-version
         run: |
-          VERSION=$(node -e "process.stdout.write(require('./package.json').version)")
+          VERSION="${{ steps.get-version.outputs.version }}"
+          if npm view @dot-slash/browserstack-cli@$VERSION version >/dev/null 2>&1; then
+            echo "already_published=true" >> $GITHUB_OUTPUT
+            echo "Version $VERSION is already published."
+          else
+            echo "already_published=false" >> $GITHUB_OUTPUT
+            echo "Version $VERSION is new."
+          fi
+
+      - name: Publish
+        if: steps.check-version.outputs.already_published == 'false'
+        run: |
+          VERSION="${{ steps.get-version.outputs.version }}"
           if echo "$VERSION" | grep -qE '\-(alpha|beta|rc)([.\d]|$)'; then
             TAG="next"
           else
@@ -376,3 +387,128 @@ jobs:
           pnpm publish -r --tag $TAG --no-git-checks
         env:
           NODE_AUTH_TOKEN: "${{ secrets.NPM_PUBLISH_TOKEN }}"
+
+  # ── 6. Create GitHub Release (main branch only, if published) ────────────────
+  release:
+    name: "Create GitHub Release"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [publish-npm]
+    if: needs.publish-npm.outputs.published == 'true'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: build-artifacts
+          path: packages
+
+      - name: Pack SDK tarballs
+        run: |
+          mkdir -p release-assets/sdk
+          for pkg in automate app-automate screenshots local-testing local-testing-binary accessibility test-management test-reporting; do
+            pnpm --filter "@dot-slash/browserstack-$pkg" pack --pack-destination release-assets/sdk
+          done
+
+      - name: Organize binaries
+        run: |
+          mkdir -p release-assets/go
+          mkdir -p release-assets/ts
+          cp packages/cli/golang/dist/browserstack-client-* release-assets/go/
+          cp packages/cli/typescript/dist-binary/browserstack-client-ts-* release-assets/ts/
+          chmod +x release-assets/go/browserstack-client-linux-*
+          chmod +x release-assets/go/browserstack-client-darwin-*
+          chmod +x release-assets/ts/browserstack-client-ts-linux-*
+          chmod +x release-assets/ts/browserstack-client-ts-darwin-*
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          VERSION="${{ needs.publish-npm.outputs.version }}"
+          TAG="v$VERSION"
+          PREV_TAG=$(git tag --sort=-version:refname | grep "^v" | grep -v "^${TAG}$" | head -1)
+          if [ -n "$PREV_TAG" ]; then
+            CHANGELOG=$(git log --pretty=format:"- %s" "${PREV_TAG}..HEAD" -- . ':!.github')
+          else
+            CHANGELOG=$(git log --pretty=format:"- %s" "HEAD" -- . ':!.github')
+          fi
+          {
+            DELIMITER="RELEASE_NOTES_$(openssl rand -hex 8)"
+            echo "notes<<${DELIMITER}"
+            echo "## Go CLI — native binaries (no Node.js required)"
+            echo ""
+            echo "| Platform | Architecture | File |"
+            echo "|----------|-------------|------|"
+            echo "| Linux | x64 | \`browserstack-client-linux-amd64\` |"
+            echo "| Linux | arm64 | \`browserstack-client-linux-arm64\` |"
+            echo "| macOS | x64 | \`browserstack-client-darwin-amd64\` |"
+            echo "| macOS | arm64 (M1/M2) | \`browserstack-client-darwin-arm64\` |"
+            echo "| Windows | x64 | \`browserstack-client-windows-amd64.exe\` |"
+            echo ""
+            echo "## TypeScript CLI — Node.js bundled"
+            echo ""
+            echo "| Platform | Architecture | File |"
+            echo "|----------|-------------|------|"
+            echo "| Linux | x64 | \`browserstack-client-ts-linux-amd64\` |"
+            echo "| Linux | arm64 | \`browserstack-client-ts-linux-arm64\` |"
+            echo "| macOS | x64 | \`browserstack-client-ts-darwin-amd64\` |"
+            echo "| macOS | arm64 (M1/M2) | \`browserstack-client-ts-darwin-arm64\` |"
+            echo "| Windows | x64 | \`browserstack-client-ts-windows-amd64.exe\` |"
+            echo ""
+            echo "## SDK Packages"
+            echo ""
+            echo "Install directly from this release (no npm registry required):"
+            echo "\`\`\`sh"
+            echo "# Example: install the Automate SDK"
+            echo "npm install https://github.com/shirish87/browserstack-client/releases/download/${TAG}/browserstack-client-automate-${VERSION}.tgz"
+            echo "\`\`\`"
+            echo ""
+            echo "Available packages: \`automate\`, \`app-automate\`, \`screenshots\`, \`local-testing\`, \`local-testing-binary\`, \`accessibility\`, \`test-management\`, \`test-reporting\`"
+            echo ""
+            echo "## Changes"
+            echo ""
+            echo "${CHANGELOG}"
+            echo "${DELIMITER}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_NOTES: ${{ steps.notes.outputs.notes }}
+        run: |
+          VERSION="${{ needs.publish-npm.outputs.version }}"
+          TAG="v$VERSION"
+          IS_PRE=$(echo "$TAG" | grep -qE '\-(alpha|beta|rc)([.\d]|$)' && echo "true" || echo "false")
+          
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG exists, updating notes and assets..."
+            gh release edit "$TAG" --notes "$RELEASE_NOTES" $( [ "$IS_PRE" = "true" ] && echo "--prerelease" )
+            gh release upload "$TAG" --clobber \
+              release-assets/go/browserstack-client-* \
+              release-assets/ts/browserstack-client-ts-* \
+              release-assets/sdk/*.tgz
+          else
+            echo "Creating new release $TAG..."
+            gh release create "$TAG" \
+              --title "Release $TAG" \
+              --notes "$RELEASE_NOTES" \
+              $( [ "$IS_PRE" = "true" ] && echo "--prerelease" ) \
+              release-assets/go/browserstack-client-* \
+              release-assets/ts/browserstack-client-ts-* \
+              release-assets/sdk/*.tgz
+          fi

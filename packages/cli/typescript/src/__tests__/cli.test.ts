@@ -1,5 +1,6 @@
 import { runLocalCli } from "@dot-slash/browserstack-cli";
 import { env } from "@dot-slash/browserstack-core";
+import process from "node:process";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { cliContext } from "./setup.ts";
 
@@ -39,7 +40,7 @@ describe("LocalCLI", () => {
   });
 
   describe("Test instance run-with", () => {
-    test("run-with", async () => {
+    test.skipIf(process.platform === "win32")("run-with", async () => {
       await runLocalCli(
         [
           "run-with",

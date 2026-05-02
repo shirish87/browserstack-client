@@ -121,6 +121,7 @@ describe("AppAutomateClient", () => {
       const client = makeClient(APPS);
       const data = await client.getApps();
       expect(data).toBeInstanceOf(Array);
+      if (!Array.isArray(data)) throw new Error("Expected array");
       expect(data).toHaveLength(2);
       expect(data[0].appId).toBe("abc123app");
       expect(data[0].appUrl).toMatch(/^bs:\/\//);
@@ -324,6 +325,7 @@ describe("AppAutomateClient", () => {
       const client = makeClient(MEDIA_FILES);
       const data = await client.getMediaFiles();
       expect(data).toBeInstanceOf(Array);
+      if (!Array.isArray(data)) throw new Error("Expected array");
       expect(data).toHaveLength(2);
       expect(data[0].mediaId).toBe("abc123media");
       expect(data[0].mediaUrl).toBe("media://abc123media");
@@ -343,7 +345,7 @@ describe("AppAutomateClient", () => {
 
     it("deleteMediaFile returns success true", async () => {
       const client = makeClient(DELETE_MEDIA);
-      const data = await client.deleteMediaFile("abc123media");
+      const data = await client.deleteMediaFile("abc123media") as { success: boolean; message: string };
       expect(data).toBeDefined();
       expect(data.success).toBe(true);
       expect(data.message).toContain("abc123media");

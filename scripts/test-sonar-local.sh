@@ -9,24 +9,12 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SONAR_ADMIN_PASS=$(openssl rand -base64 24 | tr -dc 'A-Za-z0-9' | head -c 20)"!A1"
 echo "Session Password generated."
 
-# 1. Prepare Lean Extensions
-if [ ! -d "$SCRIPT_DIR/.sonar-lean-plugins" ] || [ -z "$(ls -A "$SCRIPT_DIR/.sonar-lean-plugins")" ]; then
-  echo "Extracting lean plugins (TS, JS, Go)..."
-  mkdir -p "$SCRIPT_DIR/.sonar-lean-plugins"
-  # Run as root to ensure we can write to the mounted volume
-  docker run --rm --user root -v "$SCRIPT_DIR/.sonar-lean-plugins:/target" sonarqube:community sh -c "
-    cp /opt/sonarqube/lib/extensions/sonar-javascript-plugin-*.jar /target/
-    cp /opt/sonarqube/lib/extensions/sonar-go-plugin-*.jar /target/
-    cp /opt/sonarqube/lib/extensions/sonar-text-plugin-*.jar /target/
-  "
-fi
-
-# 2. Start Lean SonarQube
+# 1. Start Lean SonarQube
 echo "Starting Lean Latest SonarQube..."
 docker compose -f "$SCRIPT_DIR/docker-compose.sonarqube.yml" down -v || true
-docker compose -f "$SCRIPT_DIR/docker-compose.sonarqube.yml" up -d
+docker compose -f "$SCRIPT_DIR/docker-compose.sonarqube.yml" up -d --build
 
-# 3. Wait for SonarQube
+# 2. Wait for SonarQube
 echo "Waiting for SonarQube to be ready..."
 for i in {1..40}; do
   STATUS=$(curl -s -f http://localhost:9000/api/system/status | grep -o '"status":"[^"]*"' | cut -d'"' -f4 || echo "DOWN")
@@ -44,13 +32,13 @@ if [ "$STATUS" != "UP" ]; then
   exit 1
 fi
 
-# 4. Configure Security and generate Token
+# 3. Configure Security and generate Token
 echo "Configuring SonarQube..."
 curl -s -u admin:admin -X POST "http://localhost:9000/api/users/change_password?login=admin&previousPassword=admin&password=$SONAR_ADMIN_PASS"
 TOKEN_JSON=$(curl -s -u admin:$SONAR_ADMIN_PASS -X POST "http://localhost:9000/api/user_tokens/generate?name=scanner-token")
 SONAR_TOKEN=$(echo $TOKEN_JSON | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
 
-# 5. Run SonarQube Scan
+# 4. Run SonarQube Scan
 echo "Running SonarQube Scan..."
 docker run --rm \
   --network="host" \
@@ -60,11 +48,11 @@ docker run --rm \
   -Dsonar.sources=. \
   -Dsonar.tests=. \
   -Dsonar.test.inclusions="**/*.test.ts,**/*.spec.ts,**/*_test.go,**/__tests__/**,**/test/**" \
-  -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/dist-binary/**,scripts/.sonar-lean-plugins/**" \
+  -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/dist-binary/**" \
   -Dsonar.host.url=http://localhost:9000 \
   -Dsonar.token=$SONAR_TOKEN
 
-# 6. Generate Report inside the SonarQube container
+# 5. Generate Report inside the SonarQube container
 echo "Generating Report via sonar-cnes-report 5.0.4..."
 docker exec sonarqube-local sh -c "
   curl -L -s -o /tmp/cnes.jar https://github.com/cnescatlab/sonar-cnes-report/releases/download/5.0.4/sonar-cnes-report-5.0.4.jar
@@ -75,7 +63,7 @@ docker exec sonarqube-local sh -c "
     -o /opt/sonarqube/temp
 "
 
-# 7. Copy the report out, convert to PDF, and Cleanup
+# 6. Copy the report out, convert to PDF, and Cleanup
 echo "Copying report to host..."
 mkdir -p "$PROJECT_ROOT/sonarqube-reports"
 docker cp sonarqube-local:/opt/sonarqube/temp/. "$PROJECT_ROOT/sonarqube-reports/"

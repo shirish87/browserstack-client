@@ -40,7 +40,7 @@ export function createGotAdapter(got: GotLike): typeof fetch {
       headers: Object.fromEntries(new Headers(init?.headers ?? {}).entries()),
       body,
       throwHttpErrors: false,
-      signal: init?.signal,
+      signal: init?.signal ?? undefined,
     });
 
     return new Response(new Blob([gotResp.rawBody]), {
