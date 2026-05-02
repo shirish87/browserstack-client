@@ -6,4 +6,5 @@ export { main as runLocalTestingCli } from "./browserstack-local-testing.ts";
 export { main as runTestManagementCli } from "./browserstack-test-management.ts";
 export { main as runAccessibilityCli } from "./browserstack-accessibility.ts";
 export { main as runTestReportingCli } from "./browserstack-test-reporting.ts";
+export { main as runScreenshotsCli } from "./browserstack-screenshots.ts";
 export { ensureAccessKeyExists, ensureUsernameExists } from "./utils.ts";

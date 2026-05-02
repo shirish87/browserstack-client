@@ -141,8 +141,8 @@ const screenshotsRequiredArgActions = [
   "get-job",
 ];
 
-// All local-testing actions require args
-const localTestingRequiredArgActions = [
+// All local actions require args
+const localRequiredArgActions = [
   "list-instances",
   "get-instance",
   "disconnect-instance",
@@ -325,6 +325,25 @@ describe("CLI E2E Orchestrator", () => {
       }
     );
 
+    // ─── local ───────────────────────────────────────────────────────────────
+
+    describe("local", () => {
+      it("should print usage for 'local help'", async () => {
+        await assertHelp(binary, ["local", "help"]);
+      });
+
+      it("should fail on unknown local action", async () => {
+        await assertUnknownAction(binary, ["local", "unknown-action-xyz"]);
+      });
+
+      it.each(localRequiredArgActions)(
+        "local %s with no args should fail with usage hint",
+        async (action) => {
+          await assertMissingArgs(binary, ["local", action]);
+        }
+      );
+    });
+
     // ─── automate ───────────────────────────────────────────────────────────
 
     describe("automate", () => {
@@ -378,25 +397,6 @@ describe("CLI E2E Orchestrator", () => {
         "screenshots %s with no args should fail with usage hint",
         async (action) => {
           await assertMissingArgs(binary, ["screenshots", action]);
-        }
-      );
-    });
-
-    // ─── local-testing ───────────────────────────────────────────────────────
-
-    describe("local-testing", () => {
-      it("should print usage for 'local-testing help'", async () => {
-        await assertHelp(binary, ["local-testing", "help"]);
-      });
-
-      it("should fail on unknown local-testing action", async () => {
-        await assertUnknownAction(binary, ["local-testing", "unknown-action-xyz"]);
-      });
-
-      it.each(localTestingRequiredArgActions)(
-        "local-testing %s with no args should fail with usage hint",
-        async (action) => {
-          await assertMissingArgs(binary, ["local-testing", action]);
         }
       );
     });

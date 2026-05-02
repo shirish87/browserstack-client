@@ -11,6 +11,7 @@ import process from "node:process";
 import { onExit } from "signal-exit";
 import { env, resolveAccessKey } from "@dot-slash/browserstack-core";
 import { formatError } from "./utils.ts";
+import { LocalTesting } from "./constants.generated.ts";
 
 enum BrowserStackLocalAction {
   start = "start",
@@ -276,6 +277,9 @@ function ensureAccessKeyExists(accessKey: string | undefined): string {
   return resolved.trim();
 }
 
+const USAGE = `Usage: local <action> [args...]
+Actions: ${[...Object.values(BrowserStackLocalAction), ...Object.values(LocalTesting.Action)].join(", ")}`;
+
 /**
  * Ensures that the provided action is valid.
  *
@@ -295,7 +299,7 @@ function ensureValidAction(
     return action as BrowserStackLocalAction;
   }
 
-  throw new BrowserStackError(`Invalid action: ${action}`);
+  throw new BrowserStackError(`Invalid action: ${action}\n${USAGE}`);
 }
 
 function resolveEnvLocalIdentifier(): string | undefined {
@@ -407,10 +411,18 @@ export async function main(
 ) {
   try {
     const args = inputArgs.map((arg) => arg.trim());
-    const action = ensureValidAction(args[0]);
+    const actionInput = args[0]?.toLowerCase();
+
+    if (!actionInput || actionInput === "help") {
+      logger.info(USAGE);
+      return;
+    }
+
+    const action = ensureValidAction(actionInput);
     const localIdentifier =
       resolveEnvLocalIdentifier() ??
       (args[1] === cmdSeparator ? undefined : args[1]);
+
     const accessKey = ensureAccessKeyExists(
       action === BrowserStackLocalAction.runWith ? undefined : args[2]
     );

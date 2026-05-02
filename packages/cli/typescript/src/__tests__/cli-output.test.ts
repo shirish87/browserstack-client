@@ -17,6 +17,7 @@ import {
   runLocalTestingCli,
   runTestManagementCli,
   runTestReportingCli,
+  runScreenshotsCli,
 } from "../index.ts";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -229,6 +230,14 @@ afterEach(() => {
 // ── runAutomateCli ────────────────────────────────────────────────────────────
 
 describe("runAutomateCli output", () => {
+  it("help: prints usage instructions", async () => {
+    const { logger, infoCalls } = makeLogger();
+    await runAutomateCli(["help"], logger);
+    expect(infoCalls.length).toBeGreaterThan(0);
+    expect(infoCalls[0]).toContain("Usage: automate <action> [args...]");
+    expect(infoCalls[0]).toContain("Actions:");
+  });
+
   it("list-projects: prints project id and name", async () => {
     vi.stubGlobal("fetch", makeFetch(AUTOMATE_PROJECTS_WIRE));
     const { logger, infoCalls } = makeLogger();
@@ -314,6 +323,14 @@ describe("runAutomateCli output", () => {
 // ── runAppAutomateCli ─────────────────────────────────────────────────────────
 
 describe("runAppAutomateCli output", () => {
+  it("help: prints usage instructions", async () => {
+    const { logger, infoCalls } = makeLogger();
+    await runAppAutomateCli(["help"], logger);
+    expect(infoCalls.length).toBeGreaterThan(0);
+    expect(infoCalls[0]).toContain("Usage: app-automate <action> [args...]");
+    expect(infoCalls[0]).toContain("Actions:");
+  });
+
   it("get-plan: prints JSON with automatePlan field", async () => {
     vi.stubGlobal("fetch", makeFetch(APP_AUTOMATE_PLAN_WIRE));
     const { logger, infoCalls } = makeLogger();
@@ -346,6 +363,14 @@ describe("runAppAutomateCli output", () => {
 // ── runLocalTestingCli ────────────────────────────────────────────────────────
 
 describe("runLocalTestingCli output", () => {
+  it("help: prints usage instructions", async () => {
+    const { logger, infoCalls } = makeLogger();
+    await runLocalTestingCli(["help"], logger);
+    expect(infoCalls.length).toBeGreaterThan(0);
+    expect(infoCalls[0]).toContain("Usage: local <action> [args...]");
+    expect(infoCalls[0]).toContain("Actions:");
+  });
+
   it("list-instances: prints JSON containing instances array", async () => {
     vi.stubGlobal("fetch", makeFetch(LOCAL_TESTING_INSTANCES_WIRE));
     const { logger, infoCalls } = makeLogger();
@@ -362,6 +387,14 @@ describe("runLocalTestingCli output", () => {
 // ── runTestManagementCli ──────────────────────────────────────────────────────
 
 describe("runTestManagementCli output", () => {
+  it("help: prints usage instructions", async () => {
+    const { logger, infoCalls } = makeLogger();
+    await runTestManagementCli(["help"], logger);
+    expect(infoCalls.length).toBeGreaterThan(0);
+    expect(infoCalls[0]).toContain("Usage: test-management <action> [args...]");
+    expect(infoCalls[0]).toContain("Actions:");
+  });
+
   it("list-projects: prints JSON containing project identifier", async () => {
     // test-management getProjects uses json-unwrap $.projects — wire body must have "projects" key
     vi.stubGlobal("fetch", makeFetch(TEST_MANAGEMENT_PROJECTS_WIRE));
@@ -378,6 +411,14 @@ describe("runTestManagementCli output", () => {
 // ── runTestReportingCli ───────────────────────────────────────────────────────
 
 describe("runTestReportingCli output", () => {
+  it("help: prints usage instructions", async () => {
+    const { logger, infoCalls } = makeLogger();
+    await runTestReportingCli(["help"], logger);
+    expect(infoCalls.length).toBeGreaterThan(0);
+    expect(infoCalls[0]).toContain("Usage: test-reporting <action> [args...]");
+    expect(infoCalls[0]).toContain("Actions:");
+  });
+
   it("list-projects: prints JSON containing project data", async () => {
     vi.stubGlobal("fetch", makeFetch(TEST_REPORTING_PROJECTS_WIRE));
     const { logger, infoCalls } = makeLogger();
@@ -390,6 +431,16 @@ describe("runTestReportingCli output", () => {
   });
 });
 
+describe("runScreenshotsCli output", () => {
+  it("help: prints usage instructions", async () => {
+    const { logger, infoCalls } = makeLogger();
+    await runScreenshotsCli(["help"], logger);
+    expect(infoCalls.length).toBeGreaterThan(0);
+    expect(infoCalls[0]).toContain("Usage: screenshots <action> [args...]");
+    expect(infoCalls[0]).toContain("Actions:");
+  });
+});
+
 // ── runAccessibilityCli ───────────────────────────────────────────────────────
 //
 // NOTE: runAccessibilityCli has a different signature — it only accepts
@@ -397,6 +448,22 @@ describe("runTestReportingCli output", () => {
 // We test it by spying on console.log.
 
 describe("runAccessibilityCli output", () => {
+  it("help: prints usage instructions", async () => {
+    // Dynamic import to avoid issues with the different signature at the top level
+    const { runAccessibilityCli } = await import("../index.ts");
+
+    const logCalls: string[] = [];
+    vi.spyOn(console, "log").mockImplementation((...args: unknown[]) => {
+      logCalls.push(args.map(String).join(" "));
+    });
+
+    await runAccessibilityCli(["help"]);
+
+    expect(logCalls.length).toBeGreaterThan(0);
+    expect(logCalls[0]).toContain("Usage: accessibility <action> [args...]");
+    expect(logCalls[0]).toContain("Actions:");
+  });
+
   it("list-workflow-analyzer-reports: console.log contains reports data", async () => {
     // Dynamic import to avoid issues with the different signature at the top level
     const { runAccessibilityCli } = await import("../index.ts");

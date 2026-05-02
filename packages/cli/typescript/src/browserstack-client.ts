@@ -13,14 +13,24 @@ import { main as runAccessibility } from "./browserstack-accessibility.ts";
 import { main as runTestReporting } from "./browserstack-test-reporting.ts";
 import { main as runScreenshots } from "./browserstack-screenshots.ts";
 
-import { Product } from "./constants.generated.ts";
+import { Product, LocalTesting } from "./constants.generated.ts";
 import { formatError } from "./utils.ts";
 
+async function runLocalCombined(args: string[]) {
+  const actionInput = args[0]?.toLowerCase().trim();
+  const localTestingActions = Object.values(LocalTesting.Action) as string[];
+
+  if (actionInput && localTestingActions.includes(actionInput)) {
+    return await runLocalTesting(args);
+  }
+
+  return await runLocal(args);
+}
+
 const products: Record<string, (args: string[]) => Promise<void>> = {
-  local: runLocal,
+  local: runLocalCombined,
   [Product.AppAutomate]: runAppAutomate,
   [Product.Automate]: runAutomate,
-  [Product.LocalTesting]: runLocalTesting,
   [Product.TestManagement]: runTestManagement,
   [Product.Accessibility]: runAccessibility,
   [Product.TestReporting]: runTestReporting,
@@ -38,15 +48,17 @@ export async function main(inputArgs: string[] = process.argv.slice(2)) {
       return;
     }
 
+    const validProducts = ["local", ...Object.values(Product).filter(p => p !== Product.LocalTesting)];
+
     if (productInput === "help") {
-      const valid = ["local", ...Object.values(Product)].join(", ");
+      const valid = validProducts.join(", ");
       process.stdout.write(`Usage: browserstack-client <product> <action> [args...]\n`);
       process.stdout.write(`Products: ${valid}\n`);
       return;
     }
 
     if (!productInput || !products[productInput]) {
-      const valid = ["local", ...Object.values(Product)].join(", ");
+      const valid = validProducts.join(", ");
       process.stderr.write(
         `Invalid or missing product: ${productInput ?? "(none)"} (valid: ${valid})\n`
       );
