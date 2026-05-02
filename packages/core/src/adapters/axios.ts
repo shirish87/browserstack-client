@@ -29,6 +29,7 @@ interface AxiosLike {
     data: BodyInit | null | undefined;
     responseType: "arraybuffer";
     validateStatus: (status: number) => boolean;
+    signal?: AbortSignal;
   }): Promise<{
     data: ArrayBuffer;
     status: number;
@@ -52,6 +53,7 @@ export function createAxiosAdapter(axios: AxiosLike): typeof fetch {
       data: init?.body,
       responseType: "arraybuffer",
       validateStatus: () => true, // Don't throw on any status
+      signal: init?.signal,
     });
 
     return new Response(axiosResp.data, {

@@ -22,6 +22,7 @@ type GotLike = (url: string, options: {
   headers: Record<string, string>;
   body: string | Buffer | undefined;
   throwHttpErrors: boolean;
+  signal?: AbortSignal;
 }) => Promise<{
   rawBody: Uint8Array<ArrayBuffer>;
   statusCode: number;
@@ -39,6 +40,7 @@ export function createGotAdapter(got: GotLike): typeof fetch {
       headers: Object.fromEntries(new Headers(init?.headers ?? {}).entries()),
       body,
       throwHttpErrors: false,
+      signal: init?.signal,
     });
 
     return new Response(new Blob([gotResp.rawBody]), {

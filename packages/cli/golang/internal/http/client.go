@@ -9,6 +9,13 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
+)
+
+const (
+	// maxResponseSize is 10MB to prevent OOM DoS
+	maxResponseSize = 10 * 1024 * 1024
+	defaultTimeout  = 30 * time.Second
 )
 
 type Client struct {
@@ -67,7 +74,7 @@ func New(baseURL, username, accessKey string) *Client {
 		baseURL:    baseURL,
 		username:   username,
 		accessKey:  accessKey,
-		httpClient: &http.Client{},
+		httpClient: &http.Client{Timeout: defaultTimeout},
 	}
 }
 
@@ -99,7 +106,9 @@ func (c *Client) do(req *http.Request) ([]byte, error) {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
+
+	// Limit response size to prevent OOM DoS
+	body, err := io.ReadAll(io.LimitReader(resp.Body, maxResponseSize))
 	if err != nil {
 		return nil, fmt.Errorf("reading response body: %w", err)
 	}
