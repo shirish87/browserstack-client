@@ -11,6 +11,46 @@ import (
 
 const threeColFmt = "%s %s %s\n"
 
+func printBuilds(res *automate.DispatchResult) bool {
+	if res.ListBuilds == nil {
+		return false
+	}
+	for _, b := range *res.ListBuilds {
+		fmt.Printf(threeColFmt, b.AutomationBuild.HashedId, b.AutomationBuild.Name, b.AutomationBuild.Status)
+	}
+	return true
+}
+
+func printSessions(res *automate.DispatchResult) bool {
+	if res.ListSessions == nil {
+		return false
+	}
+	for _, s := range *res.ListSessions {
+		fmt.Printf(threeColFmt, s.AutomationSession.HashedId, s.AutomationSession.Name, s.AutomationSession.Status)
+	}
+	return true
+}
+
+func printProjects(res *automate.DispatchResult) bool {
+	if res.ListProjects == nil {
+		return false
+	}
+	for _, p := range *res.ListProjects {
+		fmt.Printf("%.0f %s\n", p.Id, p.Name)
+	}
+	return true
+}
+
+func printMediaFiles(res *automate.DispatchResult) bool {
+	if res.ListMediaFiles == nil {
+		return false
+	}
+	for _, f := range *res.ListMediaFiles {
+		fmt.Printf(threeColFmt, f.MediaUrl, f.UploadedAt, f.MediaName)
+	}
+	return true
+}
+
 func printSessionLog(res *automate.DispatchResult) bool {
 	if res.ListSessionLogs != nil {
 		fmt.Print(*res.ListSessionLogs)
@@ -34,33 +74,13 @@ func printSessionLog(res *automate.DispatchResult) bool {
 func printAutomateResult(res *automate.DispatchResult, action string) bool {
 	switch action {
 	case automate.ActionListBuilds:
-		if res.ListBuilds != nil {
-			for _, b := range *res.ListBuilds {
-				fmt.Printf(threeColFmt, b.AutomationBuild.HashedId, b.AutomationBuild.Name, b.AutomationBuild.Status)
-			}
-			return true
-		}
+		return printBuilds(res)
 	case automate.ActionListSessions:
-		if res.ListSessions != nil {
-			for _, s := range *res.ListSessions {
-				fmt.Printf(threeColFmt, s.AutomationSession.HashedId, s.AutomationSession.Name, s.AutomationSession.Status)
-			}
-			return true
-		}
+		return printSessions(res)
 	case automate.ActionListProjects:
-		if res.ListProjects != nil {
-			for _, p := range *res.ListProjects {
-				fmt.Printf("%.0f %s\n", p.Id, p.Name)
-			}
-			return true
-		}
+		return printProjects(res)
 	case automate.ActionListMediaFiles:
-		if res.ListMediaFiles != nil {
-			for _, f := range *res.ListMediaFiles {
-				fmt.Printf(threeColFmt, f.MediaUrl, f.UploadedAt, f.MediaName)
-			}
-			return true
-		}
+		return printMediaFiles(res)
 	case automate.ActionGetProjectBadgeKey:
 		if res.GetProjectBadgeKey != nil {
 			fmt.Println(*res.GetProjectBadgeKey)
