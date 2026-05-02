@@ -87,6 +87,6 @@ const isMain =
   import.meta.url === `file://${process.argv[1]}` ||
   import.meta.url === `file://${resolve(process.argv[1])}`;
 
-if (typeof (globalThis as any).__BUILD_TARGET__ === "undefined" && isMain && !process.argv[1].endsWith('browserstack-client.js')) {
+if (typeof (globalThis as unknown as { __BUILD_TARGET__?: string }).__BUILD_TARGET__ === "undefined" && isMain && !process.argv[1].endsWith('browserstack-client.js')) {
   main();
 }

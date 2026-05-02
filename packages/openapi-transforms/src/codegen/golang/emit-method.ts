@@ -65,20 +65,19 @@ export function emitGoMethod(input: GoMethodInput): string {
 
   const docComment = input.cliAction ? `/**\n * CLI Command: ${input.cliAction}\n */\n` : "";
 
-  if (isTextResponse) {
-    return `${docComment}func (c *${input.className}) ${fnName}(${paramsList}) (string, error) {
-\treturn c.http.GetText(ctx, ${urlExpr}, ${queryExpr})
-}`;
+  if (isMultipart) {
+    const returnType = isTextResponse ? "string" : `*${input.responseType}`;
+    let body = `\tvar out ${isTextResponse ? "string" : input.responseType}\n`;
+    body += `\tif err := c.http.PostMultipart(ctx, ${urlExpr}, file, fileName, fields, &out); err != nil {\n`;
+    body += `\t\treturn ${isTextResponse ? '""' : "nil"}, err\n`;
+    body += `\t}\n`;
+    body += `\treturn ${isTextResponse ? "out" : "&out"}, nil`;
+
+    return `${docComment}func (c *${input.className}) ${fnName}(${paramsList}) (${returnType}, error) {\n${body}\n}`;
   }
 
-  if (isMultipart) {
-    return `${docComment}func (c *${input.className}) ${fnName}(${paramsList}) (*${input.responseType}, error) {
-\tvar out ${input.responseType}
-\tif err := c.http.PostMultipart(ctx, ${urlExpr}, file, fileName, fields, &out); err != nil {
-\t\treturn nil, err
-\t}
-\treturn &out, nil
-}`;
+  if (isTextResponse) {
+    return `${docComment}func (c *${input.className}) ${fnName}(${paramsList}) (string, error) {\n\treturn c.http.${httpMethod}Text(ctx, ${urlExpr}, ${queryExpr})\n}`;
   }
 
   const needsBody = input.hasRequestBody;

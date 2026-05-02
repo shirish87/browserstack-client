@@ -52,7 +52,11 @@ function formatZodIssue(issue: z.ZodIssue, argNames?: string[]): string {
 /**
  * Parses raw CLI arguments into a structured object matching the generated Zod schema.
  */
-export function parseArgs(schema: z.ZodObject<any>, args: string[], argNames?: string[]): any {
+export function parseArgs<T extends z.ZodObject<any>>(
+  schema: T,
+  args: string[],
+  argNames?: string[]
+): z.infer<T> {
   const positionalSchema = schema.shape.positional as z.ZodTuple<any>;
   const positionalCount = positionalSchema._def.items.length;
 
@@ -60,7 +64,7 @@ export function parseArgs(schema: z.ZodObject<any>, args: string[], argNames?: s
   const remainingArgs = args.slice(positionalCount);
 
   const { options, body } = parseRemainingArgs(remainingArgs);
-  const data: any = { positional: positionalArgs };
+  const data: Record<string, unknown> = { positional: positionalArgs };
 
   if (schema.shape.options) {
     data.options = options;

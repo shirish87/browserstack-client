@@ -65,10 +65,8 @@ func (e *APIError) Error() string {
 
 	prefix := fmt.Sprintf("Error: %d %s", e.StatusCode, strings.TrimPrefix(status, fmt.Sprintf("%d ", e.StatusCode)))
 
-	if len(e.Body) > 0 {
-		if msg := extractBodyMessage(e.Body); msg != "" {
-			return fmt.Sprintf("%s: %s", prefix, msg)
-		}
+	if msg := extractBodyMessage(e.Body); msg != "" {
+		return fmt.Sprintf("%s: %s", prefix, msg)
 	}
 	return prefix
 }
@@ -154,12 +152,24 @@ func (c *Client) Post(ctx context.Context, path string, bodyIn any, out any) err
 	return c.doJSON(ctx, http.MethodPost, path, bodyIn, out)
 }
 
+func (c *Client) PostText(ctx context.Context, path string, bodyIn any) (string, error) {
+	return c.doJSONText(ctx, http.MethodPost, path, bodyIn)
+}
+
 func (c *Client) Put(ctx context.Context, path string, bodyIn any, out any) error {
 	return c.doJSON(ctx, http.MethodPut, path, bodyIn, out)
 }
 
+func (c *Client) PutText(ctx context.Context, path string, bodyIn any) (string, error) {
+	return c.doJSONText(ctx, http.MethodPut, path, bodyIn)
+}
+
 func (c *Client) Patch(ctx context.Context, path string, bodyIn any, out any) error {
 	return c.doJSON(ctx, http.MethodPatch, path, bodyIn, out)
+}
+
+func (c *Client) PatchText(ctx context.Context, path string, bodyIn any) (string, error) {
+	return c.doJSONText(ctx, http.MethodPatch, path, bodyIn)
 }
 
 func (c *Client) Delete(ctx context.Context, path string, query map[string]string, out any) error {
@@ -175,6 +185,18 @@ func (c *Client) Delete(ctx context.Context, path string, query map[string]strin
 		return json.Unmarshal(body, out)
 	}
 	return nil
+}
+
+func (c *Client) DeleteText(ctx context.Context, path string, query map[string]string) (string, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, c.buildURL(path, query), nil)
+	if err != nil {
+		return "", err
+	}
+	body, err := c.do(req)
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
 }
 
 func (c *Client) doJSON(ctx context.Context, method, path string, bodyIn any, out any) error {
@@ -197,6 +219,29 @@ func (c *Client) doJSON(ctx context.Context, method, path string, bodyIn any, ou
 	return nil
 }
 
+func (c *Client) doJSONText(ctx context.Context, method, path string, bodyIn any) (string, error) {
+	var b []byte
+	if bodyIn != nil {
+		var err error
+		b, err = json.Marshal(bodyIn)
+		if err != nil {
+			return "", fmt.Errorf("marshaling request body: %w", err)
+		}
+	}
+	req, err := http.NewRequestWithContext(ctx, method, c.baseURL+path, bytes.NewReader(b))
+	if err != nil {
+		return "", err
+	}
+	if bodyIn != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
+	body, err := c.do(req)
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
+}
+
 func (c *Client) PostMultipart(ctx context.Context, path string, file []byte, fileName string, fields map[string]string, out any) error {
 	body, contentType, err := buildMultipart(file, fileName, fields)
 	if err != nil {
@@ -212,6 +257,10 @@ func (c *Client) PostMultipart(ctx context.Context, path string, file []byte, fi
 		return err
 	}
 	if out != nil && len(respBody) > 0 {
+		if s, ok := out.(*string); ok {
+			*s = string(respBody)
+			return nil
+		}
 		return json.Unmarshal(respBody, out)
 	}
 	return nil

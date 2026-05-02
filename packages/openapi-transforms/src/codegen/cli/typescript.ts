@@ -1,15 +1,16 @@
 import { CLIMetadata, CLIActionMetadata } from "./index";
 import { toPascalCase } from "../golang/case";
 
-function openApiToZod(schema: any, required: boolean): string {
-    if (!schema) return "z.unknown()";
+function openApiToZod(schema: unknown, required: boolean): string {
+    if (!schema || typeof schema !== "object") return "z.unknown()";
 
+    const s = schema as Record<string, unknown>;
     let zod = "";
-    if (schema.$ref) {
+    if (s.$ref) {
         return "z.any()";
     }
 
-    const type = Array.isArray(schema.type) ? schema.type[0] : schema.type;
+    const type = Array.isArray(s.type) ? s.type[0] : s.type;
 
     switch (type) {
         case "string":
@@ -23,20 +24,22 @@ function openApiToZod(schema: any, required: boolean): string {
             zod = "z.coerce.boolean()";
             break;
         case "array":
-            zod = `z.array(${openApiToZod(schema.items || {}, true)})`;
+            zod = `z.array(${openApiToZod(s.items || {}, true)})`;
             break;
         case "object":
-            const props = Object.entries(schema.properties || {})
+            const properties = (s.properties || {}) as Record<string, unknown>;
+            const requiredProps = (Array.isArray(s.required) ? s.required : []) as string[];
+            const props = Object.entries(properties)
                 .map(([k, v]) => {
                     const name = k.includes("-") || k.includes("[") ? `"${k}"` : k;
-                    const isPropRequired = Array.isArray(schema.required) && schema.required.includes(k);
+                    const isPropRequired = requiredProps.includes(k);
                     return `${name}: ${openApiToZod(v, isPropRequired)}`;
                 })
                 .join(", ");
             zod = `z.object({ ${props} })`;
             break;
         default:
-            if (schema.oneOf || schema.anyOf || schema.allOf) {
+            if (s.oneOf || s.anyOf || s.allOf) {
                 return "z.any()";
             }
             zod = "z.any()";
@@ -104,7 +107,7 @@ function buildArgsSchema(
   }
   out += `    ]),\n`;
   if (bodySchema) {
-    out += `    body: ${openApiToZod(bodySchema, !!actionMeta.requestBody.required)},\n`;
+    out += `    body: ${openApiToZod(bodySchema, !!actionMeta.requestBody?.required)},\n`;
   }
   out += `  });\n`;
   return out;
@@ -116,7 +119,7 @@ function buildActionMapEntry(
   resourceName: string,
   enumName: string,
   pathParamNames: string[],
-  queryParams: any[]
+  queryParams: CLIActionMetadata["parameters"]
 ): string {
   const actionPascal = toPascalCase(action);
   const schemaName = `${resourceName}${actionPascal}Args`;
@@ -149,6 +152,12 @@ export function generateTSSchemas(metadata: CLIMetadata[]): string {
     out += "import { z } from \"zod\";\n";
     out += "import * as Constants from \"./constants.generated\";\n\n";
 
+    out += `export interface ZodActionConfig {\n`;
+    out += `  schema: z.ZodObject<Record<string, any>>;\n`;
+    out += `  argNames: string[];\n`;
+    out += `  call: (client: unknown, data: { positional: unknown[], body?: unknown, options?: Record<string, unknown> }) => Promise<unknown>;\n`;
+    out += `}\n\n`;
+
     for (const m of metadata) {
         const productPascal = toPascalCase(m.product);
         out += `export namespace ${productPascal}Schemas {\n`;
@@ -159,20 +168,24 @@ export function generateTSSchemas(metadata: CLIMetadata[]): string {
             for (const [action, actionMeta] of Object.entries(resMeta.actions)) {
                 const pathParamNames = (actionMeta.path.match(/\{([^}]+)\}/g) || []).map((s: string) => s.slice(1, -1));
                 const pathParams = pathParamNames.map((name: string) => {
-                    const p = actionMeta.parameters.find((p: any) => p.name === name && p.in === "path");
-                    return { name, schema: p?.schema || { type: "string" }, required: true };
+                    const p = actionMeta.parameters.find((p) => p.name === name && p.in === "path");
+                    return { name, schema: (p?.schema as unknown) || { type: "string" }, required: true };
                 });
-                const queryParams = actionMeta.parameters.filter((p: any) => p.in === "query");
+                const queryParams = actionMeta.parameters.filter((p) => p.in === "query").map(p => ({
+                    name: p.name,
+                    schema: (p.schema as unknown) || { type: "string" },
+                    required: p.required
+                }));
                 const bodySchema = actionMeta.requestBody?.content?.["application/json"]?.schema;
                 out += buildArgsSchema(resourceName, action, actionMeta, pathParams, queryParams, bodySchema);
             }
 
             const enumName = resource === "default" ? `Constants.${productPascal}.Action` : `Constants.${productPascal}.${resourceName}Action`;
             const mapName = `${resourceName}ActionSchemaMap`;
-            out += `  export const ${mapName}: Record<string, { schema: z.ZodObject<any>, argNames: string[], call: (client: any, data: any) => Promise<any> }> = {\n`;
+            out += `  export const ${mapName}: Record<string, ZodActionConfig> = {\n`;
             for (const [action, actionMeta] of Object.entries(resMeta.actions)) {
                 const pathParamNames = (actionMeta.path.match(/\{([^}]+)\}/g) || []).map((s: string) => s.slice(1, -1));
-                const queryParams = actionMeta.parameters.filter((p: any) => p.in === "query");
+                const queryParams = actionMeta.parameters.filter((p) => p.in === "query");
                 out += buildActionMapEntry(action, actionMeta, resourceName, enumName, pathParamNames, queryParams);
             }
             out += `  };\n`;

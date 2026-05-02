@@ -7,19 +7,34 @@ export * from "./golang";
 
 interface SpecOp {
   operationId?: string;
-  parameters?: any[];
-  requestBody?: any;
+  parameters?: Array<{
+    name: string;
+    in: string;
+    required?: boolean;
+    schema?: Record<string, unknown>;
+    $ref?: string;
+  }>;
+  requestBody?: {
+    content?: Record<string, {
+      schema?: Record<string, unknown>;
+    }>;
+    required?: boolean;
+  };
   responses?: Record<string, {
     content?: Record<string, {
-      schema?: any;
+      schema?: Record<string, unknown>;
     }>;
   }>;
+  tags?: string[];
   "x-cli-action"?: string;
   "x-cli-resource"?: string;
 }
 
 interface SpecDoc {
   paths?: Record<string, Record<string, SpecOp | undefined>>;
+  components?: {
+    parameters?: Record<string, SpecOp["parameters"] extends Array<infer T> ? T : never>;
+  };
 }
 
 export interface CLIActionMetadata {
@@ -27,8 +42,13 @@ export interface CLIActionMetadata {
   methodName: string;
   path: string;
   method: string;
-  parameters: any[];
-  requestBody?: any;
+  parameters: Array<{
+    name: string;
+    in: string;
+    required: boolean;
+    schema?: Record<string, unknown>;
+  }>;
+  requestBody?: SpecOp["requestBody"];
   /** Go response type for this action, e.g. "AutomatePlan", "string", "[]byte". Populated by build.mjs after Go codegen. */
   responseGoType?: string;
   /** Field name in DispatchResult for this action, e.g. "GetPlan". Populated by build.mjs after Go codegen. */
@@ -43,20 +63,33 @@ export interface CLIMetadata {
 }
 
 function resolveAction(op: SpecOp, product: string): string {
-  const xCliAction = op["x-cli-action"] as string;
+  const xCliAction = op["x-cli-action"];
   if (xCliAction) return xCliAction;
   const rawAction = stripOperationPrefix(op.operationId!, product);
   return toCLIAction(rawAction, op.responses?.["200"]?.content?.["application/json"]?.schema);
 }
 
-function resolveParams(pathItem: any, op: SpecOp, doc: any): any[] {
-  const allParamsRaw = [...(pathItem.parameters || []), ...(op.parameters || [])];
+function resolveParams(
+  pathItem: Record<string, SpecOp | undefined>,
+  op: SpecOp,
+  doc: SpecDoc
+): CLIActionMetadata["parameters"] {
+  const pathParams = (pathItem.parameters as SpecOp["parameters"]) || [];
+  const opParams = op.parameters || [];
+  const allParamsRaw = [...pathParams, ...opParams];
+
   return allParamsRaw.map(p => {
+    let resolved = p;
     if (p.$ref) {
       const refName = p.$ref.replace("#/components/parameters/", "");
-      return doc.components?.parameters?.[refName] ?? p;
+      resolved = doc.components?.parameters?.[refName] ?? p;
     }
-    return p;
+    return {
+      name: resolved.name,
+      in: resolved.in,
+      required: resolved.name === "auth_token" ? false : !!resolved.required,
+      schema: resolved.schema,
+    };
   });
 }
 
@@ -73,7 +106,7 @@ export async function extractCLIMetadata(specPath: string, product: string): Pro
     for (const [_method, op] of Object.entries(pathItem)) {
       if (!op?.operationId) continue;
 
-      const rawResource = op["x-cli-resource"] as string || (op as any).tags?.[0] || "";
+      const rawResource = op["x-cli-resource"] || op.tags?.[0] || "";
       const productNorm = product.replace(/-/g, "").toLowerCase();
       const resourceNorm = rawResource.replace(/-/g, "").replace(/\\s/g, "").toLowerCase();
 
@@ -92,10 +125,7 @@ export async function extractCLIMetadata(specPath: string, product: string): Pro
         methodName: stripOperationPrefix(op.operationId, product),
         path,
         method: _method,
-        parameters: allParams.map(p => ({
-            ...p,
-            required: p.name === "auth_token" ? false : !!p.required
-        })),
+        parameters: allParams,
         requestBody: op.requestBody,
       };
     }

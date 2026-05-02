@@ -117,6 +117,16 @@ export async function main(
         };
     }
 
+    if (action === Automate.Action.UploadBuildTerminalLogs || action === Automate.Action.UploadSessionTerminalLogs) {
+        if (!rest[1]) throw new BrowserStackError("Missing <file-path>");
+        const filePath = resolve(rest[1]);
+        const filename = basename(filePath);
+        parsed.body = {
+            file: new Blob([await readFile(filePath)]),
+            fileName: filename,
+        };
+    }
+
     const result = await schemaConfig.call(client, parsed);
     printResult(action, result, logger);
   } catch (err) {

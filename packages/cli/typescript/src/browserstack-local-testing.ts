@@ -49,9 +49,14 @@ export async function main(
 
     switch (action) {
       case LocalTesting.Action.ListInstances: {
-        const instances = (result as { instances: any[] }).instances ?? [];
+        interface LocalInstance {
+          id: string;
+          localIdentifier?: string;
+          startTime: string;
+        }
+        const instances = (result as { instances: LocalInstance[] }).instances ?? [];
         instances.forEach((inst) =>
-          logger.info(`${inst.id} ${inst.localIdentifier} ${inst.startTime}`)
+          logger.info(`${inst.id} ${inst.localIdentifier ?? ""} ${inst.startTime}`)
         );
         logger.info(JSON.stringify(result, null, 2));
         break;

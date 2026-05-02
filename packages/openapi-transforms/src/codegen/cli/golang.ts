@@ -65,16 +65,16 @@ function emitDispatchCase(
   hasTypedResult: boolean,
   product: string
 ): string {
-  const pathParams = actionMeta.parameters.filter((p: any) => p.in === "path");
-  const queryParams = actionMeta.parameters.filter((p: any) => p.in === "query");
-  const requiredQueryParams = queryParams.filter((p: any) => p.required);
+  const pathParams = actionMeta.parameters.filter((p) => p.in === "path");
+  const queryParams = actionMeta.parameters.filter((p) => p.in === "query");
+  const requiredQueryParams = queryParams.filter((p) => p.required);
   const totalRequired = pathParams.length + requiredQueryParams.length;
 
   let out = `\tcase ${prefix}${toPascalCase(action)}:\n`;
 
   if (pathParams.length > 0 || requiredQueryParams.length > 0) {
     out += `\t\tif len(args) < ${totalRequired} {\n`;
-    const argNames = [...pathParams, ...requiredQueryParams, ...queryParams.filter((p: any) => !p.required)].map((p: any) => `<${p.name}>`).join(" ");
+    const argNames = [...pathParams, ...requiredQueryParams, ...queryParams.filter((p) => !p.required)].map((p) => `<${p.name}>`).join(" ");
     out += `\t\t\treturn nil, fmt.Errorf("usage: ${product} ${action} ${argNames}")\n`;
     out += `\t\t}\n`;
   }

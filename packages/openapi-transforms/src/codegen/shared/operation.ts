@@ -47,18 +47,19 @@ export function toActionSlug(methodName: string): string {
 /**
  * Checks if a schema represents an array or a list.
  */
-export function isArrayList(schema: any): boolean {
-  if (!schema) return false;
-  if (schema.type === "array") return true;
-  if (schema.oneOf) return schema.oneOf.some(isArrayList);
-  if (schema.anyOf) return schema.anyOf.some(isArrayList);
+export function isArrayList(schema: unknown): boolean {
+  if (!schema || typeof schema !== "object") return false;
+  const s = schema as Record<string, unknown>;
+  if (s.type === "array") return true;
+  if (Array.isArray(s.oneOf)) return s.oneOf.some(isArrayList);
+  if (Array.isArray(s.anyOf)) return s.anyOf.some(isArrayList);
   return false;
 }
 
 /**
  * High-level helper to get a CLI action name from an operation.
  */
-export function toCLIAction(methodName: string, responseSchema?: any): string {
+export function toCLIAction(methodName: string, responseSchema?: unknown): string {
   let action = toActionSlug(methodName);
 
   const isGet = action.startsWith("get-");

@@ -75,6 +75,16 @@ export async function main(
         };
     }
 
+    if (action === AppAutomate.Action.UploadBuildTerminalLogs || action === AppAutomate.Action.UploadSessionTerminalLogs) {
+        if (!rest[1]) throw new BrowserStackError("Missing <file-path>");
+        const filePath = resolve(rest[1]);
+        const filename = basename(filePath);
+        parsed.body = {
+            file: new Blob([await readFile(filePath)]),
+            fileName: filename,
+        };
+    }
+
     const result = await schemaConfig.call(client, parsed);
     logger.info(JSON.stringify(result, null, 2));
   } catch (err) {
