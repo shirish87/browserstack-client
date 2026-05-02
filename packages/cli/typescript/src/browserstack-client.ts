@@ -14,6 +14,7 @@ import { main as runTestReporting } from "./browserstack-test-reporting.ts";
 import { main as runScreenshots } from "./browserstack-screenshots.ts";
 
 import { Product } from "./constants.generated.ts";
+import { formatError } from "./utils.ts";
 
 const products: Record<string, (args: string[]) => Promise<void>> = {
   local: runLocal,
@@ -27,31 +28,36 @@ const products: Record<string, (args: string[]) => Promise<void>> = {
 };
 
 export async function main(inputArgs: string[] = process.argv.slice(2)) {
-  const productInput = inputArgs[0]?.toLowerCase().trim();
+  try {
+    const productInput = inputArgs[0]?.toLowerCase().trim();
 
-  if (productInput === "version") {
-    const ver = (globalThis as Record<string, unknown>)["__CLI_VERSION__"] as string | undefined
-      ?? (await import("../package.json", { with: { type: "json" } })).default.version;
-    process.stdout.write(`browserstack-client ${ver}\n`);
-    return;
-  }
+    if (productInput === "version") {
+      const ver = (globalThis as Record<string, unknown>)["__CLI_VERSION__"] as string | undefined
+        ?? (await import("../package.json", { with: { type: "json" } })).default.version;
+      process.stdout.write(`browserstack-client ${ver}\n`);
+      return;
+    }
 
-  if (productInput === "help") {
-    const valid = ["local", ...Object.values(Product)].join(", ");
-    process.stdout.write(`Usage: browserstack-client <product> <action> [args...]\n`);
-    process.stdout.write(`Products: ${valid}\n`);
-    return;
-  }
+    if (productInput === "help") {
+      const valid = ["local", ...Object.values(Product)].join(", ");
+      process.stdout.write(`Usage: browserstack-client <product> <action> [args...]\n`);
+      process.stdout.write(`Products: ${valid}\n`);
+      return;
+    }
 
-  if (!productInput || !products[productInput]) {
-    const valid = ["local", ...Object.values(Product)].join(", ");
-    process.stderr.write(
-      `Invalid or missing product: ${productInput ?? "(none)"} (valid: ${valid})\n`
-    );
+    if (!productInput || !products[productInput]) {
+      const valid = ["local", ...Object.values(Product)].join(", ");
+      process.stderr.write(
+        `Invalid or missing product: ${productInput ?? "(none)"} (valid: ${valid})\n`
+      );
+      process.exit(1);
+    }
+
+    await products[productInput](inputArgs.slice(1));
+  } catch (err) {
+    process.stderr.write(`${formatError(err)}\n`);
     process.exit(1);
   }
-
-  await products[productInput](inputArgs.slice(1));
 }
 
 const isMain =

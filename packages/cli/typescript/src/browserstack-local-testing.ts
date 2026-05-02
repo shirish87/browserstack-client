@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { ensureAccessKeyExists } from "./utils.ts";
+import { ensureAccessKeyExists, formatError } from "./utils.ts";
 import { BrowserStackError } from "@dot-slash/browserstack-core";
 import { LocalTestingClient } from "@dot-slash/browserstack-local-testing-api";
 import process from "node:process";
@@ -60,12 +60,7 @@ export async function main(
     }
 
   } catch (err) {
-    if (err instanceof Error) {
-      logger.error(err.message);
-    } else {
-      logger.error(`An unexpected error occurred: ${err}`);
-    }
-
+    logger.error(formatError(err));
     process.exit(1);
   }
 }

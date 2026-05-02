@@ -34,7 +34,7 @@ func main() {
 	if len(os.Args) < 3 {
 		fmt.Fprintln(os.Stderr, "Usage: browserstack-client <product> <action> [args...]")
 		fmt.Fprintln(os.Stderr, "       browserstack-client version")
-		fmt.Printf("Products: %s, %s, %s, %s, %s, %s, %s\n",
+		fmt.Fprintf(os.Stderr, "Products: %s, %s, %s, %s, %s, %s, %s\n",
 			automate.ProductAutomate, appautomate.ProductAppAutomate, screenshots.ProductScreenshots, localtesting.ProductLocalTesting,
 			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting)
 		os.Exit(1)
@@ -45,8 +45,8 @@ func main() {
 	args := os.Args[3:]
 
 	if product == "help" {
-		fmt.Fprintln(os.Stderr, "Usage: browserstack-client <product> <action> [args...]")
-		fmt.Fprintln(os.Stderr, "       browserstack-client version")
+		fmt.Fprintln(os.Stdout, "Usage: browserstack-client <product> <action> [args...]")
+		fmt.Fprintln(os.Stdout, "       browserstack-client version")
 		fmt.Printf("Products: %s, %s, %s, %s, %s, %s, %s\n",
 			automate.ProductAutomate, appautomate.ProductAppAutomate, screenshots.ProductScreenshots, localtesting.ProductLocalTesting,
 			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting)
