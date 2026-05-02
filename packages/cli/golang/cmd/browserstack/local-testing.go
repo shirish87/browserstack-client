@@ -13,7 +13,7 @@ func runLocalTesting(c *browserstackhttp.Client, action string, args []string) e
 	client := localtesting.New(c)
 	ctx := context.Background()
 
-	const usage = "Usage: local-testing <action> [args...]"
+	const usage = "Usage: local <action> [args...]"
 
 	if action == "help" {
 		fmt.Println(usage)

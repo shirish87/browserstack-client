@@ -13,7 +13,7 @@ interface Logger {
   error(message: string, ...params: unknown[]): void;
 }
 
-const USAGE = `Usage: local-testing <action> [args...]
+const USAGE = `Usage: local <action> [args...]
 Actions: ${Object.values(LocalTesting.Action).join(", ")}`;
 
 export async function main(
@@ -53,6 +53,7 @@ export async function main(
         instances.forEach((inst) =>
           logger.info(`${inst.id} ${inst.localIdentifier} ${inst.startTime}`)
         );
+        logger.info(JSON.stringify(result, null, 2));
         break;
       }
       default:

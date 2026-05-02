@@ -22,6 +22,22 @@ describe("LocalCLI", () => {
     }
   );
 
+  describe("Test help command", () => {
+    test("help", async () => {
+      let output = "";
+      await runLocalCli(["help"], {
+        info(message) {
+          output += message;
+        },
+        error(message) {
+          expect(message).toBeFalsy();
+        },
+      });
+      expect(output).toContain("Usage: local <action> [args...]");
+      expect(output).toContain("Actions: start, stop, list, run-with");
+    });
+  });
+
   describe("Test instance run-with", () => {
     test("run-with", async () => {
       await runLocalCli(

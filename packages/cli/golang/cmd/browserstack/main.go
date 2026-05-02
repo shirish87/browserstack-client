@@ -7,7 +7,6 @@ import (
 	"github.com/browserstack/browserstack-client/generated/accessibility"
 	appautomate "github.com/browserstack/browserstack-client/generated/app-automate"
 	"github.com/browserstack/browserstack-client/generated/automate"
-	localtesting "github.com/browserstack/browserstack-client/generated/local-testing"
 	"github.com/browserstack/browserstack-client/generated/screenshots"
 	testmanagement "github.com/browserstack/browserstack-client/generated/test-management"
 	testreporting "github.com/browserstack/browserstack-client/generated/test-reporting"
@@ -34,8 +33,8 @@ func main() {
 	if len(os.Args) < 3 {
 		fmt.Fprintln(os.Stderr, "Usage: browserstack-client <product> <action> [args...]")
 		fmt.Fprintln(os.Stderr, "       browserstack-client version")
-		fmt.Fprintf(os.Stderr, "Products: %s, %s, %s, %s, %s, %s, %s\n",
-			automate.ProductAutomate, appautomate.ProductAppAutomate, screenshots.ProductScreenshots, localtesting.ProductLocalTesting,
+		fmt.Fprintf(os.Stderr, "Products: local, %s, %s, %s, %s, %s, %s\n",
+			automate.ProductAutomate, appautomate.ProductAppAutomate, screenshots.ProductScreenshots,
 			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting)
 		os.Exit(1)
 	}
@@ -47,8 +46,8 @@ func main() {
 	if product == "help" {
 		fmt.Fprintln(os.Stdout, "Usage: browserstack-client <product> <action> [args...]")
 		fmt.Fprintln(os.Stdout, "       browserstack-client version")
-		fmt.Printf("Products: %s, %s, %s, %s, %s, %s, %s\n",
-			automate.ProductAutomate, appautomate.ProductAppAutomate, screenshots.ProductScreenshots, localtesting.ProductLocalTesting,
+		fmt.Printf("Products: local, %s, %s, %s, %s, %s, %s\n",
+			automate.ProductAutomate, appautomate.ProductAppAutomate, screenshots.ProductScreenshots,
 			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting)
 		return
 	}
@@ -60,14 +59,14 @@ func main() {
 
 	var err error
 	switch product {
+	case "local":
+		err = runLocalWrapper(apiClient, action, args)
 	case automate.ProductAutomate:
 		err = runAutomate(apiClient, action, args)
 	case appautomate.ProductAppAutomate:
 		err = runAppAutomate(apiClient, action, args)
 	case screenshots.ProductScreenshots:
 		err = runScreenshots(screenshotsClient, action, args)
-	case localtesting.ProductLocalTesting:
-		err = runLocalTesting(apiClient, action, args)
 	case accessibility.ProductAccessibility:
 		err = runAccessibility(accessibilityClient, action, args)
 	case testmanagement.ProductTestManagement:
