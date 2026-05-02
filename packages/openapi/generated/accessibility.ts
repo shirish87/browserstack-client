@@ -451,42 +451,45 @@ export interface components {
             needsReview?: number;
             hidden?: number;
         };
+        IssueCountBySeverity: {
+            minor?: number;
+            serious?: number;
+            critical?: number;
+            moderate?: number;
+        };
         IssueCount: {
-            issueCountBySeverity?: {
-                minor?: number;
-                serious?: number;
-                critical?: number;
-                moderate?: number;
-            };
+            issueCountBySeverity?: components["schemas"]["IssueCountBySeverity"];
             issueCountByURL?: components["schemas"]["IssueCountByURL"][];
             issueCountByComponent?: components["schemas"]["IssueCountByComponent"][];
             issueCountByCategory?: components["schemas"]["IssueCountByCategory"][];
         };
+        IssueCountSeverity: {
+            critical?: number;
+            serious?: number;
+            moderate?: number;
+            minor?: number;
+        };
+        IssueCountSeverityDetailed: {
+            critical?: number;
+            criticalPassed?: number;
+            criticalFailed?: number;
+            serious?: number;
+            seriousPassed?: number;
+            seriousFailed?: number;
+            moderate?: number;
+            moderatePassed?: number;
+            moderateFailed?: number;
+            minor?: number;
+            minorPassed?: number;
+            minorFailed?: number;
+        };
         ScoreData: {
             score?: number;
-            impact?: {
-                critical?: number;
-                serious?: number;
-                moderate?: number;
-                minor?: number;
-            };
+            impact?: components["schemas"]["IssueCountSeverity"];
         };
         ScoreDataDetailed: {
             score?: number;
-            impact?: {
-                critical?: number;
-                criticalPassed?: number;
-                criticalFailed?: number;
-                serious?: number;
-                seriousPassed?: number;
-                seriousFailed?: number;
-                moderate?: number;
-                moderatePassed?: number;
-                moderateFailed?: number;
-                minor?: number;
-                minorPassed?: number;
-                minorFailed?: number;
-            };
+            impact?: components["schemas"]["IssueCountSeverityDetailed"];
         };
         ChangesSinceLastRun: {
             newIssues?: number;
@@ -503,43 +506,87 @@ export interface components {
             version?: string;
             logo?: string;
         };
+        SessionDataFramework: {
+            name?: string;
+            version?: string;
+        };
+        SessionData: {
+            browser?: components["schemas"]["BrowserData"][];
+            os?: components["schemas"]["OsData"][];
+            framework?: components["schemas"]["SessionDataFramework"];
+        };
+        HealthSummary: {
+            failed?: number;
+            passed?: number;
+            skipped?: number;
+            total?: number;
+        };
+        TestCaseSummaryBreakdown: {
+            minor?: number;
+            serious?: number;
+            critical?: number;
+            moderate?: number;
+        };
+        TestCaseSummary: {
+            pageCount?: number;
+            componentCount?: number;
+            issueCount?: number;
+            severityBreakdown?: components["schemas"]["TestCaseSummaryBreakdown"];
+        };
+        ScanConfigCreatedBy: {
+            id?: number;
+            name?: string;
+        };
+        ScanConfigInfo: {
+            name?: string;
+            scanConfigId?: number;
+            createdBy?: components["schemas"]["ScanConfigCreatedBy"];
+            wcagVersion?: string;
+            needsReview?: boolean;
+            bestPractices?: boolean;
+            recurring?: boolean;
+            advanced?: boolean;
+            pageCount?: number;
+            nextScanDate?: string;
+            active?: boolean;
+            isProcessing?: boolean;
+            authEnabled?: boolean;
+            localTestingEnabled?: boolean;
+        };
+        ScanEngineInfo: {
+            testEngine?: components["schemas"]["ScanEngineInfo"];
+        };
+        AuthConfigData: {
+            url?: string;
+            username?: string;
+            password?: string;
+            usernameSelector?: string;
+            passwordSelector?: string;
+            submitSelector?: string;
+        };
+        WorkflowAnalyzerCreatedBy: {
+            id?: number;
+            name?: string;
+            email?: string;
+        };
         AuthConfig: {
             id?: number;
             name?: string;
             type?: string;
-            authData?: {
-                url?: string;
-                username?: string;
-                password?: string;
-                usernameSelector?: string;
-                passwordSelector?: string;
-                submitSelector?: string;
-            };
+            authData?: components["schemas"]["AuthConfigData"];
         };
         WorkflowAnalyzerReportItem: {
             id?: number;
             name?: string;
-            createdBy?: {
-                user_id?: number;
-                name?: string;
-            };
+            createdBy?: components["schemas"]["WorkflowAnalyzerCreatedBy"];
             wcagVersion?: string;
             status?: string;
             needsReview?: boolean;
             bestPractices?: boolean;
             advanced?: boolean;
             scanType?: string;
-            engineInfo?: {
-                testEngine?: {
-                    name?: string;
-                    version?: string;
-                };
-            };
-            issueSummary?: {
-                componentCount?: number;
-                issueCount?: number;
-                pageCount?: number;
-            };
+            engineInfo?: components["schemas"]["ScanEngineInfo"];
+            issueSummary?: components["schemas"]["IssueSummary"];
         };
         WorkflowAnalyzerReportList: {
             reports?: components["schemas"]["WorkflowAnalyzerReportItem"][];
@@ -548,10 +595,7 @@ export interface components {
         WorkflowAnalyzerReportSummary: {
             id?: number;
             name?: string;
-            createdBy?: {
-                user_id?: number;
-                name?: string;
-            };
+            createdBy?: components["schemas"]["WorkflowAnalyzerCreatedBy"];
             time?: string;
             wcagVersion?: string;
             status?: string;
@@ -559,7 +603,7 @@ export interface components {
             bestPractices?: boolean;
             advanced?: boolean;
             scanType?: string;
-            engineInfo?: components["schemas"]["EngineInfo"];
+            engineInfo?: components["schemas"]["ScanEngineInfo"];
             scoreData?: components["schemas"]["ScoreData"];
             issueSummary?: components["schemas"]["IssueSummary"];
             issueCount?: components["schemas"]["IssueCount"];
@@ -574,34 +618,22 @@ export interface components {
             bestPractices?: boolean;
             advanced?: boolean;
             scanType?: string;
-            engineInfo?: components["schemas"]["EngineInfo"];
+            engineInfo?: components["schemas"]["ScanEngineInfo"];
             report_link?: string;
             pagination?: components["schemas"]["Pagination"];
         };
         AssistedTestReportItem: {
             id?: number;
             name?: string;
-            createdBy?: {
-                user_id?: number;
-                name?: string;
-            };
+            createdBy?: components["schemas"]["WorkflowAnalyzerCreatedBy"];
             wcagVersion?: string;
             status?: string;
             needsReview?: boolean;
             bestPractices?: boolean;
             advanced?: boolean;
             scanType?: string;
-            engineInfo?: {
-                testEngine?: {
-                    name?: string;
-                    version?: string;
-                };
-            };
-            issueSummary?: {
-                componentCount?: number;
-                issueCount?: number;
-                pageCount?: number;
-            };
+            engineInfo?: components["schemas"]["ScanEngineInfo"];
+            issueSummary?: components["schemas"]["IssueSummary"];
             assistedTestType?: string;
         };
         AssistedTestReportList: {
@@ -611,10 +643,7 @@ export interface components {
         AssistedTestReportSummary: {
             id?: number;
             name?: string;
-            createdBy?: {
-                user_id?: number;
-                name?: string;
-            };
+            createdBy?: components["schemas"]["WorkflowAnalyzerCreatedBy"];
             time?: string;
             wcagVersion?: string;
             status?: string;
@@ -622,7 +651,7 @@ export interface components {
             bestPractices?: boolean;
             advanced?: boolean;
             scanType?: string;
-            engineInfo?: components["schemas"]["EngineInfo"];
+            engineInfo?: components["schemas"]["ScanEngineInfo"];
             scoreData?: components["schemas"]["ScoreData"];
             issueSummary?: components["schemas"]["IssueSummary"];
             issueCount?: components["schemas"]["IssueCount"];
@@ -638,7 +667,7 @@ export interface components {
             bestPractices?: boolean;
             advanced?: boolean;
             scanType?: string;
-            engineInfo?: components["schemas"]["EngineInfo"];
+            engineInfo?: components["schemas"]["ScanEngineInfo"];
             report_link?: string;
             pagination?: components["schemas"]["Pagination"];
             assistedTestType?: string;
@@ -679,25 +708,7 @@ export interface components {
             pagination?: components["schemas"]["Pagination"];
         };
         WebsiteScannerScanOverview: {
-            scanConfigInfo?: {
-                name?: string;
-                scanConfigId?: number;
-                createdBy?: {
-                    id?: number;
-                    name?: string;
-                };
-                wcagVersion?: string;
-                needsReview?: boolean;
-                bestPractices?: boolean;
-                recurring?: boolean;
-                advanced?: boolean;
-                pageCount?: number;
-                nextScanDate?: string;
-                active?: boolean;
-                isProcessing?: boolean;
-                authEnabled?: boolean;
-                localTestingEnabled?: boolean;
-            };
+            scanConfigInfo?: components["schemas"]["ScanConfigInfo"];
             urlList?: string[];
         };
         WebsiteScannerScanRunList: {
@@ -729,7 +740,7 @@ export interface components {
             bestPractices?: boolean;
             advanced?: boolean;
             wcagVersion?: string;
-            engineInfo?: components["schemas"]["EngineInfo"];
+            engineInfo?: components["schemas"]["ScanEngineInfo"];
             authEnabled?: boolean;
             localTestingEnabled?: boolean;
             status?: string;
@@ -751,7 +762,7 @@ export interface components {
             needsReview?: boolean;
             bestPractices?: boolean;
             advanced?: boolean;
-            engineInfo?: components["schemas"]["EngineInfo"];
+            engineInfo?: components["schemas"]["ScanEngineInfo"];
             wcagVersion?: string;
             report_link?: string;
         };
@@ -786,10 +797,7 @@ export interface components {
             localTestingEnabled?: boolean;
             authEnabled?: boolean;
             pageCount?: number;
-            createdBy?: {
-                id?: number;
-                name?: string;
-            };
+            createdBy?: components["schemas"]["WorkflowAnalyzerCreatedBy"];
             projectId?: number;
             thBuildId?: string;
         };
@@ -802,17 +810,7 @@ export interface components {
             name?: string;
             status?: string;
             time?: string;
-            summary?: {
-                pageCount?: number;
-                componentCount?: number;
-                issueCount?: number;
-                severityBreakdown?: {
-                    minor?: number;
-                    serious?: number;
-                    critical?: number;
-                    moderate?: number;
-                };
-            };
+            summary?: components["schemas"]["TestCaseSummary"];
             file?: string;
             osData?: components["schemas"]["OsData"];
             browserData?: components["schemas"]["BrowserData"];
@@ -829,27 +827,15 @@ export interface components {
             id?: number;
             buildNumber?: number;
             wcagVersion?: string;
-            testEngine?: components["schemas"]["EngineInfo"];
+            testEngine?: components["schemas"]["ScanEngineInfo"];
             changesSinceLastRun?: components["schemas"]["ChangesSinceLastRun"];
             scoreData?: components["schemas"]["ScoreDataDetailed"];
             createdAt?: string;
             advanced?: boolean;
             needsReview?: boolean;
             bestPractice?: boolean;
-            sessionData?: {
-                browser?: components["schemas"]["BrowserData"][];
-                os?: components["schemas"]["OsData"][];
-                framework?: {
-                    name?: string;
-                    version?: string;
-                };
-            };
-            healthSummary?: {
-                failed?: number;
-                passed?: number;
-                skipped?: number;
-                total?: number;
-            };
+            sessionData?: components["schemas"]["SessionData"];
+            healthSummary?: components["schemas"]["HealthSummary"];
             issueSummary?: components["schemas"]["IssueSummaryFull"];
             issueCount?: components["schemas"]["IssueCount"];
             pagination?: components["schemas"]["Pagination"];
@@ -858,7 +844,7 @@ export interface components {
             buildNumber?: number;
             buildUId?: string;
             wcagVersion?: string;
-            testEngine?: components["schemas"]["EngineInfo"];
+            testEngine?: components["schemas"]["ScanEngineInfo"];
             time?: string;
             advanced?: boolean;
             needsReview?: boolean;
@@ -1058,6 +1044,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** AuthConfigsData */
                         data?: {
                             authConfigs?: components["schemas"]["AuthConfig"][];
                         };
@@ -1078,14 +1065,7 @@ export interface operations {
                 "application/json": {
                     name?: string;
                     type?: string;
-                    authData?: {
-                        url?: string;
-                        username?: string;
-                        password?: string;
-                        usernameSelector?: string;
-                        passwordSelector?: string;
-                        submitSelector?: string;
-                    };
+                    authData?: components["schemas"]["AuthConfigData"];
                 };
             };
         };

@@ -54,22 +54,7 @@ paths:
                 - build
                 properties:
                   build:
-                    type: object
-                    required:
-                    - automation_build
-                    - sessions
-                    properties:
-                      automation_build:
-                        $ref: '#/components/schemas/AutomateBuild'
-                      sessions:
-                        type: array
-                        items:
-                          type: object
-                          required:
-                          - automation_session
-                          properties:
-                            automation_session:
-                              $ref: '#/components/schemas/AutomateSession'
+                    $ref: '#/components/schemas/AppAutomateBuildContainer'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -413,6 +398,7 @@ paths:
                 - success
                 properties:
                   success:
+                    title: AppDeleteSuccessMessage
                     type: object
                     required:
                     - message
@@ -1037,16 +1023,7 @@ paths:
                 - project
                 properties:
                   project:
-                    allOf:
-                    - $ref: '#/components/schemas/AutomateProject'
-                    - type: object
-                      required:
-                      - builds
-                      properties:
-                        builds:
-                          type: array
-                          items:
-                            $ref: '#/components/schemas/AutomateBuild'
+                    $ref: '#/components/schemas/AppAutomateProjectWithBuilds'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -1326,6 +1303,7 @@ paths:
                 - success
                 properties:
                   success:
+                    title: AppDeleteSuccessMessage
                     type: object
                     required:
                     - message
@@ -1796,6 +1774,7 @@ paths:
                 - success
                 properties:
                   success:
+                    title: AppDeleteSuccessMessage
                     type: object
                     required:
                     - message
@@ -2311,12 +2290,7 @@ paths:
                 title: GetAppAutomateBuildsResponse
                 type: array
                 items:
-                  type: object
-                  required:
-                  - automation_build
-                  properties:
-                    automation_build:
-                      $ref: '#/components/schemas/AutomateBuild'
+                  $ref: '#/components/schemas/AppAutomateBuildWrap'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -2394,6 +2368,7 @@ paths:
                 - success
                 properties:
                   success:
+                    title: AppDeleteSuccessMessage
                     type: object
                     required:
                     - message
@@ -2456,6 +2431,47 @@ components:
       type: http
       scheme: basic
   schemas:
+    AppAutomateProjectWithBuilds:
+      title: AppAutomateProjectWithBuilds
+      allOf:
+      - $ref: '#/components/schemas/AutomateProject'
+      - type: object
+        required:
+        - builds
+        properties:
+          builds:
+            type: array
+            items:
+              $ref: '#/components/schemas/AutomateBuild'
+    AppAutomateBuildWrap:
+      title: AppAutomateBuildWrap
+      type: object
+      required:
+      - automation_build
+      properties:
+        automation_build:
+          $ref: '#/components/schemas/AutomateBuild'
+    AppAutomateBuildContainer:
+      title: AppAutomateBuildContainer
+      type: object
+      required:
+      - automation_build
+      - sessions
+      properties:
+        automation_build:
+          $ref: '#/components/schemas/AutomateBuild'
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppAutomateSessionContainer'
+    AppAutomateSessionContainer:
+      title: AppAutomateSessionContainer
+      type: object
+      required:
+      - automation_session
+      properties:
+        automation_session:
+          $ref: '#/components/schemas/AutomateSession'
     400.BadRequest:
       description: Bad request.
     401.Unauthorized:
@@ -2708,240 +2724,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/BrowserPlatform'
-    BrowserMap:
-      title: BrowserMap
-      type: object
-      properties:
-        Windows:
-          type: object
-          required:
-          - XP
-          - '7'
-          - '8'
-          - '8.1'
-          - '10'
-          - '11'
-          properties:
-            XP:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            '7':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            '8':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            '8.1':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            '10':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            '11':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/BrowserPlatform'
-        OS X:
-          type: object
-          required:
-          - Snow Leopard
-          - Lion
-          - Mountain Lion
-          - Mavericks
-          - Yosemite
-          - El Capitan
-          - Sierra
-          - High Sierra
-          - Mojave
-          - Catalina
-          - Big Sur
-          - Monterey
-          - Ventura
-          - Sonoma
-          properties:
-            Snow Leopard:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Lion:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Mountain Lion:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Mavericks:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Yosemite:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            El Capitan:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Sierra:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            High Sierra:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Mojave:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Catalina:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Big Sur:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Monterey:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Ventura:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            Sonoma:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-            additionalProperties:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserPlatform'
-        winphone:
-          type: object
-          required:
-          - '8.1'
-          properties:
-            '8.1':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-        android:
-          type: object
-          required:
-          - '14.0'
-          - '13.0'
-          - '12.0'
-          - '11.0'
-          - '10.0'
-          - '9.0'
-          - '8.1'
-          - '8.0'
-          - '7.1'
-          - '7.0'
-          - '6.0'
-          - '5.0'
-          - '4.4'
-          - '4.3'
-          - '4.2'
-          - '4.1'
-          - '4.0'
-          - '2.3'
-          - '2.2'
-          properties:
-            '14.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '13.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '12.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '11.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '10.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '9.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '8.1':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '8.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '7.1':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '7.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '6.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserRealDevice'
-            '5.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '4.4':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '4.3':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '4.2':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '4.1':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '4.0':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '2.3':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            '2.2':
-              type: array
-              items:
-                $ref: '#/components/schemas/BrowserDevice'
-            additionalProperties:
-              type: array
-              items:
-                oneOf:
-                - $ref: '#/components/schemas/BrowserRealDevice'
-                - $ref: '#/components/schemas/BrowserDevice'
     BrowserPlatform:
       title: BrowserPlatform
       allOf:
@@ -3098,6 +2880,7 @@ components:
             description: ID of the worker.
             example: 122326697
           sessionId:
+            type: string
             description: ID of the session.
             example: 550709149fe79e949363b581e774d5ebffa1b8fe
           status:

@@ -24,6 +24,10 @@ export interface CLIActionMetadata {
   method: string;
   parameters: any[];
   requestBody?: any;
+  /** Go response type for this action, e.g. "AutomatePlan", "string", "[]byte". Populated by build.mjs after Go codegen. */
+  responseGoType?: string;
+  /** Field name in DispatchResult for this action, e.g. "GetPlan". Populated by build.mjs after Go codegen. */
+  resultFieldName?: string;
 }
 
 export interface CLIMetadata {

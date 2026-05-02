@@ -56,16 +56,29 @@ describe("emitGoTypes", () => {
     expect(result).toContain('Tags []string `json:"tags"`');
   });
 
-  it("emits nested object fields as map[string]any", () => {
+  it("throws on nested inline type:object fields", () => {
+    expect(() =>
+      emitGoTypes("automate", {
+        Build: {
+          type: "object",
+          properties: {
+            meta: { type: "object" },
+          },
+        },
+      })
+    ).toThrow('[go-codegen] Schema "Build" field "meta": inline type:object');
+  });
+
+  it("emits map[string]T for type:object with additionalProperties", () => {
     const result = emitGoTypes("automate", {
       Build: {
         type: "object",
         properties: {
-          meta: { type: "object" },
+          meta: { type: "object", additionalProperties: { type: "string" } },
         },
       },
     });
-    expect(result).toContain('Meta map[string]any `json:"meta"`');
+    expect(result).toContain('Meta map[string]string `json:"meta"`');
   });
 
   it("emits correct package declaration", () => {

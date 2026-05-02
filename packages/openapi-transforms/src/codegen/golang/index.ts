@@ -3,6 +3,12 @@ import fs from "node:fs/promises";
 import { emitGoFile } from "./emit-file";
 import { emitGoMethod, type GoMethodInput } from "./emit-method";
 import { emitGoTypes } from "./emit-types";
+import { emitDispatchResult, type DispatchAction } from "./emit-dispatch-result";
+
+export interface ActionResponseInfo {
+  responseType: string;
+  fieldName: string;
+}
 import { toPascalCase } from "./case";
 import { stripOperationPrefix } from "../shared/operation";
 
@@ -157,26 +163,30 @@ function responseType(op: SpecOp, operationId: string, knownSchemas: Set<string>
 
   if (responseCodec === "json-compose") {
     const resultName = resolveJsonComposeResultName(operationId);
-    return knownSchemas.has(resultName) ? resultName : "map[string]any";
+    if (!knownSchemas.has(resultName)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — json-compose result type "${resultName}" not found in known schemas`);
+    return resultName;
   }
 
   const schema = op.responses?.["200"]?.content?.["application/json"]?.schema;
-  if (!schema) return "map[string]any";
+  if (!schema) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — no 200 response schema defined`);
 
   if (schema.type === "array" && schema.items) {
     if (schema.title) {
       const name = toPascalCase(schema.title);
-      return knownSchemas.has(name) ? name : "map[string]any";
+      if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — array response title "${name}" not in known schemas`);
+      return name;
     }
-    
+
     let elemType = "any";
     if (schema.items.$ref) {
       const name = toPascalCase(schema.items.$ref.replace(/^.*\//, ""));
-      elemType = knownSchemas.has(name) ? name : "map[string]any";
+      if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — array items $ref "${schema.items.$ref}" not in known schemas`);
+      elemType = name;
     } else if (schema.items.type === "object" || schema.items.properties) {
       const defaultName = toPascalCase(operationId) + "Response";
       const name = toPascalCase(schema.items.title ?? (defaultName + "Item"));
-      elemType = knownSchemas.has(name) ? name : "map[string]any";
+      if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — array items inline object type not in known schemas — extract to named schema`);
+      elemType = name;
     } else {
       elemType = schema.items.type === "string" ? "string"
         : schema.items.type === "integer" ? "int"
@@ -190,14 +200,24 @@ function responseType(op: SpecOp, operationId: string, knownSchemas: Set<string>
   if (schema.$ref) {
     const refName = schema.$ref.replace(/^.*\//, "");
     const goName = toPascalCase(refName);
-    return knownSchemas.has(goName) ? goName : "map[string]any";
+    if (!knownSchemas.has(goName)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — $ref "${schema.$ref}" not in known schemas`);
+    return goName;
   }
 
   if (schema.type === "object" || schema.properties) {
     const name = toPascalCase(schema.title ?? (toPascalCase(operationId) + "Response"));
-    return knownSchemas.has(name) ? name : "map[string]any";
+    if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — inline object response type "${name}" not in known schemas`);
+    return name;
   }
-  return "map[string]any";
+
+  // oneOf/anyOf at response root: use the schema title as the named type (success branch is collected by collectInlineSchemas)
+  if ((schema.oneOf || schema.anyOf) && schema.title) {
+    const name = toPascalCase(schema.title);
+    if (!knownSchemas.has(name)) throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — oneOf/anyOf titled "${name}" not in known schemas`);
+    return name;
+  }
+
+  throw new Error(`[go-codegen] Operation "${operationId}": cannot resolve response type — unresolvable schema type`);
 }
 
 type InlineSchemas = Record<string, { type?: string; properties?: Record<string, { type?: string; $ref?: string; items?: { type?: string; $ref?: string } }>; required?: string[]; items?: { type?: string; $ref?: string; title?: string; properties?: Record<string, { type?: string; $ref?: string }>; required?: string[] }; _baseEmbed?: string }>;
@@ -225,6 +245,14 @@ function collectInlineSchemas(
           if (respSchema.type === "object" || respSchema.properties) {
             const name = toPascalCase(respSchema.title ?? (toPascalCase(op.operationId) + "Response"));
             extra[name] = { type: "object", properties: respSchema.properties, required: respSchema.required };
+            // Collect titled inline objects within properties (one level deep)
+            for (const [, propSchema] of Object.entries(respSchema.properties ?? {})) {
+              const p = propSchema as SpecResponseSchema;
+              if (p.title && (p.type === "object" || p.properties) && !p.$ref) {
+                const pName = toPascalCase(p.title);
+                extra[pName] = { type: "object", properties: p.properties as InlineSchemas[string]["properties"], required: p.required };
+              }
+            }
           } else if (respSchema.type === "array") {
             const name = toPascalCase(respSchema.title ?? (toPascalCase(op.operationId) + "Response"));
             if (respSchema.title) {
@@ -234,6 +262,14 @@ function collectInlineSchemas(
               const itemName = toPascalCase(respSchema.items.title ?? (name + "Item"));
               extra[itemName] = { type: "object", properties: respSchema.items.properties, required: respSchema.items.required };
             }
+          } else if ((respSchema.oneOf || respSchema.anyOf) && respSchema.title) {
+            // oneOf/anyOf: pick the first branch that has real data properties (not error-only)
+            const branches = (respSchema.oneOf ?? respSchema.anyOf) as Array<{ type?: string; properties?: Record<string, unknown>; required?: string[] }>;
+            const dataBranch = branches.find(b => b.properties && !Object.keys(b.properties).every(k => k === "error"));
+            if (dataBranch) {
+              const name = toPascalCase(respSchema.title);
+              extra[name] = { type: "object", properties: dataBranch.properties as InlineSchemas[string]["properties"], required: dataBranch.required };
+            }
           }
         }
       }
@@ -242,6 +278,14 @@ function collectInlineSchemas(
       if (bodySchema && !bodySchema.$ref) {
         const name = toPascalCase(bodySchema.title ?? (toPascalCase(op.operationId) + "Request"));
         extra[name] = { type: "object", properties: bodySchema.properties, required: bodySchema.required };
+        // Collect titled inline objects within request body properties (one level deep)
+        for (const [, propSchema] of Object.entries(bodySchema.properties ?? {})) {
+          const p = propSchema as SpecResponseSchema;
+          if (p.title && (p.type === "object" || p.properties) && !p.$ref) {
+            const pName = toPascalCase(p.title);
+            extra[pName] = { type: "object", properties: p.properties as InlineSchemas[string]["properties"], required: p.required };
+          }
+        }
       }
     }
   }
@@ -250,7 +294,7 @@ function collectInlineSchemas(
 
 export async function generateGoModule(
   opts: GenerateGoModuleOptions
-): Promise<{ typesGo: string; clientGo: string }> {
+): Promise<{ typesGo: string; clientGo: string; dispatchResultGo: string; actionResponseTypes: Map<string, ActionResponseInfo> }> {
   const modulePath =
     opts.modulePath ?? "github.com/browserstack/browserstack-client";
   const doc = opts.specDoc ?? (yaml.parse(await fs.readFile(opts.specPath, "utf8")) as SpecDoc);
@@ -265,6 +309,8 @@ export async function generateGoModule(
   const allKnownSchemas = new Set(Object.keys(schemas).map(toPascalCase));
 
   const methods: string[] = [];
+  const dispatchActions: DispatchAction[] = [];
+  const actionResponseTypes = new Map<string, ActionResponseInfo>();
 
   for (const [path, pathItem] of Object.entries(doc.paths ?? {})) {
     for (const method of ["get", "post", "put", "patch", "delete"] as const) {
@@ -319,6 +365,16 @@ export async function generateGoModule(
       };
 
       methods.push(emitGoMethod(input));
+
+      // Derive CLI action slug (matches what generateGoConstants/generateGoDispatch emit)
+      const actionSlug = input.methodName
+        .replace(/([a-z])([A-Z])/g, "$1-$2")
+        .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
+        .toLowerCase()
+        .replace(/^get-(.+)s$/, "list-$1s"); // mirrors CLI-friendly mapping in extractCLIMetadata
+      const fieldName = toPascalCase(actionSlug.replace(/-/g, "_"));
+      dispatchActions.push({ fieldName, responseType: respType });
+      actionResponseTypes.set(actionSlug, { responseType: respType, fieldName });
     }
   }
 
@@ -327,6 +383,7 @@ export async function generateGoModule(
   const fileHeader = emitGoFile(opts.product, className, modulePath, needsStrconv, needsUrl);
   const clientGo = fileHeader + "\n" + methods.join("\n\n") + "\n";
   const typesGo = emitGoTypes(opts.product, schemas);
+  const dispatchResultGo = emitDispatchResult(opts.product, dispatchActions);
 
-  return { typesGo, clientGo };
+  return { typesGo, clientGo, dispatchResultGo, actionResponseTypes };
 }

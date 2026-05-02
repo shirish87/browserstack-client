@@ -370,6 +370,27 @@ export interface components {
             observability_url?: string;
             tcm_test_run_identifier?: string;
         };
+        BuildDetailsSmartTags: {
+            is_flaky?: number;
+            is_always_failing?: number;
+            is_performance_anomaly?: number;
+            is_new_failure?: number;
+        };
+        BuildDetailsVcsInfo: {
+            name?: string;
+            sha?: string;
+            branch?: string;
+        };
+        BuildDetailsCiInfo: {
+            job_name?: string;
+            name?: string;
+            build_number?: string;
+            build_url?: string;
+        };
+        BuildDetailsHostInfo: {
+            hostname?: string;
+            os?: string;
+        };
         BuildDetails: {
             name?: string;
             description?: string;
@@ -388,29 +409,12 @@ export interface components {
             failure_categories?: {
                 [key: string]: number;
             };
-            smart_tags?: {
-                is_flaky?: number;
-                is_always_failing?: number;
-                is_performance_anomaly?: number;
-                is_new_failure?: number;
-            };
+            smart_tags?: components["schemas"]["BuildDetailsSmartTags"];
             is_archived?: boolean;
             observability_url?: string;
-            vcs_info?: {
-                name?: string;
-                sha?: string;
-                branch?: string;
-            };
-            ci_info?: {
-                job_name?: string;
-                name?: string;
-                build_number?: string;
-                build_url?: string;
-            };
-            host_info?: {
-                hostname?: string;
-                os?: string;
-            };
+            vcs_info?: components["schemas"]["BuildDetailsVcsInfo"];
+            ci_info?: components["schemas"]["BuildDetailsCiInfo"];
+            host_info?: components["schemas"]["BuildDetailsHostInfo"];
         };
         TestRunsResponse: {
             name?: string;
@@ -425,6 +429,38 @@ export interface components {
             }[];
             pagination?: components["schemas"]["Pagination"];
         };
+        ApplicableBuilds: {
+            all_builds?: boolean;
+            build_tags?: string[];
+            build_names?: string[];
+        };
+        StartBuildFramework: {
+            name: string;
+            version: string;
+        };
+        StartBuildHostInfo: {
+            hostname?: string;
+            platform?: string;
+            type?: string;
+            version?: string;
+            arch?: string;
+        };
+        StartBuildCiInfo: {
+            name?: string;
+            build_url?: string;
+            url?: string;
+            build_number?: string;
+            job_name?: string;
+        };
+        StartBuildVersionControl: {
+            name?: string;
+            sha?: string;
+            branch?: string;
+            tag?: string;
+            commit_message?: string;
+            committer_email?: string;
+            committer_name?: string;
+        };
         StartBuildRequest: {
             name: string;
             project_name: string;
@@ -432,27 +468,12 @@ export interface components {
             started_at: string;
             tags?: string[];
             build_run_identifier?: string;
-            host_info?: {
-                hostname?: string;
-                platform?: string;
-                type?: string;
-                version?: string;
-                arch?: string;
-            };
-            ci_info?: {
-                name?: string;
-                build_url?: string;
-                url?: string;
-                build_number?: string;
-                job_name?: string;
-            };
+            host_info?: components["schemas"]["StartBuildHostInfo"];
+            ci_info?: components["schemas"]["StartBuildCiInfo"];
             version_control?: {
                 [key: string]: unknown;
             };
-            framework: {
-                name: string;
-                version: string;
-            };
+            framework: components["schemas"]["StartBuildFramework"];
         };
         StartTestRunRequest: {
             name: string;
@@ -571,11 +592,7 @@ export interface components {
             rules: {
                 [key: string]: unknown;
             }[];
-            applicable_builds?: {
-                all_builds?: boolean;
-                build_tags?: string[];
-                build_names?: string[];
-            };
+            applicable_builds?: components["schemas"]["ApplicableBuilds"];
             /** @enum {string} */
             rule_status?: "pass" | "fail";
             /** @enum {string} */

@@ -35,9 +35,13 @@ export function generateGoConstants(m: CLIMetadata): string {
 
 export function generateGoDispatch(m: CLIMetadata): string {
   const pkgName = toGoPackageName(m.product);
+  const hasTypedResult = Object.values(m.resources).some(r =>
+    Object.values(r.actions).some(a => a.resultFieldName)
+  );
 
   let out = `package ${pkgName}\n\n`;
   out += "// Generated CLI dispatcher. Do not modify.\n\n";
+
   out += `import (\n\t"context"\n\t"fmt"\n)\n\n`;
 
   out += `func argAt(args []string, i int) string {\n`;
@@ -45,7 +49,11 @@ export function generateGoDispatch(m: CLIMetadata): string {
   out += `\treturn ""\n`;
   out += `}\n\n`;
 
-  out += `func Dispatch(client *${toPascalCase(m.product)}Client, ctx context.Context, action string, args []string) (interface{}, error) {\n`;
+  const returnType = hasTypedResult
+    ? `(*DispatchResult, error)`
+    : `(any, error)`;
+
+  out += `func Dispatch(client *${toPascalCase(m.product)}Client, ctx context.Context, action string, args []string) ${returnType} {\n`;
   out += `\tswitch action {\n`;
 
   for (const [resource, resMeta] of Object.entries(m.resources)) {
@@ -56,7 +64,7 @@ export function generateGoDispatch(m: CLIMetadata): string {
       const pathParams = actionMeta.parameters.filter((p: any) => p.in === "path");
       const queryParams = actionMeta.parameters.filter((p: any) => p.in === "query");
       const requiredQueryParams = queryParams.filter((p: any) => p.required);
-      
+
       const totalRequired = pathParams.length + requiredQueryParams.length;
 
       if (pathParams.length > 0 || requiredQueryParams.length > 0) {
@@ -86,7 +94,21 @@ export function generateGoDispatch(m: CLIMetadata): string {
         }
       }
 
-      out += `\t\treturn client.${toPascalCase(actionMeta.methodName)}(${callArgs.join(", ")})\n`;
+      const callExpr = `client.${toPascalCase(actionMeta.methodName)}(${callArgs.join(", ")})`;
+
+      if (hasTypedResult && actionMeta.resultFieldName) {
+        const respType = actionMeta.responseGoType ?? "";
+        out += `\t\tv, err := ${callExpr}\n`;
+        out += `\t\tif err != nil { return nil, err }\n`;
+        if (respType === "string") {
+          // string is not addressable directly — store in var
+          out += `\t\treturn &DispatchResult{Action: action, ${actionMeta.resultFieldName}: &v}, nil\n`;
+        } else {
+          out += `\t\treturn &DispatchResult{Action: action, ${actionMeta.resultFieldName}: v}, nil\n`;
+        }
+      } else {
+        out += `\t\treturn ${callExpr}\n`;
+      }
     }
   }
 

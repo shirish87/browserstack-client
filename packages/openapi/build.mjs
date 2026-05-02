@@ -207,13 +207,16 @@ async function loadSpecWithShared(specPath) {
 
 console.log("Generating Go client modules...");
 
+// Maps product name → Map<actionSlug, { responseType, fieldName }>
+const goActionResponseTypes = new Map();
+
 async function generateGoModules() {
   const goOutBase = path.join(__dirname, "../cli/golang/generated");
   for (const { product } of productSpecs) {
     const specFile = path.join(__dirname, "specs", `${product}.yml`);
     try {
       const mergedDoc = await loadSpecWithShared(specFile);
-      const { typesGo, clientGo } = await generateGoModule({
+      const { typesGo, clientGo, dispatchResultGo, actionResponseTypes } = await generateGoModule({
         specPath: specFile,
         specDoc: mergedDoc,
         product,
@@ -223,6 +226,8 @@ async function generateGoModules() {
       await fs.mkdir(outDir, { recursive: true });
       await fs.writeFile(path.join(outDir, "types.go"), typesGo);
       await fs.writeFile(path.join(outDir, "client.go"), clientGo);
+      await fs.writeFile(path.join(outDir, "dispatch_result.generated.go"), dispatchResultGo);
+      goActionResponseTypes.set(product, actionResponseTypes);
       console.log(`  ✓ ${product}/ (Go)`);
     } catch (e) {
       console.error(`  ✗ ${product}:`, e.message);
@@ -254,6 +259,20 @@ for (const m of cliMetadata) {
   const constantsOutPath = path.join(__dirname, `../cli/golang/generated/${m.product}/constants.generated.go`);
   await fs.writeFile(constantsOutPath, goConstants);
   console.log(`  ✓ ${m.product}/constants.generated.go (Go)`);
+
+  // Enrich CLI metadata actions with response type info from Go codegen
+  const actionTypes = goActionResponseTypes.get(m.product);
+  if (actionTypes) {
+    for (const resMeta of Object.values(m.resources)) {
+      for (const [action, actionMeta] of Object.entries(resMeta.actions)) {
+        const info = actionTypes.get(action);
+        if (info) {
+          actionMeta.responseGoType = info.responseType;
+          actionMeta.resultFieldName = info.fieldName;
+        }
+      }
+    }
+  }
 
   const goDispatch = generateGoDispatch(m);
   const dispatchOutPath = path.join(__dirname, `../cli/golang/generated/${m.product}/cli_dispatch.generated.go`);

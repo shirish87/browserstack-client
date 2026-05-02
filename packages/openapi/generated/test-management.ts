@@ -652,14 +652,56 @@ export interface components {
             created_by?: string;
             team_id?: number[];
         };
+        CustomFieldResponseData: {
+            custom_field?: components["schemas"]["CustomField"];
+        };
+        TestCaseResponseData: {
+            test_case?: components["schemas"]["TestCase"];
+        };
+        TestRunCount: {
+            active?: number;
+            closed?: number;
+        };
+        TestCaseFilter: {
+            status?: string[];
+            priority?: string[];
+            case_type?: string[];
+            owner?: string[];
+            tags?: string[];
+            custom_fields?: {
+                [key: string]: unknown;
+            };
+        };
+        IssueTracker: {
+            name?: string;
+            host?: string;
+        };
+        TestRunPlanSummary: {
+            identifier?: string;
+            name?: string;
+        } | null;
+        TestRunLinks: {
+            [key: string]: unknown;
+        };
+        TestRunProgress: {
+            [key: string]: unknown;
+        };
+        CreateTestRunInput: {
+            name: string;
+            plan_status?: string;
+            description?: string;
+            start_date?: string;
+            end_date?: string | null;
+        };
+        FolderLinks: {
+            sub_folders?: string;
+        };
         FolderSummary: {
             id?: number;
             name?: string;
             parent_id?: number | null;
             sub_folders_count?: number;
-            links?: {
-                sub_folders?: string;
-            };
+            links?: components["schemas"]["FolderLinks"];
         };
         Folder: {
             id?: number;
@@ -668,9 +710,7 @@ export interface components {
             parent_id?: number | null;
             cases_count?: number;
             sub_folders_count?: number;
-            links?: {
-                sub_folders?: string;
-            };
+            links?: components["schemas"]["FolderLinks"];
         };
         TestCaseStep: {
             id?: number;
@@ -694,7 +734,9 @@ export interface components {
             tags?: string[];
             test_case_steps?: components["schemas"]["TestCaseStep"][];
             issues?: string[];
-            custom_fields?: Record<string, never>;
+            custom_fields?: {
+                [key: string]: unknown;
+            };
             created_at?: string;
             updated_at?: string;
             feature?: string;
@@ -725,18 +767,15 @@ export interface components {
             test_cases_count?: number;
             tags?: string[];
             issues?: string[];
-            test_plan?: {
-                identifier?: string;
-                name?: string;
-            } | null;
+            test_plan?: components["schemas"]["TestRunPlanSummary"];
         };
         TestRunDetail: components["schemas"]["TestRun"] & {
             configurations?: number[];
             test_cases?: components["schemas"]["TestRunTestCase"][];
-            links?: Record<string, never>;
+            links?: components["schemas"]["TestRunLinks"];
             passed_count?: number;
             failed_count?: number;
-            overall_progress?: Record<string, never>;
+            overall_progress?: components["schemas"]["TestRunProgress"];
         };
         TestRunTestCase: {
             identifier?: string;
@@ -768,10 +807,7 @@ export interface components {
             test_case_assignee?: string;
             tags?: string[];
             issues?: string[];
-            issue_tracker?: {
-                name?: string;
-                host?: string;
-            };
+            issue_tracker?: components["schemas"]["IssueTracker"];
             test_plan_id?: string;
             configurations?: number[];
             configuration_map?: {
@@ -781,14 +817,7 @@ export interface components {
             test_cases?: string[];
             folder_ids?: number[];
             include_all?: boolean;
-            filter_test_cases?: {
-                status?: string[];
-                priority?: string[];
-                case_type?: string[];
-                owner?: string[];
-                tags?: string[];
-                custom_fields?: Record<string, never>;
-            };
+            filter_test_cases?: components["schemas"]["TestCaseFilter"];
         };
         TestRunPatchInput: {
             name?: string;
@@ -799,13 +828,7 @@ export interface components {
                 test_case_id?: string | string[];
                 configuration_ids?: number[];
             }[];
-            filter_test_cases?: {
-                status?: string[];
-                priority?: string[];
-                case_type?: string[];
-                owner?: string[];
-                tags?: string[];
-            };
+            filter_test_cases?: components["schemas"]["TestCaseFilter"];
         };
         TestPlan: {
             identifier?: string;
@@ -817,10 +840,7 @@ export interface components {
             start_date?: string;
             end_date?: string | null;
             created_at?: string;
-            test_runs_count?: {
-                active?: number;
-                closed?: number;
-            };
+            test_runs_count?: components["schemas"]["TestRunCount"];
         };
         TestPlanDetail: components["schemas"]["TestPlan"] & {
             test_runs?: components["schemas"]["TestRunSummary"][];
@@ -837,18 +857,19 @@ export interface components {
             created_by?: string;
             attachments?: components["schemas"]["Attachment"][];
             issues?: string[];
-            custom_fields?: Record<string, never>;
+            custom_fields?: {
+                [key: string]: unknown;
+            };
         };
         TestResultInput: {
             status: string;
             comment?: string;
             duration?: number;
             issues?: string[];
-            issue_tracker?: {
-                name?: string;
-                host?: string;
+            issue_tracker?: components["schemas"]["IssueTracker"];
+            custom_fields?: {
+                [key: string]: unknown;
             };
-            custom_fields?: Record<string, never>;
         };
         Attachment: {
             id?: number;
@@ -960,6 +981,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** CreateProjectInput */
                     project?: {
                         name: string;
                         description?: string;
@@ -1049,6 +1071,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** UpdateProjectInput */
                     project?: {
                         name?: string;
                         description?: string;
@@ -1115,6 +1138,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** CreateFolderData */
                     folder?: {
                         name: string;
                         description: string;
@@ -1207,6 +1231,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** UpdateFolderData */
                     folder?: {
                         name?: string;
                         description?: string;
@@ -1352,11 +1377,14 @@ export interface operations {
             content: {
                 "application/json": {
                     ids: string[];
+                    /** BulkEditTestCaseData */
                     test_case: {
                         preconditions?: string;
                         owner?: string;
                         tags?: string[];
-                        custom_fields?: Record<string, never>;
+                        custom_fields?: {
+                            [key: string]: unknown;
+                        };
                         automation_status?: string;
                         case_type?: string;
                         priority?: string;
@@ -1455,6 +1483,7 @@ export interface operations {
             content: {
                 "application/json": {
                     ids: string[];
+                    /** BulkEditTestCaseData */
                     test_case: Record<string, never>;
                 };
             };
@@ -1487,6 +1516,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** CreateTestCaseData */
                     test_case?: {
                         name?: string;
                         template?: string;
@@ -1498,14 +1528,13 @@ export interface operations {
                             result?: string;
                         }[];
                         issues?: string[];
-                        issue_tracker?: {
-                            name?: string;
-                            host?: string;
-                        };
+                        issue_tracker?: components["schemas"]["IssueTracker"];
                         tags?: string[];
                         case_type?: string;
                         priority?: string;
-                        custom_fields?: Record<string, never>;
+                        custom_fields?: {
+                            [key: string]: unknown;
+                        };
                         feature?: string;
                         scenario?: string;
                         background?: string;
@@ -1522,6 +1551,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
+                        /** CreateTestCaseResponseData */
                         data?: {
                             test_case?: components["schemas"]["TestCase"];
                         };
@@ -1571,6 +1601,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** UpdateTestCaseData */
                     test_case?: {
                         name?: string;
                         case_type?: string;
@@ -1584,12 +1615,11 @@ export interface operations {
                             result?: string;
                         }[];
                         issues?: string[];
-                        issue_tracker?: {
-                            name?: string;
-                            host?: string;
-                        };
+                        issue_tracker?: components["schemas"]["IssueTracker"];
                         tags?: string[];
-                        custom_fields?: Record<string, never>;
+                        custom_fields?: {
+                            [key: string]: unknown;
+                        };
                         automation_status?: string;
                         feature?: string;
                         scenario?: string;
@@ -1607,6 +1637,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
+                        /** UpdateTestCaseResponseData */
                         data?: {
                             test_case?: components["schemas"]["TestCase"];
                         };
@@ -1637,9 +1668,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
-                        data?: {
-                            test_case?: components["schemas"]["TestCase"];
-                        };
+                        data?: components["schemas"]["TestCaseResponseData"];
                     };
                 };
             };
@@ -1667,9 +1696,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
-                        data?: {
-                            test_case?: components["schemas"]["TestCase"];
-                        };
+                        data?: components["schemas"]["TestCaseResponseData"];
                     };
                 };
             };
@@ -1703,9 +1730,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         success?: boolean;
-                        data?: {
-                            test_case?: components["schemas"]["TestCase"];
-                        };
+                        data?: components["schemas"]["TestCaseResponseData"];
                     };
                 };
             };
@@ -2366,13 +2391,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    test_plan?: {
-                        name: string;
-                        plan_status?: string;
-                        description?: string;
-                        start_date?: string;
-                        end_date?: string | null;
-                    };
+                    test_plan?: components["schemas"]["CreateTestRunInput"];
                 };
             };
         };
@@ -2433,6 +2452,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** CreateTestPlanData */
                     test_plan?: {
                         name?: string;
                         plan_status?: string;
@@ -2702,9 +2722,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data?: {
-                            custom_field?: components["schemas"]["CustomField"];
-                        };
+                        data?: components["schemas"]["CustomFieldResponseData"];
                     };
                 };
             };
