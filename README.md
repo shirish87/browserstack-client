@@ -27,7 +27,8 @@ $ npm i @dot-slash/browserstack-local-testing-api @dot-slash/browserstack-local-
 
 ## Requirements
 
-Please ensure that your BrowserStack account contains the required subscription(s) for using the APIs provided by these modules.
+- **Node.js**: 20.0.0 or higher.
+- **BrowserStack Account**: Please ensure that your BrowserStack account contains the required subscription(s) for using the APIs provided by these modules.
 
 Add your BrowserStack username and API key to the following environment variables for your shell:
 

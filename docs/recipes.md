@@ -2,7 +2,7 @@
 
 ### Prerequisites
 * Environment variables `BROWSERSTACK_USERNAME` and `BROWSERSTACK_ACCESS_KEY` set in your shell
-* Node.js runtime
+* Node.js runtime (v20 or higher)
 
 ## BrowserStackLocal in npm scripts for testing local websites
 
@@ -88,50 +88,44 @@ Similar to the above npm scripts for BrowserStack Local, you can upload and mana
 
 ### Flutter
 ```bash
-npx @dot-slash/browserstack-cli app-automate flutter list ios
-npx @dot-slash/browserstack-cli app-automate flutter upload <local-file-path> ios
-npx @dot-slash/browserstack-cli app-automate flutter upload <public-url> <filename> ios
-npx @dot-slash/browserstack-cli app-automate flutter get <app-id> ios
-npx @dot-slash/browserstack-cli app-automate flutter delete <app-id> ios
+npx @dot-slash/browserstack-cli app-automate list-flutter-ios-apps
+npx @dot-slash/browserstack-cli app-automate upload-flutter-ios-app <local-file-path>
+npx @dot-slash/browserstack-cli app-automate get-flutter-ios-app <app-id>
+npx @dot-slash/browserstack-cli app-automate delete-flutter-ios-app <app-id>
 
-npx @dot-slash/browserstack-cli app-automate flutter list android
-npx @dot-slash/browserstack-cli app-automate flutter upload <local-file-path> android
-npx @dot-slash/browserstack-cli app-automate flutter upload <public-url> <filename> android
-npx @dot-slash/browserstack-cli app-automate flutter get <app-id> android
-npx @dot-slash/browserstack-cli app-automate flutter delete <app-id> android
+npx @dot-slash/browserstack-cli app-automate list-flutter-android-apps
+npx @dot-slash/browserstack-cli app-automate upload-flutter-android-app <local-file-path>
+npx @dot-slash/browserstack-cli app-automate get-flutter-android-app <app-id>
+npx @dot-slash/browserstack-cli app-automate delete-flutter-android-app <app-id>
 ```
 
 ### Appium
 ```bash
-npx @dot-slash/browserstack-cli app-automate appium list
-npx @dot-slash/browserstack-cli app-automate appium upload <local-file-path>
-npx @dot-slash/browserstack-cli app-automate appium upload <public-url> <filename>
-npx @dot-slash/browserstack-cli app-automate appium get <app-id>
-npx @dot-slash/browserstack-cli app-automate appium delete <app-id>
+npx @dot-slash/browserstack-cli app-automate list-apps
+npx @dot-slash/browserstack-cli app-automate upload-app <local-file-path>
+npx @dot-slash/browserstack-cli app-automate delete-app <app-id>
 ```
 
 ### Espresso
 ```bash
-npx @dot-slash/browserstack-cli app-automate espresso list
-npx @dot-slash/browserstack-cli app-automate espresso upload <local-file-path>
-npx @dot-slash/browserstack-cli app-automate espresso upload <public-url> <filename>
-npx @dot-slash/browserstack-cli app-automate espresso get <app-id>
-npx @dot-slash/browserstack-cli app-automate espresso delete <app-id>
+npx @dot-slash/browserstack-cli app-automate list-espresso-apps
+npx @dot-slash/browserstack-cli app-automate upload-espresso-app <local-file-path>
+npx @dot-slash/browserstack-cli app-automate get-espresso-app <app-id>
+npx @dot-slash/browserstack-cli app-automate delete-espresso-app <app-id>
 ```
 
 ### XCUITest
 ```bash
-npx @dot-slash/browserstack-cli app-automate xcuitest list
-npx @dot-slash/browserstack-cli app-automate xcuitest upload <local-file-path>
-npx @dot-slash/browserstack-cli app-automate xcuitest upload <public-url> <filename>
-npx @dot-slash/browserstack-cli app-automate xcuitest get <app-id>
-npx @dot-slash/browserstack-cli app-automate xcuitest delete <app-id>
+npx @dot-slash/browserstack-cli app-automate list-xcui-test-apps
+npx @dot-slash/browserstack-cli app-automate upload-xcui-test-app <local-file-path>
+npx @dot-slash/browserstack-cli app-automate get-xcui-test-app <app-id>
+npx @dot-slash/browserstack-cli app-automate delete-xcui-test-app <app-id>
 ```
 
 ### Detox Android
 ```bash
-npx @dot-slash/browserstack-cli app-automate detox upload <local-file-path> app
-npx @dot-slash/browserstack-cli app-automate detox upload <local-file-path> app-client
+npx @dot-slash/browserstack-cli app-automate upload-detox-android-app <local-file-path>
+npx @dot-slash/browserstack-cli app-automate upload-detox-android-app-client <local-file-path>
 ```
 
 ### Media Files

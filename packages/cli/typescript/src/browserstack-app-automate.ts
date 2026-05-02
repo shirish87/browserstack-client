@@ -55,7 +55,16 @@ export async function main(
     const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);
     
     // Some actions need manual file reading or special handling before call
-    if (action === AppAutomate.Action.UploadApp || action === AppAutomate.Action.UploadEspressoApp || action === AppAutomate.Action.UploadXcuiTestApp || action === AppAutomate.Action.UploadMediaFile) {
+    if (
+      action === AppAutomate.Action.UploadApp ||
+      action === AppAutomate.Action.UploadEspressoApp ||
+      action === AppAutomate.Action.UploadXcuiTestApp ||
+      action === AppAutomate.Action.UploadMediaFile ||
+      action === AppAutomate.Action.UploadFlutterAndroidApp ||
+      action === AppAutomate.Action.UploadFlutterIosApp ||
+      action === AppAutomate.Action.UploadDetoxAndroidApp ||
+      action === AppAutomate.Action.UploadDetoxAndroidAppClient
+    ) {
         if (!rest[0]) throw new BrowserStackError("Missing <file-path>");
         const filePath = resolve(rest[0]);
         const filename = basename(filePath);

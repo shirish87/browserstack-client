@@ -14,6 +14,7 @@ export default withMermaid(defineConfig({
     nav: [
       { text: "Home", link: "/" },
       { text: "Recipes", link: "/recipes" },
+      { text: "CLI", link: "/cli" },
       {
         text: "Github",
         link: "https://github.com/shirish87/browserstack-client",
@@ -26,6 +27,7 @@ export default withMermaid(defineConfig({
     sidebar: [
       { text: "Architecture", link: "/architecture" },
       { text: "Recipes", link: "/recipes" },
+      { text: "CLI", link: "/cli" },
       ...typedocSidebar,
     ],
   },

@@ -21,13 +21,13 @@ graph TD
         Core["Core Library (TS)<br/>(packages/core)"]
     end
 
-    subgraph "TypeScript SDKs"
-        SDK_TS["Product SDKs (TS)<br/>(@dot-slash/browserstack-automate, etc.)"]
+    subgraph "TypeScript SDKs (NPM)"
+        SDK_TS["@dot-slash/browserstack-automate<br/>@dot-slash/browserstack-app-automate<br/>..."]
     end
 
-    subgraph "Command Line Interfaces"
-        CLI_TS["TypeScript CLI<br/>(packages/cli/typescript)"]
-        CLI_GO["Golang CLI / SDK<br/>(packages/cli/golang)"]
+    subgraph "Command Line Interface (CLI)"
+        CLI_TS["Unified CLI (TS/NPM)<br/>(@dot-slash/browserstack-cli)"]
+        CLI_GO["Native Binary (Go)<br/>(GitHub Releases)"]
     end
 
     %% Dependencies
@@ -42,6 +42,19 @@ graph TD
     
     SDK_TS --> CLI_TS
 ```
+
+## Component Architecture
+
+The SDK is organized as a monorepo containing multiple specialized NPM packages. This allows users to install only the products they need, reducing dependency bloat.
+
+### Primary NPM Packages
+- **`@dot-slash/browserstack-cli`**: The unified CLI for all BrowserStack products. This is the primary entry point for most users.
+- **`@dot-slash/browserstack-automate`**: Type-safe client for BrowserStack Automate.
+- **`@dot-slash/browserstack-app-automate`**: Type-safe client for App Automate.
+- **`@dot-slash/browserstack-core`**: Shared utilities, authentication, and HTTP client base used by all SDKs.
+- **`@dot-slash/browserstack-local-testing`**: Management for the `BrowserStackLocal` binary.
+
+---
 
 ## Source of Truth: OpenAPI Specs
 
