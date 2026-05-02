@@ -54,6 +54,7 @@ jobs:
   build:
     name: "Build"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
@@ -205,6 +206,7 @@ jobs:
   test-sdk:
     name: "Test (linux, node.js lts)"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [build]
     environment: BrowserStackEnv
     steps:
@@ -242,6 +244,7 @@ jobs:
   test-cli:
     name: "Test CLI (${{ matrix.os }})"
     needs: [build, test-sdk]
+    timeout-minutes: 15
     strategy:
       matrix:
         os: [macos-latest, windows-latest]
@@ -278,6 +281,7 @@ jobs:
   publish-docs:
     name: "Publish Docs"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [test-sdk, test-cli]
     if: github.event_name != 'pull_request'
     permissions:
@@ -333,6 +337,7 @@ jobs:
   publish-npm:
     name: "Publish npm"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [test-sdk, test-cli]
     if: github.event_name != 'pull_request'
     environment: BrowserStackEnv
