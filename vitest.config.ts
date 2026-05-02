@@ -35,31 +35,46 @@ const sharedAliases = {
   "@dot-slash/browserstack-openapi-transforms": path.resolve(__dirname, "packages/openapi-transforms/src/index.ts"),
 };
 
-const projectBase = {
-  test: {
-    globals: true,
-    environment: "node",
-  },
-  resolve: { alias: sharedAliases },
-};
-
 const readPkgVersion = (pkgPath: string) =>
   JSON.stringify(JSON.parse(readFileSync(path.resolve(__dirname, pkgPath), "utf-8")).version);
+
+function project(name: string, root: string, pkgPath: string) {
+  return {
+    root,
+    resolve: { alias: sharedAliases },
+    define: { __PKG_VERSION__: readPkgVersion(pkgPath) },
+    test: {
+      name,
+      globals: true,
+      environment: "node",
+    },
+  };
+}
 
 export default defineConfig({
   test: {
     projects: [
-      { ...projectBase, name: "automate", root: "./packages/automate", define: { __PKG_VERSION__: readPkgVersion("packages/automate/package.json") } },
-      { ...projectBase, name: "app-automate", root: "./packages/app-automate", define: { __PKG_VERSION__: readPkgVersion("packages/app-automate/package.json") } },
-      { ...projectBase, name: "local-testing", root: "./packages/local-testing", define: { __PKG_VERSION__: readPkgVersion("packages/local-testing/package.json") } },
-      { ...projectBase, name: "screenshots", root: "./packages/screenshots", define: { __PKG_VERSION__: readPkgVersion("packages/screenshots/package.json") } },
-      { ...projectBase, name: "local-testing-binary", root: "./packages/local-testing-binary", define: { __PKG_VERSION__: readPkgVersion("packages/local-testing-binary/package.json") } },
-      { ...projectBase, name: "cli", root: "./packages/cli/typescript", define: { __PKG_VERSION__: readPkgVersion("packages/cli/typescript/package.json") } },
-      { ...projectBase, name: "openapi-transforms", root: "./packages/openapi-transforms", define: { __PKG_VERSION__: readPkgVersion("packages/openapi-transforms/package.json") } },
-      { ...projectBase, name: "core", root: "./packages/core", define: { __PKG_VERSION__: readPkgVersion("packages/core/package.json") } },
-      { ...projectBase, name: "test-management", root: "./packages/test-management", define: { __PKG_VERSION__: readPkgVersion("packages/test-management/package.json") } },
-      { ...projectBase, name: "accessibility", root: "./packages/accessibility", define: { __PKG_VERSION__: readPkgVersion("packages/accessibility/package.json") } },
-      { ...projectBase, name: "test-reporting", root: "./packages/test-reporting", define: { __PKG_VERSION__: readPkgVersion("packages/test-reporting/package.json") } },
+      project("automate", "./packages/automate", "packages/automate/package.json"),
+      project("app-automate", "./packages/app-automate", "packages/app-automate/package.json"),
+      project("local-testing", "./packages/local-testing", "packages/local-testing/package.json"),
+      project("screenshots", "./packages/screenshots", "packages/screenshots/package.json"),
+      project("local-testing-binary", "./packages/local-testing-binary", "packages/local-testing-binary/package.json"),
+      project("cli", "./packages/cli/typescript", "packages/cli/typescript/package.json"),
+      {
+        root: "./packages/openapi-transforms",
+        resolve: { alias: sharedAliases },
+        define: { __PKG_VERSION__: readPkgVersion("packages/openapi-transforms/package.json") },
+        test: {
+          name: "openapi-transforms",
+          globals: true,
+          environment: "node",
+          execArgv: ["--expose-gc"],
+        },
+      },
+      project("core", "./packages/core", "packages/core/package.json"),
+      project("test-management", "./packages/test-management", "packages/test-management/package.json"),
+      project("accessibility", "./packages/accessibility", "packages/accessibility/package.json"),
+      project("test-reporting", "./packages/test-reporting", "packages/test-reporting/package.json"),
     ],
   },
 });
