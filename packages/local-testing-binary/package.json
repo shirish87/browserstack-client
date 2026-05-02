@@ -32,7 +32,7 @@
     "@dot-slash/browserstack-core": "workspace:*",
     "@dot-slash/browserstack-local-testing-api": "workspace:*",
     "@dot-slash/browserstack-openapi": "workspace:*",
-    "@types/node": "^25.6.0",
+    "@types/node": "20.0.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"
   }

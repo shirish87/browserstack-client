@@ -51,8 +51,13 @@ The SDK is organized as a monorepo containing multiple specialized NPM packages.
 - **`@dot-slash/browserstack-cli`**: The unified CLI for all BrowserStack products. This is the primary entry point for most users.
 - **`@dot-slash/browserstack-automate`**: Type-safe client for BrowserStack Automate.
 - **`@dot-slash/browserstack-app-automate`**: Type-safe client for App Automate.
+- **`@dot-slash/browserstack-accessibility`**: Type-safe client for BrowserStack Accessibility.
+- **`@dot-slash/browserstack-test-reporting`**: Type-safe client for Test Reporting.
+- **`@dot-slash/browserstack-test-management`**: Type-safe client for Test Management.
+- **`@dot-slash/browserstack-screenshots`**: Type-safe client for Screenshots.
 - **`@dot-slash/browserstack-core`**: Shared utilities, authentication, and HTTP client base used by all SDKs.
 - **`@dot-slash/browserstack-local-testing`**: Management for the `BrowserStackLocal` binary.
+- **`@dot-slash/browserstack-local-testing-api`**: Type-safe client for the Local Testing REST API.
 
 ---
 
