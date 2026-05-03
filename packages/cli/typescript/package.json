@@ -68,7 +68,7 @@
   "scripts": {
     "build": "tsup",
     "build:binary-bundle": "tsup --config tsup.binary.config.ts",
-    "build:binary": "pnpm build:binary-bundle && pkg dist-binary/browserstack-client.cjs --targets node18-linux-x64,node18-linux-arm64,node18-macos-x64,node18-macos-arm64,node18-win-x64 --output dist-binary/browserstack-client-ts --compress GZip --fallback-to-source && node -e \"const fs=require('fs'); const renames=[['linux-x64','linux-amd64'],['macos-x64','darwin-amd64'],['macos-arm64','darwin-arm64'],['win-x64.exe','windows-amd64.exe']]; renames.forEach(([oldS,newS])=>{ const p='./dist-binary/browserstack-client-ts-'+oldS; if(fs.existsSync(p)) fs.renameSync(p, './dist-binary/browserstack-client-ts-'+newS); })\"",
+    "build:binary": "node build-sea.mjs",
     "typecheck": "tsc --noEmit || true"
   },
   "pkg": {
@@ -76,7 +76,6 @@
     "scripts": []
   },
   "dependencies": {
-    "signal-exit": "^4.1.0",
     "zod": "^4.4.1"
   },
   "devDependencies": {
@@ -90,8 +89,8 @@
     "@dot-slash/browserstack-screenshots": "workspace:*",
     "@dot-slash/browserstack-test-management": "workspace:*",
     "@dot-slash/browserstack-test-reporting": "workspace:*",
-    "@types/node": "20.0.0",
-    "@yao-pkg/pkg": "^6.18.2",
+    "@types/node": "^24.0.0",
+    "postject": "^1.0.0-alpha.6",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"
   }

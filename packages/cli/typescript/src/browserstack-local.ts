@@ -2,12 +2,11 @@
 import { BrowserStackError } from "@dot-slash/browserstack-core";
 import { ensureDirExists } from "@dot-slash/browserstack-local-testing";
 import { LocalTestingBinary, LocalTestingBinaryOptions } from "@dot-slash/browserstack-local-testing";
-import { BufferEncoding, writeFileAtomic } from "@dot-slash/browserstack-local-testing";
+import { BufferEncoding, onExit, writeFileAtomic } from "@dot-slash/browserstack-local-testing";
 import cp from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
-import { onExit } from "signal-exit";
 import process from "node:process";
 import { env, resolveAccessKey } from "@dot-slash/browserstack-core";
 import { formatError } from "./utils.ts";

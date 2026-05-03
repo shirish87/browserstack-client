@@ -17,6 +17,5 @@ export default defineConfig({
   ],
   external: [
     "fflate",
-    "signal-exit",
   ],
 });

@@ -34,7 +34,5 @@ export default defineConfig({
     "@dot-slash/browserstack-screenshots",
     "@dot-slash/browserstack-openapi-transforms",
   ],
-  external: [
-    "signal-exit",
-  ],
+  external: [],
 });

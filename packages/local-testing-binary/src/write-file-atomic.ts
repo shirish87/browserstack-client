@@ -16,7 +16,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { promisify } from "node:util";
-import { onExit } from "signal-exit";
+import { onExit } from "./signal-exit.ts";
 
 export type BufferEncoding =
   | "ascii"
