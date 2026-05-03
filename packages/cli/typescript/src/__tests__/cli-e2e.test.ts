@@ -360,6 +360,27 @@ describe("CLI E2E Orchestrator", () => {
           await assertMissingArgs(binary, ["local", action]);
         }
       );
+
+      // Binary tunnel actions (start/stop/list/run-with) — now implemented.
+      // 'list' is safe to call without real credentials: it reads a local status
+      // file and exits 0 with empty output (no API call made).
+      it("local list should exit 0 with no output when no tunnels are running", async () => {
+        const result = await runCli(binary, ["local", "list"]);
+        expect(result.exitCode).toBe(0);
+        expect(result.stdout.trim()).toBe("");
+      });
+
+      it("local start with unknown flag should fail with error", async () => {
+        const result = await runCli(binary, ["local", "start", "--unknown-flag", "val"]);
+        expect(result.exitCode).toBe(1);
+        expect(result.stderr.toLowerCase()).toMatch(/unknown|invalid/);
+      });
+
+      it("local run-with with no -- separator should fail with error", async () => {
+        const result = await runCli(binary, ["local", "run-with"]);
+        expect(result.exitCode).toBe(1);
+        expect(result.stderr.toLowerCase()).toMatch(/separator|usage|invalid/);
+      });
     });
 
     // ─── automate ───────────────────────────────────────────────────────────
