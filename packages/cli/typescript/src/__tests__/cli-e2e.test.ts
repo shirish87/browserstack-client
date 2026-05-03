@@ -376,10 +376,35 @@ describe("CLI E2E Orchestrator", () => {
         expect(result.stderr.toLowerCase()).toMatch(/unknown|invalid/);
       });
 
-      it("local run-with with no -- separator should fail with error", async () => {
+      it("local run-with with no separator should fail with error", async () => {
         const result = await runCli(binary, ["local", "run-with"]);
         expect(result.exitCode).toBe(1);
         expect(result.stderr.toLowerCase()).toMatch(/separator|usage|invalid/);
+      });
+
+      // The Go CLI accepts --- as a Windows PowerShell-safe alternative to --
+      // (PowerShell may consume -- before it reaches the binary).
+      // Test that --- with no command after it fails with a clear error.
+      it("Go CLI: local run-with with --- and no command should fail with error", async () => {
+        if (!binary.name.toLowerCase().includes("golang")) {
+          return; // --- separator only implemented in Go CLI
+        }
+        const result = await runCli(binary, ["local", "run-with", "---"]);
+        expect(result.exitCode).toBe(1);
+        expect(result.stderr.toLowerCase()).toMatch(/no command|usage|invalid/);
+      });
+
+      // On Windows, -- may be consumed by PowerShell; --- is the workaround.
+      // This test verifies the Go CLI accepts --- as a valid separator.
+      // (run-with will attempt to start the tunnel and fail due to dummy creds,
+      // but the error should NOT be about a missing separator)
+      it("Go CLI: local run-with with --- separator should not fail with separator error", async () => {
+        if (!binary.name.toLowerCase().includes("golang") || process.platform !== "win32") {
+          return; // only meaningful on Windows Go CLI
+        }
+        const result = await runCli(binary, ["local", "run-with", "---", "echo", "hello"]);
+        // Should fail on tunnel start (bad creds), not on separator parsing
+        expect(result.stderr.toLowerCase()).not.toMatch(/separator/);
       });
     });
 

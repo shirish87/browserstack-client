@@ -16,7 +16,8 @@ import (
 )
 
 const UsageLocal = `Usage: local <action> [args...]
-Actions: start, stop, list, run-with, list-instances, get-instance, disconnect-instance`
+Actions: start, stop, list, run-with, list-instances, get-instance, disconnect-instance
+Note: run-with accepts -- or --- as the command separator (use --- in Windows PowerShell)`
 
 func runLocalWrapper(c *browserstackhttp.Client, accessKey, action string, args []string) error {
 	if action == "help" {
@@ -185,16 +186,27 @@ func localList() error {
 	return nil
 }
 
-func localRunWith(accessKey string, args []string) error {
-	sep := -1
+// runWithSeparators lists accepted command separators for run-with.
+// "---" is provided as a Windows PowerShell alternative: PowerShell may
+// consume "--" before it reaches the binary, whereas "---" passes through
+// unchanged in both PowerShell and cmd.exe.
+var runWithSeparators = []string{"--", "---"}
+
+func findSeparator(args []string) int {
 	for i, a := range args {
-		if a == "--" {
-			sep = i
-			break
+		for _, sep := range runWithSeparators {
+			if a == sep {
+				return i
+			}
 		}
 	}
+	return -1
+}
+
+func localRunWith(accessKey string, args []string) error {
+	sep := findSeparator(args)
 	if sep == -1 {
-		return fmt.Errorf("run-with: no command separator -- found\n%s", UsageLocal)
+		return fmt.Errorf("run-with: no command separator -- (or --- on Windows PowerShell) found\n%s", UsageLocal)
 	}
 	cmdArgs := args[sep+1:]
 	if len(cmdArgs) == 0 {
