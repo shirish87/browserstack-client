@@ -475,53 +475,14 @@ export async function main(
         break;
       }
       case BrowserStackLocalAction.runWith: {
-        const actualLocalIdentifier = await start({ accessKey, binHome, localIdentifier }, statusPath, logger);
-
-        const exitHandler = async () => {
-          await stop({ ...options, localIdentifier: actualLocalIdentifier }, statusPath, logger);
-          if (exitOnError) {
-            process.exit(childExitCode);
-          }
-        };
-
-        const removeOnExitHandler = onExit(() => {
-          (async () => await exitHandler())();
-        });
-
-        try {
-          const [cmd, ...args] = runWithArgs;
-          const childProcess = cp.spawnSync(cmd, args, {
-            cwd: process.cwd(),
-            stdio: ["pipe", "inherit", "inherit"],
-            windowsHide: true,
-            env: {
-              ...process.env,
-              BROWSERSTACK_LOCAL_ID: actualLocalIdentifier,
-              BROWSERSTACK_LOCAL_IDENTIFIER: actualLocalIdentifier,
-            },
-            // https://stackoverflow.com/a/54515183
-            ...(process.platform === "win32" ? { shell: true } : {}),
-          });
-
-          if (childProcess.error) {
-            throw childProcess.error;
-          }
-
-          childExitCode = Number(childProcess.status ?? 0);
-        } catch (err) {
-          childExitCode = 1;
-
-          if (err instanceof Error) {
-            logger.error(err?.message);
-          } else {
-            logger.error(`An unexpected error occurred: ${err}`);
-          }
-        } finally {
-          removeOnExitHandler();
-          await exitHandler();
-        }
-        // This function does not return anything, so no need to return here.
-        break; // Break from the switch case
+        await runWith(
+          { accessKey, binHome, localIdentifier },
+          statusPath,
+          runWithArgs!,
+          logger,
+          exitOnError
+        );
+        break;
       }
       default:
         throw new BrowserStackError(
