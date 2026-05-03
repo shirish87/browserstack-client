@@ -60,10 +60,30 @@ func TestParseArgs_proxyFlags(t *testing.T) {
 	}
 }
 
-func TestParseArgs_unknownFlag(t *testing.T) {
-	_, err := ParseArgs([]string{"--unknown-flag", "val"}, "key")
-	if err == nil {
-		t.Error("expected error for unknown flag")
+func TestParseArgs_unknownFlagPassThrough(t *testing.T) {
+	// Unknown flags + their following non-flag value are passed through to the
+	// spawned binary via Extra rather than rejected.
+	opts, err := ParseArgs([]string{"--unknown-flag", "val"}, "key")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(opts.Extra) != 2 || opts.Extra[0] != "--unknown-flag" || opts.Extra[1] != "val" {
+		t.Errorf("Extra = %v, want [--unknown-flag val]", opts.Extra)
+	}
+}
+
+func TestParseArgs_unknownFlagBoolean(t *testing.T) {
+	// An unknown flag with no following value (or followed by another flag)
+	// is still passed through as a standalone flag.
+	opts, err := ParseArgs([]string{"--some-bool", "--local-identifier", "id"}, "key")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(opts.Extra) != 1 || opts.Extra[0] != "--some-bool" {
+		t.Errorf("Extra = %v, want [--some-bool]", opts.Extra)
+	}
+	if opts.LocalIdentifier != "id" {
+		t.Errorf("LocalIdentifier = %q, want id", opts.LocalIdentifier)
 	}
 }
 
@@ -259,10 +279,25 @@ func TestParseArgs_localIdentifierStable(t *testing.T) {
 	}
 }
 
-func TestParseArgs_nonFlagArgument(t *testing.T) {
-	// An argument without -- prefix should return an error.
-	_, err := ParseArgs([]string{"notaflag"}, "key")
+func TestParseArgs_positionalLocalIdentifier(t *testing.T) {
+	// A bare positional token is taken as the LocalIdentifier when
+	// --local-identifier was not passed.
+	opts, err := ParseArgs([]string{"my-positional-id"}, "key")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if opts.LocalIdentifier != "my-positional-id" {
+		t.Errorf("LocalIdentifier = %q, want my-positional-id", opts.LocalIdentifier)
+	}
+	if !opts.ExplicitLocalIdentifier {
+		t.Error("ExplicitLocalIdentifier should be true for positional id")
+	}
+}
+
+func TestParseArgs_secondPositionalRejected(t *testing.T) {
+	// Only one positional token is meaningful — a second one is an error.
+	_, err := ParseArgs([]string{"id-one", "id-two"}, "key")
 	if err == nil {
-		t.Error("expected error for argument without -- prefix")
+		t.Error("expected error for second positional argument")
 	}
 }

@@ -13,7 +13,10 @@ type Options struct {
 	AccessKey       string
 	BinHome         string
 	LocalIdentifier string
-	CommandTimeout  time.Duration
+	// ExplicitLocalIdentifier is true when the user supplied the identifier
+	// either positionally or via --local-identifier (i.e. not auto-generated).
+	ExplicitLocalIdentifier bool
+	CommandTimeout          time.Duration
 
 	// HTTP proxy
 	ProxyHost  string
@@ -49,9 +52,17 @@ type Options struct {
 	Extra []string
 }
 
-// ParseArgs parses --flag value pairs from args into an Options.
+// ParseArgs parses CLI args into an Options. Three forms are accepted:
+//
+//   - positional [string]                — first bare token is taken as the
+//     LocalIdentifier (when --local-identifier was not also passed).
+//   - --local-identifier <string>        — explicit form; sets LocalIdentifier.
+//   - --<flag> [value]                   — known flags update the corresponding
+//     Options field; unknown flags (and a following non-flag value, if any)
+//     are appended to Options.Extra and passed through to the binary as-is.
+//
 // accessKey is used as the default value for Options.AccessKey.
-// A random localIdentifier is generated if --local-identifier is not provided.
+// A random localIdentifier is generated if neither form supplied one.
 func ParseArgs(args []string, accessKey string) (*Options, error) {
 	opts := &Options{
 		AccessKey:      accessKey,
@@ -62,7 +73,15 @@ func ParseArgs(args []string, accessKey string) (*Options, error) {
 	for i < len(args) {
 		arg := args[i]
 		if !strings.HasPrefix(arg, "--") {
-			return nil, fmt.Errorf("unexpected argument %q (expected --flag)", arg)
+			// Bare positional → LocalIdentifier (only the first one wins).
+			if !opts.ExplicitLocalIdentifier {
+				opts.LocalIdentifier = arg
+				opts.ExplicitLocalIdentifier = true
+			} else {
+				return nil, fmt.Errorf("unexpected positional argument %q", arg)
+			}
+			i++
+			continue
 		}
 		key := strings.TrimPrefix(arg, "--")
 
@@ -81,6 +100,7 @@ func ParseArgs(args []string, accessKey string) (*Options, error) {
 				return nil, err
 			}
 			opts.LocalIdentifier = v
+			opts.ExplicitLocalIdentifier = true
 		case "proxy-host":
 			v, err := needsValue()
 			if err != nil {
@@ -210,7 +230,13 @@ func ParseArgs(args []string, accessKey string) (*Options, error) {
 			}
 			opts.ParallelRuns = n
 		default:
-			return nil, fmt.Errorf("unknown flag: --%s", key)
+			// Unknown flag: pass through to the binary. Append the flag and,
+			// if the next token is not itself a flag, append it as the value.
+			opts.Extra = append(opts.Extra, arg)
+			if i+1 < len(args) && !strings.HasPrefix(args[i+1], "--") {
+				opts.Extra = append(opts.Extra, args[i+1])
+				i++
+			}
 		}
 		i++
 	}

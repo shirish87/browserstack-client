@@ -7,8 +7,8 @@ import cp from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
-import process from "node:process";
 import { onExit } from "signal-exit";
+import process from "node:process";
 import { env, resolveAccessKey } from "@dot-slash/browserstack-core";
 import { formatError } from "./utils.ts";
 import { LocalTesting } from "./constants.generated.ts";
@@ -412,8 +412,8 @@ export async function main(
     const separators = Array.isArray(cmdSeparator) ? cmdSeparator : [cmdSeparator];
     const isSeparator = (arg: string) => separators.includes(arg);
 
-    const args = inputArgs.map((arg) => arg.trim());
-    const actionInput = args[0]?.toLowerCase();
+    const rawArgs = inputArgs.map((arg) => arg.trim());
+    const actionInput = rawArgs[0]?.toLowerCase();
 
     if (actionInput === undefined || actionInput === "help") {
       logger.info(USAGE);
@@ -425,32 +425,68 @@ export async function main(
     let accessKey: string | undefined;
     let runWithArgs: string[] | undefined;
 
+    // Args between the action token and (for run-with) the command separator.
+    let preArgs: string[];
     if (action === BrowserStackLocalAction.runWith) {
-      const cmdStartIndex = args.findIndex(isSeparator);
-      if (cmdStartIndex === -1) {
+      const sepIdx = rawArgs.findIndex((a, i) => i > 0 && isSeparator(a));
+      if (sepIdx === -1) {
         throw new BrowserStackError(`Invalid run-with command: no command separator ${separators.join(" or ")} found`);
       }
-      runWithArgs = args.slice(cmdStartIndex + 1);
+      runWithArgs = rawArgs.slice(sepIdx + 1);
       if (!runWithArgs.length) {
         throw new BrowserStackError("Invalid run-with command: no command provided");
       }
-      // For run-with, localIdentifier can be from args[1] or env. AccessKey is primarily from env.
-      localIdentifier = resolveEnvLocalIdentifier() ?? (args.length > 1 && !isSeparator(args[1]) ? args[1] : undefined);
-      accessKey = env.BROWSERSTACK_ACCESS_KEY ?? env.BROWSERSTACK_KEY; // Fallback to env vars for accessKey
-
+      preArgs = rawArgs.slice(1, sepIdx);
     } else {
-      // For start, stop, list actions
-      if (args.length > 1) {
-        if (isSeparator(args[1])) {
-          throw new BrowserStackError(`Invalid arguments for ${action}: separator found unexpectedly.`);
+      preArgs = rawArgs.slice(1);
+      const stray = preArgs.findIndex(isSeparator);
+      if (stray !== -1) {
+        throw new BrowserStackError(`Invalid arguments for ${action}: separator found unexpectedly.`);
+      }
+    }
+
+    // Parse three categories from preArgs:
+    //   1. --local-identifier <value>        → registered as the tunnel id
+    //   2. positional non-flag, non-separator → first one taken as the tunnel id
+    //                                           (when --local-identifier absent)
+    //   3. any other --flag [value]          → passed through to the
+    //                                           BrowserStackLocal binary as-is
+    let flagLocalIdentifier: string | undefined;
+    const positional: string[] = [];
+    const passThrough: string[] = [];
+    for (let i = 0; i < preArgs.length; i++) {
+      const a = preArgs[i];
+      if (a === "--local-identifier") {
+        if (i + 1 >= preArgs.length) {
+          throw new BrowserStackError("Invalid arguments: --local-identifier requires a value");
         }
-        localIdentifier = args[1];
+        flagLocalIdentifier = preArgs[i + 1];
+        i++;
+        continue;
       }
-      if (args.length > 2) {
-        // For start, stop, list, only action and optional localIdentifier are expected. Any further args are invalid.
-        throw new BrowserStackError(`Invalid arguments for ${action}: unexpected arguments found.`);
+      if (a.startsWith("--")) {
+        passThrough.push(a);
+        const next = preArgs[i + 1];
+        if (next !== undefined && !next.startsWith("--")) {
+          passThrough.push(next);
+          i++;
+        }
+        continue;
       }
-      accessKey = args[2]; // For start, stop, list, accessKey is expected at args[2]
+      positional.push(a);
+    }
+
+    if (action === BrowserStackLocalAction.runWith) {
+      // For run-with, localIdentifier can be from the flag, the first positional,
+      // or env. AccessKey is sourced from env vars only.
+      localIdentifier = flagLocalIdentifier ?? resolveEnvLocalIdentifier() ?? positional[0];
+      accessKey = env.BROWSERSTACK_ACCESS_KEY ?? env.BROWSERSTACK_KEY;
+    } else {
+      // For start/stop/list, optional localIdentifier as first positional.
+      // The (legacy) second positional is treated as accessKey for backwards
+      // compatibility; --local-identifier overrides any positional id.
+      localIdentifier = flagLocalIdentifier ?? positional[0];
+      accessKey = positional[1];
     }
 
     // Ensure accessKey is present if needed (and not for run-with where it's handled by env)
@@ -461,13 +497,15 @@ export async function main(
     const binHome = await ensureBinHomeExists();
     const statusPath = join(binHome, "status.json");
 
+    const more = passThrough.length ? passThrough : undefined;
+
     switch (action) {
       case BrowserStackLocalAction.start: {
-        await start({ accessKey, binHome, localIdentifier }, statusPath, logger);
+        await start({ accessKey, binHome, localIdentifier, more }, statusPath, logger);
         break;
       }
       case BrowserStackLocalAction.stop: {
-        await stop({ accessKey, binHome, localIdentifier }, statusPath, logger);
+        await stop({ accessKey, binHome, localIdentifier, more }, statusPath, logger);
         break;
       }
       case BrowserStackLocalAction.list: {
@@ -476,7 +514,7 @@ export async function main(
       }
       case BrowserStackLocalAction.runWith: {
         await runWith(
-          { accessKey, binHome, localIdentifier },
+          { accessKey, binHome, localIdentifier, more },
           statusPath,
           runWithArgs!,
           logger,

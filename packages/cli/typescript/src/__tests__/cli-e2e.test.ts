@@ -1,7 +1,9 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, beforeAll } from "vitest";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { resolve, join } from "node:path";
+import { writeFileSync, mkdirSync } from "node:fs";
+import { homedir, tmpdir } from "node:os";
 
 const execFileAsync = promisify(execFile);
 
@@ -376,6 +378,26 @@ describe("CLI E2E Orchestrator", () => {
     // ─── local ───────────────────────────────────────────────────────────────
 
     describe("local", () => {
+      // Stop any tracked tunnels left over from prior test runs so that
+      // assertions about "no tunnels running" start from a clean slate.
+      // Using the CLI's own `stop` keeps both the running binaries and the
+      // status.json in sync — wiping the file alone would orphan processes.
+      beforeAll(async () => {
+        if (hasRealCreds) {
+          await runCliWithRealCreds(binary, ["local", "stop"]);
+        } else {
+          // No real creds: just clear the status file so unit-level "list/stop
+          // with no tracked tunnels" assertions are not polluted by prior runs.
+          const binHome = join(homedir() ?? tmpdir(), ".browserstack");
+          try {
+            mkdirSync(binHome, { recursive: true });
+            writeFileSync(join(binHome, "status.json"), JSON.stringify({ localIdentifiers: [] }, null, 2));
+          } catch {
+            // best-effort; tests will surface real failures if the file isn't writable.
+          }
+        }
+      });
+
       it("should print usage for 'local help'", async () => {
         await assertHelp(binary, ["local", "help"]);
       });

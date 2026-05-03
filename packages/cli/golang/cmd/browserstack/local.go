@@ -125,18 +125,12 @@ func localStop(accessKey string, args []string) error {
 		return err
 	}
 
-	// Only treat LocalIdentifier as a filter when the user explicitly passed
-	// --local-identifier. ParseArgs always generates one, so we re-check args.
-	var explicitID string
-	for i, a := range args {
-		if a == "--local-identifier" && i+1 < len(args) {
-			explicitID = strings.TrimSpace(args[i+1])
-			break
-		}
-	}
-
+	// Only treat LocalIdentifier as a filter when the user explicitly supplied
+	// it (positionally or via --local-identifier). ParseArgs always sets some
+	// value — auto-generated when absent — so we rely on the explicit flag.
 	var toStop []string
-	if explicitID != "" {
+	if opts.ExplicitLocalIdentifier {
+		explicitID := strings.TrimSpace(opts.LocalIdentifier)
 		if !contains(s.LocalIdentifiers, explicitID) {
 			fmt.Fprintf(os.Stderr, "warning: --local-identifier %q is not tracked; stopping all tracked instances\n", explicitID)
 		} else {
