@@ -421,7 +421,7 @@ export async function main(
     const action = ensureValidAction(actionInput);
     const localIdentifier =
       resolveEnvLocalIdentifier() ??
-      (args[1] === cmdSeparator ? undefined : args[1]);
+      (args[1] === cmdSeparator || args[1] === "---" ? undefined : args[1]);
 
     const accessKey = ensureAccessKeyExists(
       action === BrowserStackLocalAction.runWith ? undefined : args[2]
@@ -443,7 +443,9 @@ export async function main(
         break;
       }
       case BrowserStackLocalAction.runWith: {
-        const cmdStartIndex = args.findIndex((arg) => arg === cmdSeparator);
+        // Accept both -- and --- as separators. --- is the Windows PowerShell
+        // workaround: PowerShell may consume -- before it reaches the process.
+        const cmdStartIndex = args.findIndex((arg) => arg === cmdSeparator || arg === "---");
         if (cmdStartIndex === -1) {
           throw new BrowserStackError(
             `Invalid run-with command: no command separator ${cmdSeparator} found`

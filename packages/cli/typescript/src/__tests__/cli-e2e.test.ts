@@ -506,14 +506,10 @@ describe("CLI E2E Orchestrator", () => {
 
       it("local run-with starts tunnel, sets env vars, runs command, stops tunnel", async () => {
         if (!hasRealCreds) return;
-        // TypeScript CLI uses spawnSync with shell:true on Windows, which does
-        // not reliably handle the -- separator. Skip TS CLI on Windows.
-        const isGoCliOnWindows = binary.name.toLowerCase().includes("golang") && process.platform === "win32";
-        if (process.platform === "win32" && !isGoCliOnWindows) return;
-
-        // Go CLI accepts --- on Windows PowerShell (-- may be consumed by the shell).
-        // TypeScript CLI uses -- on all other platforms.
-        const sep = isGoCliOnWindows ? "---" : "--";
+        // On Windows PowerShell, -- may be consumed before reaching the binary.
+        // Use --- instead — both CLIs accept it when spawned via execFileAsync
+        // (args are passed directly to the OS, no shell interpolation).
+        const sep = process.platform === "win32" ? "---" : "--";
 
         const result = await runCliWithRealCreds(binary, [
           "local", "run-with", sep,
@@ -530,10 +526,7 @@ describe("CLI E2E Orchestrator", () => {
 
       it("local run-with exits non-zero when child command fails", async () => {
         if (!hasRealCreds) return;
-        const isGoCliOnWindows = binary.name.toLowerCase().includes("golang") && process.platform === "win32";
-        if (process.platform === "win32" && !isGoCliOnWindows) return;
-
-        const sep = isGoCliOnWindows ? "---" : "--";
+        const sep = process.platform === "win32" ? "---" : "--";
         const result = await runCliWithRealCreds(binary, [
           "local", "run-with", sep,
           "node", "-e", "process.exit(42)",
