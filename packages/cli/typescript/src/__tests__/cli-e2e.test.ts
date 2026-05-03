@@ -505,38 +505,40 @@ describe("CLI E2E Orchestrator", () => {
       }, TEST_TIMEOUT_TUNNEL);
 
       it("local run-with starts tunnel, sets env vars, runs command, stops tunnel", async () => {
-        if (!hasRealCreds || process.platform === "win32") return;
-        // Windows: -- separator may be consumed by shell; run-with integration
-        // test skipped on Windows (use --- workaround in real usage).
+        if (!hasRealCreds) return;
+        // TypeScript CLI uses spawnSync with shell:true on Windows, which does
+        // not reliably handle the -- separator. Skip TS CLI on Windows.
+        const isGoCliOnWindows = binary.name.toLowerCase().includes("golang") && process.platform === "win32";
+        if (process.platform === "win32" && !isGoCliOnWindows) return;
 
-        const sep = "--";
+        // Go CLI accepts --- on Windows PowerShell (-- may be consumed by the shell).
+        // TypeScript CLI uses -- on all other platforms.
+        const sep = isGoCliOnWindows ? "---" : "--";
+
         const result = await runCliWithRealCreds(binary, [
           "local", "run-with", sep,
-          // Print the env var so we can assert it was set
           "node", "-e", "process.stdout.write(process.env.BROWSERSTACK_LOCAL_IDENTIFIER || '')",
         ]);
         expect(result.exitCode).toBe(0);
-        // stdout has two lines: "<id>: Connected" then the node output (the identifier)
-        // then "<id>: BrowserStackLocal stopped successfully"
         const lines = (result.stdout + result.stderr).split("\n").map((l: string) => l.trim()).filter(Boolean);
         const connectedLine = lines.find((l: string) => /connected/i.test(l));
         expect(connectedLine).toBeTruthy();
         const tunnelId = connectedLine!.split(":")[0].trim();
-        // The env var printed by node should match the tunnel id
         expect(result.stdout).toContain(tunnelId);
         expect(lines.some((l: string) => /stopped successfully/i.test(l))).toBe(true);
       }, TEST_TIMEOUT_TUNNEL);
 
       it("local run-with exits non-zero when child command fails", async () => {
-        if (!hasRealCreds || process.platform === "win32") return;
+        if (!hasRealCreds) return;
+        const isGoCliOnWindows = binary.name.toLowerCase().includes("golang") && process.platform === "win32";
+        if (process.platform === "win32" && !isGoCliOnWindows) return;
 
+        const sep = isGoCliOnWindows ? "---" : "--";
         const result = await runCliWithRealCreds(binary, [
-          "local", "run-with", "--",
+          "local", "run-with", sep,
           "node", "-e", "process.exit(42)",
         ]);
-        // Child exits 42, run-with should propagate non-zero
         expect(result.exitCode).not.toBe(0);
-        // Tunnel should still be stopped (no dangling tunnel)
         const listResult = await runCliWithRealCreds(binary, ["local", "list"]);
         expect(listResult.stdout.trim()).toBe("");
       }, TEST_TIMEOUT_TUNNEL);
