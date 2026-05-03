@@ -120,27 +120,41 @@ func localStop(accessKey string, args []string) error {
 	opts.BinHome = binHome
 	statusPath := filepath.Join(binHome, "status.json")
 
-	binPath, err := browserstacklocal.EnsureBinaryExists(binHome)
-	if err != nil {
-		return fmt.Errorf("ensure binary: %w", err)
-	}
-
 	s, err := browserstacklocal.ReadStatus(statusPath)
 	if err != nil {
 		return err
 	}
 
+	// Only treat LocalIdentifier as a filter when the user explicitly passed
+	// --local-identifier. ParseArgs always generates one, so we re-check args.
+	var explicitID string
+	for i, a := range args {
+		if a == "--local-identifier" && i+1 < len(args) {
+			explicitID = strings.TrimSpace(args[i+1])
+			break
+		}
+	}
+
 	var toStop []string
-	inputID := strings.TrimSpace(opts.LocalIdentifier)
-	if inputID != "" {
-		if !contains(s.LocalIdentifiers, inputID) {
-			fmt.Fprintf(os.Stderr, "warning: --local-identifier %q is not tracked; stopping all tracked instances\n", inputID)
+	if explicitID != "" {
+		if !contains(s.LocalIdentifiers, explicitID) {
+			fmt.Fprintf(os.Stderr, "warning: --local-identifier %q is not tracked; stopping all tracked instances\n", explicitID)
 		} else {
-			toStop = []string{inputID}
+			toStop = []string{explicitID}
 		}
 	}
 	if len(toStop) == 0 {
 		toStop = append([]string{}, s.LocalIdentifiers...)
+	}
+
+	// Nothing tracked — exit cleanly without touching the binary.
+	if len(toStop) == 0 {
+		return nil
+	}
+
+	binPath, err := browserstacklocal.EnsureBinaryExists(binHome)
+	if err != nil {
+		return fmt.Errorf("ensure binary: %w", err)
 	}
 
 	remaining := append([]string{}, s.LocalIdentifiers...)
