@@ -1,6 +1,7 @@
 package local
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -115,5 +116,153 @@ func TestDaemonArgs_verboseLevels(t *testing.T) {
 		if !found {
 			t.Errorf("verbose level %d: expected --verbose in %v", level, args)
 		}
+	}
+}
+
+// --- Adversarial tests ---
+
+func TestParseArgs_flagMissingValue(t *testing.T) {
+	// --proxy-host with no following argument should return an error.
+	_, err := ParseArgs([]string{"--proxy-host"}, "key")
+	if err == nil {
+		t.Error("expected error when --proxy-host has no value")
+	}
+}
+
+func TestParseArgs_nonNumericIntFlags(t *testing.T) {
+	cases := [][]string{
+		{"--proxy-port", "abc"},
+		{"--verbose", "abc"},
+		{"--timeout", "abc"},
+		{"--parallel-runs", "abc"},
+		{"--local-proxy-port", "abc"},
+	}
+	for _, args := range cases {
+		_, err := ParseArgs(args, "key")
+		if err == nil {
+			t.Errorf("expected error for non-numeric value in %v", args)
+		}
+	}
+}
+
+func TestParseArgs_verboseOutOfRange(t *testing.T) {
+	// 0 and 4 are out of range and should error.
+	for _, v := range []string{"0", "4", "-1", "100"} {
+		_, err := ParseArgs([]string{"--verbose", v}, "key")
+		if err == nil {
+			t.Errorf("expected error for --verbose %s", v)
+		}
+	}
+}
+
+func TestParseArgs_verboseValidRange(t *testing.T) {
+	for _, v := range []string{"1", "2", "3"} {
+		opts, err := ParseArgs([]string{"--verbose", v}, "key")
+		if err != nil {
+			t.Errorf("unexpected error for --verbose %s: %v", v, err)
+			continue
+		}
+		if opts.Verbose < 1 || opts.Verbose > 3 {
+			t.Errorf("Verbose = %d out of expected range for input %s", opts.Verbose, v)
+		}
+	}
+}
+
+func TestDaemonArgs_emptyAccessKey(t *testing.T) {
+	// Empty AccessKey should still produce --key "" in args.
+	opts := &Options{AccessKey: "", LocalIdentifier: "myid"}
+	args := opts.DaemonArgs("start")
+	found := false
+	for i, a := range args {
+		if a == "--key" && i+1 < len(args) && args[i+1] == "" {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("expected --key \"\" in args, got %v", args)
+	}
+}
+
+func TestDaemonArgs_allOptionalFlags(t *testing.T) {
+	opts := &Options{
+		AccessKey:       "k",
+		LocalIdentifier: "id",
+		ForceLocal:      true,
+		OnlyAutomate:    true,
+		Folder:          "/tmp/folder",
+		LogFile:         "/tmp/log.txt",
+		Timeout:         60,
+		ParallelRuns:    4,
+		IncludeHosts:    "host1.example.com",
+		ExcludeHosts:    "host2.example.com",
+		Only:            "3000,3001",
+		CACert:          "/tmp/ca.pem",
+		LocalProxyHost:  "localproxy.example.com",
+		Verbose:         2,
+	}
+	args := opts.DaemonArgs("start")
+	joined := strings.Join(args, " ")
+
+	checks := []struct {
+		flag string
+		val  string
+	}{
+		{"--force-local", ""},
+		{"--only-automate", ""},
+		{"--folder", "/tmp/folder"},
+		{"--log-file", "/tmp/log.txt"},
+		{"--timeout", "60"},
+		{"--parallel-runs", "4"},
+		{"--include-hosts", "host1.example.com"},
+		{"--exclude-hosts", "host2.example.com"},
+		{"--only", "3000,3001"},
+		{"--use-ca-certificate", "/tmp/ca.pem"},
+		{"--local-proxy-host", "localproxy.example.com"},
+		{"--verbose", "2"},
+	}
+	for _, c := range checks {
+		if !strings.Contains(joined, c.flag) {
+			t.Errorf("expected %q in DaemonArgs, got: %v", c.flag, args)
+			continue
+		}
+		if c.val != "" && !strings.Contains(joined, c.val) {
+			t.Errorf("expected value %q for flag %q in DaemonArgs, got: %v", c.val, c.flag, args)
+		}
+	}
+}
+
+func TestDaemonArgs_extraFlagsAppended(t *testing.T) {
+	opts := &Options{
+		AccessKey:       "k",
+		LocalIdentifier: "id",
+		Extra:           []string{"--custom-flag", "custom-value"},
+	}
+	args := opts.DaemonArgs("start")
+	joined := strings.Join(args, " ")
+	if !strings.Contains(joined, "--custom-flag") || !strings.Contains(joined, "custom-value") {
+		t.Errorf("expected Extra flags in DaemonArgs, got: %v", args)
+	}
+}
+
+func TestParseArgs_localIdentifierStable(t *testing.T) {
+	// Explicitly-provided --local-identifier should be preserved across calls.
+	opts1, err1 := ParseArgs([]string{"--local-identifier", "stable-id"}, "key")
+	opts2, err2 := ParseArgs([]string{"--local-identifier", "stable-id"}, "key")
+	if err1 != nil || err2 != nil {
+		t.Fatalf("unexpected errors: %v, %v", err1, err2)
+	}
+	if opts1.LocalIdentifier != opts2.LocalIdentifier {
+		t.Errorf("LocalIdentifier mismatch: %q vs %q", opts1.LocalIdentifier, opts2.LocalIdentifier)
+	}
+	if opts1.LocalIdentifier != "stable-id" {
+		t.Errorf("LocalIdentifier = %q, want stable-id", opts1.LocalIdentifier)
+	}
+}
+
+func TestParseArgs_nonFlagArgument(t *testing.T) {
+	// An argument without -- prefix should return an error.
+	_, err := ParseArgs([]string{"notaflag"}, "key")
+	if err == nil {
+		t.Error("expected error for argument without -- prefix")
 	}
 }
