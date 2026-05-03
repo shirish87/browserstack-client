@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { resolve, join } from "node:path";
@@ -23,6 +23,36 @@ const binaries = [
 ];
 
 const TEST_TIMEOUT_SLOW_API = 30000;
+const TEST_TIMEOUT_TUNNEL = 60000;
+
+// Real credentials from env — present only when running integration tests.
+const realUsername = process.env.BROWSERSTACK_USERNAME ?? "";
+const realAccessKey = process.env.BROWSERSTACK_ACCESS_KEY ?? process.env.BROWSERSTACK_KEY ?? "";
+const hasRealCreds = realUsername !== "" && realAccessKey !== "" &&
+  realUsername !== "dummy-user" && realAccessKey !== "dummy-key";
+
+async function runCliWithRealCreds(binary: typeof binaries[number], args: string[]) {
+  const spawnPath = binary.type === "node" ? "node" : binary.path;
+  const spawnArgs = binary.type === "node" ? [binary.entry!, ...args] : args;
+
+  try {
+    const { stdout, stderr } = await execFileAsync(spawnPath, spawnArgs, {
+      env: {
+        ...process.env,
+        BROWSERSTACK_USERNAME: realUsername,
+        BROWSERSTACK_ACCESS_KEY: realAccessKey,
+      },
+      timeout: TEST_TIMEOUT_TUNNEL,
+    });
+    return { stdout, stderr, exitCode: 0 };
+  } catch (error: any) {
+    return {
+      stdout: error.stdout ?? "",
+      stderr: error.stderr ?? "",
+      exitCode: typeof error.code === "number" ? error.code : 1,
+    };
+  }
+}
 
 async function runCli(binary: typeof binaries[number], args: string[]) {
   const spawnPath = binary.type === "node" ? "node" : binary.path;
@@ -406,6 +436,110 @@ describe("CLI E2E Orchestrator", () => {
         // Should fail on tunnel start (bad creds), not on separator parsing
         expect(result.stderr.toLowerCase()).not.toMatch(/separator/);
       });
+    });
+
+    // ─── local integration (requires real BROWSERSTACK credentials) ─────────
+    //
+    // Skipped automatically when dummy credentials are detected.
+    // Run with real BROWSERSTACK_USERNAME + BROWSERSTACK_ACCESS_KEY to enable.
+
+    describe("local integration", () => {
+      let startedLocalIdentifier: string | undefined;
+
+      beforeEach(() => {
+        startedLocalIdentifier = undefined;
+      });
+
+      it("local start connects a tunnel and local stop disconnects it", async () => {
+        if (!hasRealCreds) return;
+
+        // start
+        const startResult = await runCliWithRealCreds(binary, ["local", "start"]);
+        expect(startResult.exitCode).toBe(0);
+        // stdout: "<localIdentifier>: Connected"
+        expect(startResult.stdout).toMatch(/^[a-z0-9]+: connected$/im);
+        startedLocalIdentifier = startResult.stdout.trim().split(":")[0].trim();
+
+        // list — should include the started identifier
+        const listResult = await runCliWithRealCreds(binary, ["local", "list"]);
+        expect(listResult.exitCode).toBe(0);
+        expect(listResult.stdout).toContain(startedLocalIdentifier);
+
+        // stop
+        const stopResult = await runCliWithRealCreds(binary, ["local", "stop"]);
+        expect(stopResult.exitCode).toBe(0);
+        expect(stopResult.stdout).toMatch(/stopped successfully/i);
+
+        // list — should be empty now
+        const listAfterStop = await runCliWithRealCreds(binary, ["local", "list"]);
+        expect(listAfterStop.exitCode).toBe(0);
+        expect(listAfterStop.stdout.trim()).toBe("");
+      }, TEST_TIMEOUT_TUNNEL);
+
+      it("local stop with specific --local-identifier stops only that tunnel", async () => {
+        if (!hasRealCreds) return;
+
+        const startResult = await runCliWithRealCreds(binary, ["local", "start"]);
+        expect(startResult.exitCode).toBe(0);
+        startedLocalIdentifier = startResult.stdout.trim().split(":")[0].trim();
+
+        const stopResult = await runCliWithRealCreds(binary, [
+          "local", "stop", "--local-identifier", startedLocalIdentifier!,
+        ]);
+        expect(stopResult.exitCode).toBe(0);
+        expect(stopResult.stdout).toContain(startedLocalIdentifier);
+        expect(stopResult.stdout).toMatch(/stopped successfully/i);
+      }, TEST_TIMEOUT_TUNNEL);
+
+      it("local stop on an already-stopped tunnel does not error", async () => {
+        if (!hasRealCreds) return;
+
+        const startResult = await runCliWithRealCreds(binary, ["local", "start"]);
+        expect(startResult.exitCode).toBe(0);
+        startedLocalIdentifier = startResult.stdout.trim().split(":")[0].trim();
+
+        // stop twice — second stop should not crash
+        await runCliWithRealCreds(binary, ["local", "stop"]);
+        const secondStop = await runCliWithRealCreds(binary, ["local", "stop"]);
+        expect(secondStop.exitCode).toBe(0);
+      }, TEST_TIMEOUT_TUNNEL);
+
+      it("local run-with starts tunnel, sets env vars, runs command, stops tunnel", async () => {
+        if (!hasRealCreds || process.platform === "win32") return;
+        // Windows: -- separator may be consumed by shell; run-with integration
+        // test skipped on Windows (use --- workaround in real usage).
+
+        const sep = "--";
+        const result = await runCliWithRealCreds(binary, [
+          "local", "run-with", sep,
+          // Print the env var so we can assert it was set
+          "node", "-e", "process.stdout.write(process.env.BROWSERSTACK_LOCAL_IDENTIFIER || '')",
+        ]);
+        expect(result.exitCode).toBe(0);
+        // stdout has two lines: "<id>: Connected" then the node output (the identifier)
+        // then "<id>: BrowserStackLocal stopped successfully"
+        const lines = (result.stdout + result.stderr).split("\n").map((l: string) => l.trim()).filter(Boolean);
+        const connectedLine = lines.find((l: string) => /connected/i.test(l));
+        expect(connectedLine).toBeTruthy();
+        const tunnelId = connectedLine!.split(":")[0].trim();
+        // The env var printed by node should match the tunnel id
+        expect(result.stdout).toContain(tunnelId);
+        expect(lines.some((l: string) => /stopped successfully/i.test(l))).toBe(true);
+      }, TEST_TIMEOUT_TUNNEL);
+
+      it("local run-with exits non-zero when child command fails", async () => {
+        if (!hasRealCreds || process.platform === "win32") return;
+
+        const result = await runCliWithRealCreds(binary, [
+          "local", "run-with", "--",
+          "node", "-e", "process.exit(42)",
+        ]);
+        // Child exits 42, run-with should propagate non-zero
+        expect(result.exitCode).not.toBe(0);
+        // Tunnel should still be stopped (no dangling tunnel)
+        const listResult = await runCliWithRealCreds(binary, ["local", "list"]);
+        expect(listResult.stdout.trim()).toBe("");
+      }, TEST_TIMEOUT_TUNNEL);
     });
 
     // ─── automate ───────────────────────────────────────────────────────────
