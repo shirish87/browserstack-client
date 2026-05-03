@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"strings"
+	"sync"
 	"syscall"
 
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
@@ -35,6 +36,7 @@ func defaultBinHome() string {
 	if v := os.Getenv("BROWSERSTACK_LOCAL_BINARY_HOME"); v != "" {
 		return v
 	}
+	// BROWSERSTACK_LOCAL_BINARY_PATH is treated as a directory path (binHome), not a file path.
 	if v := os.Getenv("BROWSERSTACK_LOCAL_BINARY_PATH"); v != "" {
 		return v
 	}
@@ -129,9 +131,14 @@ func localStop(accessKey string, args []string) error {
 
 	var toStop []string
 	inputID := strings.TrimSpace(opts.LocalIdentifier)
-	if inputID != "" && contains(s.LocalIdentifiers, inputID) {
-		toStop = []string{inputID}
-	} else {
+	if inputID != "" {
+		if !contains(s.LocalIdentifiers, inputID) {
+			fmt.Fprintf(os.Stderr, "warning: --local-identifier %q is not tracked; stopping all tracked instances\n", inputID)
+		} else {
+			toStop = []string{inputID}
+		}
+	}
+	if len(toStop) == 0 {
 		toStop = append([]string{}, s.LocalIdentifiers...)
 	}
 
@@ -227,18 +234,21 @@ func localRunWith(accessKey string, args []string) error {
 	_ = browserstacklocal.WriteStatus(statusPath, s)
 	fmt.Printf("%s: %s\n", opts.LocalIdentifier, browserstacklocal.ExtractMessage(startResp.Message))
 
+	var stopOnce sync.Once
 	stopTunnel := func() {
-		stopOpts := *opts
-		stopCtx, stopCancel := context.WithTimeout(context.Background(), opts.CommandTimeout)
-		defer stopCancel()
-		resp, err := browserstacklocal.ExecDaemon(stopCtx, binHome, binPath, stopOpts.DaemonArgs("stop"))
-		if err == nil {
-			fmt.Printf("%s: %s\n", opts.LocalIdentifier, browserstacklocal.ExtractMessage(resp.Message))
-		}
-		if st, rerr := browserstacklocal.ReadStatus(statusPath); rerr == nil {
-			st.LocalIdentifiers = removeFrom(st.LocalIdentifiers, opts.LocalIdentifier)
-			_ = browserstacklocal.WriteStatus(statusPath, st)
-		}
+		stopOnce.Do(func() {
+			stopOpts := *opts
+			stopCtx, stopCancel := context.WithTimeout(context.Background(), opts.CommandTimeout)
+			defer stopCancel()
+			resp, err := browserstacklocal.ExecDaemon(stopCtx, binHome, binPath, stopOpts.DaemonArgs("stop"))
+			if err == nil {
+				fmt.Printf("%s: %s\n", opts.LocalIdentifier, browserstacklocal.ExtractMessage(resp.Message))
+			}
+			if st, rerr := browserstacklocal.ReadStatus(statusPath); rerr == nil {
+				st.LocalIdentifiers = removeFrom(st.LocalIdentifiers, opts.LocalIdentifier)
+				_ = browserstacklocal.WriteStatus(statusPath, st)
+			}
+		})
 	}
 
 	sigCh := make(chan os.Signal, 1)

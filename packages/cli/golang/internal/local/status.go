@@ -54,6 +54,7 @@ func WriteStatus(statusPath string, s *StatusFile) error {
 	}
 
 	tmp := statusPath + ".tmp"
+	defer os.Remove(tmp) // clean up on rename failure
 	if err := os.MkdirAll(filepath.Dir(statusPath), 0755); err != nil {
 		return err
 	}

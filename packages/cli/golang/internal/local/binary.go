@@ -91,7 +91,7 @@ func execOnce(ctx context.Context, binPath string, args []string) (*DaemonRespon
 }
 
 func isPermissionError(err error) bool {
-	return err != nil && strings.Contains(err.Error(), "permission denied")
+	return err != nil && errors.Is(err, os.ErrPermission)
 }
 
 func downloadBinary(binHome string) (string, error) {
@@ -118,7 +118,8 @@ func downloadBinary(binHome string) (string, error) {
 		return "", fmt.Errorf("download binary: HTTP %d for %s", resp.StatusCode, url)
 	}
 
-	zipData, err := io.ReadAll(resp.Body)
+	const maxBinarySize = 100 * 1024 * 1024 // 100 MB
+	zipData, err := io.ReadAll(io.LimitReader(resp.Body, maxBinarySize))
 	if err != nil {
 		return "", fmt.Errorf("read zip: %w", err)
 	}
@@ -157,6 +158,7 @@ func extractZip(zipData []byte, destDir string) (string, error) {
 
 		destPath := binaryPath(destDir)
 		tmpPath := destPath + ".tmp"
+		defer os.Remove(tmpPath) // clean up on rename failure
 		if err := os.WriteFile(tmpPath, data, 0755); err != nil {
 			return "", err
 		}
@@ -180,6 +182,9 @@ func binaryPath(binHome string) string {
 func currentOSArch() (string, error) {
 	switch runtime.GOOS {
 	case "darwin":
+		if runtime.GOARCH == "arm64" {
+			return "darwin-arm64", nil
+		}
 		return "darwin-x64", nil
 	case "windows":
 		return "win32", nil

@@ -14,11 +14,12 @@ func TestCurrentOSArch_returnsKnownValue(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	valid := map[string]bool{
-		"linux-x64":  true,
-		"linux-ia32": true,
-		"alpine":     true,
-		"darwin-x64": true,
-		"win32":      true,
+		"linux-x64":    true,
+		"linux-ia32":   true,
+		"alpine":       true,
+		"darwin-x64":   true,
+		"darwin-arm64": true,
+		"win32":        true,
 	}
 	if !valid[arch] {
 		t.Errorf("currentOSArch() = %q, not a recognized value", arch)

@@ -2,7 +2,7 @@ package local
 
 import (
 	"fmt"
-	"math/rand"
+	"math/rand" // math/rand global is auto-seeded since Go 1.20; math/rand/v2 requires Go 1.22
 	"strconv"
 	"strings"
 	"time"
