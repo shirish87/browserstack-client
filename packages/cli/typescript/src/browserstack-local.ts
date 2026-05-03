@@ -406,10 +406,13 @@ async function writeStatusFile(
 export async function main(
   inputArgs: string[] = process.argv.slice(2),
   logger: Logger = globalThis.console,
-  cmdSeparator: string = "--",
+  cmdSeparator: string | string[] = ["--", "---"],
   exitOnError: boolean = true
 ) {
   try {
+    const separators = Array.isArray(cmdSeparator) ? cmdSeparator : [cmdSeparator];
+    const isSeparator = (arg: string) => separators.includes(arg);
+
     const args = inputArgs.map((arg) => arg.trim());
     const actionInput = args[0]?.toLowerCase();
 
@@ -421,7 +424,7 @@ export async function main(
     const action = ensureValidAction(actionInput);
     const localIdentifier =
       resolveEnvLocalIdentifier() ??
-      (args[1] === cmdSeparator || args[1] === "---" ? undefined : args[1]);
+      (isSeparator(args[1]) ? undefined : args[1]);
 
     const accessKey = ensureAccessKeyExists(
       action === BrowserStackLocalAction.runWith ? undefined : args[2]
@@ -443,12 +446,10 @@ export async function main(
         break;
       }
       case BrowserStackLocalAction.runWith: {
-        // Accept both -- and --- as separators. --- is the Windows PowerShell
-        // workaround: PowerShell may consume -- before it reaches the process.
-        const cmdStartIndex = args.findIndex((arg) => arg === cmdSeparator || arg === "---");
+        const cmdStartIndex = args.findIndex(isSeparator);
         if (cmdStartIndex === -1) {
           throw new BrowserStackError(
-            `Invalid run-with command: no command separator ${cmdSeparator} found`
+            `Invalid run-with command: no command separator ${separators.join(" or ")} found`
           );
         }
 
