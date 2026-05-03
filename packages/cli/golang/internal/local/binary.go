@@ -73,7 +73,7 @@ func execOnce(ctx context.Context, binPath string, args []string) (*DaemonRespon
 		if errors.As(err, &exitErr) {
 			var resp DaemonResponse
 			if jerr := json.Unmarshal(bytes.TrimSpace(exitErr.Stderr), &resp); jerr == nil {
-				return nil, fmt.Errorf("%s", extractMessage(resp.Message))
+				return nil, fmt.Errorf("%s", ExtractMessage(resp.Message))
 			}
 		}
 		if isPermissionError(err) {
@@ -205,8 +205,8 @@ func isMusl() bool {
 	return strings.Contains(string(data), "musl")
 }
 
-// extractMessage extracts the human-readable message from a DaemonResponse.Message.
-func extractMessage(msg any) string {
+// ExtractMessage extracts the human-readable message from a DaemonResponse.Message.
+func ExtractMessage(msg any) string {
 	if msg == nil {
 		return ""
 	}

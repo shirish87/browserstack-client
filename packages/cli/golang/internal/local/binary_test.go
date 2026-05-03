@@ -26,21 +26,21 @@ func TestCurrentOSArch_returnsKnownValue(t *testing.T) {
 }
 
 func TestExtractMessage_stringValue(t *testing.T) {
-	got := extractMessage("hello world")
+	got := ExtractMessage("hello world")
 	if got != "hello world" {
 		t.Errorf("got %q", got)
 	}
 }
 
 func TestExtractMessage_nestedObject(t *testing.T) {
-	got := extractMessage(map[string]any{"message": "nested msg"})
+	got := ExtractMessage(map[string]any{"message": "nested msg"})
 	if got != "nested msg" {
 		t.Errorf("got %q", got)
 	}
 }
 
 func TestExtractMessage_nil(t *testing.T) {
-	got := extractMessage(nil)
+	got := ExtractMessage(nil)
 	if got != "" {
 		t.Errorf("got %q, want empty", got)
 	}

@@ -60,7 +60,7 @@ func main() {
 	var err error
 	switch product {
 	case "local":
-		err = runLocalWrapper(apiClient, action, args)
+		err = runLocalWrapper(apiClient, accessKey, action, args)
 	case automate.ProductAutomate:
 		err = runAutomate(apiClient, action, args)
 	case appautomate.ProductAppAutomate:
