@@ -56,9 +56,8 @@ async function start(
       );
     } else if (err instanceof Error) {
       logger.error(`${localIdentifier}: ${err.message}`);
-    } else {
-      throw err;
     }
+    throw err;
   }
 
   if (status) {
@@ -330,7 +329,7 @@ async function readOrCreateStatusFile(
       const data: unknown = JSON.parse(contents);
       const localIdentifiers = [];
 
-      if (data && typeof data === "object") {
+      if (data && typeof data === "object" && !Array.isArray(data)) {
         if (
           "localIdentifiers" in data &&
           Array.isArray(data.localIdentifiers)
@@ -344,7 +343,7 @@ async function readOrCreateStatusFile(
           );
         }
 
-        return { localIdentifiers, ...data };
+        return { ...data, localIdentifiers };
       }
     }
 
@@ -416,19 +415,49 @@ export async function main(
     const args = inputArgs.map((arg) => arg.trim());
     const actionInput = args[0]?.toLowerCase();
 
-    if (!actionInput || actionInput === "help") {
+    if (actionInput === undefined || actionInput === "help") {
       logger.info(USAGE);
       return;
     }
 
     const action = ensureValidAction(actionInput);
-    const localIdentifier =
-      resolveEnvLocalIdentifier() ??
-      (isSeparator(args[1]) ? undefined : args[1]);
+    let localIdentifier: string | undefined;
+    let accessKey: string | undefined;
+    let runWithArgs: string[] | undefined;
 
-    const accessKey = ensureAccessKeyExists(
-      action === BrowserStackLocalAction.runWith ? undefined : args[2]
-    );
+    if (action === BrowserStackLocalAction.runWith) {
+      const cmdStartIndex = args.findIndex(isSeparator);
+      if (cmdStartIndex === -1) {
+        throw new BrowserStackError(`Invalid run-with command: no command separator ${separators.join(" or ")} found`);
+      }
+      runWithArgs = args.slice(cmdStartIndex + 1);
+      if (!runWithArgs.length) {
+        throw new BrowserStackError("Invalid run-with command: no command provided");
+      }
+      // For run-with, localIdentifier can be from args[1] or env. AccessKey is primarily from env.
+      localIdentifier = resolveEnvLocalIdentifier() ?? (args.length > 1 && !isSeparator(args[1]) ? args[1] : undefined);
+      accessKey = env.BROWSERSTACK_ACCESS_KEY ?? env.BROWSERSTACK_KEY; // Fallback to env vars for accessKey
+
+    } else {
+      // For start, stop, list actions
+      if (args.length > 1) {
+        if (isSeparator(args[1])) {
+          throw new BrowserStackError(`Invalid arguments for ${action}: separator found unexpectedly.`);
+        }
+        localIdentifier = args[1];
+      }
+      if (args.length > 2) {
+        // For start, stop, list, only action and optional localIdentifier are expected. Any further args are invalid.
+        throw new BrowserStackError(`Invalid arguments for ${action}: unexpected arguments found.`);
+      }
+      accessKey = args[2]; // For start, stop, list, accessKey is expected at args[2]
+    }
+
+    // Ensure accessKey is present if needed (and not for run-with where it's handled by env)
+    if (action !== BrowserStackLocalAction.runWith) {
+      accessKey = ensureAccessKeyExists(accessKey);
+    }
+
     const binHome = await ensureBinHomeExists();
     const statusPath = join(binHome, "status.json");
 
@@ -446,27 +475,53 @@ export async function main(
         break;
       }
       case BrowserStackLocalAction.runWith: {
-        const cmdStartIndex = args.findIndex(isSeparator);
-        if (cmdStartIndex === -1) {
-          throw new BrowserStackError(
-            `Invalid run-with command: no command separator ${separators.join(" or ")} found`
-          );
-        }
+        const actualLocalIdentifier = await start({ accessKey, binHome, localIdentifier }, statusPath, logger);
 
-        const runWithArgs = args.slice(cmdStartIndex + 1);
-        if (!runWithArgs.length) {
-          throw new BrowserStackError(
-            "Invalid run-with command: no command provided"
-          );
-        }
+        const exitHandler = async () => {
+          await stop({ ...options, localIdentifier: actualLocalIdentifier }, statusPath, logger);
+          if (exitOnError) {
+            process.exit(childExitCode);
+          }
+        };
 
-        return await runWith(
-          { accessKey, binHome, localIdentifier },
-          statusPath,
-          runWithArgs,
-          logger,
-          exitOnError
-        );
+        const removeOnExitHandler = onExit(() => {
+          (async () => await exitHandler())();
+        });
+
+        try {
+          const [cmd, ...args] = runWithArgs;
+          const childProcess = cp.spawnSync(cmd, args, {
+            cwd: process.cwd(),
+            stdio: ["pipe", "inherit", "inherit"],
+            windowsHide: true,
+            env: {
+              ...process.env,
+              BROWSERSTACK_LOCAL_ID: actualLocalIdentifier,
+              BROWSERSTACK_LOCAL_IDENTIFIER: actualLocalIdentifier,
+            },
+            // https://stackoverflow.com/a/54515183
+            ...(process.platform === "win32" ? { shell: true } : {}),
+          });
+
+          if (childProcess.error) {
+            throw childProcess.error;
+          }
+
+          childExitCode = Number(childProcess.status ?? 0);
+        } catch (err) {
+          childExitCode = 1;
+
+          if (err instanceof Error) {
+            logger.error(err?.message);
+          } else {
+            logger.error(`An unexpected error occurred: ${err}`);
+          }
+        } finally {
+          removeOnExitHandler();
+          await exitHandler();
+        }
+        // This function does not return anything, so no need to return here.
+        break; // Break from the switch case
       }
       default:
         throw new BrowserStackError(
@@ -478,6 +533,8 @@ export async function main(
 
     if (exitOnError) {
       process.exit(1);
+    } else {
+      throw err;
     }
   }
 }
