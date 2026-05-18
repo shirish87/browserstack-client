@@ -25,7 +25,7 @@
     "typecheck": "tsc --noEmit || true"
   },
   "dependencies": {
-    "fflate": "^0.8.2",
+    "fflate": "^0.8.3",
     "signal-exit": "^4.1.0"
   },
   "devDependencies": {
