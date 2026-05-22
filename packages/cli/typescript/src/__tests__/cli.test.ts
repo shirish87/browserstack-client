@@ -47,7 +47,7 @@ describe("LocalCLI", () => {
           "--",
           "node",
           "-e",
-          "'assert(process.env.BROWSERSTACK_LOCAL_IDENTIFIER);'",
+          "assert(process.env.BROWSERSTACK_LOCAL_IDENTIFIER);",
         ],
         {
           info(message) {
@@ -62,7 +62,7 @@ describe("LocalCLI", () => {
         "--",
         false
       );
-    });
+    }, LONG_TIMEOUT);
   });
 
   describe("Test instance start-list-stop", () => {

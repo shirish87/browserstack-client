@@ -70,8 +70,18 @@ func ParseArgs(args []string, accessKey string) (*Options, error) {
 	}
 
 	i := 0
+	// Support positional local-identifier as first argument
+	if len(args) > 0 && !strings.HasPrefix(args[0], "--") {
+		opts.LocalIdentifier = args[0]
+		i = 1
+	}
+
 	for i < len(args) {
 		arg := args[i]
+		if arg == "--" || arg == "---" {
+			opts.Extra = args[i+1:]
+			break
+		}
 		if !strings.HasPrefix(arg, "--") {
 			// Bare positional → LocalIdentifier (only the first one wins).
 			if !opts.ExplicitLocalIdentifier {

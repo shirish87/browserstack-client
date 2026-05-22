@@ -406,7 +406,8 @@ export async function main(
   inputArgs: string[] = process.argv.slice(2),
   logger: Logger = globalThis.console,
   cmdSeparator: string | string[] = ["--", "---"],
-  exitOnError: boolean = true
+  exitOnError: boolean = true,
+  options: { commandTimeoutMs?: number } = {}
 ) {
   try {
     const separators = Array.isArray(cmdSeparator) ? cmdSeparator : [cmdSeparator];

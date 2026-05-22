@@ -301,3 +301,4 @@ func TestParseArgs_secondPositionalRejected(t *testing.T) {
 		t.Error("expected error for second positional argument")
 	}
 }
+

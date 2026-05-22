@@ -9,9 +9,10 @@
  *   - exitOnError=false so errors throw rather than calling process.exit
  */
 
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { platform } from "node:process";
 import { afterEach, beforeEach, describe, it, expect } from "vitest";
 import { env } from "@dot-slash/browserstack-core";
 import { runLocalCli } from "@dot-slash/browserstack-cli";
@@ -33,8 +34,8 @@ function makeLogger() {
   return { logger, info, error };
 }
 
-function runLocal(args: string[], logger: Logger, sep: string | string[] = ["--", "---"]) {
-  return runLocalCli(args, logger, sep, false);
+function runLocal(args: string[], logger: Logger, sep: string | string[] = ["--", "---"], opts: { commandTimeoutMs?: number } = {}) {
+  return runLocalCli(args, logger, sep, false, opts);
 }
 
 // ── fixtures ──────────────────────────────────────────────────────────────────
@@ -47,6 +48,11 @@ beforeEach(async () => {
   statusPath = join(tempDir, "status.json");
   env.BROWSERSTACK_ACCESS_KEY = "test-key-unit";
   env.BROWSERSTACK_LOCAL_BINARY_HOME = tempDir;
+  // Stub binary so ensureBinaryExists skips the network download in every test.
+  const stubName = platform === "win32" ? "BrowserStackLocal.exe" : "BrowserStackLocal";
+  const stubPath = join(tempDir, stubName);
+  await writeFile(stubPath, platform === "win32" ? "@echo off\r\nexit 1\r\n" : "#!/bin/sh\nexit 1\n");
+  await chmod(stubPath, 0o755);
 });
 
 afterEach(async () => {
@@ -228,10 +234,11 @@ describe("main arg parsing", () => {
 
   it("run-with uses the first separator; subsequent -- are cmd args", async () => {
     // ["run-with", "--", "echo", "--", "extra"]: cmd is "echo", args are ["--", "extra"]
-    // Will fail on tunnel start (no real binary), but NOT on arg parsing
+    // Will fail on tunnel start (no real binary), but NOT on arg parsing.
+    // commandTimeoutMs is short so the binary attempt fails fast on all platforms.
     const { logger } = makeLogger();
     try {
-      await runLocal(["run-with", "--", "echo", "--", "extra"], logger);
+      await runLocal(["run-with", "--", "echo", "--", "extra"], logger, ["--", "---"], { commandTimeoutMs: 100 });
     } catch (err: any) {
       expect(String(err)).not.toMatch(/separator/i);
       expect(String(err)).not.toMatch(/no command/i);
