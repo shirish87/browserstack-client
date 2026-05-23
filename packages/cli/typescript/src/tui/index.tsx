@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Box, Text, useApp, useInput } from "ink";
 import { TUI_MANIFEST } from "../tui-manifest.generated.ts";
 import type { TUIProduct, TUIResource, TUIAction } from "../tui-types.ts";
-import { Logo } from "./logo.tsx";
 import { SelectList, type SelectItem } from "./select-list.tsx";
 import { Form } from "./form.tsx";
 import { Result } from "./result.tsx";
@@ -52,7 +51,7 @@ interface AppState {
   error: string | null;
 }
 
-export function App({ version }: { version?: string }) {
+export function App(_props: { version?: string }) {
   const { exit } = useApp();
   const [state, setState] = useState<AppState>({
     step: "product",
@@ -72,7 +71,6 @@ export function App({ version }: { version?: string }) {
   if (state.step === "product") {
     return (
       <Box flexDirection="column">
-        <Logo version={version} />
         <SelectList
           title="Select a product"
           items={TUI_MANIFEST.map(p => ({ id: p.id, label: productLabel(p), description: p.description }))}
@@ -93,7 +91,6 @@ export function App({ version }: { version?: string }) {
   if (state.step === "resource" && state.product) {
     return (
       <Box flexDirection="column">
-        <Logo version={version} />
         <SelectList
           title={`${productLabel(state.product)} → select a resource`}
           items={state.product.resources.map(r => ({ id: r.id, label: r.label }))}
@@ -111,7 +108,6 @@ export function App({ version }: { version?: string }) {
     const isFlat = state.product.resources.length === 1 && state.product.resources[0].id === "default";
     return (
       <Box flexDirection="column">
-        <Logo version={version} />
         <SelectList
           title={`${productLabel(state.product)}${isFlat ? "" : ` → ${state.resource.label}`} → select an action`}
           items={groupedActionItems(state.resource.actions)}
@@ -139,7 +135,6 @@ export function App({ version }: { version?: string }) {
   if (state.step === "form" && state.action) {
     return (
       <Box flexDirection="column">
-        <Logo version={version} />
         <Form
           title={`${productLabel(state.product!)} → ${state.action.id}`}
           fields={state.action.fields}
@@ -158,7 +153,6 @@ export function App({ version }: { version?: string }) {
   if (state.step === "loading") {
     return (
       <Box flexDirection="column">
-        <Logo version={version} />
         <Text>Running…</Text>
       </Box>
     );
@@ -167,7 +161,6 @@ export function App({ version }: { version?: string }) {
   if (state.step === "result") {
     return (
       <Box flexDirection="column">
-        <Logo version={version} />
         <Result
           output={state.output}
           error={state.error}
