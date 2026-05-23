@@ -138,11 +138,12 @@ function buildActionMapEntry(
     argNames.push(queryParams[i].name);
   }
 
+  const argsArray = callArgs.length > 0 ? `[${callArgs.join(", ")}]` : "[]";
   const clientDataArg = callArgs.length > 0 ? "data" : "_data";
   let out = `    [${enumName}.${actionPascal}]: {\n`;
   out += `      schema: ${schemaName},\n`;
   out += `      argNames: ${JSON.stringify(argNames)},\n`;
-  out += `      call: (client, ${clientDataArg}) => client.${actionMeta.methodName}(${callArgs.join(", ")})\n`;
+  out += `      call: (client, ${clientDataArg}) => callMethod(client, "${actionMeta.methodName}", ${argsArray})\n`;
   out += `    },\n`;
   return out;
 }
@@ -152,10 +153,22 @@ export function generateTSSchemas(metadata: CLIMetadata[]): string {
     out += "import { z } from \"zod\";\n";
     out += "import * as Constants from \"./constants.generated\";\n\n";
 
+    out += `export interface ParsedArgs {\n`;
+    out += `  positional: unknown[];\n`;
+    out += `  body?: unknown;\n`;
+    out += `  options?: Record<string, unknown>;\n`;
+    out += `}\n\n`;
+    out += `export function isApiMethod(client: object, method: string): client is Record<string, (...args: unknown[]) => Promise<unknown>> {\n`;
+    out += `  return method in client && typeof (client as Record<string, unknown>)[method] === "function";\n`;
+    out += `}\n\n`;
+    out += `export function callMethod(client: object, method: string, args: unknown[]): Promise<unknown> {\n`;
+    out += `  if (!isApiMethod(client, method)) throw new Error(\`Client does not implement method: \${method}\`);\n`;
+    out += `  return client[method](...args);\n`;
+    out += `}\n\n`;
     out += `export interface ZodActionConfig {\n`;
-    out += `  schema: z.ZodObject<Record<string, any>>;\n`;
+    out += `  schema: z.ZodObject<Record<string, z.ZodTypeAny>>;\n`;
     out += `  argNames: string[];\n`;
-    out += `  call: (client: unknown, data: { positional: unknown[], body?: unknown, options?: Record<string, unknown> }) => Promise<unknown>;\n`;
+    out += `  call: (client: object, data: ParsedArgs) => Promise<unknown>;\n`;
     out += `}\n\n`;
 
     for (const m of metadata) {

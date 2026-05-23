@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, beforeAll, afterAll } from "vitest";
 import { execFile } from "node:child_process";
-import { mkdtemp, rm, symlink, readdir } from "node:fs/promises";
+import { mkdtemp, rm, symlink, readdir, writeFile } from "node:fs/promises";
 import { promisify } from "node:util";
 import { resolve, join } from "node:path";
 import { tmpdir, homedir } from "node:os";
@@ -408,14 +408,12 @@ describe("CLI E2E Orchestrator", () => {
       // status.json in sync — wiping the file alone would orphan processes.
       beforeAll(async () => {
         if (hasRealCreds) {
-          await runCliWithRealCreds(binary, ["local", "stop"]);
+          await runCliWithRealCreds(binary, ["local", "stop"], binHome);
         } else {
-          // No real creds: just clear the status file so unit-level "list/stop
-          // with no tracked tunnels" assertions are not polluted by prior runs.
-          const binHome = join(homedir() ?? tmpdir(), ".browserstack");
+          // No real creds: seed the isolated binHome status file so unit-level
+          // "list/stop with no tracked tunnels" assertions start from a clean slate.
           try {
-            mkdirSync(binHome, { recursive: true });
-            writeFileSync(join(binHome, "status.json"), JSON.stringify({ localIdentifiers: [] }, null, 2));
+            await writeFile(join(binHome, "status.json"), JSON.stringify({ localIdentifiers: [] }, null, 2));
           } catch {
             // best-effort; tests will surface real failures if the file isn't writable.
           }

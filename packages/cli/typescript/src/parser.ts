@@ -1,5 +1,10 @@
 import { z } from "zod";
 import { BrowserStackError } from "@dot-slash/browserstack-core";
+import type { ParsedArgs } from "./schemas.generated.ts";
+
+function isParsedArgs(obj: unknown): obj is ParsedArgs {
+  return typeof obj === "object" && obj !== null && "positional" in obj && Array.isArray((obj as ParsedArgs).positional);
+}
 
 function parseRemainingArgs(remainingArgs: string[]): { options: Record<string, unknown>; body: Record<string, unknown> } {
   const options: Record<string, unknown> = {};
@@ -52,11 +57,11 @@ function formatZodIssue(issue: z.ZodIssue, argNames?: string[]): string {
 /**
  * Parses raw CLI arguments into a structured object matching the generated Zod schema.
  */
-export function parseArgs<T extends z.ZodObject<any>>(
+export function parseArgs<T extends z.ZodObject<z.ZodRawShape>>(
   schema: T,
   args: string[],
   argNames?: string[]
-): z.infer<T> {
+): ParsedArgs {
   const positionalSchema = schema.shape.positional as z.ZodTuple<any>;
   const positionalCount = positionalSchema._def.items.length;
 
@@ -81,7 +86,11 @@ export function parseArgs<T extends z.ZodObject<any>>(
   }
 
   try {
-    return schema.parse(data);
+    const result: unknown = schema.parse(data);
+    if (!isParsedArgs(result)) {
+      throw new BrowserStackError("Parsed arguments missing required 'positional' field");
+    }
+    return result;
   } catch (err) {
     if (err instanceof z.ZodError) {
       const issues = err.issues.map(i => formatZodIssue(i, argNames)).join("\n");

@@ -40,7 +40,7 @@ function printResult(action: string, result: unknown, logger: Logger): void {
       process.stdout.write(result as string);
       break;
     case Automate.Action.ListSessionTelemetryLogs: {
-      process.stdout.write(Buffer.from(result as ArrayBuffer));
+      process.stdout.write(new Uint8Array(result as ArrayBuffer));
       break;
     }
     case Automate.Action.ListProjects: {
@@ -112,7 +112,7 @@ export async function main(
         const filePath = resolve(rest[0]);
         const filename = basename(filePath);
         parsed.body = {
-            file: new Blob([await readFile(filePath)]),
+            file: new Blob([new Uint8Array(await readFile(filePath))]),
             fileName: filename,
         };
     }
@@ -122,7 +122,7 @@ export async function main(
         const filePath = resolve(rest[1]);
         const filename = basename(filePath);
         parsed.body = {
-            file: new Blob([await readFile(filePath)]),
+            file: new Blob([new Uint8Array(await readFile(filePath))]),
             fileName: filename,
         };
     }

@@ -64,7 +64,7 @@ export async function main(
         // Note: UploadReport schema might be empty positional, but we need these manually for now
         // since the API takes an object that isn't fully captured as a body in the spec sometimes
         await client.uploadReport({
-          file: new Blob([data]),
+          file: new Blob([new Uint8Array(data)]),
           fileName: filename,
           projectName: rest[1],
           buildName: rest[2],

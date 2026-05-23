@@ -69,7 +69,7 @@ export async function main(
         const filePath = resolve(rest[0]);
         const filename = basename(filePath);
         parsed.body = {
-            file: new Blob([await readFile(filePath)]),
+            file: new Blob([new Uint8Array(await readFile(filePath))]),
             fileName: filename,
             customId: randomBytes(20).toString("hex"),
         };
@@ -80,7 +80,7 @@ export async function main(
         const filePath = resolve(rest[1]);
         const filename = basename(filePath);
         parsed.body = {
-            file: new Blob([await readFile(filePath)]),
+            file: new Blob([new Uint8Array(await readFile(filePath))]),
             fileName: filename,
         };
     }
