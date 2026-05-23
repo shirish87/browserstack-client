@@ -44,10 +44,10 @@
     "@dot-slash/browserstack-openapi": "workspace:*",
     "@dot-slash/browserstack-openapi-transforms": "workspace:*",
     "@types/node": "20.0.0",
-    "fflate": "^0.8.2",
+    "fflate": "^0.8.3",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.4",
-    "zod": "^4.4.2"
+    "zod": "^4.4.3"
   }
 }

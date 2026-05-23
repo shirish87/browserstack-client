@@ -47,7 +47,7 @@
     "vitepress": "^1.6.4",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitest": "^4.1.4",
-    "zod": "^4.4.1"
+    "zod": "^4.4.3"
   },
   "pnpm": {
     "peerDependencyRules": {
