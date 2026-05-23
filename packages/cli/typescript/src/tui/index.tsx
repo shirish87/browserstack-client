@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Box, Text, useApp, useInput, useStdout } from "ink";
 import { TUI_MANIFEST } from "../tui-manifest.generated.ts";
 import type { TUIProduct, TUIResource, TUIAction } from "../tui-types.ts";
@@ -64,7 +64,9 @@ export function App({ version }: { version?: string }) {
     error: null,
   });
 
+  const mounted = useRef(false);
   useEffect(() => {
+    if (!mounted.current) { mounted.current = true; return; }
     stdout?.write("\x1b[2J\x1b[H");
   }, [state.step]);
 
