@@ -40,22 +40,17 @@ func StripBrand(s string) string {
 }
 
 func Logo(version string) string {
-	if !isColorTTY() {
-		title := "BrowserStack CLI"
+	var sb strings.Builder
+	if isColorTTY() {
+		sb.WriteString(StyleTitle.Render(LogoANSI))
 		if version != "" {
-			title += "  v" + version
+			sb.WriteString(StyleDim.Render("  v" + version))
 		}
-		return title + "\n" + strings.Repeat("━", 40)
+	} else {
+		sb.WriteString(LogoANSI)
+		if version != "" {
+			sb.WriteString("  v" + version)
+		}
 	}
-	rightLines := []string{
-		"", "", "", "",
-		StyleTitle.Render("BrowserStack CLI"),
-	}
-	if version != "" {
-		rightLines = append(rightLines, StyleDim.Render("v"+version))
-	}
-	right := strings.Join(rightLines, "\n")
-	combined := lipgloss.JoinHorizontal(lipgloss.Top, LogoANSI, "  ", right)
-	// Add top/left/bottom margin
-	return "\n  " + strings.ReplaceAll(combined, "\n", "\n  ") + "\n"
+	return sb.String()
 }

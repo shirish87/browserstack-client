@@ -260,8 +260,8 @@ func (f *formView) view() string {
 	var sb strings.Builder
 
 	// Compute visible window of fields around `f.focus`, fitting `available` rows.
-	// Reserve rows for: logo (~7), title (2), hint bar (3), error (1), margin.
-	reserved := 14
+	// Reserve rows for: logo (~5), title (2), hint bar (3), error (1), margin.
+	reserved := 12
 	available := f.termHeight - reserved
 	if available < 8 {
 		available = 8
