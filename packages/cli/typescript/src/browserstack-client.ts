@@ -45,8 +45,14 @@ export async function main(inputArgs: string[] = process.argv.slice(2)) {
       const { render } = await import("ink");
       const React = (await import("react")).default;
       const { App } = await import("./tui/index.tsx");
+      // Enter alternate screen buffer so Ink renders on a clean canvas
+      // with no stale content from previous output, and the user's terminal
+      // is fully restored on exit.
+      process.stdout.write("\x1b[?1049h\x1b[H");
+      process.on("exit", () => process.stdout.write("\x1b[?1049l"));
       const { waitUntilExit } = render(React.createElement(App, { version: ver }));
       await waitUntilExit();
+      process.stdout.write("\x1b[?1049l");
       return;
     }
 
