@@ -76,6 +76,8 @@
     "scripts": []
   },
   "dependencies": {
+    "ink": "^7.0.3",
+    "react": "^19.2.6",
     "signal-exit": "^4.1.0",
     "zod": "^4.4.1"
   },
@@ -91,6 +93,7 @@
     "@dot-slash/browserstack-test-management": "workspace:*",
     "@dot-slash/browserstack-test-reporting": "workspace:*",
     "@types/node": "20.0.0",
+    "@types/react": "^19.2.15",
     "@yao-pkg/pkg": "^6.18.2",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"

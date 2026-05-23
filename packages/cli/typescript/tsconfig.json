@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "noEmit": true,
+    "jsx": "react-jsx",
     "paths": {
       "@dot-slash/browserstack-cli": ["./src/index.ts"],
       "@dot-slash/browserstack-core": ["../../core/src/index.ts"],

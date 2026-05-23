@@ -19,6 +19,10 @@ export default defineConfig({
   splitting: false,
   platform: "node",
   shims: true,
+  loader: { ".tsx": "tsx" },
+  esbuildOptions(options) {
+    options.jsx = "automatic";
+  },
   define: {
     __PKG_VERSION__: JSON.stringify(require("./package.json").version),
   },
@@ -36,5 +40,7 @@ export default defineConfig({
   ],
   external: [
     "signal-exit",
+    "ink",
+    "react",
   ],
 });

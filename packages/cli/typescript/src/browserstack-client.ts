@@ -39,6 +39,17 @@ const products: Record<string, (args: string[]) => Promise<void>> = {
 
 export async function main(inputArgs: string[] = process.argv.slice(2)) {
   try {
+    if (inputArgs.length === 0 && process.stdout.isTTY) {
+      const ver = (globalThis as Record<string, unknown>)["__CLI_VERSION__"] as string | undefined
+        ?? (await import("../package.json", { with: { type: "json" } })).default.version;
+      const { render } = await import("ink");
+      const React = (await import("react")).default;
+      const { App } = await import("./tui/index.tsx");
+      const { waitUntilExit } = render(React.createElement(App, { version: ver }));
+      await waitUntilExit();
+      return;
+    }
+
     const productInput = inputArgs[0]?.toLowerCase().trim();
 
     if (productInput === "version") {
