@@ -37,10 +37,12 @@ export default defineConfig({
     "@dot-slash/browserstack-test-reporting",
     "@dot-slash/browserstack-screenshots",
     "@dot-slash/browserstack-openapi-transforms",
+    "react",
+    "react/jsx-runtime",
+    "react/jsx-dev-runtime",
   ],
   external: [
     "signal-exit",
     "ink",
-    "react",
   ],
 });

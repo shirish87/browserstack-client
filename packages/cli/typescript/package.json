@@ -79,8 +79,8 @@
     "fuzzysort": "^3.1.0",
     "ink": "^3.2.0",
     "react": "^17.0.2",
-    "signal-exit": "^3.0.7",
-    "zod": "^4.4.1"
+    "signal-exit": "^4.1.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@dot-slash/browserstack-accessibility": "workspace:*",
