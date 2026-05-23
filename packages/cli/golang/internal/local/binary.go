@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	downloadBaseURL        = "https://api-cloud.browserstack.com/browserstack-local"
+	downloadBaseURL        = "https://www.browserstack.com/browserstack-local"
 	binaryName             = "BrowserStackLocal"
 	defaultDownloadTimeout = 5 * time.Minute
 )
