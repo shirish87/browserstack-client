@@ -1,6 +1,6 @@
 import { Box, Text } from "ink";
 
-const BRAND = "#E84D38";
+const BRAND = "#00BFFF";
 
 const ASCII_ART = [
   "  ____                                  ____  _             _    ",
