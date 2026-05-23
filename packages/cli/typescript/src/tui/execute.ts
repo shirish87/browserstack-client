@@ -84,7 +84,7 @@ class BufferStream extends Writable {
     cb();
   }
   toString(): string {
-    return Buffer.concat(this.chunks).toString("utf8");
+    return Buffer.concat(this.chunks as unknown as Uint8Array[]).toString("utf8");
   }
 }
 
