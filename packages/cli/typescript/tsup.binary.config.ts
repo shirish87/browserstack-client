@@ -5,22 +5,6 @@ import fs from "node:fs";
 const require = createRequire(import.meta.url);
 const { version } = require("./package.json") as { version: string };
 
-// yoga-layout-prebuilt's nbind.js uses `this` at module scope to register
-// itself via a UMD wrapper. In pkg's snapshot environment (strict mode, no
-// global `this`), that `this` is undefined and the registration silently
-// fails, causing "_a is not defined" at runtime. We patch the file on load
-// to replace `})(this, function` with `})(globalThis, function` so the UMD
-// call always resolves to a real global object.
-const patchYogaPlugin = {
-  name: "patch-yoga-nbind",
-  setup(build: any) {
-    build.onLoad({ filter: /yoga-layout-prebuilt.*nbind\.js$/ }, async (args: any) => {
-      let contents = await fs.promises.readFile(args.path, "utf8");
-      contents = contents.replace("})(this, function", "})(globalThis, function");
-      return { contents, loader: "js" };
-    });
-  },
-};
 
 export default defineConfig({
   entry: {
@@ -41,6 +25,17 @@ export default defineConfig({
     "globalThis.__CLI_VERSION__": JSON.stringify(version),
     "__PKG_VERSION__": JSON.stringify(version),
   },
-  esbuildPlugins: [patchYogaPlugin],
+  async onSuccess() {
+    // Several bundled UMD modules use `})(this, function` at module scope to
+    // self-register. In pkg's snapshot (strict mode), `this` is undefined so
+    // they silently fail, causing "_a is not defined" at runtime. Patch every
+    // occurrence in the output bundles.
+    for (const name of ["browserstack-client.cjs", "browserstack-test-reporting.cjs"]) {
+      const p = `dist-binary/${name}`;
+      const src = await fs.promises.readFile(p, "utf8");
+      const patched = src.replaceAll("})(this,", "})(globalThis,");
+      if (patched !== src) await fs.promises.writeFile(p, patched);
+    }
+  },
 });
 
