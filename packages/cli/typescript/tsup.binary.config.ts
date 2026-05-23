@@ -26,15 +26,24 @@ export default defineConfig({
     "__PKG_VERSION__": JSON.stringify(version),
   },
   async onSuccess() {
-    // Several bundled UMD modules use `})(this, function` at module scope to
-    // self-register. In pkg's snapshot (strict mode), `this` is undefined so
-    // they silently fail, causing "_a is not defined" at runtime. Patch every
-    // occurrence in the output bundles.
     for (const name of ["browserstack-client.cjs", "browserstack-test-reporting.cjs"]) {
       const p = `dist-binary/${name}`;
-      const src = await fs.promises.readFile(p, "utf8");
-      const patched = src.replaceAll("})(this,", "})(globalThis,");
-      if (patched !== src) await fs.promises.writeFile(p, patched);
+      let src = await fs.promises.readFile(p, "utf8");
+
+      // 1. UMD modules use `})(this, function` at module scope. In pkg's snapshot
+      //    (strict mode), `this` is undefined. Replace with globalThis.
+      src = src.replaceAll("})(this,", "})(globalThis,");
+
+      // 2. esbuild drops the bare `var _a;` declaration from yoga-layout-prebuilt/nbind.js
+      //    (it sees it as dead code) but the assignment `_a = _typeModule(...)` remains,
+      //    causing "ReferenceError: _a is not defined". Re-insert the declaration just
+      //    before the assignment site.
+      src = src.replace(
+        "_a = _typeModule(_typeModule),",
+        "var _a; _a = _typeModule(_typeModule),"
+      );
+
+      await fs.promises.writeFile(p, src);
     }
   },
 });
