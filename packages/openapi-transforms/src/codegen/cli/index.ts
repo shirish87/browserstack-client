@@ -52,6 +52,7 @@ interface SpecDoc {
   components?: {
     parameters?: Record<string, SpecOp["parameters"] extends Array<infer T> ? T : never>;
   };
+  "x-cli-section-order"?: Record<string, string[]>;
 }
 
 export interface CLIActionMetadata {
@@ -81,6 +82,7 @@ export interface CLIMetadata {
   product: string;
   resources: Record<string, {
     actions: Record<string, CLIActionMetadata>;
+    sectionOrder?: string[];
   }>;
 }
 
@@ -139,7 +141,8 @@ export async function extractCLIMetadata(specPath: string, product: string): Pro
 
       const resKey = resource || "default";
       if (!metadata.resources[resKey]) {
-        metadata.resources[resKey] = { actions: {} };
+        const sectionOrder = doc["x-cli-section-order"]?.[resKey];
+        metadata.resources[resKey] = { actions: {}, sectionOrder };
       }
 
       const allParams = resolveParams(pathItem, op, doc);

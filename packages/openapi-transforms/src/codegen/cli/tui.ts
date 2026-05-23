@@ -74,6 +74,7 @@ interface TUIResourceData {
   id: string;
   label: string;
   actions: TUIActionData[];
+  sectionOrder?: string[];
 }
 
 interface TUIProductData {
@@ -209,6 +210,7 @@ function buildManifest(metadata: CLIMetadata[], specInfoMap: SpecInfoMap, specDo
         id: resId,
         label: resId === "default" ? info.title : toLabel(resId),
         actions,
+        sectionOrder: resMeta.sectionOrder,
       };
     });
     return {
@@ -288,9 +290,10 @@ function goResource(r: TUIResourceData, indent: string): string {
     : `[]Action{\n${r.actions.map(a => goAction(a, indent + "\t\t")).join(",\n")},\n${indent}\t}`;
   return [
     `${indent}{`,
-    `${indent}\tID:      ${jsonStr(r.id)},`,
-    `${indent}\tLabel:   ${jsonStr(r.label)},`,
-    `${indent}\tActions: ${actionsStr},`,
+    `${indent}\tID:           ${jsonStr(r.id)},`,
+    `${indent}\tLabel:        ${jsonStr(r.label)},`,
+    `${indent}\tActions:      ${actionsStr},`,
+    `${indent}\tSectionOrder: ${goStringSlice(r.sectionOrder ?? [])},`,
     `${indent}}`,
   ].join("\n");
 }

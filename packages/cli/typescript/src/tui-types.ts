@@ -35,6 +35,7 @@ export interface TUIResource {
   id: string;
   label: string;
   actions: TUIAction[];
+  sectionOrder?: string[];
 }
 
 export interface TUIProduct {

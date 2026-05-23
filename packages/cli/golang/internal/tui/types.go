@@ -44,9 +44,10 @@ type Action struct {
 }
 
 type Resource struct {
-	ID      string
-	Label   string
-	Actions []Action
+	ID           string
+	Label        string
+	Actions      []Action
+	SectionOrder []string
 }
 
 type Product struct {

@@ -10,9 +10,9 @@ var Manifest = []Product{
 		Description: "BrowserStack Automate API",
 		Resources:   []Resource{
 		{
-			ID:      "default",
-			Label:   "BrowserStack Automate",
-			Actions: []Action{
+			ID:           "default",
+			Label:        "BrowserStack Automate",
+			Actions:      []Action{
 				{
 					ID:          "list-browsers",
 					Summary:     "Fetches all automate browsers.",
@@ -721,6 +721,7 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 	},
 	},
@@ -730,9 +731,9 @@ var Manifest = []Product{
 		Description: "BrowserStack App Automate API",
 		Resources:   []Resource{
 		{
-			ID:      "default",
-			Label:   "BrowserStack App Automate",
-			Actions: []Action{
+			ID:           "default",
+			Label:        "BrowserStack App Automate",
+			Actions:      []Action{
 				{
 					ID:          "get-build",
 					Summary:     "Fetches a build",
@@ -2088,6 +2089,7 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 	},
 	},
@@ -2097,9 +2099,9 @@ var Manifest = []Product{
 		Description: "BrowserStack Screenshots API",
 		Resources:   []Resource{
 		{
-			ID:      "default",
-			Label:   "BrowserStack Screenshots",
-			Actions: []Action{
+			ID:           "default",
+			Label:        "BrowserStack Screenshots",
+			Actions:      []Action{
 				{
 					ID:          "get-job",
 					Summary:     "Fetches a screenshot job",
@@ -2224,6 +2226,7 @@ var Manifest = []Product{
 					Fields:      nil,
 				},
 			},
+			SectionOrder: nil,
 		},
 	},
 	},
@@ -2233,9 +2236,9 @@ var Manifest = []Product{
 		Description: "BrowserStack Local Testing API",
 		Resources:   []Resource{
 		{
-			ID:      "default",
-			Label:   "BrowserStack Local Testing",
-			Actions: []Action{
+			ID:           "default",
+			Label:        "BrowserStack Local Testing",
+			Actions:      []Action{
 				{
 					ID:          "list-instances",
 					Summary:     "Fetches list of recent binary instances",
@@ -2331,6 +2334,7 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 	},
 	},
@@ -2340,9 +2344,9 @@ var Manifest = []Product{
 		Description: "BrowserStack Test Management API",
 		Resources:   []Resource{
 		{
-			ID:      "Projects",
-			Label:   "Projects",
-			Actions: []Action{
+			ID:           "Projects",
+			Label:        "Projects",
+			Actions:      []Action{
 				{
 					ID:          "list-projects",
 					Summary:     "Get list of projects",
@@ -2489,11 +2493,12 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 		{
-			ID:      "Folders",
-			Label:   "Folders",
-			Actions: []Action{
+			ID:           "Folders",
+			Label:        "Folders",
+			Actions:      []Action{
 				{
 					ID:          "list-folders",
 					Summary:     "Get list of folders in a project",
@@ -2773,11 +2778,12 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 		{
-			ID:      "TestCases",
-			Label:   "TestCases",
-			Actions: []Action{
+			ID:           "TestCases",
+			Label:        "TestCases",
+			Actions:      []Action{
 				{
 					ID:          "list-test-cases",
 					Summary:     "Get list of test cases",
@@ -3780,11 +3786,12 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 		{
-			ID:      "Attachments",
-			Label:   "Attachments",
-			Actions: []Action{
+			ID:           "Attachments",
+			Label:        "Attachments",
+			Actions:      []Action{
 				{
 					ID:          "list-test-case-attachments",
 					Summary:     "Get attachments for a test case",
@@ -4114,11 +4121,12 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 		{
-			ID:      "TestResults",
-			Label:   "TestResults",
-			Actions: []Action{
+			ID:           "TestResults",
+			Label:        "TestResults",
+			Actions:      []Action{
 				{
 					ID:          "list-test-case-results",
 					Summary:     "Get test results for a test case across all test runs",
@@ -4427,11 +4435,12 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 		{
-			ID:      "TestRuns",
-			Label:   "TestRuns",
-			Actions: []Action{
+			ID:           "TestRuns",
+			Label:        "TestRuns",
+			Actions:      []Action{
 				{
 					ID:          "list-test-runs",
 					Summary:     "Get list of test runs",
@@ -5410,11 +5419,12 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 		{
-			ID:      "TestPlans",
-			Label:   "TestPlans",
-			Actions: []Action{
+			ID:           "TestPlans",
+			Label:        "TestPlans",
+			Actions:      []Action{
 				{
 					ID:          "list-test-plans",
 					Summary:     "Get list of test plans",
@@ -5706,11 +5716,12 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 		{
-			ID:      "Configurations",
-			Label:   "Configurations",
-			Actions: []Action{
+			ID:           "Configurations",
+			Label:        "Configurations",
+			Actions:      []Action{
 				{
 					ID:          "list-configurations",
 					Summary:     "Get all configurations",
@@ -5781,11 +5792,12 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 		{
-			ID:      "CustomFields",
-			Label:   "CustomFields",
-			Actions: []Action{
+			ID:           "CustomFields",
+			Label:        "CustomFields",
+			Actions:      []Action{
 				{
 					ID:          "list-custom-fields",
 					Summary:     "Get all custom fields",
@@ -6028,6 +6040,7 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 	},
 	},
@@ -6037,9 +6050,9 @@ var Manifest = []Product{
 		Description: "",
 		Resources:   []Resource{
 		{
-			ID:      "default",
-			Label:   "BrowserStack Accessibility",
-			Actions: []Action{
+			ID:           "default",
+			Label:        "BrowserStack Accessibility",
+			Actions:      []Action{
 				{
 					ID:          "list-workflow-analyzer-reports",
 					Summary:     "List Workflow Analyzer reports",
@@ -6786,6 +6799,7 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 	},
 	},
@@ -6795,9 +6809,9 @@ var Manifest = []Product{
 		Description: "API for BrowserStack Test Reporting & Analytics",
 		Resources:   []Resource{
 		{
-			ID:      "default",
-			Label:   "BrowserStack Test Reporting & Analytics (TestReporting)",
-			Actions: []Action{
+			ID:           "default",
+			Label:        "BrowserStack Test Reporting & Analytics (TestReporting)",
+			Actions:      []Action{
 				{
 					ID:          "list-projects",
 					Summary:     "Get Project List",
@@ -8383,6 +8397,7 @@ var Manifest = []Product{
 					},
 				},
 			},
+			SectionOrder: nil,
 		},
 	},
 	},

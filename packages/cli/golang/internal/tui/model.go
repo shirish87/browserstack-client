@@ -278,7 +278,7 @@ func (m *Model) gotoResource() {
 }
 
 func (m *Model) gotoAction() {
-	items := groupedActionItems(m.resource.Actions)
+	items := groupedActionItems(m.resource.Actions, m.resource.SectionOrder)
 	isFlat := len(m.product.Resources) == 1 && m.product.Resources[0].ID == "default"
 	title := StripBrand(m.product.Title)
 	if !isFlat {
@@ -291,7 +291,7 @@ func (m *Model) gotoAction() {
 	m.step = stepAction
 }
 
-func groupedActionItems(actions []Action) []listItem {
+func groupedActionItems(actions []Action, sectionOrder []string) []listItem {
 	type bucket struct {
 		name    string
 		actions []Action
@@ -307,6 +307,23 @@ func groupedActionItems(actions []Action) []listItem {
 			order = append(order, key)
 		}
 		bySection[key] = append(bySection[key], a)
+	}
+	// Apply explicit section order if provided, preserving any sections not listed at the end.
+	if len(sectionOrder) > 0 {
+		ranked := make([]string, 0, len(order))
+		inRanked := map[string]bool{}
+		for _, s := range sectionOrder {
+			if _, ok := bySection[s]; ok {
+				ranked = append(ranked, s)
+				inRanked[s] = true
+			}
+		}
+		for _, s := range order {
+			if !inRanked[s] {
+				ranked = append(ranked, s)
+			}
+		}
+		order = ranked
 	}
 	mkLabel := func(a Action) string {
 		if a.Summary != "" {
