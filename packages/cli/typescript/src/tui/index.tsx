@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Box, Text, useApp, useInput } from "ink";
+import { useState, useEffect } from "react";
+import { Box, Text, useApp, useInput, useStdout } from "ink";
 import { TUI_MANIFEST } from "../tui-manifest.generated.ts";
 import type { TUIProduct, TUIResource, TUIAction } from "../tui-types.ts";
 import { Logo } from "./logo.tsx";
@@ -54,6 +54,7 @@ interface AppState {
 
 export function App({ version }: { version?: string }) {
   const { exit } = useApp();
+  const { stdout } = useStdout();
   const [state, setState] = useState<AppState>({
     step: "product",
     product: null,
@@ -62,6 +63,10 @@ export function App({ version }: { version?: string }) {
     output: "",
     error: null,
   });
+
+  useEffect(() => {
+    stdout?.write("\x1b[2J\x1b[H");
+  }, [state.step]);
 
   useInput((_input, key) => {
     if (key.ctrl && _input === "c") {
