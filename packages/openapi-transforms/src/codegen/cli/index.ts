@@ -4,6 +4,7 @@ import { stripOperationPrefix, toCLIAction } from "../shared/operation";
 
 export * from "./typescript";
 export * from "./golang";
+export * from "./tui";
 
 interface SpecOp {
   operationId?: string;
@@ -26,6 +27,8 @@ interface SpecOp {
     }>;
   }>;
   tags?: string[];
+  summary?: string;
+  description?: string;
   "x-cli-action"?: string;
   "x-cli-resource"?: string;
 }
@@ -49,6 +52,8 @@ export interface CLIActionMetadata {
     schema?: Record<string, unknown>;
   }>;
   requestBody?: SpecOp["requestBody"];
+  summary?: string;
+  description?: string;
   /** Go response type for this action, e.g. "AutomatePlan", "string", "[]byte". Populated by build.mjs after Go codegen. */
   responseGoType?: string;
   /** Field name in DispatchResult for this action, e.g. "GetPlan". Populated by build.mjs after Go codegen. */
@@ -127,6 +132,8 @@ export async function extractCLIMetadata(specPath: string, product: string): Pro
         method: _method,
         parameters: allParams,
         requestBody: op.requestBody,
+        summary: op.summary,
+        description: op.description,
       };
     }
   }

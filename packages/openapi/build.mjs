@@ -8,7 +8,7 @@ import yaml from "yaml";
 import { CodecRegistry, registerAllBuiltins } from "@dot-slash/browserstack-openapi-transforms";
 import { generateClientModule } from "@dot-slash/browserstack-openapi-transforms/codegen/typescript";
 import { generateGoModule } from "@dot-slash/browserstack-openapi-transforms/codegen/golang";
-import { extractCLIMetadata, generateTSConstants, generateTSSchemas, generateGoConstants, generateGoDispatch } from "@dot-slash/browserstack-openapi-transforms/codegen/cli";
+import { extractCLIMetadata, generateTSConstants, generateTSSchemas, generateGoConstants, generateGoDispatch, generateTUIManifestTS, generateTUIManifestGo } from "@dot-slash/browserstack-openapi-transforms/codegen/cli";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -240,9 +240,16 @@ await generateGoModules();
 
 console.log("Generating CLI constants...");
 const cliMetadata = [];
+const specInfoMap = {};
 for (const { product } of productSpecs) {
   const specPath = path.join(__dirname, "specs", `${product}.yml`);
   cliMetadata.push(await extractCLIMetadata(specPath, product));
+  const raw = await fs.readFile(specPath, "utf8");
+  const doc = yaml.parse(raw);
+  specInfoMap[product] = {
+    title: doc.info?.title ?? product,
+    description: doc.info?.description ?? "",
+  };
 }
 
 const tsConstants = generateTSConstants(cliMetadata);
@@ -252,6 +259,21 @@ console.log("  ✓ constants.generated.ts (TS)");
 const tsSchemas = generateTSSchemas(cliMetadata);
 await fs.writeFile(path.join(__dirname, "../cli/typescript/src/schemas.generated.ts"), tsSchemas);
 console.log("  ✓ schemas.generated.ts (TS)");
+
+const tuiManifestTS = generateTUIManifestTS(cliMetadata, specInfoMap);
+await fs.writeFile(
+  path.join(__dirname, "../cli/typescript/src/tui-manifest.generated.ts"),
+  tuiManifestTS
+);
+console.log("  ✓ tui-manifest.generated.ts (TS)");
+
+const tuiManifestGo = generateTUIManifestGo(cliMetadata, specInfoMap);
+await fs.mkdir(path.join(__dirname, "../cli/golang/internal/tui"), { recursive: true });
+await fs.writeFile(
+  path.join(__dirname, "../cli/golang/internal/tui/manifest.generated.go"),
+  tuiManifestGo
+);
+console.log("  ✓ manifest.generated.go (TUI)");
 
 console.log("Generating Go CLI constants and dispatcher...");
 for (const m of cliMetadata) {
