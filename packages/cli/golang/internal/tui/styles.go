@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	StyleTitle    = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00BFFF"))
+	StyleTitle    = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.AdaptiveColor{Dark: "#00BFFF", Light: "#0066CC"})
 	StyleSection  = lipgloss.NewStyle().Bold(true)
 	StyleDim      = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
 	StyleSelected = lipgloss.NewStyle().Foreground(lipgloss.Color("14"))

@@ -1,6 +1,16 @@
 import { Box, Text } from "ink";
 
-const BRAND = "#00BFFF";
+// Use a darker shade on light-background terminals so the banner remains legible.
+// COLORFGBG is widely supported (iTerm2, Konsole, xterm, Windows Terminal).
+// Format is "fg;bg" where bg=15 means white/light background.
+function brandColor(): string {
+  const colorfgbg = process.env.COLORFGBG ?? "";
+  const bg = parseInt(colorfgbg.split(";").pop() ?? "", 10);
+  const isLightBg = !isNaN(bg) && bg >= 8;
+  return isLightBg ? "#0066CC" : "#00BFFF";
+}
+
+const BRAND = brandColor();
 
 const ASCII_ART = [
   "  ____                                  ____  _             _    ",
