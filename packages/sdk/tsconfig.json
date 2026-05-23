@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "noEmit": true,
+    "paths": {
+      "@dot-slash/browserstack-core": ["../core/src/index.ts"],
+      "@dot-slash/browserstack-automate": ["../automate/src/index.ts"],
+      "@dot-slash/browserstack-app-automate": ["../app-automate/src/index.ts"],
+      "@dot-slash/browserstack-local-testing-api": ["../local-testing/src/index.ts"],
+      "@dot-slash/browserstack-local-testing": ["../local-testing-binary/src/index.ts"],
+      "@dot-slash/browserstack-accessibility": ["../accessibility/src/index.ts"],
+      "@dot-slash/browserstack-test-management": ["../test-management/src/index.ts"],
+      "@dot-slash/browserstack-test-reporting": ["../test-reporting/src/index.ts"],
+      "@dot-slash/browserstack-screenshots": ["../screenshots/src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}
