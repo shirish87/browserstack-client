@@ -39,6 +39,7 @@ paths:
       summary: Fetches all automate browsers.
       description: Fetches all automate browsers.
       operationId: getAutomateBrowsers
+      x-cli-section: "Account"
       responses:
         '200':
           description: Successful operation
@@ -63,6 +64,7 @@ paths:
       summary: Get Automate plan details
       description: Fetches Automate plan details
       operationId: getAutomatePlan
+      x-cli-section: "Account"
       responses:
         '200':
           description: Successful operation
@@ -88,10 +90,16 @@ paths:
       description: Fetches Appium logs for a session. Raw Appium Logs for each session
         are available to you in text format.
       operationId: getAutomateSessionAppiumLogs
+      x-cli-section: "Session Logs"
       x-response-transform:
         codec: text
       parameters:
       - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
         in: path
         description: ID of your session
         required: true
@@ -125,10 +133,15 @@ paths:
       description: Fetches the badge key for sharing a public link for the Automate
         dashboard to view the latest build and sessions for that project
       operationId: getAutomateProjectBadgeKey
+      x-cli-section: "Projects"
       x-response-transform:
         codec: text
       parameters:
       - name: projectId
+        x-cli-picker:
+          source: automate.list-projects
+          valueField: id
+          labelFields: [id, name]
         in: path
         description: ID of your project
         required: true
@@ -162,6 +175,7 @@ paths:
       summary: Upload terminal logs for your session.
       description: Upload terminal logs for your session.
       operationId: uploadAutomateSessionTerminalLogs
+      x-cli-section: "Sessions"
       x-base-url: sdkCloud
       x-request-transform:
         codec: multipart
@@ -172,6 +186,11 @@ paths:
         codec: text
       parameters:
       - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
         in: path
         description: ID of your session
         required: true
@@ -226,6 +245,7 @@ paths:
       description: Delete multiple builds on the server. You can delete a maximum of
         5 builds at a time. Builds once deleted cannot be recovered.
       operationId: deleteAutomateBuilds
+      x-cli-section: "Builds"
       parameters:
       - name: buildId[]
         in: query
@@ -267,12 +287,18 @@ paths:
       summary: Fetches a session
       description: Fetches a session for a particular build
       operationId: getAutomateSession
+      x-cli-section: "Sessions"
       x-response-transform:
         codec: json-unwrap
         config:
           path: "$.automation_session"
       parameters:
       - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
         in: path
         description: ID of your session
         required: true
@@ -309,12 +335,18 @@ paths:
       description: Set the status for a session or update the name of the session. You
         can mark test status as passed or failed along with a reason.
       operationId: updateAutomateSession
+      x-cli-section: "Sessions"
       x-response-transform:
         codec: json-unwrap
         config:
           path: "$.automation_session"
       parameters:
       - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
         in: path
         description: ID of your session
         required: true
@@ -381,8 +413,14 @@ paths:
       summary: Delete a session on the server
       description: Delete a session on the server. Sessions once deleted cannot be recovered
       operationId: deleteAutomateSession
+      x-cli-section: "Sessions"
       parameters:
       - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
         in: path
         description: ID of your session
         required: true
@@ -425,6 +463,7 @@ paths:
       description: Delete multiple sessions on the server. Sessions once deleted cannot
         be recovered.
       operationId: deleteAutomateSessions
+      x-cli-section: "Sessions"
       parameters:
       - name: sessionId[]
         in: query
@@ -466,6 +505,7 @@ paths:
       description: Delete a media file on the server. Media files once deleted cannot
         be recovered
       operationId: deleteAutomateMediaFile
+      x-cli-section: "Media Files"
       parameters:
       - name: mediaId
         in: path
@@ -506,6 +546,7 @@ paths:
       summary: Fetches a build
       description: Fetches a build
       operationId: getAutomateBuild
+      x-cli-section: "Builds"
       x-response-transform:
         codec: json-compose
         config:
@@ -514,6 +555,11 @@ paths:
             sessions: "$.build.sessions[*].automation_session"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -563,8 +609,14 @@ paths:
       description: Update the name or tag of your build after the build is complete.
         To delete a build tag, simply pass an empty string as value for build_tag.
       operationId: updateAutomateBuild
+      x-cli-section: "Builds"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -629,8 +681,14 @@ paths:
       description: Delete a build on the server. Please note that deleting a build will
         delete all the sessions contained within it. Builds once deleted cannot be recovered
       operationId: deleteAutomateBuild
+      x-cli-section: "Builds"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -673,10 +731,16 @@ paths:
       description: Fetches session logs. Whenever you execute a session on BrowserStack,
         a session log is generated. These logs are available to you in text format.
       operationId: getAutomateSessionLogs
+      x-cli-section: "Session Logs"
       x-response-transform:
         codec: text
       parameters:
       - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
         in: path
         description: ID of your session
         required: true
@@ -707,6 +771,7 @@ paths:
       summary: Upload a media file
       description: Upload a media file you want to use in your tests
       operationId: uploadAutomateMediaFile
+      x-cli-section: "Media Files"
       x-request-transform:
         codec: multipart
         config:
@@ -762,6 +827,7 @@ paths:
       summary: Reset Automate access key
       description: Reset Automate access key
       operationId: recycleAutomateKey
+      x-cli-section: "Account"
       requestBody:
         content:
           application/json:
@@ -802,12 +868,18 @@ paths:
       summary: Fetches list of sessions
       description: Fetches list of sessions for a particular build
       operationId: getAutomateSessions
+      x-cli-section: "Sessions"
       x-response-transform:
         codec: json-unwrap
         config:
           path: "$[*].automation_session"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -868,12 +940,17 @@ paths:
       description: Specific information about a particular project can be queried using
         the project ID
       operationId: getAutomateProject
+      x-cli-section: "Projects"
       x-response-transform:
         codec: json-unwrap
         config:
           path: "$.project"
       parameters:
       - name: projectId
+        x-cli-picker:
+          source: automate.list-projects
+          valueField: id
+          labelFields: [id, name]
         in: path
         description: ID of your project
         required: true
@@ -909,8 +986,13 @@ paths:
       summary: Update the name of your project
       description: Update the name of your project after the project is complete
       operationId: updateAutomateProject
+      x-cli-section: "Projects"
       parameters:
       - name: projectId
+        x-cli-picker:
+          source: automate.list-projects
+          valueField: id
+          labelFields: [id, name]
         in: path
         description: ID of your project
         required: true
@@ -957,8 +1039,13 @@ paths:
         that to delete a project, it needs to be empty of builds and sessions, and projects
         once deleted cannot be recovered
       operationId: deleteAutomateProject
+      x-cli-section: "Projects"
       parameters:
       - name: projectId
+        x-cli-picker:
+          source: automate.list-projects
+          valueField: id
+          labelFields: [id, name]
         in: path
         description: ID of your project
         required: true
@@ -1000,10 +1087,16 @@ paths:
       description: Fetches Selenium logs for a session. Raw Selenium logs for each session
         are available to you in text format.
       operationId: getAutomateSessionSeleniumLogs
+      x-cli-section: "Session Logs"
       x-response-transform:
         codec: text
       parameters:
       - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
         in: path
         description: ID of your session
         required: true
@@ -1037,6 +1130,7 @@ paths:
       summary: Upload terminal logs for your build.
       description: Upload terminal logs for your build.
       operationId: uploadAutomateBuildTerminalLogs
+      x-cli-section: "Builds"
       x-request-transform:
         codec: multipart
         config:
@@ -1046,6 +1140,11 @@ paths:
         codec: text
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -1099,6 +1198,7 @@ paths:
       summary: Fetches list of uploaded media files
       description: Fetches list of recently uploaded media files
       operationId: getAutomateMediaFiles
+      x-cli-section: "Media Files"
       responses:
         '200':
           description: Successful operation
@@ -1128,6 +1228,7 @@ paths:
         key. You will need the id of the project for invoking any other Project API
         that follows in this document
       operationId: getAutomateProjects
+      x-cli-section: "Projects"
       responses:
         '200':
           description: Successful operation
@@ -1157,10 +1258,16 @@ paths:
         the browserstack.console capability to disabled, errors, warnings, info, verbose.
         Raw Console Logs for each session are available to you in text format.
       operationId: getAutomateSessionConsoleLogs
+      x-cli-section: "Session Logs"
       x-response-transform:
         codec: text
       parameters:
       - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
         in: path
         description: ID of your session
         required: true
@@ -1195,10 +1302,16 @@ paths:
         are available for tests run using Selenium 4. Telemetry logs are by default
         disabled for a session.
       operationId: getAutomateSessionTelemetryLogs
+      x-cli-section: "Session Logs"
       x-response-transform:
         codec: binary
       parameters:
       - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
         in: path
         description: ID of your session
         required: true
@@ -1228,12 +1341,17 @@ paths:
       description: Fetch the 10 recent test builds that have run on BrowserStack. You
         can also limit the number of builds and paginate through your data
       operationId: getAutomateBuilds
+      x-cli-section: "Builds"
       x-response-transform:
         codec: json-unwrap
         config:
           path: "$[*].automation_build"
       parameters:
       - name: projectId
+        x-cli-picker:
+          source: automate.list-projects
+          valueField: id
+          labelFields: [id, name]
         in: query
         description: ID of your project
         required: false
@@ -1299,8 +1417,14 @@ paths:
       description: Fetches network logs for a session. Network Logs for each session
         are available to you in HAR (HTTP Archive) format.
       operationId: getAutomateSessionNetworkLogs
+      x-cli-section: "Session Logs"
       parameters:
       - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
         in: path
         description: ID of your session
         required: true

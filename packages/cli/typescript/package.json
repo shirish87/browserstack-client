@@ -76,6 +76,7 @@
     "scripts": []
   },
   "dependencies": {
+    "fuzzysort": "^3.1.0",
     "ink": "^7.0.3",
     "react": "^19.2.6",
     "signal-exit": "^4.1.0",

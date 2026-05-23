@@ -17,6 +17,7 @@ paths:
       summary: List Workflow Analyzer reports
       description: Returns a paginated list of all Workflow Analyzer accessibility reports for your account.
       operationId: getAccessibilityWorkflowAnalyzerReports
+      x-cli-section: "Workflow Analyzer"
       responses:
         '200':
           description: Successful response
@@ -29,8 +30,13 @@ paths:
       summary: Get Workflow Analyzer report summary
       description: Returns the summary for a specific Workflow Analyzer report, including score, issue counts, and scan metadata.
       operationId: getAccessibilityWorkflowAnalyzerReportSummary
+      x-cli-section: "Workflow Analyzer"
       parameters:
         - name: report_id
+          x-cli-picker:
+            source: accessibility.list-workflow-analyzer-reports
+            valueField: id
+            labelFields: [id, name]
           in: path
           required: true
           schema:
@@ -47,8 +53,13 @@ paths:
       summary: Get Workflow Analyzer report issues
       description: Returns the paginated list of accessibility issues for a specific Workflow Analyzer report, optionally filtered by task.
       operationId: getAccessibilityWorkflowAnalyzerReportIssues
+      x-cli-section: "Workflow Analyzer"
       parameters:
         - name: report_id
+          x-cli-picker:
+            source: accessibility.list-workflow-analyzer-reports
+            valueField: id
+            labelFields: [id, name]
           in: query
           schema:
             type: integer
@@ -72,6 +83,7 @@ paths:
       summary: List Assisted Test reports
       description: Returns a paginated list of all Assisted Test accessibility reports for your account.
       operationId: getAccessibilityAssistedTestReports
+      x-cli-section: "Assisted Tests"
       responses:
         '200':
           description: Successful response
@@ -84,8 +96,13 @@ paths:
       summary: Get Assisted Test report summary
       description: Returns the summary for a specific Assisted Test report, including score, issue counts, and scan metadata.
       operationId: getAccessibilityAssistedTestReportSummary
+      x-cli-section: "Assisted Tests"
       parameters:
         - name: report_id
+          x-cli-picker:
+            source: accessibility.list-workflow-analyzer-reports
+            valueField: id
+            labelFields: [id, name]
           in: path
           required: true
           schema:
@@ -102,8 +119,13 @@ paths:
       summary: Get Assisted Test report issues
       description: Returns the paginated list of accessibility issues for a specific Assisted Test report, optionally filtered by task.
       operationId: getAccessibilityAssistedTestReportIssues
+      x-cli-section: "Assisted Tests"
       parameters:
         - name: report_id
+          x-cli-picker:
+            source: accessibility.list-workflow-analyzer-reports
+            valueField: id
+            labelFields: [id, name]
           in: query
           schema:
             type: integer
@@ -127,6 +149,7 @@ paths:
       summary: List Website Scanner auth configs
       description: Returns all saved authentication configurations used by the Website Scanner for login-protected pages.
       operationId: getAccessibilityWebsiteScannerAuthConfigs
+      x-cli-section: "Website Scanner Auth"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -152,6 +175,7 @@ paths:
       summary: Create Website Scanner auth config
       description: Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans.
       operationId: createAccessibilityWebsiteScannerAuthConfig
+      x-cli-section: "Website Scanner Auth"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -183,6 +207,7 @@ paths:
       summary: List Website Scanner scans
       description: Returns a paginated list of all configured Website Scanner scans for your account.
       operationId: getAccessibilityWebsiteScannerScans
+      x-cli-section: "Website Scanner Scans"
       responses:
         '200':
           description: Successful response
@@ -194,6 +219,7 @@ paths:
       summary: Create Website Scanner scan
       description: Creates and triggers a new Website Scanner accessibility scan for the specified URL.
       operationId: createAccessibilityWebsiteScannerScan
+      x-cli-section: "Website Scanner Scans"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -221,12 +247,17 @@ paths:
       summary: Get Website Scanner scan overview
       description: Returns the configuration overview for a specific Website Scanner scan, including URL list and scan settings.
       operationId: getAccessibilityWebsiteScannerScanOverview
+      x-cli-section: "Website Scanner Scans"
       x-response-transform:
         codec: json-unwrap
         config:
           path: $.data
       parameters:
         - name: scan_id
+          x-cli-picker:
+            source: accessibility.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
           in: path
           required: true
           schema:
@@ -246,8 +277,13 @@ paths:
       summary: List Website Scanner scan runs
       description: Returns a paginated list of all scan runs for a specific Website Scanner scan, including status and issue counts.
       operationId: getAccessibilityWebsiteScannerScanRuns
+      x-cli-section: "Website Scanner Runs"
       parameters:
         - name: scan_id
+          x-cli-picker:
+            source: accessibility.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
           in: path
           required: true
           schema:
@@ -272,13 +308,23 @@ paths:
       summary: Get Website Scanner scan run summary
       description: Returns a detailed summary for a specific scan run, including score, issue counts, and changes since the last run.
       operationId: getAccessibilityWebsiteScannerScanRunSummary
+      x-cli-section: "Website Scanner Runs"
       parameters:
         - name: scan_id
+          x-cli-picker:
+            source: accessibility.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
           in: path
           required: true
           schema:
             type: integer
         - name: scan_run_id
+          x-cli-picker:
+            source: accessibility.list-website-scanner-scan-runs
+            valueField: id
+            labelFields: [id]
+            filterBy: [scan_id]
           in: path
           required: true
           schema:
@@ -295,17 +341,27 @@ paths:
       summary: Get Website Scanner scan run status
       description: Returns the current execution status of a specific Website Scanner scan run.
       operationId: getAccessibilityWebsiteScannerScanRunStatus
+      x-cli-section: "Website Scanner Runs"
       x-response-transform:
         codec: json-unwrap
         config:
           path: $.data
       parameters:
         - name: scan_id
+          x-cli-picker:
+            source: accessibility.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
           in: path
           required: true
           schema:
             type: integer
         - name: scan_run_id
+          x-cli-picker:
+            source: accessibility.list-website-scanner-scan-runs
+            valueField: id
+            labelFields: [id]
+            filterBy: [scan_id]
           in: path
           required: true
           schema:
@@ -325,13 +381,23 @@ paths:
       summary: Get Website Scanner scan run issues
       description: Returns paginated accessibility issues found during a specific Website Scanner scan run, optionally filtered by task.
       operationId: getAccessibilityWebsiteScannerScanRunIssues
+      x-cli-section: "Website Scanner Runs"
       parameters:
         - name: scan_id
+          x-cli-picker:
+            source: accessibility.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
           in: path
           required: true
           schema:
             type: integer
         - name: scan_run_id
+          x-cli-picker:
+            source: accessibility.list-website-scanner-scan-runs
+            valueField: id
+            labelFields: [id]
+            filterBy: [scan_id]
           in: query
           schema:
             type: integer
@@ -355,17 +421,27 @@ paths:
       summary: Get Website Scanner scan run logs
       description: Returns the crawl logs for a specific Website Scanner scan run, including per-URL status, redirects, and errors.
       operationId: getAccessibilityWebsiteScannerScanRunLogs
+      x-cli-section: "Website Scanner Runs"
       x-response-transform:
         codec: json-unwrap
         config:
           path: $.data
       parameters:
         - name: scan_id
+          x-cli-picker:
+            source: accessibility.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
           in: path
           required: true
           schema:
             type: integer
         - name: scan_run_id
+          x-cli-picker:
+            source: accessibility.list-website-scanner-scan-runs
+            valueField: id
+            labelFields: [id]
+            filterBy: [scan_id]
           in: path
           required: true
           schema:
@@ -385,6 +461,7 @@ paths:
       summary: List Automated Test projects
       description: Returns a paginated list of all Automated Test accessibility projects for your account.
       operationId: getAccessibilityAutomatedTestProjects
+      x-cli-section: "Automated Tests"
       parameters:
         - name: next_page
           in: query
@@ -402,12 +479,17 @@ paths:
       summary: List Automated Test builds
       description: Returns a paginated list of Automated Test accessibility builds, optionally filtered by project.
       operationId: getAccessibilityAutomatedTestBuilds
+      x-cli-section: "Automated Tests"
       parameters:
         - name: next_page
           in: query
           schema:
             type: string
         - name: projectId
+          x-cli-picker:
+            source: accessibility.list-automated-test-projects
+            valueField: id
+            labelFields: [id, name]
           in: query
           schema:
             type: integer
@@ -423,6 +505,7 @@ paths:
       summary: List test cases for an Automated Test build
       description: Returns the paginated list of test cases and their accessibility results for a specific Automated Test build.
       operationId: getAccessibilityAutomatedTestBuildTestCases
+      x-cli-section: "Automated Tests"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -452,6 +535,7 @@ paths:
       summary: Get Automated Test build summary
       description: Returns the summary for a specific Automated Test build, including score, health stats, and issue counts.
       operationId: getAccessibilityAutomatedTestBuildSummary
+      x-cli-section: "Automated Tests"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -481,8 +565,13 @@ paths:
       summary: Get Automated Test build issues
       description: Returns paginated accessibility issues for a specific Automated Test build, optionally filtered by task.
       operationId: getAccessibilityAutomatedTestBuildIssues
+      x-cli-section: "Automated Tests"
       parameters:
         - name: build_id
+          x-cli-picker:
+            source: accessibility.list-automated-test-builds
+            valueField: id
+            labelFields: [id, name]
           in: query
           schema:
             type: string
@@ -506,6 +595,7 @@ paths:
       summary: Get Automated Test case summary
       description: Returns the accessibility summary for a specific test case within an Automated Test build.
       operationId: getAccessibilityAutomatedTestBuildTestCaseSummary
+      x-cli-section: "Automated Tests"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -517,6 +607,11 @@ paths:
           schema:
             type: string
         - name: test_case_id
+          x-cli-picker:
+            source: accessibility.list-automated-test-build-test-cases
+            valueField: id
+            labelFields: [id, name]
+            filterBy: [build_id]
           in: path
           required: true
           schema:
@@ -540,6 +635,7 @@ paths:
       summary: Get Automated Test case issues
       description: Returns paginated accessibility issues for a specific test case within an Automated Test build.
       operationId: getAccessibilityAutomatedTestBuildTestCaseIssues
+      x-cli-section: "Automated Tests"
       parameters:
         - name: thBuildId
           in: path

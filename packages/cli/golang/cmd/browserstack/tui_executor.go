@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -16,27 +17,78 @@ import (
 	"github.com/browserstack/browserstack-client/internal/tui"
 )
 
-// buildArgs converts TUI form values into positional CLI args.
-// Order: path fields, then query fields, then body fields (matches CLI parser expectations).
-func buildArgs(action *tui.Action, values map[string]string) []string {
-	args := []string{action.ID}
-	add := func(loc tui.FieldLocation) {
-		for _, f := range action.Fields {
-			if f.Location == loc {
-				v, ok := values[f.Name]
-				if !ok || v == "" {
-					if f.Required {
-						args = append(args, "")
-					}
-					continue
-				}
-				args = append(args, v)
-			}
+func setNested(target map[string]any, dottedKey string, value any) {
+	parts := strings.Split(dottedKey, ".")
+	cur := target
+	for i := 0; i < len(parts)-1; i++ {
+		p := parts[i]
+		next, ok := cur[p].(map[string]any)
+		if !ok {
+			next = map[string]any{}
+			cur[p] = next
+		}
+		cur = next
+	}
+	cur[parts[len(parts)-1]] = value
+}
+
+func coerceBodyValue(f tui.Field, raw string) any {
+	if f.Type == tui.FieldTypeBoolean {
+		return raw == "true"
+	}
+	if f.Type == tui.FieldTypeNumber {
+		var n float64
+		if _, err := fmt.Sscanf(raw, "%g", &n); err == nil {
+			return n
 		}
 	}
-	add(tui.LocationPath)
-	add(tui.LocationQuery)
-	add(tui.LocationBody)
+	return raw
+}
+
+// buildArgs converts TUI form values into positional CLI args.
+// Path and query become individual positionals; body values are collapsed into a
+// single JSON object positional (matches the existing parser that JSON.parses positional[0]).
+func buildArgs(action *tui.Action, values map[string]string) []string {
+	args := []string{action.ID}
+	for _, f := range action.Fields {
+		if f.Location != tui.LocationPath {
+			continue
+		}
+		v := values[f.Name]
+		if v != "" {
+			args = append(args, v)
+		} else if f.Required {
+			args = append(args, "")
+		}
+	}
+	for _, f := range action.Fields {
+		if f.Location != tui.LocationQuery {
+			continue
+		}
+		v := values[f.Name]
+		if v != "" {
+			args = append(args, v)
+		} else if f.Required {
+			args = append(args, "")
+		}
+	}
+	body := map[string]any{}
+	hasBody := false
+	for _, f := range action.Fields {
+		if f.Location != tui.LocationBody {
+			continue
+		}
+		v := values[f.Name]
+		if v == "" {
+			continue
+		}
+		setNested(body, f.Name, coerceBodyValue(f, v))
+		hasBody = true
+	}
+	if hasBody {
+		b, _ := json.Marshal(body)
+		args = append(args, string(b))
+	}
 	return args
 }
 

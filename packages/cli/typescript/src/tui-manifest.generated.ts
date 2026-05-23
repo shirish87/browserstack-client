@@ -18,26 +18,41 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-browsers",
             "summary": "Fetches all automate browsers.",
             "description": "Fetches all automate browsers.",
+            "section": "Account",
             "fields": []
           },
           {
             "id": "get-plan",
             "summary": "Get Automate plan details",
             "description": "Fetches Automate plan details",
+            "section": "Account",
             "fields": []
           },
           {
             "id": "list-session-appium-logs",
             "summary": "Fetches Appium logs for a session",
             "description": "Fetches Appium logs for a session. Raw Appium Logs for each session are available to you in text format.",
+            "section": "Session Logs",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
               }
             ]
           },
@@ -45,14 +60,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-project-badge-key",
             "summary": "Fetches the badge key for the project",
             "description": "Fetches the badge key for sharing a public link for the Automate dashboard to view the latest build and sessions for that project",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
                 "label": "ProjectId",
-                "description": "",
+                "description": "ID of your project",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -60,14 +84,35 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "upload-session-terminal-logs",
             "summary": "Upload terminal logs for your session.",
             "description": "Upload terminal logs for your session.",
+            "section": "Sessions",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the terminal log file on your machine. The max allowed file size is 2MB",
+                "type": "file",
+                "required": true,
+                "location": "body"
               }
             ]
           },
@@ -75,11 +120,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-builds",
             "summary": "Delete multiple builds on the server",
             "description": "Delete multiple builds on the server. You can delete a maximum of 5 builds at a time. Builds once deleted cannot be recovered.",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId[]",
                 "label": "BuildId[]",
-                "description": "",
+                "description": "IDs of your builds",
                 "type": "string",
                 "required": true,
                 "location": "query"
@@ -90,14 +136,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-session",
             "summary": "Fetches a session",
             "description": "Fetches a session for a particular build",
+            "section": "Sessions",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
               }
             ]
           },
@@ -105,14 +164,55 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-session",
             "summary": "Update session status or name",
             "description": "Set the status for a session or update the name of the session. You can mark test status as passed or failed along with a reason.",
+            "section": "Sessions",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
+              },
+              {
+                "name": "status",
+                "label": "Status",
+                "description": "Status of the session",
+                "type": "string",
+                "required": false,
+                "location": "body",
+                "enum": [
+                  "passed",
+                  "failed"
+                ]
+              },
+              {
+                "name": "reason",
+                "label": "Reason",
+                "description": "Reason for marking the session as failed",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "name",
+                "label": "Name",
+                "description": "Name of the session",
+                "type": "string",
+                "required": false,
+                "location": "body"
               }
             ]
           },
@@ -120,14 +220,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-session",
             "summary": "Delete a session on the server",
             "description": "Delete a session on the server. Sessions once deleted cannot be recovered",
+            "section": "Sessions",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
               }
             ]
           },
@@ -135,11 +248,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-sessions",
             "summary": "Delete multiple sessions on the server",
             "description": "Delete multiple sessions on the server. Sessions once deleted cannot be recovered.",
+            "section": "Sessions",
             "fields": [
               {
                 "name": "sessionId[]",
                 "label": "SessionId[]",
-                "description": "",
+                "description": "IDs of your sessions",
                 "type": "string",
                 "required": true,
                 "location": "query"
@@ -150,11 +264,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-media-file",
             "summary": "Delete a media file earlier uploaded to BrowserStack",
             "description": "Delete a media file on the server. Media files once deleted cannot be recovered",
+            "section": "Media Files",
             "fields": [
               {
                 "name": "mediaId",
                 "label": "MediaId",
-                "description": "",
+                "description": "ID of your media file",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -165,14 +280,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-build",
             "summary": "Fetches a build",
             "description": "Fetches a build",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -180,14 +308,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-build",
             "summary": "Update the name or tag of your build",
             "description": "Update the name or tag of your build after the build is complete. To delete a build tag, simply pass an empty string as value for build_tag.",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "name",
@@ -211,14 +352,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-build",
             "summary": "Delete a build on the server",
             "description": "Delete a build on the server. Please note that deleting a build will delete all the sessions contained within it. Builds once deleted cannot be recovered",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -226,14 +380,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-session-logs",
             "summary": "Fetches session logs",
             "description": "Fetches session logs. Whenever you execute a session on BrowserStack, a session log is generated. These logs are available to you in text format.",
+            "section": "Session Logs",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
               }
             ]
           },
@@ -241,31 +408,55 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "upload-media-file",
             "summary": "Upload a media file",
             "description": "Upload a media file you want to use in your tests",
-            "fields": []
+            "section": "Media Files",
+            "fields": [
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the media file on your machine. Note: You can upload up to 10 media files on the BrowserStack server. By default, we delete the uploaded files after 30 days from the date of upload.",
+                "type": "file",
+                "required": true,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "recycle-key",
             "summary": "Reset Automate access key",
             "description": "Reset Automate access key",
+            "section": "Account",
             "fields": []
           },
           {
             "id": "list-sessions",
             "summary": "Fetches list of sessions",
             "description": "Fetches list of sessions for a particular build",
+            "section": "Sessions",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "limit",
                 "label": "Limit",
-                "description": "",
+                "description": "Specify the number of results to be displayed. The default value is 10, and the maximum value is 100",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -273,7 +464,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "offset",
                 "label": "Offset",
-                "description": "",
+                "description": "Retrieve sessions from a specific point using the offset parameter",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -281,7 +472,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "status",
                 "label": "Status",
-                "description": "",
+                "description": "Status of the session",
                 "type": "string",
                 "required": false,
                 "location": "query",
@@ -298,14 +489,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-project",
             "summary": "Fetches a project",
             "description": "Specific information about a particular project can be queried using the project ID",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
                 "label": "ProjectId",
-                "description": "",
+                "description": "ID of your project",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -313,14 +513,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-project",
             "summary": "Update the name of your project",
             "description": "Update the name of your project after the project is complete",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
                 "label": "ProjectId",
-                "description": "",
+                "description": "ID of your project",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "name",
@@ -336,14 +545,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-project",
             "summary": "Delete your project",
             "description": "Delete a project on the server using the DELETE method. Please note that to delete a project, it needs to be empty of builds and sessions, and projects once deleted cannot be recovered",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
                 "label": "ProjectId",
-                "description": "",
+                "description": "ID of your project",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -351,14 +569,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-session-selenium-logs",
             "summary": "Fetches Selenium logs for a session",
             "description": "Fetches Selenium logs for a session. Raw Selenium logs for each session are available to you in text format.",
+            "section": "Session Logs",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
               }
             ]
           },
@@ -366,14 +597,35 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "upload-build-terminal-logs",
             "summary": "Upload terminal logs for your build.",
             "description": "Upload terminal logs for your build.",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the terminal log file on your machine. The max allowed file size is 2MB",
+                "type": "file",
+                "required": true,
+                "location": "body"
               }
             ]
           },
@@ -381,26 +633,41 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-media-files",
             "summary": "Fetches list of uploaded media files",
             "description": "Fetches list of recently uploaded media files",
+            "section": "Media Files",
             "fields": []
           },
           {
             "id": "list-projects",
             "summary": "Fetches list of projects",
             "description": "Fetches list of projects associated with your username and access key. You will need the id of the project for invoking any other Project API that follows in this document",
+            "section": "Projects",
             "fields": []
           },
           {
             "id": "list-session-console-logs",
             "summary": "Fetches console logs for a session",
             "description": "Fetches console logs for a session. Console logs are enabled by default and are set to errors. You can disable them or change verbosity options by using the browserstack.console capability to disabled, errors, warnings, info, verbose. Raw Console Logs for each session are available to you in text format.",
+            "section": "Session Logs",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
               }
             ]
           },
@@ -408,14 +675,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-session-telemetry-logs",
             "summary": "Fetches telemetry logs for a session",
             "description": "Fetches telemetry logs for a session. Telemetry logs for a session are available for tests run using Selenium 4. Telemetry logs are by default disabled for a session.",
+            "section": "Session Logs",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
               }
             ]
           },
@@ -423,19 +703,28 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-builds",
             "summary": "Fetches list of builds",
             "description": "Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number of builds and paginate through your data",
+            "section": "Builds",
             "fields": [
               {
                 "name": "projectId",
                 "label": "ProjectId",
-                "description": "",
+                "description": "ID of your project",
                 "type": "number",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "picker": {
+                  "source": "automate.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "limit",
                 "label": "Limit",
-                "description": "",
+                "description": "Specify the number of results to be displayed. The default value is 10, and the maximum value is 100",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -443,7 +732,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "offset",
                 "label": "Offset",
-                "description": "",
+                "description": "Retrieve builds from a specific point using the offset parameter",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -451,7 +740,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "status",
                 "label": "Status",
-                "description": "",
+                "description": "Status of the build",
                 "type": "string",
                 "required": false,
                 "location": "query",
@@ -468,14 +757,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-session-network-logs",
             "summary": "Fetches network logs for a session",
             "description": "Fetches network logs for a session. Network Logs for each session are available to you in HAR (HTTP Archive) format.",
+            "section": "Session Logs",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
               }
             ]
           }
@@ -496,14 +798,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-build",
             "summary": "Fetches a build",
             "description": "Fetches a build",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -511,14 +826,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-build",
             "summary": "Update the tag of your build",
             "description": "Update the tag of your build after the build is complete. To delete a build tag, simply pass an empty string as value for build_tag.",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "build_tag",
@@ -534,14 +862,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-build",
             "summary": "Delete a build on the server",
             "description": "Delete a build on the server. Please note that deleting a build will delete all the sessions contained within it. Builds once deleted cannot be recovered",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -549,11 +890,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-media-files-by-custom-id",
             "summary": "Fetches list of uploaded media files by custom ID",
             "description": "Fetches list of recently uploaded media files by custom ID",
+            "section": "Media Files",
             "fields": [
               {
                 "name": "customId",
                 "label": "CustomId",
-                "description": "",
+                "description": "Filter recently uploaded media files by custom ID.",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -564,19 +906,32 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-session-logs",
             "summary": "Fetches session logs",
             "description": "Access the logs for the session in textual format. It includes information about the test session’s desired capabilities and detailed information about every request and response. You can view all the steps executed in the test and troubleshoot errors for any failed steps.",
+            "section": "Session Logs",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -587,26 +942,37 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-apps",
             "summary": "Fetches list of uploaded apps",
             "description": "Fetches list of recently uploaded apps",
+            "section": "Apps",
             "fields": []
           },
           {
             "id": "list-group-media-files",
             "summary": "Fetches list of uploaded media files for the entire group",
             "description": "Fetches list of recently uploaded media files for the entire group",
+            "section": "Media Files",
             "fields": []
           },
           {
             "id": "get-xcui-test-app",
             "summary": "Get details of an uploaded XCUITest app",
             "description": "Get details of an uploaded XCUITest app",
+            "section": "XCUITest Apps",
             "fields": [
               {
                 "name": "appId",
                 "label": "AppId",
-                "description": "",
+                "description": "App ID of your app",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-apps",
+                  "valueField": "app_url",
+                  "labelFields": [
+                    "app_url",
+                    "app_name"
+                  ]
+                }
               }
             ]
           },
@@ -614,14 +980,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-xcui-test-app",
             "summary": "Delete a XCUITest app that was previously uploaded to BrowserStack",
             "description": "Delete an app that was previously uploaded to BrowserStack. Note that apps once deleted cannot be recovered.",
+            "section": "XCUITest Apps",
             "fields": [
               {
                 "name": "appId",
                 "label": "AppId",
-                "description": "",
+                "description": "ID of your uploaded app",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-apps",
+                  "valueField": "app_url",
+                  "labelFields": [
+                    "app_url",
+                    "app_name"
+                  ]
+                }
               }
             ]
           },
@@ -629,19 +1004,32 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-network-logs",
             "summary": "Fetches network logs",
             "description": "Access the network logs for your session. These logs capture network data such as network traffic, latency, HTTP requests/responses in the HAR (HTTP Archive) format. You can identify any performance bottlenecks or debug failed REST API responses. Network logs are disabled by default.",
+            "section": "Session Logs",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -652,14 +1040,35 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "upload-build-terminal-logs",
             "summary": "Upload terminal logs for your build.",
             "description": "Upload terminal logs for your build.",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the terminal log file on your machine. The max allowed file size is 2MB",
+                "type": "file",
+                "required": true,
+                "location": "body"
               }
             ]
           },
@@ -667,23 +1076,76 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "upload-flutter-android-app",
             "summary": "Upload an app",
             "description": "Upload the application under test (AUT) for Flutter testing.",
-            "fields": []
+            "section": "Flutter Android Apps",
+            "fields": [
+              {
+                "name": "custom_id",
+                "label": "Custom Id",
+                "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "file",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "url",
+                "label": "Url",
+                "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "upload-detox-android-app",
             "summary": "Upload an app",
             "description": "Upload the application under test (AUT) for Detox Android testing.",
-            "fields": []
+            "section": "Detox Android Apps",
+            "fields": [
+              {
+                "name": "custom_id",
+                "label": "Custom Id",
+                "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "file",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "url",
+                "label": "Url",
+                "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "list-xcui-test-apps",
             "summary": "Fetches list of uploaded XCUITest apps",
             "description": "Fetches list of recently uploaded XCUITest apps",
+            "section": "XCUITest Apps",
             "fields": [
               {
                 "name": "scope",
                 "label": "Scope",
-                "description": "",
+                "description": "Show recent apps at a group level or user level.",
                 "type": "string",
                 "required": false,
                 "location": "query",
@@ -695,7 +1157,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "custom_id",
                 "label": "Custom Id",
-                "description": "",
+                "description": "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
                 "location": "query"
@@ -703,7 +1165,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "limit",
                 "label": "Limit",
-                "description": "",
+                "description": "Number of recent apps to be fetched. Default is 10.",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -714,14 +1176,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "upload-session-terminal-logs",
             "summary": "Upload terminal logs for your session.",
             "description": "Upload terminal logs for your session.",
+            "section": "Sessions",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
                 "location": "path"
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the terminal log file on your machine. The max allowed file size is 2MB",
+                "type": "file",
+                "required": true,
+                "location": "body"
               }
             ]
           },
@@ -729,38 +1200,126 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-plan",
             "summary": "Get App Automate plan details",
             "description": "Fetches App Automate plan details",
+            "section": "Account",
             "fields": []
           },
           {
             "id": "upload-flutter-ios-app",
             "summary": "Upload a Flutter test package for iOS",
             "description": "Upload the application under test (AUT) for Flutter iOS testing in .zip format.",
-            "fields": []
+            "section": "Flutter iOS Apps",
+            "fields": [
+              {
+                "name": "custom_id",
+                "label": "Custom Id",
+                "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "file",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "url",
+                "label": "Url",
+                "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "upload-detox-android-app-client",
             "summary": "Upload an app client",
             "description": "Upload the app client under test for Detox Android testing.",
-            "fields": []
+            "section": "Detox Android Apps",
+            "fields": [
+              {
+                "name": "custom_id",
+                "label": "Custom Id",
+                "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the app file on your machine. Supported file formats are .apk and .aab files for Android",
+                "type": "file",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "url",
+                "label": "Url",
+                "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "upload-xcui-test-app",
             "summary": "Upload an app",
             "description": "Upload the application under test (AUT) for XCUITest testing.",
-            "fields": []
+            "section": "XCUITest Apps",
+            "fields": [
+              {
+                "name": "custom_id",
+                "label": "Custom Id",
+                "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "file",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "url",
+                "label": "Url",
+                "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "get-project",
             "summary": "Fetches a project",
             "description": "Specific information about a particular project can be queried using the project ID",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
                 "label": "ProjectId",
-                "description": "",
+                "description": "ID of your project",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -768,14 +1327,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-project",
             "summary": "Update the name of your project",
             "description": "Update the name of your project after the project is complete",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
                 "label": "ProjectId",
-                "description": "",
+                "description": "ID of your project",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "name",
@@ -791,14 +1359,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-project",
             "summary": "Delete your project",
             "description": "Delete a project on the server using the DELETE method. Please note that to delete a project, it needs to be empty of builds and sessions, and projects once deleted cannot be recovered",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
                 "label": "ProjectId",
-                "description": "",
+                "description": "ID of your project",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -806,25 +1383,39 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-devices",
             "summary": "Get a list of supported Android and iOS devices",
             "description": "Fetches list of devices supported by App Automate",
+            "section": "Account",
             "fields": []
           },
           {
             "id": "list-appium-logs",
             "summary": "Fetches Appium logs",
             "description": "Access the Appium logs for your session. These are logs generated by the Appium server and contain the details about your each Appium command execution in the test session. You can troubleshoot any errors in case your test session failed.",
+            "section": "Session Logs",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -835,14 +1426,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-app",
             "summary": "Delete an app that was previously uploaded to BrowserStack",
             "description": "Delete an app that was previously uploaded to BrowserStack. Note that apps once deleted cannot be recovered.",
+            "section": "Apps",
             "fields": [
               {
                 "name": "appId",
                 "label": "AppId",
-                "description": "",
+                "description": "ID of your uploaded app",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-apps",
+                  "valueField": "app_url",
+                  "labelFields": [
+                    "app_url",
+                    "app_name"
+                  ]
+                }
               }
             ]
           },
@@ -850,14 +1450,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-flutter-android-app",
             "summary": "Get details of an uploaded Flutter app",
             "description": "Get details of an uploaded Flutter app",
+            "section": "Flutter Android Apps",
             "fields": [
               {
                 "name": "appId",
                 "label": "AppId",
-                "description": "",
+                "description": "App ID of your app",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-apps",
+                  "valueField": "app_url",
+                  "labelFields": [
+                    "app_url",
+                    "app_name"
+                  ]
+                }
               }
             ]
           },
@@ -865,14 +1474,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-flutter-android-app",
             "summary": "Delete a Flutter app that was previously uploaded to BrowserStack",
             "description": "Delete an app that was previously uploaded to BrowserStack. Note that apps once deleted cannot be recovered.",
+            "section": "Flutter Android Apps",
             "fields": [
               {
                 "name": "appId",
                 "label": "AppId",
-                "description": "",
+                "description": "ID of your uploaded app",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-apps",
+                  "valueField": "app_url",
+                  "labelFields": [
+                    "app_url",
+                    "app_name"
+                  ]
+                }
               }
             ]
           },
@@ -880,17 +1498,36 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "upload-media-file",
             "summary": "Upload a media file",
             "description": "Upload a media file you want to use in your tests",
-            "fields": []
+            "section": "Media Files",
+            "fields": [
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the media file on your machine. Note: You can upload up to 10 media files on the BrowserStack server. By default, we delete the uploaded files after 30 days from the date of upload.",
+                "type": "file",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "custom_id",
+                "label": "Custom Id",
+                "description": "Custom ID for the media file. This ID is used to specify the media files to be used in your tests.",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "list-espresso-apps",
             "summary": "Fetches list of uploaded Espresso apps",
             "description": "Fetches list of recently uploaded Espresso apps",
+            "section": "Espresso Apps",
             "fields": [
               {
                 "name": "scope",
                 "label": "Scope",
-                "description": "",
+                "description": "Show recent apps at a group level or user level.",
                 "type": "string",
                 "required": false,
                 "location": "query",
@@ -902,7 +1539,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "custom_id",
                 "label": "Custom Id",
-                "description": "",
+                "description": "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
                 "location": "query"
@@ -910,7 +1547,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "limit",
                 "label": "Limit",
-                "description": "",
+                "description": "Number of recent apps to be fetched. Default is 10.",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -921,19 +1558,32 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-app-profiling-data-v2",
             "summary": "Fetches app profiling data v2",
             "description": "Access the detailed app profling metrics such as installed app size, UI rendering metrics, resource consumption metrics, etc.",
+            "section": "Apps",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -944,11 +1594,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-session",
             "summary": "Fetches a session",
             "description": "Get details of a test session including its status and debugging information such as Appium logs and test video recording",
+            "section": "Sessions",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -959,11 +1610,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-session",
             "summary": "Update session status",
             "description": "Set the status for a session. You can mark test status as passed or failed along with a reason.",
+            "section": "Sessions",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -994,11 +1646,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-session",
             "summary": "Delete a session on the server",
             "description": "Delete a session on the server. Sessions once deleted cannot be recovered",
+            "section": "Sessions",
             "fields": [
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -1009,11 +1662,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-projects",
             "summary": "Retrieve a list of recent projects for your BrowserStack group",
             "description": "Fetch the last 10 projects or your BrowserStack group. You can also limit the number of projects and paginate through your data",
+            "section": "Projects",
             "fields": [
               {
                 "name": "limit",
                 "label": "Limit",
-                "description": "",
+                "description": "Specify the number of results to be displayed. The default value is 10, and the maximum value is 100",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -1021,7 +1675,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "offset",
                 "label": "Offset",
-                "description": "",
+                "description": "Retrieve projects from a specific point using the offset parameter",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -1029,7 +1683,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "status",
                 "label": "Status",
-                "description": "",
+                "description": "Status of the build",
                 "type": "string",
                 "required": false,
                 "location": "query",
@@ -1046,11 +1700,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-media-file",
             "summary": "Fetches list of uploaded media files for the entire group",
             "description": "Fetches list of recently uploaded media files for the entire group",
+            "section": "Media Files",
             "fields": [
               {
                 "name": "mediaId",
                 "label": "MediaId",
-                "description": "",
+                "description": "ID of your media file",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -1061,14 +1716,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-espresso-app",
             "summary": "Get details of an uploaded Espresso app",
             "description": "Get details of an uploaded Espresso app",
+            "section": "Espresso Apps",
             "fields": [
               {
                 "name": "appId",
                 "label": "AppId",
-                "description": "",
+                "description": "App ID of your app",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-apps",
+                  "valueField": "app_url",
+                  "labelFields": [
+                    "app_url",
+                    "app_name"
+                  ]
+                }
               }
             ]
           },
@@ -1076,14 +1740,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-espresso-app",
             "summary": "Delete a Espresso app that was previously uploaded to BrowserStack",
             "description": "Delete an app that was previously uploaded to BrowserStack. Note that apps once deleted cannot be recovered.",
+            "section": "Espresso Apps",
             "fields": [
               {
                 "name": "appId",
                 "label": "AppId",
-                "description": "",
+                "description": "ID of your uploaded app",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-apps",
+                  "valueField": "app_url",
+                  "labelFields": [
+                    "app_url",
+                    "app_name"
+                  ]
+                }
               }
             ]
           },
@@ -1091,17 +1764,19 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-media-files",
             "summary": "Fetches list of uploaded media files",
             "description": "Fetches list of recently uploaded media files",
+            "section": "Media Files",
             "fields": []
           },
           {
             "id": "list-flutter-ios-apps",
             "summary": "Fetches list of uploaded Flutter iOS test packages",
             "description": "Fetches list of recently uploaded Flutter iOS test packages",
+            "section": "Flutter iOS Apps",
             "fields": [
               {
                 "name": "scope",
                 "label": "Scope",
-                "description": "",
+                "description": "Show recent apps at a group level or user level.",
                 "type": "string",
                 "required": false,
                 "location": "query",
@@ -1113,7 +1788,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "custom_id",
                 "label": "Custom Id",
-                "description": "",
+                "description": "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
                 "location": "query"
@@ -1121,7 +1796,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "limit",
                 "label": "Limit",
-                "description": "",
+                "description": "Number of recent apps to be fetched. Default is 10.",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -1132,29 +1807,83 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "upload-app",
             "summary": "Upload an app",
             "description": "Upload the application under test (AUT) for Appium testing.",
-            "fields": []
+            "section": "Apps",
+            "fields": [
+              {
+                "name": "custom_id",
+                "label": "Custom Id",
+                "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "file",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "url",
+                "label": "Url",
+                "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "list-group-apps",
             "summary": "Fetches list of uploaded apps for the entire group",
             "description": "Fetches list of recently uploaded apps for the entire group",
+            "section": "Apps",
             "fields": []
           },
           {
             "id": "upload-espresso-app",
             "summary": "Upload an app",
             "description": "Upload the application under test (AUT) for Espresso testing.",
-            "fields": []
+            "section": "Espresso Apps",
+            "fields": [
+              {
+                "name": "custom_id",
+                "label": "Custom Id",
+                "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "Path to the app file on your machine. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "file",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "url",
+                "label": "Url",
+                "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "list-apps-by-custom-id",
             "summary": "Fetches list of uploaded apps by custom ID",
             "description": "Fetches list of uploaded apps by custom ID",
+            "section": "Apps",
             "fields": [
               {
                 "name": "customId",
                 "label": "CustomId",
-                "description": "",
+                "description": "Custom ID of your app",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -1165,11 +1894,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-flutter-android-apps",
             "summary": "Fetches list of uploaded Flutter apps",
             "description": "Fetches list of recently uploaded Flutter apps",
+            "section": "Flutter Android Apps",
             "fields": [
               {
                 "name": "scope",
                 "label": "Scope",
-                "description": "",
+                "description": "Show recent apps at a group level or user level.",
                 "type": "string",
                 "required": false,
                 "location": "query",
@@ -1181,7 +1911,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "custom_id",
                 "label": "Custom Id",
-                "description": "",
+                "description": "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
                 "location": "query"
@@ -1189,7 +1919,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "limit",
                 "label": "Limit",
-                "description": "",
+                "description": "Number of recent apps to be fetched. Default is 10.",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -1200,19 +1930,32 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-device-logs",
             "summary": "Fetches device logs",
             "description": "Access the device logs for your session. These are system logs specific to your application generated by the OS(Android/iOS) and can be helpful for debugging any application crashes during test execution.",
+            "section": "Session Logs",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -1223,19 +1966,32 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-app-profiling-data-v1",
             "summary": "Fetches app profiling data",
             "description": "Access the app profiling logs to view the resource consumption (CPU, memory, battery, and network) by your app on the device. The logs are only available for Android.",
+            "section": "Apps",
             "fields": [
               {
                 "name": "buildId",
                 "label": "BuildId",
-                "description": "",
+                "description": "ID of your build",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "sessionId",
                 "label": "SessionId",
-                "description": "",
+                "description": "ID of your session",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -1246,19 +2002,28 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-builds",
             "summary": "Fetches list of builds",
             "description": "Fetch the 10 recent test builds that have run on BrowserStack. You can also limit the number of builds and paginate through your data",
+            "section": "Builds",
             "fields": [
               {
                 "name": "projectId",
                 "label": "ProjectId",
-                "description": "",
+                "description": "ID of your project",
                 "type": "number",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "picker": {
+                  "source": "app-automate.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "limit",
                 "label": "Limit",
-                "description": "",
+                "description": "Specify the number of results to be displayed. The default value is 10, and the maximum value is 100",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -1266,7 +2031,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "offset",
                 "label": "Offset",
-                "description": "",
+                "description": "Retrieve builds from a specific point using the offset parameter",
                 "type": "number",
                 "required": false,
                 "location": "query"
@@ -1274,7 +2039,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "status",
                 "label": "Status",
-                "description": "",
+                "description": "Status of the build",
                 "type": "string",
                 "required": false,
                 "location": "query",
@@ -1291,14 +2056,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-flutter-ios-app",
             "summary": "Get details of an uploaded Flutter iOS test package",
             "description": "Get details of an uploaded Flutter iOS test package",
+            "section": "Flutter iOS Apps",
             "fields": [
               {
                 "name": "appId",
                 "label": "AppId",
-                "description": "",
+                "description": "Test package ID of your app",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-apps",
+                  "valueField": "app_url",
+                  "labelFields": [
+                    "app_url",
+                    "app_name"
+                  ]
+                }
               }
             ]
           },
@@ -1306,14 +2080,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-flutter-ios-app",
             "summary": "Delete a Flutter iOS test package that was previously uploaded to BrowserStack",
             "description": "Delete a Flutter iOS test package that was previously uploaded to BrowserStack. Note that apps once deleted cannot be recovered.",
+            "section": "Flutter iOS Apps",
             "fields": [
               {
                 "name": "appId",
                 "label": "AppId",
-                "description": "",
+                "description": "Test package ID of your app",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-apps",
+                  "valueField": "app_url",
+                  "labelFields": [
+                    "app_url",
+                    "app_name"
+                  ]
+                }
               }
             ]
           },
@@ -1321,14 +2104,23 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-project-badge-key",
             "summary": "Fetches the badge key for the project",
             "description": "Fetches the badge key for sharing a public link for the Automate dashboard to view the latest build and sessions for that project",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
                 "label": "ProjectId",
-                "description": "",
+                "description": "ID of your project",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           }
@@ -1349,11 +2141,12 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-job",
             "summary": "Fetches a screenshot job",
             "description": "Fetches a screenshot job",
+            "section": "Jobs",
             "fields": [
               {
                 "name": "jobId",
                 "label": "JobId",
-                "description": "",
+                "description": "ID of your screenshot job",
                 "type": "string",
                 "required": true,
                 "location": "path"
@@ -1364,12 +2157,95 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "create-job",
             "summary": "Take a screenshot",
             "description": "Take a screenshot of a website on a particular browser",
-            "fields": []
+            "section": "Jobs",
+            "fields": [
+              {
+                "name": "browsers",
+                "label": "Browsers",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "orientation",
+                "label": "Orientation",
+                "description": "Screen orientation for a mobile device. Default: portrait",
+                "type": "string",
+                "required": false,
+                "location": "body",
+                "enum": [
+                  "portrait",
+                  "landscape"
+                ]
+              },
+              {
+                "name": "url",
+                "label": "Url",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "callback_url",
+                "label": "Callback Url",
+                "description": "Public URL to which the screenshot will be posted.",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "win_res",
+                "label": "Win Res",
+                "description": "Sceen resolution of the Windows machine. Values: 1024x768, 1280x1024. Default: 1024x768",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "mac_res",
+                "label": "Mac Res",
+                "description": "Sceen resolution of the Mac machine. Values: 1024x768, 1280x960, 1280x1024, 1600x1200, 1920x1080. Default: 1024x768",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "quality",
+                "label": "Quality",
+                "description": "Quality of the screenshot. Default: Compressed",
+                "type": "string",
+                "required": false,
+                "location": "body",
+                "enum": [
+                  "Compressed",
+                  "Original"
+                ]
+              },
+              {
+                "name": "local",
+                "label": "Local",
+                "description": "Set to true if URL is local and a Local Testing connection has been set up. Default: false",
+                "type": "boolean",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "wait_time",
+                "label": "Wait Time",
+                "description": "Time in seconds to wait before taking the screenshot. Default: 5",
+                "type": "number",
+                "required": false,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "list-browsers",
             "summary": "Fetches list of browsers",
             "description": "Fetches list of browsers supported by Screenshots API",
+            "section": "Browsers",
             "fields": []
           }
         ]
@@ -1389,6 +2265,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-instances",
             "summary": "Fetches list of recent binary instances",
             "description": "Fetches list of recent binary instances for local testing. Note that the binary should have been started with the --enable-logging-for-api parameter.",
+            "section": "Instances",
             "fields": [
               {
                 "name": "auth_token",
@@ -1424,6 +2301,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-instance",
             "summary": "Fetches details of a Local binary instance",
             "description": "Fetches details of a Local binary instance used for local testing. Note that the binary should have been started with the --enable-logging-for-api parameter.",
+            "section": "Instances",
             "fields": [
               {
                 "name": "localInstanceId",
@@ -1447,6 +2325,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "disconnect-instance",
             "summary": "Disconnect a Local binary instance",
             "description": "Disconnect a Local binary instance",
+            "section": "Instances",
             "fields": [
               {
                 "name": "localInstanceId",
@@ -1483,6 +2362,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-projects",
             "summary": "Get list of projects",
             "description": "",
+            "section": "Projects",
             "fields": [
               {
                 "name": "p",
@@ -1510,10 +2390,19 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "create-project",
             "summary": "Create a project",
             "description": "",
+            "section": "Projects",
             "fields": [
               {
-                "name": "project",
-                "label": "Project",
+                "name": "project.name",
+                "label": "Project › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "project.description",
+                "label": "Project › Description",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -1525,6 +2414,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-project",
             "summary": "Get project details",
             "description": "",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
@@ -1532,7 +2422,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -1540,6 +2438,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-project",
             "summary": "Update a project",
             "description": "",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
@@ -1547,11 +2446,27 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
-                "name": "project",
-                "label": "Project",
+                "name": "project.name",
+                "label": "Project › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "project.description",
+                "label": "Project › Description",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -1563,6 +2478,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-project",
             "summary": "Delete a project",
             "description": "",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
@@ -1570,7 +2486,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           }
@@ -1584,6 +2508,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-folders",
             "summary": "Get list of folders in a project",
             "description": "",
+            "section": "Folders",
             "fields": [
               {
                 "name": "projectId",
@@ -1591,7 +2516,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "p",
@@ -1619,6 +2552,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "create-folder",
             "summary": "Create a folder",
             "description": "",
+            "section": "Folders",
             "fields": [
               {
                 "name": "projectId",
@@ -1626,13 +2560,37 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
-                "name": "folder",
-                "label": "Folder",
+                "name": "folder.name",
+                "label": "Folder › Name",
                 "description": "",
                 "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "folder.description",
+                "label": "Folder › Description",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "folder.parent_id",
+                "label": "Folder › Parent Id",
+                "description": "",
+                "type": "number",
                 "required": false,
                 "location": "body"
               }
@@ -1642,6 +2600,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-folder",
             "summary": "Get folder details",
             "description": "",
+            "section": "Folders",
             "fields": [
               {
                 "name": "projectId",
@@ -1649,7 +2608,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "folderId",
@@ -1657,7 +2624,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-folders",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -1665,6 +2643,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-folder",
             "summary": "Update a folder",
             "description": "",
+            "section": "Folders",
             "fields": [
               {
                 "name": "projectId",
@@ -1672,7 +2651,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "folderId",
@@ -1680,11 +2667,30 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-folders",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
-                "name": "folder",
-                "label": "Folder",
+                "name": "folder.name",
+                "label": "Folder › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "folder.description",
+                "label": "Folder › Description",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -1696,6 +2702,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-folder",
             "summary": "Delete a folder",
             "description": "",
+            "section": "Folders",
             "fields": [
               {
                 "name": "projectId",
@@ -1703,7 +2710,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "folderId",
@@ -1711,7 +2726,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-folders",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -1719,6 +2745,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "move-folder",
             "summary": "Move a folder",
             "description": "",
+            "section": "Folders",
             "fields": [
               {
                 "name": "projectId",
@@ -1726,7 +2753,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "folderId",
@@ -1734,7 +2769,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-folders",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "parent_id",
@@ -1756,6 +2802,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-cases",
             "summary": "Get list of test cases",
             "description": "",
+            "section": "Test Cases",
             "fields": [
               {
                 "name": "projectId",
@@ -1763,7 +2810,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "p",
@@ -1863,7 +2918,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "picker": {
+                  "source": "test-management.list-folders",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "tags",
@@ -1895,6 +2961,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "bulk-edit-test-cases",
             "summary": "Bulk edit test cases",
             "description": "",
+            "section": "Test Cases (Bulk)",
             "fields": [
               {
                 "name": "projectId",
@@ -1902,7 +2969,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "ids",
@@ -1913,11 +2988,67 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "location": "body"
               },
               {
-                "name": "test_case",
-                "label": "Test Case",
+                "name": "test_case.preconditions",
+                "label": "Test Case › Preconditions",
                 "description": "",
                 "type": "string",
-                "required": true,
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.owner",
+                "label": "Test Case › Owner",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.tags",
+                "label": "Test Case › Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.custom_fields",
+                "label": "Test Case › Custom Fields",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.automation_status",
+                "label": "Test Case › Automation Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.case_type",
+                "label": "Test Case › Case Type",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.priority",
+                "label": "Test Case › Priority",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.status",
+                "label": "Test Case › Status",
+                "description": "",
+                "type": "string",
+                "required": false,
                 "location": "body"
               }
             ]
@@ -1926,6 +3057,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "bulk-delete-test-cases",
             "summary": "Bulk delete test cases",
             "description": "",
+            "section": "Test Cases (Bulk)",
             "fields": [
               {
                 "name": "projectId",
@@ -1933,7 +3065,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "ids",
@@ -1949,6 +3089,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "bulk-archive-test-cases",
             "summary": "Bulk archive test cases",
             "description": "",
+            "section": "Test Cases (Bulk)",
             "fields": [
               {
                 "name": "projectId",
@@ -1956,7 +3097,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "ids",
@@ -1972,6 +3121,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "bulk-unarchive-test-cases",
             "summary": "Bulk unarchive test cases",
             "description": "",
+            "section": "Test Cases (Bulk)",
             "fields": [
               {
                 "name": "projectId",
@@ -1979,7 +3129,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "ids",
@@ -1995,6 +3153,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "bulk-edit-test-cases-with-operations",
             "summary": "Bulk edit test cases with operations",
             "description": "",
+            "section": "Test Cases (Bulk)",
             "fields": [
               {
                 "name": "projectId",
@@ -2002,7 +3161,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "ids",
@@ -2026,6 +3193,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "create-test-case",
             "summary": "Create a test case",
             "description": "",
+            "section": "Test Cases",
             "fields": [
               {
                 "name": "projectId",
@@ -2033,7 +3201,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "folderId",
@@ -2041,11 +3217,142 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-folders",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
-                "name": "test_case",
-                "label": "Test Case",
+                "name": "test_case.name",
+                "label": "Test Case › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.template",
+                "label": "Test Case › Template",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.description",
+                "label": "Test Case › Description",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.owner",
+                "label": "Test Case › Owner",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.preconditions",
+                "label": "Test Case › Preconditions",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.test_case_steps",
+                "label": "Test Case › Test Case Steps",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.issues",
+                "label": "Test Case › Issues",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.issue_tracker.name",
+                "label": "Test Case › Issue Tracker › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.issue_tracker.host",
+                "label": "Test Case › Issue Tracker › Host",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.tags",
+                "label": "Test Case › Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.case_type",
+                "label": "Test Case › Case Type",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.priority",
+                "label": "Test Case › Priority",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.custom_fields",
+                "label": "Test Case › Custom Fields",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.feature",
+                "label": "Test Case › Feature",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.scenario",
+                "label": "Test Case › Scenario",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.background",
+                "label": "Test Case › Background",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -2057,6 +3364,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-test-case",
             "summary": "Update a test case",
             "description": "",
+            "section": "Test Cases",
             "fields": [
               {
                 "name": "projectId",
@@ -2064,7 +3372,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testCaseId",
@@ -2072,11 +3388,150 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
-                "name": "test_case",
-                "label": "Test Case",
+                "name": "test_case.name",
+                "label": "Test Case › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.case_type",
+                "label": "Test Case › Case Type",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.priority",
+                "label": "Test Case › Priority",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.status",
+                "label": "Test Case › Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.description",
+                "label": "Test Case › Description",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.owner",
+                "label": "Test Case › Owner",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.preconditions",
+                "label": "Test Case › Preconditions",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.test_case_steps",
+                "label": "Test Case › Test Case Steps",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.issues",
+                "label": "Test Case › Issues",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.issue_tracker.name",
+                "label": "Test Case › Issue Tracker › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.issue_tracker.host",
+                "label": "Test Case › Issue Tracker › Host",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.tags",
+                "label": "Test Case › Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.custom_fields",
+                "label": "Test Case › Custom Fields",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.automation_status",
+                "label": "Test Case › Automation Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.feature",
+                "label": "Test Case › Feature",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.scenario",
+                "label": "Test Case › Scenario",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case.background",
+                "label": "Test Case › Background",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -2088,6 +3543,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-test-case",
             "summary": "Delete a test case",
             "description": "",
+            "section": "Test Cases",
             "fields": [
               {
                 "name": "projectId",
@@ -2095,7 +3551,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testCaseId",
@@ -2103,7 +3567,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -2111,6 +3586,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "archive-test-case",
             "summary": "Archive a test case",
             "description": "",
+            "section": "Test Cases",
             "fields": [
               {
                 "name": "projectId",
@@ -2118,7 +3594,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testCaseId",
@@ -2126,7 +3610,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -2134,6 +3629,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "unarchive-test-case",
             "summary": "Unarchive a test case",
             "description": "",
+            "section": "Test Cases",
             "fields": [
               {
                 "name": "projectId",
@@ -2141,7 +3637,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testCaseId",
@@ -2149,7 +3653,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -2157,6 +3672,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "move-test-case",
             "summary": "Move a test case to a different folder",
             "description": "",
+            "section": "Test Cases",
             "fields": [
               {
                 "name": "projectId",
@@ -2164,7 +3680,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testCaseId",
@@ -2172,7 +3696,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "destination_folder_id",
@@ -2194,6 +3729,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-case-attachments",
             "summary": "Get attachments for a test case",
             "description": "",
+            "section": "Test Case Attachments",
             "fields": [
               {
                 "name": "projectId",
@@ -2201,7 +3737,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testCaseId",
@@ -2209,7 +3753,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "p",
@@ -2225,6 +3780,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "add-test-case-attachment",
             "summary": "Add attachment to a test case",
             "description": "",
+            "section": "Test Case Attachments",
             "fields": [
               {
                 "name": "projectId",
@@ -2232,7 +3788,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testCaseId",
@@ -2240,7 +3804,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "inline",
@@ -2249,6 +3824,22 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "type": "boolean",
                 "required": false,
                 "location": "query"
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "",
+                "type": "file",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "file_name",
+                "label": "File Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
               }
             ]
           },
@@ -2256,6 +3847,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-test-case-attachment",
             "summary": "Delete attachment from a test case",
             "description": "",
+            "section": "Test Case Attachments",
             "fields": [
               {
                 "name": "projectId",
@@ -2263,7 +3855,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testCaseId",
@@ -2271,7 +3871,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "attachmentId",
@@ -2279,7 +3890,19 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-case-attachments",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId",
+                    "testCaseId"
+                  ]
+                }
               }
             ]
           },
@@ -2287,6 +3910,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-result-attachments",
             "summary": "Get attachments for a test result",
             "description": "",
+            "section": "Test Result Attachments",
             "fields": [
               {
                 "name": "projectId",
@@ -2294,7 +3918,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testResultId",
@@ -2302,7 +3934,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-run-results",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "projectId",
+                    "testRunId"
+                  ]
+                }
               },
               {
                 "name": "p",
@@ -2318,6 +3961,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "add-test-result-attachment",
             "summary": "Add attachment to a test result",
             "description": "",
+            "section": "Test Result Attachments",
             "fields": [
               {
                 "name": "projectId",
@@ -2325,7 +3969,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testResultId",
@@ -2333,7 +3985,34 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-run-results",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "projectId",
+                    "testRunId"
+                  ]
+                }
+              },
+              {
+                "name": "file",
+                "label": "File",
+                "description": "",
+                "type": "file",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "file_name",
+                "label": "File Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
               }
             ]
           },
@@ -2341,6 +4020,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-test-result-attachment",
             "summary": "Delete attachment from a test result",
             "description": "",
+            "section": "Test Result Attachments",
             "fields": [
               {
                 "name": "projectId",
@@ -2348,7 +4028,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testResultId",
@@ -2356,7 +4044,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-run-results",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "projectId",
+                    "testRunId"
+                  ]
+                }
               },
               {
                 "name": "attachmentId",
@@ -2364,7 +4063,19 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-case-attachments",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId",
+                    "testCaseId"
+                  ]
+                }
               }
             ]
           }
@@ -2378,6 +4089,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-case-results",
             "summary": "Get test results for a test case across all test runs",
             "description": "",
+            "section": "Test Cases",
             "fields": [
               {
                 "name": "projectId",
@@ -2385,7 +4097,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testCaseId",
@@ -2393,7 +4113,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "p",
@@ -2409,6 +4140,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-run-results",
             "summary": "Get all test results for a test run",
             "description": "",
+            "section": "Test Run Results",
             "fields": [
               {
                 "name": "projectId",
@@ -2416,7 +4148,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testRunId",
@@ -2424,7 +4164,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "p",
@@ -2448,6 +4199,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "add-test-run-results",
             "summary": "Add test result(s) to a test run",
             "description": "",
+            "section": "Test Run Results",
             "fields": [
               {
                 "name": "projectId",
@@ -2455,7 +4207,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testRunId",
@@ -2463,7 +4223,98 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
+              },
+              {
+                "name": "test_result.status",
+                "label": "Test Result › Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_result.comment",
+                "label": "Test Result › Comment",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_result.duration",
+                "label": "Test Result › Duration",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_result.issues",
+                "label": "Test Result › Issues",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_result.issue_tracker.name",
+                "label": "Test Result › Issue Tracker › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_result.issue_tracker.host",
+                "label": "Test Result › Issue Tracker › Host",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_result.custom_fields",
+                "label": "Test Result › Custom Fields",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_case_id",
+                "label": "Test Case Id",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "configuration_id",
+                "label": "Configuration Id",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "results",
+                "label": "Results",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
               }
             ]
           },
@@ -2471,6 +4322,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-run-test-case-results",
             "summary": "Get test results for a specific test case in a test run",
             "description": "",
+            "section": "Test Run Results",
             "fields": [
               {
                 "name": "projectId",
@@ -2478,7 +4330,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testRunId",
@@ -2486,7 +4346,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "testCaseId",
@@ -2494,7 +4365,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "p",
@@ -2516,6 +4398,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-runs",
             "summary": "Get list of test runs",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "projectId",
@@ -2523,7 +4406,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "closed_before",
@@ -2563,7 +4454,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "picker": {
+                  "source": "test-management.list-test-plans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "assignee",
@@ -2595,6 +4497,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "create-test-run",
             "summary": "Create a test run",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "projectId",
@@ -2602,11 +4505,179 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
-                "name": "test_run",
-                "label": "Test Run",
+                "name": "test_run.name",
+                "label": "Test Run › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.description",
+                "label": "Test Run › Description",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.run_state",
+                "label": "Test Run › Run State",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.assignee",
+                "label": "Test Run › Assignee",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.test_case_assignee",
+                "label": "Test Run › Test Case Assignee",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.tags",
+                "label": "Test Run › Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.issues",
+                "label": "Test Run › Issues",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.issue_tracker.name",
+                "label": "Test Run › Issue Tracker › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.issue_tracker.host",
+                "label": "Test Run › Issue Tracker › Host",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.test_plan_id",
+                "label": "Test Run › Test Plan Id",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.configurations",
+                "label": "Test Run › Configurations",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.configuration_map",
+                "label": "Test Run › Configuration Map",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.test_cases",
+                "label": "Test Run › Test Cases",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.folder_ids",
+                "label": "Test Run › Folder Ids",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.include_all",
+                "label": "Test Run › Include All",
+                "description": "",
+                "type": "boolean",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.status",
+                "label": "Test Run › Filter Test Cases › Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.priority",
+                "label": "Test Run › Filter Test Cases › Priority",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.case_type",
+                "label": "Test Run › Filter Test Cases › Case Type",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.owner",
+                "label": "Test Run › Filter Test Cases › Owner",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.tags",
+                "label": "Test Run › Filter Test Cases › Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.custom_fields",
+                "label": "Test Run › Filter Test Cases › Custom Fields",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -2618,6 +4689,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-test-run",
             "summary": "Get test run details",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "projectId",
@@ -2625,7 +4697,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testRunId",
@@ -2633,7 +4713,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "minify",
@@ -2649,6 +4740,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-run-test-cases",
             "summary": "Get test cases of a test run",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "projectId",
@@ -2656,7 +4748,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testRunId",
@@ -2664,7 +4764,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "p",
@@ -2696,6 +4807,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "patch-test-run",
             "summary": "Partially update a test run",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "projectId",
@@ -2703,7 +4815,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testRunId",
@@ -2711,11 +4831,102 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
-                "name": "test_run",
-                "label": "Test Run",
+                "name": "test_run.name",
+                "label": "Test Run › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.run_state",
+                "label": "Test Run › Run State",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.tags",
+                "label": "Test Run › Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.configurations",
+                "label": "Test Run › Configurations",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.configuration_map",
+                "label": "Test Run › Configuration Map",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.status",
+                "label": "Test Run › Filter Test Cases › Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.priority",
+                "label": "Test Run › Filter Test Cases › Priority",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.case_type",
+                "label": "Test Run › Filter Test Cases › Case Type",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.owner",
+                "label": "Test Run › Filter Test Cases › Owner",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.tags",
+                "label": "Test Run › Filter Test Cases › Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.custom_fields",
+                "label": "Test Run › Filter Test Cases › Custom Fields",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -2727,6 +4938,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-test-run",
             "summary": "Fully update a test run (replaces test cases)",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "projectId",
@@ -2734,7 +4946,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testRunId",
@@ -2742,11 +4962,182 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
-                "name": "test_run",
-                "label": "Test Run",
+                "name": "test_run.name",
+                "label": "Test Run › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.description",
+                "label": "Test Run › Description",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.run_state",
+                "label": "Test Run › Run State",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.assignee",
+                "label": "Test Run › Assignee",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.test_case_assignee",
+                "label": "Test Run › Test Case Assignee",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.tags",
+                "label": "Test Run › Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.issues",
+                "label": "Test Run › Issues",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.issue_tracker.name",
+                "label": "Test Run › Issue Tracker › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.issue_tracker.host",
+                "label": "Test Run › Issue Tracker › Host",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.test_plan_id",
+                "label": "Test Run › Test Plan Id",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.configurations",
+                "label": "Test Run › Configurations",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.configuration_map",
+                "label": "Test Run › Configuration Map",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.test_cases",
+                "label": "Test Run › Test Cases",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.folder_ids",
+                "label": "Test Run › Folder Ids",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.include_all",
+                "label": "Test Run › Include All",
+                "description": "",
+                "type": "boolean",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.status",
+                "label": "Test Run › Filter Test Cases › Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.priority",
+                "label": "Test Run › Filter Test Cases › Priority",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.case_type",
+                "label": "Test Run › Filter Test Cases › Case Type",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.owner",
+                "label": "Test Run › Filter Test Cases › Owner",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.tags",
+                "label": "Test Run › Filter Test Cases › Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_run.filter_test_cases.custom_fields",
+                "label": "Test Run › Filter Test Cases › Custom Fields",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -2758,6 +5149,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "assign-test-run-test-cases",
             "summary": "Update assignees of test cases within a test run",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "projectId",
@@ -2765,7 +5157,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testRunId",
@@ -2773,7 +5173,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "assign_to",
@@ -2789,6 +5200,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "close-test-run",
             "summary": "Close a test run",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "projectId",
@@ -2796,7 +5208,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testRunId",
@@ -2804,7 +5224,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -2812,6 +5243,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-test-run",
             "summary": "Delete a test run",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "projectId",
@@ -2819,7 +5251,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testRunId",
@@ -2827,7 +5267,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           }
@@ -2841,6 +5292,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-plans",
             "summary": "Get list of test plans",
             "description": "",
+            "section": "Test Plans",
             "fields": [
               {
                 "name": "projectId",
@@ -2848,7 +5300,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "p",
@@ -2876,6 +5336,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "create-test-plan",
             "summary": "Create a test plan",
             "description": "",
+            "section": "Test Plans",
             "fields": [
               {
                 "name": "projectId",
@@ -2883,11 +5344,51 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
-                "name": "test_plan",
-                "label": "Test Plan",
+                "name": "test_plan.name",
+                "label": "Test Plan › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_plan.plan_status",
+                "label": "Test Plan › Plan Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_plan.description",
+                "label": "Test Plan › Description",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_plan.start_date",
+                "label": "Test Plan › Start Date",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_plan.end_date",
+                "label": "Test Plan › End Date",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -2899,6 +5400,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-test-plan",
             "summary": "Get test plan details",
             "description": "",
+            "section": "Test Plans",
             "fields": [
               {
                 "name": "projectId",
@@ -2906,7 +5408,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testPlanId",
@@ -2914,7 +5424,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-plans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -2922,6 +5443,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-test-plan",
             "summary": "Update a test plan",
             "description": "",
+            "section": "Test Plans",
             "fields": [
               {
                 "name": "projectId",
@@ -2929,7 +5451,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testPlanId",
@@ -2937,11 +5467,54 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-plans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
-                "name": "test_plan",
-                "label": "Test Plan",
+                "name": "test_plan.name",
+                "label": "Test Plan › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_plan.plan_status",
+                "label": "Test Plan › Plan Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_plan.description",
+                "label": "Test Plan › Description",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_plan.start_date",
+                "label": "Test Plan › Start Date",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "test_plan.end_date",
+                "label": "Test Plan › End Date",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -2953,6 +5526,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-plan-test-runs",
             "summary": "Get test runs linked to a test plan",
             "description": "",
+            "section": "Test Plans",
             "fields": [
               {
                 "name": "projectId",
@@ -2960,7 +5534,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "testPlanId",
@@ -2968,7 +5550,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-test-plans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "p",
@@ -2990,6 +5583,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-configurations",
             "summary": "Get all configurations",
             "description": "",
+            "section": "Configurations",
             "fields": [
               {
                 "name": "p",
@@ -3017,6 +5611,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "create-configuration",
             "summary": "Add a custom configuration",
             "description": "",
+            "section": "Configurations",
             "fields": [
               {
                 "name": "name",
@@ -3032,6 +5627,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-configuration",
             "summary": "Get configuration by ID",
             "description": "",
+            "section": "Configurations",
             "fields": [
               {
                 "name": "configurationId",
@@ -3039,7 +5635,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-configurations",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           }
@@ -3053,12 +5660,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-custom-fields",
             "summary": "Get all custom fields",
             "description": "",
+            "section": "Custom Fields",
             "fields": []
           },
           {
             "id": "create-custom-field",
             "summary": "Create a custom field",
             "description": "",
+            "section": "Custom Fields",
             "fields": [
               {
                 "name": "field_name",
@@ -3152,6 +5761,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-custom-field",
             "summary": "Update a custom field",
             "description": "",
+            "section": "Custom Fields",
             "fields": [
               {
                 "name": "customFieldId",
@@ -3159,7 +5769,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-custom-fields",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "field_name",
@@ -3239,6 +5860,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-custom-field",
             "summary": "Delete a custom field",
             "description": "",
+            "section": "Custom Fields",
             "fields": [
               {
                 "name": "customFieldId",
@@ -3246,7 +5868,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-management.list-custom-fields",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           }
@@ -3267,12 +5900,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-workflow-analyzer-reports",
             "summary": "List Workflow Analyzer reports",
             "description": "Returns a paginated list of all Workflow Analyzer accessibility reports for your account.",
+            "section": "Workflow Analyzer",
             "fields": []
           },
           {
             "id": "get-workflow-analyzer-report-summary",
             "summary": "Get Workflow Analyzer report summary",
             "description": "Returns the summary for a specific Workflow Analyzer report, including score, issue counts, and scan metadata.",
+            "section": "Workflow Analyzer",
             "fields": [
               {
                 "name": "report_id",
@@ -3280,7 +5915,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-workflow-analyzer-reports",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -3288,6 +5931,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-workflow-analyzer-report-issues",
             "summary": "Get Workflow Analyzer report issues",
             "description": "Returns the paginated list of accessibility issues for a specific Workflow Analyzer report, optionally filtered by task.",
+            "section": "Workflow Analyzer",
             "fields": [
               {
                 "name": "report_id",
@@ -3295,7 +5939,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "picker": {
+                  "source": "accessibility.list-workflow-analyzer-reports",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "task_id",
@@ -3319,12 +5971,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-assisted-test-reports",
             "summary": "List Assisted Test reports",
             "description": "Returns a paginated list of all Assisted Test accessibility reports for your account.",
+            "section": "Assisted Tests",
             "fields": []
           },
           {
             "id": "get-assisted-test-report-summary",
             "summary": "Get Assisted Test report summary",
             "description": "Returns the summary for a specific Assisted Test report, including score, issue counts, and scan metadata.",
+            "section": "Assisted Tests",
             "fields": [
               {
                 "name": "report_id",
@@ -3332,7 +5986,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-workflow-analyzer-reports",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -3340,6 +6002,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-assisted-test-report-issues",
             "summary": "Get Assisted Test report issues",
             "description": "Returns the paginated list of accessibility issues for a specific Assisted Test report, optionally filtered by task.",
+            "section": "Assisted Tests",
             "fields": [
               {
                 "name": "report_id",
@@ -3347,7 +6010,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "picker": {
+                  "source": "accessibility.list-workflow-analyzer-reports",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "task_id",
@@ -3371,12 +6042,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-website-scanner-auth-configs",
             "summary": "List Website Scanner auth configs",
             "description": "Returns all saved authentication configurations used by the Website Scanner for login-protected pages.",
+            "section": "Website Scanner Auth",
             "fields": []
           },
           {
             "id": "create-website-scanner-auth-config",
             "summary": "Create Website Scanner auth config",
             "description": "Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans.",
+            "section": "Website Scanner Auth",
             "fields": [
               {
                 "name": "name",
@@ -3395,8 +6068,48 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "location": "body"
               },
               {
-                "name": "authData",
-                "label": "AuthData",
+                "name": "authData.url",
+                "label": "AuthData › Url",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.username",
+                "label": "AuthData › Username",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.password",
+                "label": "AuthData › Password",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.usernameSelector",
+                "label": "AuthData › UsernameSelector",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.passwordSelector",
+                "label": "AuthData › PasswordSelector",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.submitSelector",
+                "label": "AuthData › SubmitSelector",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -3408,12 +6121,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-website-scanner-scans",
             "summary": "List Website Scanner scans",
             "description": "Returns a paginated list of all configured Website Scanner scans for your account.",
+            "section": "Website Scanner Scans",
             "fields": []
           },
           {
             "id": "create-website-scanner-scan",
             "summary": "Create Website Scanner scan",
             "description": "Creates and triggers a new Website Scanner accessibility scan for the specified URL.",
+            "section": "Website Scanner Scans",
             "fields": [
               {
                 "name": "scan_url",
@@ -3429,6 +6144,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-website-scanner-scan-overview",
             "summary": "Get Website Scanner scan overview",
             "description": "Returns the configuration overview for a specific Website Scanner scan, including URL list and scan settings.",
+            "section": "Website Scanner Scans",
             "fields": [
               {
                 "name": "scan_id",
@@ -3436,7 +6152,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -3444,6 +6168,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-website-scanner-scan-runs",
             "summary": "List Website Scanner scan runs",
             "description": "Returns a paginated list of all scan runs for a specific Website Scanner scan, including status and issue counts.",
+            "section": "Website Scanner Runs",
             "fields": [
               {
                 "name": "scan_id",
@@ -3451,7 +6176,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "page",
@@ -3475,6 +6208,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-website-scanner-scan-run-summary",
             "summary": "Get Website Scanner scan run summary",
             "description": "Returns a detailed summary for a specific scan run, including score, issue counts, and changes since the last run.",
+            "section": "Website Scanner Runs",
             "fields": [
               {
                 "name": "scan_id",
@@ -3482,7 +6216,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "scan_run_id",
@@ -3490,7 +6232,17 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scan-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "scan_id"
+                  ]
+                }
               }
             ]
           },
@@ -3498,6 +6250,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-website-scanner-scan-run-status",
             "summary": "Get Website Scanner scan run status",
             "description": "Returns the current execution status of a specific Website Scanner scan run.",
+            "section": "Website Scanner Runs",
             "fields": [
               {
                 "name": "scan_id",
@@ -3505,7 +6258,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "scan_run_id",
@@ -3513,7 +6274,17 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scan-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "scan_id"
+                  ]
+                }
               }
             ]
           },
@@ -3521,6 +6292,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-website-scanner-scan-run-issues",
             "summary": "Get Website Scanner scan run issues",
             "description": "Returns paginated accessibility issues found during a specific Website Scanner scan run, optionally filtered by task.",
+            "section": "Website Scanner Runs",
             "fields": [
               {
                 "name": "scan_id",
@@ -3528,7 +6300,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "scan_run_id",
@@ -3536,7 +6316,17 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scan-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "scan_id"
+                  ]
+                }
               },
               {
                 "name": "task_id",
@@ -3560,6 +6350,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-website-scanner-scan-run-logs",
             "summary": "Get Website Scanner scan run logs",
             "description": "Returns the crawl logs for a specific Website Scanner scan run, including per-URL status, redirects, and errors.",
+            "section": "Website Scanner Runs",
             "fields": [
               {
                 "name": "scan_id",
@@ -3567,7 +6358,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "scan_run_id",
@@ -3575,7 +6374,17 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scan-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "scan_id"
+                  ]
+                }
               }
             ]
           },
@@ -3583,6 +6392,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-automated-test-projects",
             "summary": "List Automated Test projects",
             "description": "Returns a paginated list of all Automated Test accessibility projects for your account.",
+            "section": "Automated Tests",
             "fields": [
               {
                 "name": "next_page",
@@ -3598,6 +6408,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-automated-test-builds",
             "summary": "List Automated Test builds",
             "description": "Returns a paginated list of Automated Test accessibility builds, optionally filtered by project.",
+            "section": "Automated Tests",
             "fields": [
               {
                 "name": "next_page",
@@ -3613,7 +6424,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "picker": {
+                  "source": "accessibility.list-automated-test-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -3621,6 +6440,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-automated-test-build-test-cases",
             "summary": "List test cases for an Automated Test build",
             "description": "Returns the paginated list of test cases and their accessibility results for a specific Automated Test build.",
+            "section": "Automated Tests",
             "fields": [
               {
                 "name": "thBuildId",
@@ -3644,6 +6464,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-automated-test-build-summary",
             "summary": "Get Automated Test build summary",
             "description": "Returns the summary for a specific Automated Test build, including score, health stats, and issue counts.",
+            "section": "Automated Tests",
             "fields": [
               {
                 "name": "thBuildId",
@@ -3667,6 +6488,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-automated-test-build-issues",
             "summary": "Get Automated Test build issues",
             "description": "Returns paginated accessibility issues for a specific Automated Test build, optionally filtered by task.",
+            "section": "Automated Tests",
             "fields": [
               {
                 "name": "build_id",
@@ -3674,7 +6496,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "picker": {
+                  "source": "accessibility.list-automated-test-builds",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "task_id",
@@ -3698,6 +6528,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-automated-test-build-test-case-summary",
             "summary": "Get Automated Test case summary",
             "description": "Returns the accessibility summary for a specific test case within an Automated Test build.",
+            "section": "Automated Tests",
             "fields": [
               {
                 "name": "thBuildId",
@@ -3713,7 +6544,18 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-automated-test-build-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "build_id"
+                  ]
+                }
               },
               {
                 "name": "next_page",
@@ -3729,6 +6571,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-automated-test-build-test-case-issues",
             "summary": "Get Automated Test case issues",
             "description": "Returns paginated accessibility issues for a specific test case within an Automated Test build.",
+            "section": "Automated Tests",
             "fields": [
               {
                 "name": "thBuildId",
@@ -3781,6 +6624,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-projects",
             "summary": "Get Project List",
             "description": "",
+            "section": "Projects",
             "fields": [
               {
                 "name": "next_page",
@@ -3796,6 +6640,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-project-builds",
             "summary": "Get Build List for Project",
             "description": "",
+            "section": "Projects",
             "fields": [
               {
                 "name": "projectId",
@@ -3803,7 +6648,15 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "number",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "unique_build_names",
@@ -3882,12 +6735,159 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "start-build",
             "summary": "Start Build (ingestion)",
             "description": "",
-            "fields": []
+            "section": "Builds",
+            "fields": [
+              {
+                "name": "name",
+                "label": "Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "project_name",
+                "label": "Project Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "started_at",
+                "label": "Started At",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "tags",
+                "label": "Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "build_run_identifier",
+                "label": "Build Run Identifier",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "host_info.hostname",
+                "label": "Host Info › Hostname",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "host_info.platform",
+                "label": "Host Info › Platform",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "host_info.type",
+                "label": "Host Info › Type",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "host_info.version",
+                "label": "Host Info › Version",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "host_info.arch",
+                "label": "Host Info › Arch",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "ci_info.name",
+                "label": "Ci Info › Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "ci_info.build_url",
+                "label": "Ci Info › Build Url",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "ci_info.url",
+                "label": "Ci Info › Url",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "ci_info.build_number",
+                "label": "Ci Info › Build Number",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "ci_info.job_name",
+                "label": "Ci Info › Job Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control",
+                "label": "Version Control",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "framework.name",
+                "label": "Framework › Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "framework.version",
+                "label": "Framework › Version",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              }
+            ]
           },
           {
             "id": "get-latest-build",
             "summary": "Get Latest Build",
             "description": "",
+            "section": "Builds",
             "fields": [
               {
                 "name": "project_name",
@@ -3895,7 +6895,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "query"
+                "location": "query",
+                "picker": {
+                  "source": "test-reporting.list-projects",
+                  "valueField": "name",
+                  "labelFields": [
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "build_name",
@@ -3935,6 +6942,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-build",
             "summary": "Get Build Details",
             "description": "",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId",
@@ -3942,7 +6950,19 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-project-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               }
             ]
           },
@@ -3950,6 +6970,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-build",
             "summary": "Update Build Metadata",
             "description": "",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildId",
@@ -3957,7 +6978,19 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-project-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "build_tags",
@@ -3973,6 +7006,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "finish-build",
             "summary": "Finish Build (ingestion)",
             "description": "",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildHashedId",
@@ -3980,7 +7014,16 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-project-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ]
+                }
               },
               {
                 "name": "finished_at",
@@ -3996,6 +7039,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "start-test-run",
             "summary": "Start Test Run (ingestion)",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "buildHashedId",
@@ -4003,7 +7047,88 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-project-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ]
+                }
+              },
+              {
+                "name": "name",
+                "label": "Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "file_name",
+                "label": "File Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "scopes",
+                "label": "Scopes",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "started_at",
+                "label": "Started At",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "tags",
+                "label": "Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "location",
+                "label": "Location",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "result",
+                "label": "Result",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "custom_metadata",
+                "label": "Custom Metadata",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "environment",
+                "label": "Environment",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
               }
             ]
           },
@@ -4011,6 +7136,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "finish-test-run",
             "summary": "Finish Test Run (ingestion)",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "buildHashedId",
@@ -4018,7 +7144,16 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-project-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ]
+                }
               },
               {
                 "name": "testRunUuid",
@@ -4027,6 +7162,76 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "type": "string",
                 "required": true,
                 "location": "path"
+              },
+              {
+                "name": "result",
+                "label": "Result",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body",
+                "enum": [
+                  "passed",
+                  "failed",
+                  "skipped",
+                  "timeout"
+                ]
+              },
+              {
+                "name": "finished_at",
+                "label": "Finished At",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "file_name",
+                "label": "File Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "scopes",
+                "label": "Scopes",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "duration_in_ms",
+                "label": "Duration In Ms",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "failure",
+                "label": "Failure",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "custom_metadata",
+                "label": "Custom Metadata",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "environment",
+                "label": "Environment",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
               }
             ]
           },
@@ -4034,6 +7239,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "start-hook-run",
             "summary": "Start Hook Run (ingestion)",
             "description": "",
+            "section": "Hook Runs",
             "fields": [
               {
                 "name": "buildHashedId",
@@ -4041,7 +7247,88 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-project-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ]
+                }
+              },
+              {
+                "name": "hook_type",
+                "label": "Hook Type",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "name",
+                "label": "Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "file_name",
+                "label": "File Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "scopes",
+                "label": "Scopes",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "started_at",
+                "label": "Started At",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "test_run_id",
+                "label": "Test Run Id",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "tags",
+                "label": "Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "location",
+                "label": "Location",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "custom_metadata",
+                "label": "Custom Metadata",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
               }
             ]
           },
@@ -4049,6 +7336,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "finish-hook-run",
             "summary": "Finish Hook Run (ingestion)",
             "description": "",
+            "section": "Hook Runs",
             "fields": [
               {
                 "name": "buildHashedId",
@@ -4056,7 +7344,16 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-project-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ]
+                }
               },
               {
                 "name": "hookRunUuid",
@@ -4065,6 +7362,84 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "type": "string",
                 "required": true,
                 "location": "path"
+              },
+              {
+                "name": "hook_type",
+                "label": "Hook Type",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "result",
+                "label": "Result",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body",
+                "enum": [
+                  "passed",
+                  "failed",
+                  "skipped",
+                  "timeout"
+                ]
+              },
+              {
+                "name": "finished_at",
+                "label": "Finished At",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "file_name",
+                "label": "File Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "scopes",
+                "label": "Scopes",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "duration_in_ms",
+                "label": "Duration In Ms",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "failure",
+                "label": "Failure",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "custom_metadata",
+                "label": "Custom Metadata",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "environment",
+                "label": "Environment",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
               }
             ]
           },
@@ -4072,6 +7447,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "add-build-logs",
             "summary": "Add Build Logs (ingestion)",
             "description": "",
+            "section": "Builds",
             "fields": [
               {
                 "name": "buildHashedId",
@@ -4079,7 +7455,16 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-project-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ]
+                }
               },
               {
                 "name": "logs",
@@ -4095,6 +7480,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-test-runs",
             "summary": "Get Test List",
             "description": "",
+            "section": "Test Runs",
             "fields": [
               {
                 "name": "buildId",
@@ -4102,7 +7488,19 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-project-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
               },
               {
                 "name": "re_runs",
@@ -4177,6 +7575,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-self-healing-report",
             "summary": "Get Self-Healing Report",
             "description": "",
+            "section": "Reports",
             "fields": [
               {
                 "name": "buildUuid",
@@ -4192,6 +7591,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-quality-gate-status",
             "summary": "Get Quality Gate Status",
             "description": "",
+            "section": "Quality Gate",
             "fields": [
               {
                 "name": "buildUuid",
@@ -4207,6 +7607,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-quality-gate-settings",
             "summary": "Get Quality Gate Settings",
             "description": "",
+            "section": "Quality Gate",
             "fields": [
               {
                 "name": "projectName",
@@ -4214,7 +7615,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-projects",
+                  "valueField": "name",
+                  "labelFields": [
+                    "name"
+                  ]
+                }
               }
             ]
           },
@@ -4222,6 +7630,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-quality-gate-settings",
             "summary": "Update Quality Gate Settings",
             "description": "",
+            "section": "Quality Gate",
             "fields": [
               {
                 "name": "projectName",
@@ -4229,7 +7638,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-projects",
+                  "valueField": "name",
+                  "labelFields": [
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "enabled",
@@ -4245,6 +7661,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "create-quality-gate-profile",
             "summary": "Create Quality Gate Profile",
             "description": "",
+            "section": "Quality Gate Profiles",
             "fields": [
               {
                 "name": "projectName",
@@ -4252,7 +7669,96 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-projects",
+                  "valueField": "name",
+                  "labelFields": [
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "name",
+                "label": "Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "enabled",
+                "label": "Enabled",
+                "description": "",
+                "type": "boolean",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "is_global_profile",
+                "label": "Is Global Profile",
+                "description": "",
+                "type": "boolean",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "rules",
+                "label": "Rules",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "applicable_builds.all_builds",
+                "label": "Applicable Builds › All Builds",
+                "description": "",
+                "type": "boolean",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "applicable_builds.build_tags",
+                "label": "Applicable Builds › Build Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "applicable_builds.build_names",
+                "label": "Applicable Builds › Build Names",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "rule_status",
+                "label": "Rule Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body",
+                "enum": [
+                  "pass",
+                  "fail"
+                ]
+              },
+              {
+                "name": "hooks_visibility",
+                "label": "Hooks Visibility",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body",
+                "enum": [
+                  "failed",
+                  "none",
+                  "beforeFailed",
+                  "all"
+                ]
               }
             ]
           },
@@ -4260,6 +7766,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "get-quality-gate-profile",
             "summary": "Get Quality Gate Profile",
             "description": "",
+            "section": "Quality Gate Profiles",
             "fields": [
               {
                 "name": "projectName",
@@ -4267,7 +7774,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-projects",
+                  "valueField": "name",
+                  "labelFields": [
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "profileUuid",
@@ -4283,6 +7797,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "update-quality-gate-profile",
             "summary": "Update Quality Gate Profile",
             "description": "",
+            "section": "Quality Gate Profiles",
             "fields": [
               {
                 "name": "projectName",
@@ -4290,7 +7805,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-projects",
+                  "valueField": "name",
+                  "labelFields": [
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "profileUuid",
@@ -4299,6 +7821,88 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "type": "string",
                 "required": true,
                 "location": "path"
+              },
+              {
+                "name": "name",
+                "label": "Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "enabled",
+                "label": "Enabled",
+                "description": "",
+                "type": "boolean",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "is_global_profile",
+                "label": "Is Global Profile",
+                "description": "",
+                "type": "boolean",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "rules",
+                "label": "Rules",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "applicable_builds.all_builds",
+                "label": "Applicable Builds › All Builds",
+                "description": "",
+                "type": "boolean",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "applicable_builds.build_tags",
+                "label": "Applicable Builds › Build Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "applicable_builds.build_names",
+                "label": "Applicable Builds › Build Names",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "rule_status",
+                "label": "Rule Status",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body",
+                "enum": [
+                  "pass",
+                  "fail"
+                ]
+              },
+              {
+                "name": "hooks_visibility",
+                "label": "Hooks Visibility",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body",
+                "enum": [
+                  "failed",
+                  "none",
+                  "beforeFailed",
+                  "all"
+                ]
               }
             ]
           },
@@ -4306,6 +7910,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "delete-quality-gate-profile",
             "summary": "Delete Quality Gate Profile",
             "description": "",
+            "section": "Quality Gate Profiles",
             "fields": [
               {
                 "name": "projectName",
@@ -4313,7 +7918,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-projects",
+                  "valueField": "name",
+                  "labelFields": [
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "profileUuid",
@@ -4329,6 +7941,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "toggle-quality-gate-profile",
             "summary": "Toggle Quality Gate Profile",
             "description": "",
+            "section": "Quality Gate Profiles",
             "fields": [
               {
                 "name": "projectName",
@@ -4336,7 +7949,14 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "path"
+                "location": "path",
+                "picker": {
+                  "source": "test-reporting.list-projects",
+                  "valueField": "name",
+                  "labelFields": [
+                    "name"
+                  ]
+                }
               },
               {
                 "name": "profileUuid",
@@ -4360,7 +7980,85 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "upload-report",
             "summary": "Upload Test Reports (JUnit or Allure)",
             "description": "",
-            "fields": []
+            "section": "Reports",
+            "fields": [
+              {
+                "name": "file",
+                "label": "File",
+                "description": "",
+                "type": "file",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "file_name",
+                "label": "File Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "project_name",
+                "label": "Project Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "build_name",
+                "label": "Build Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "format",
+                "label": "Format",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body",
+                "enum": [
+                  "junit",
+                  "allure"
+                ]
+              },
+              {
+                "name": "build_identifier",
+                "label": "Build Identifier",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "tags",
+                "label": "Tags",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "ci",
+                "label": "Ci",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "framework_version",
+                "label": "Framework Version",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
           }
         ]
       }

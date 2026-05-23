@@ -6,14 +6,27 @@ export * from "./typescript";
 export * from "./golang";
 export * from "./tui";
 
+export interface PickerConfig {
+  /** Source action in the form "product.action-id" (e.g. "screenshots.list-browsers"). */
+  source: string;
+  /** The field within each list item that becomes this field's value. */
+  valueField: string;
+  /** Fields to display when listing/selecting. Defaults to [valueField] if omitted. */
+  labelFields?: string[];
+  /** Sibling field names that filter the picker results (e.g. ["os","os_version"]). */
+  filterBy?: string[];
+}
+
 interface SpecOp {
   operationId?: string;
   parameters?: Array<{
     name: string;
     in: string;
     required?: boolean;
+    description?: string;
     schema?: Record<string, unknown>;
     $ref?: string;
+    "x-cli-picker"?: PickerConfig;
   }>;
   requestBody?: {
     content?: Record<string, {
@@ -31,6 +44,7 @@ interface SpecOp {
   description?: string;
   "x-cli-action"?: string;
   "x-cli-resource"?: string;
+  "x-cli-section"?: string;
 }
 
 interface SpecDoc {
@@ -49,11 +63,14 @@ export interface CLIActionMetadata {
     name: string;
     in: string;
     required: boolean;
+    description?: string;
     schema?: Record<string, unknown>;
+    picker?: PickerConfig;
   }>;
   requestBody?: SpecOp["requestBody"];
   summary?: string;
   description?: string;
+  section?: string;
   /** Go response type for this action, e.g. "AutomatePlan", "string", "[]byte". Populated by build.mjs after Go codegen. */
   responseGoType?: string;
   /** Field name in DispatchResult for this action, e.g. "GetPlan". Populated by build.mjs after Go codegen. */
@@ -93,7 +110,9 @@ function resolveParams(
       name: resolved.name,
       in: resolved.in,
       required: resolved.name === "auth_token" ? false : !!resolved.required,
+      description: resolved.description,
       schema: resolved.schema,
+      picker: resolved["x-cli-picker"],
     };
   });
 }
@@ -134,6 +153,7 @@ export async function extractCLIMetadata(specPath: string, product: string): Pro
         requestBody: op.requestBody,
         summary: op.summary,
         description: op.description,
+        section: op["x-cli-section"],
       };
     }
   }

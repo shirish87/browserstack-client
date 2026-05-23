@@ -241,6 +241,7 @@ await generateGoModules();
 console.log("Generating CLI constants...");
 const cliMetadata = [];
 const specInfoMap = {};
+const specDocMap = {};
 for (const { product } of productSpecs) {
   const specPath = path.join(__dirname, "specs", `${product}.yml`);
   cliMetadata.push(await extractCLIMetadata(specPath, product));
@@ -250,6 +251,7 @@ for (const { product } of productSpecs) {
     title: doc.info?.title ?? product,
     description: doc.info?.description ?? "",
   };
+  specDocMap[product] = doc;
 }
 
 const tsConstants = generateTSConstants(cliMetadata);
@@ -260,14 +262,105 @@ const tsSchemas = generateTSSchemas(cliMetadata);
 await fs.writeFile(path.join(__dirname, "../cli/typescript/src/schemas.generated.ts"), tsSchemas);
 console.log("  ✓ schemas.generated.ts (TS)");
 
-const tuiManifestTS = generateTUIManifestTS(cliMetadata, specInfoMap);
+const tuiManifestTS = generateTUIManifestTS(cliMetadata, specInfoMap, specDocMap);
 await fs.writeFile(
   path.join(__dirname, "../cli/typescript/src/tui-manifest.generated.ts"),
   tuiManifestTS
 );
 console.log("  ✓ tui-manifest.generated.ts (TS)");
 
-const tuiManifestGo = generateTUIManifestGo(cliMetadata, specInfoMap);
+const tuiManifestGo = generateTUIManifestGo(cliMetadata, specInfoMap, specDocMap);
+
+// Regression check: every action with a non-trivial requestBody must produce at least
+// one body field in the TUI manifest. "Non-trivial" means the resolved body schema has
+// at least one property somewhere in its tree (allOf/oneOf/anyOf/$ref). An empty
+// `{ type: object }` body is legitimate (e.g. recycle-key) and is allowed to have no fields.
+function hasSchemaProps(schema, doc, seen = new Set(), depth = 0) {
+  if (!schema || depth > 8) return false;
+  if (typeof schema === "object" && schema.$ref && typeof schema.$ref === "string") {
+    if (seen.has(schema.$ref)) return false;
+    seen.add(schema.$ref);
+    const parts = schema.$ref.slice(2).split("/");
+    let cur = doc;
+    for (const p of parts) {
+      cur = cur && typeof cur === "object" ? cur[p] : undefined;
+      if (!cur) return false;
+    }
+    return hasSchemaProps(cur, doc, seen, depth + 1);
+  }
+  const props = schema.properties;
+  if (props && typeof props === "object" && Object.keys(props).length > 0) return true;
+  for (const key of ["allOf", "oneOf", "anyOf"]) {
+    const arr = schema[key];
+    if (Array.isArray(arr)) {
+      for (const sub of arr) {
+        if (hasSchemaProps(sub, doc, seen, depth + 1)) return true;
+      }
+    }
+  }
+  return false;
+}
+
+{
+  const issues = [];
+  for (const m of cliMetadata) {
+    const doc = specDocMap[m.product];
+    for (const [resKey, resMeta] of Object.entries(m.resources)) {
+      for (const [actionId, actionMeta] of Object.entries(resMeta.actions)) {
+        if (!actionMeta.requestBody) continue;
+        const content = actionMeta.requestBody.content || {};
+        const bodySchema = content["application/json"]?.schema
+          ?? content["multipart/form-data"]?.schema
+          ?? content["application/octet-stream"]?.schema;
+        if (!bodySchema) continue;
+        if (!hasSchemaProps(bodySchema, doc)) continue; // legitimately empty body
+        const slice = tuiManifestTS.slice(tuiManifestTS.indexOf(`"id": "${m.product}"`));
+        const actionChunk = slice.split(`"id": "`).find(c => c.startsWith(`${actionId}"`));
+        if (!actionChunk?.includes(`"location": "body"`)) {
+          issues.push(`${m.product}/${resKey}/${actionId}`);
+        }
+      }
+    }
+  }
+  if (issues.length > 0) {
+    console.error("\n✗ TUI manifest gap: the following actions have a requestBody with properties but no body fields in the manifest:");
+    for (const i of issues) console.error("    " + i);
+    console.error("This usually means an unresolved $ref or an unsupported schema construct.");
+    console.error("Fix: ensure $ref targets resolve, or extend buildFields() in tui.ts.\n");
+    process.exit(1);
+  }
+}
+
+// Picker guard: every x-cli-picker.source must reference a real action.
+{
+  const pickerIssues = [];
+  const allActionIds = new Set();
+  for (const m of cliMetadata) {
+    for (const resMeta of Object.values(m.resources)) {
+      for (const actionId of Object.keys(resMeta.actions)) {
+        allActionIds.add(`${m.product}.${actionId}`);
+      }
+    }
+  }
+  for (const m of cliMetadata) {
+    for (const [resKey, resMeta] of Object.entries(m.resources)) {
+      for (const [actionId, actionMeta] of Object.entries(resMeta.actions)) {
+        for (const p of actionMeta.parameters || []) {
+          if (p.picker?.source && !allActionIds.has(p.picker.source)) {
+            pickerIssues.push(`${m.product}/${resKey}/${actionId}: param "${p.name}" → unknown picker source "${p.picker.source}"`);
+          }
+        }
+      }
+    }
+  }
+  if (pickerIssues.length > 0) {
+    console.error("\n✗ x-cli-picker source references action that does not exist:");
+    for (const i of pickerIssues) console.error("    " + i);
+    console.error("Fix: correct the picker.source to an existing 'product.action-id', or annotate the source action.\n");
+    process.exit(1);
+  }
+}
+
 await fs.mkdir(path.join(__dirname, "../cli/golang/internal/tui"), { recursive: true });
 await fs.writeFile(
   path.join(__dirname, "../cli/golang/internal/tui/manifest.generated.go"),

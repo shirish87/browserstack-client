@@ -39,6 +39,7 @@ paths:
       summary: Fetches a screenshot job
       description: Fetches a screenshot job
       operationId: getScreenshotsJob
+      x-cli-section: "Jobs"
       parameters:
       - name: jobId
         in: path
@@ -71,6 +72,7 @@ paths:
       summary: Take a screenshot
       description: Take a screenshot of a website on a particular browser
       operationId: createScreenshotsJob
+      x-cli-section: "Jobs"
       requestBody:
         required: true
         content:
@@ -101,6 +103,7 @@ paths:
       summary: Fetches list of browsers
       description: Fetches list of browsers supported by Screenshots API
       operationId: getScreenshotsBrowsers
+      x-cli-section: "Browsers"
       responses:
         '200':
           description: Successful operation

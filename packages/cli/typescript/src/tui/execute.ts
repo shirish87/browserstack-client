@@ -23,25 +23,57 @@ const runners: Record<string, Runner> = {
   "local": runLocal,
 };
 
+function setNested(target: Record<string, unknown>, dottedKey: string, value: unknown) {
+  const parts = dottedKey.split(".");
+  let cur: Record<string, unknown> = target;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const p = parts[i];
+    if (!cur[p] || typeof cur[p] !== "object") cur[p] = {};
+    cur = cur[p] as Record<string, unknown>;
+  }
+  cur[parts[parts.length - 1]] = value;
+}
+
+function coerceBodyValue(field: TUIField, raw: string): unknown {
+  if (field.type === "boolean") return raw === "true";
+  if (field.type === "number") {
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : raw;
+  }
+  return raw;
+}
+
 function buildArgs(action: TUIAction, values: Record<string, string>): string[] {
   const args: string[] = [action.id];
 
-  const ordered: TUIField[] = [
-    ...action.fields.filter(f => f.location === "path"),
-    ...action.fields.filter(f => f.location === "query"),
-    ...action.fields.filter(f => f.location === "body"),
-  ];
-
-  for (const field of ordered) {
+  // Path then query as positional
+  for (const field of action.fields.filter(f => f.location === "path")) {
     const v = values[field.name];
-    if (v == null || v === "") {
-      if (field.required) {
-        args.push("");
-      }
-      continue;
-    }
-    args.push(v);
+    if (v != null && v !== "") args.push(v);
+    else if (field.required) args.push("");
   }
+  for (const field of action.fields.filter(f => f.location === "query")) {
+    const v = values[field.name];
+    if (v != null && v !== "") args.push(v);
+    else if (field.required) args.push("");
+  }
+
+  // Body: collapse nested-dotted keys into a single JSON object, append as one positional
+  const bodyFields = action.fields.filter(f => f.location === "body");
+  if (bodyFields.length > 0) {
+    const body: Record<string, unknown> = {};
+    let hasAny = false;
+    for (const field of bodyFields) {
+      const v = values[field.name];
+      if (v == null || v === "") continue;
+      setNested(body, field.name, coerceBodyValue(field, v));
+      hasAny = true;
+    }
+    if (hasAny) {
+      args.push(JSON.stringify(body));
+    }
+  }
+
   return args;
 }
 

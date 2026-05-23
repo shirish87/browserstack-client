@@ -34,8 +34,14 @@ paths:
       summary: Fetches a build
       description: Fetches a build
       operationId: getAppAutomateBuild
+      x-cli-section: "Builds"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -75,8 +81,14 @@ paths:
       description: Update the tag of your build after the build is complete. To delete
         a build tag, simply pass an empty string as value for build_tag.
       operationId: updateAppAutomateBuild
+      x-cli-section: "Builds"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -137,8 +149,14 @@ paths:
         will delete all the sessions contained within it. Builds once deleted cannot
         be recovered
       operationId: deleteAppAutomateBuild
+      x-cli-section: "Builds"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -180,6 +198,7 @@ paths:
       summary: Fetches list of uploaded media files by custom ID
       description: Fetches list of recently uploaded media files by custom ID
       operationId: getAppAutomateMediaFilesByCustomId
+      x-cli-section: "Media Files"
       x-cli-action: list-media-files-by-custom-id
       parameters:
       - name: customId
@@ -227,8 +246,14 @@ paths:
         \ information about every request and response. You can view all the steps\
         \ executed in the test and troubleshoot errors for any failed steps."
       operationId: getAppAutomateSessionLogs
+      x-cli-section: "Session Logs"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -269,6 +294,7 @@ paths:
       summary: Fetches list of uploaded apps
       description: Fetches list of recently uploaded apps
       operationId: getAppAutomateApps
+      x-cli-section: "Apps"
       responses:
         '200':
           description: Successful operation
@@ -304,6 +330,7 @@ paths:
       summary: Fetches list of uploaded media files for the entire group
       description: Fetches list of recently uploaded media files for the entire group
       operationId: getAppAutomateGroupMediaFiles
+      x-cli-section: "Media Files"
       responses:
         '200':
           description: Successful operation
@@ -339,8 +366,13 @@ paths:
       summary: Get details of an uploaded XCUITest app
       description: Get details of an uploaded XCUITest app
       operationId: getAppAutomateXCUITestApp
+      x-cli-section: "XCUITest Apps"
       parameters:
       - name: appId
+        x-cli-picker:
+          source: app-automate.list-apps
+          valueField: app_url
+          labelFields: [app_url, app_name]
         in: path
         description: App ID of your app
         required: true
@@ -379,8 +411,13 @@ paths:
       description: Delete an app that was previously uploaded to BrowserStack. Note
         that apps once deleted cannot be recovered.
       operationId: deleteAppAutomateXCUITestApp
+      x-cli-section: "XCUITest Apps"
       parameters:
       - name: appId
+        x-cli-picker:
+          source: app-automate.list-apps
+          valueField: app_url
+          labelFields: [app_url, app_name]
         in: path
         description: ID of your uploaded app
         required: true
@@ -429,8 +466,14 @@ paths:
         (HTTP Archive) format. You can identify any performance bottlenecks or debug
         failed REST API responses. Network logs are disabled by default.
       operationId: getAppAutomateNetworkLogs
+      x-cli-section: "Session Logs"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -469,6 +512,7 @@ paths:
       summary: Upload terminal logs for your build.
       description: Upload terminal logs for your build.
       operationId: uploadAppAutomateBuildTerminalLogs
+      x-cli-section: "Builds"
       x-request-transform:
         codec: multipart
         config:
@@ -478,6 +522,11 @@ paths:
         codec: text
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -531,6 +580,7 @@ paths:
       summary: Upload an app
       description: Upload the application under test (AUT) for Flutter testing.
       operationId: uploadAppAutomateFlutterAndroidApp
+      x-cli-section: "Flutter Android Apps"
       x-request-transform:
         codec: multipart
         config:
@@ -597,6 +647,7 @@ paths:
       summary: Upload an app
       description: Upload the application under test (AUT) for Detox Android testing.
       operationId: uploadAppAutomateDetoxAndroidApp
+      x-cli-section: "Detox Android Apps"
       x-request-transform:
         codec: multipart
         config:
@@ -663,6 +714,7 @@ paths:
       summary: Fetches list of uploaded XCUITest apps
       description: Fetches list of recently uploaded XCUITest apps
       operationId: getAppAutomateXCUITestApps
+      x-cli-section: "XCUITest Apps"
       parameters:
       - name: scope
         in: query
@@ -719,6 +771,7 @@ paths:
       summary: Upload terminal logs for your session.
       description: Upload terminal logs for your session.
       operationId: uploadAppAutomateSessionTerminalLogs
+      x-cli-section: "Sessions"
       x-request-transform:
         codec: multipart
         config:
@@ -781,6 +834,7 @@ paths:
       summary: Get App Automate plan details
       description: Fetches App Automate plan details
       operationId: getAppAutomatePlan
+      x-cli-section: "Account"
       responses:
         '200':
           description: Successful operation
@@ -806,6 +860,7 @@ paths:
       description: Upload the application under test (AUT) for Flutter iOS testing
         in .zip format.
       operationId: uploadAppAutomateFlutteriOSApp
+      x-cli-section: "Flutter iOS Apps"
       x-cli-action: upload-flutter-ios-app
       x-request-transform:
         codec: multipart
@@ -873,6 +928,7 @@ paths:
       summary: Upload an app client
       description: Upload the app client under test for Detox Android testing.
       operationId: uploadAppAutomateDetoxAndroidAppClient
+      x-cli-section: "Detox Android Apps"
       x-request-transform:
         codec: multipart
         config:
@@ -938,6 +994,7 @@ paths:
       summary: Upload an app
       description: Upload the application under test (AUT) for XCUITest testing.
       operationId: uploadAppAutomateXCUITestApp
+      x-cli-section: "XCUITest Apps"
       x-request-transform:
         codec: multipart
         config:
@@ -1005,8 +1062,13 @@ paths:
       description: Specific information about a particular project can be queried
         using the project ID
       operationId: getAppAutomateProject
+      x-cli-section: "Projects"
       parameters:
       - name: projectId
+        x-cli-picker:
+          source: app-automate.list-projects
+          valueField: id
+          labelFields: [id, name]
         in: path
         description: ID of your project
         required: true
@@ -1043,8 +1105,13 @@ paths:
       summary: Update the name of your project
       description: Update the name of your project after the project is complete
       operationId: updateAppAutomateProject
+      x-cli-section: "Projects"
       parameters:
       - name: projectId
+        x-cli-picker:
+          source: app-automate.list-projects
+          valueField: id
+          labelFields: [id, name]
         in: path
         description: ID of your project
         required: true
@@ -1091,8 +1158,13 @@ paths:
         note that to delete a project, it needs to be empty of builds and sessions,
         and projects once deleted cannot be recovered
       operationId: deleteAppAutomateProject
+      x-cli-section: "Projects"
       parameters:
       - name: projectId
+        x-cli-picker:
+          source: app-automate.list-projects
+          valueField: id
+          labelFields: [id, name]
         in: path
         description: ID of your project
         required: true
@@ -1133,6 +1205,7 @@ paths:
       summary: Get a list of supported Android and iOS devices
       description: Fetches list of devices supported by App Automate
       operationId: getAppAutomateDevices
+      x-cli-section: "Account"
       responses:
         '200':
           description: Successful operation
@@ -1163,8 +1236,14 @@ paths:
         execution in the test session. You can troubleshoot any errors in case your
         test session failed.
       operationId: getAppAutomateAppiumLogs
+      x-cli-section: "Session Logs"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -1206,8 +1285,13 @@ paths:
       description: Delete an app that was previously uploaded to BrowserStack. Note
         that apps once deleted cannot be recovered.
       operationId: deleteAppAutomateApp
+      x-cli-section: "Apps"
       parameters:
       - name: appId
+        x-cli-picker:
+          source: app-automate.list-apps
+          valueField: app_url
+          labelFields: [app_url, app_name]
         in: path
         description: ID of your uploaded app
         required: true
@@ -1245,8 +1329,13 @@ paths:
       summary: Get details of an uploaded Flutter app
       description: Get details of an uploaded Flutter app
       operationId: getAppAutomateFlutterAndroidApp
+      x-cli-section: "Flutter Android Apps"
       parameters:
       - name: appId
+        x-cli-picker:
+          source: app-automate.list-apps
+          valueField: app_url
+          labelFields: [app_url, app_name]
         in: path
         description: App ID of your app
         required: true
@@ -1285,8 +1374,13 @@ paths:
       description: Delete an app that was previously uploaded to BrowserStack. Note
         that apps once deleted cannot be recovered.
       operationId: deleteAppAutomateFlutterAndroidApp
+      x-cli-section: "Flutter Android Apps"
       parameters:
       - name: appId
+        x-cli-picker:
+          source: app-automate.list-apps
+          valueField: app_url
+          labelFields: [app_url, app_name]
         in: path
         description: ID of your uploaded app
         required: true
@@ -1332,6 +1426,7 @@ paths:
       summary: Upload a media file
       description: Upload a media file you want to use in your tests
       operationId: uploadAppAutomateMediaFile
+      x-cli-section: "Media Files"
       x-request-transform:
         codec: multipart
         config:
@@ -1383,6 +1478,7 @@ paths:
       summary: Fetches list of uploaded Espresso apps
       description: Fetches list of recently uploaded Espresso apps
       operationId: getAppAutomateEspressoApps
+      x-cli-section: "Espresso Apps"
       parameters:
       - name: scope
         in: query
@@ -1440,8 +1536,14 @@ paths:
       description: Access the detailed app profling metrics such as installed app
         size, UI rendering metrics, resource consumption metrics, etc.
       operationId: getAppAutomateAppProfilingDataV2
+      x-cli-section: "Apps"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -1480,6 +1582,7 @@ paths:
       description: Get details of a test session including its status and debugging
         information such as Appium logs and test video recording
       operationId: getAppAutomateSession
+      x-cli-section: "Sessions"
       parameters:
       - name: sessionId
         in: path
@@ -1519,6 +1622,7 @@ paths:
       description: Set the status for a session. You can mark test status as passed
         or failed along with a reason.
       operationId: updateAppAutomateSession
+      x-cli-section: "Sessions"
       parameters:
       - name: sessionId
         in: path
@@ -1579,6 +1683,7 @@ paths:
       description: Delete a session on the server. Sessions once deleted cannot be
         recovered
       operationId: deleteAppAutomateSession
+      x-cli-section: "Sessions"
       parameters:
       - name: sessionId
         in: path
@@ -1623,6 +1728,7 @@ paths:
       description: Fetch the last 10 projects or your BrowserStack group. You can
         also limit the number of projects and paginate through your data
       operationId: getAppAutomateProjects
+      x-cli-section: "Projects"
       parameters:
       - name: limit
         in: query
@@ -1677,6 +1783,7 @@ paths:
       summary: Fetches list of uploaded media files for the entire group
       description: Fetches list of recently uploaded media files for the entire group
       operationId: deleteAppAutomateMediaFile
+      x-cli-section: "Media Files"
       parameters:
       - name: mediaId
         in: path
@@ -1716,8 +1823,13 @@ paths:
       summary: Get details of an uploaded Espresso app
       description: Get details of an uploaded Espresso app
       operationId: getAppAutomateEspressoApp
+      x-cli-section: "Espresso Apps"
       parameters:
       - name: appId
+        x-cli-picker:
+          source: app-automate.list-apps
+          valueField: app_url
+          labelFields: [app_url, app_name]
         in: path
         description: App ID of your app
         required: true
@@ -1756,8 +1868,13 @@ paths:
       description: Delete an app that was previously uploaded to BrowserStack. Note
         that apps once deleted cannot be recovered.
       operationId: deleteAppAutomateEspressoApp
+      x-cli-section: "Espresso Apps"
       parameters:
       - name: appId
+        x-cli-picker:
+          source: app-automate.list-apps
+          valueField: app_url
+          labelFields: [app_url, app_name]
         in: path
         description: ID of your uploaded app
         required: true
@@ -1803,6 +1920,7 @@ paths:
       summary: Fetches list of uploaded media files
       description: Fetches list of recently uploaded media files
       operationId: getAppAutomateMediaFiles
+      x-cli-section: "Media Files"
       responses:
         '200':
           description: Successful operation
@@ -1838,6 +1956,7 @@ paths:
       summary: Fetches list of uploaded Flutter iOS test packages
       description: Fetches list of recently uploaded Flutter iOS test packages
       operationId: getAppAutomateFlutteriOSApps
+      x-cli-section: "Flutter iOS Apps"
       x-cli-action: list-flutter-ios-apps
       parameters:
       - name: scope
@@ -1895,6 +2014,7 @@ paths:
       summary: Upload an app
       description: Upload the application under test (AUT) for Appium testing.
       operationId: uploadAppAutomateApp
+      x-cli-section: "Apps"
       # TODO: url-only upload path needs a multipart-url codec variant (follow-up)
       x-request-transform:
         codec: multipart
@@ -1962,6 +2082,7 @@ paths:
       summary: Fetches list of uploaded apps for the entire group
       description: Fetches list of recently uploaded apps for the entire group
       operationId: getAppAutomateGroupApps
+      x-cli-section: "Apps"
       responses:
         '200':
           description: Successful operation
@@ -1997,6 +2118,7 @@ paths:
       summary: Upload an app
       description: Upload the application under test (AUT) for Espresso testing.
       operationId: uploadAppAutomateEspressoApp
+      x-cli-section: "Espresso Apps"
       requestBody:
         required: true
         content:
@@ -2063,6 +2185,7 @@ paths:
       summary: Fetches list of uploaded apps by custom ID
       description: Fetches list of uploaded apps by custom ID
       operationId: getAppAutomateAppsByCustomId
+      x-cli-section: "Apps"
       parameters:
       - name: customId
         in: path
@@ -2106,6 +2229,7 @@ paths:
       summary: Fetches list of uploaded Flutter apps
       description: Fetches list of recently uploaded Flutter apps
       operationId: getAppAutomateFlutterAndroidApps
+      x-cli-section: "Flutter Android Apps"
       parameters:
       - name: scope
         in: query
@@ -2164,8 +2288,14 @@ paths:
         specific to your application generated by the OS(Android/iOS) and can be helpful
         for debugging any application crashes during test execution.
       operationId: getAppAutomateDeviceLogs
+      x-cli-section: "Session Logs"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -2208,8 +2338,14 @@ paths:
         (CPU, memory, battery, and network) by your app on the device. The logs are
         only available for Android.
       operationId: getAppAutomateAppProfilingDataV1
+      x-cli-section: "Apps"
       parameters:
       - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
         in: path
         description: ID of your build
         required: true
@@ -2250,8 +2386,13 @@ paths:
       description: Fetch the 10 recent test builds that have run on BrowserStack.
         You can also limit the number of builds and paginate through your data
       operationId: getAppAutomateBuilds
+      x-cli-section: "Builds"
       parameters:
       - name: projectId
+        x-cli-picker:
+          source: app-automate.list-projects
+          valueField: id
+          labelFields: [id, name]
         in: query
         description: ID of your project
         required: false
@@ -2312,9 +2453,14 @@ paths:
       summary: Get details of an uploaded Flutter iOS test package
       description: Get details of an uploaded Flutter iOS test package
       operationId: getAppAutomateFlutteriOSApp
+      x-cli-section: "Flutter iOS Apps"
       x-cli-action: get-flutter-ios-app
       parameters:
       - name: appId
+        x-cli-picker:
+          source: app-automate.list-apps
+          valueField: app_url
+          labelFields: [app_url, app_name]
         in: path
         description: Test package ID of your app
         required: true
@@ -2352,9 +2498,14 @@ paths:
       description: Delete a Flutter iOS test package that was previously uploaded
         to BrowserStack. Note that apps once deleted cannot be recovered.
       operationId: deleteAppAutomateFlutteriOSApp
+      x-cli-section: "Flutter iOS Apps"
       x-cli-action: delete-flutter-ios-app
       parameters:
       - name: appId
+        x-cli-picker:
+          source: app-automate.list-apps
+          valueField: app_url
+          labelFields: [app_url, app_name]
         in: path
         description: Test package ID of your app
         required: true
@@ -2401,8 +2552,13 @@ paths:
       description: Fetches the badge key for sharing a public link for the Automate
         dashboard to view the latest build and sessions for that project
       operationId: getAppAutomateProjectBadgeKey
+      x-cli-section: "Projects"
       parameters:
       - name: projectId
+        x-cli-picker:
+          source: app-automate.list-projects
+          valueField: id
+          labelFields: [id, name]
         in: path
         description: ID of your project
         required: true

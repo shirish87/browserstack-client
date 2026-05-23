@@ -40,6 +40,7 @@ paths:
       description: Fetches list of recent binary instances for local testing. Note that
         the binary should have been started with the --enable-logging-for-api parameter.
       operationId: getLocalBinaryInstances
+      x-cli-section: "Instances"
       parameters:
       - name: auth_token
         in: query
@@ -114,6 +115,7 @@ paths:
         Note that the binary should have been started with the --enable-logging-for-api
         parameter.
       operationId: getLocalBinaryInstance
+      x-cli-section: "Instances"
       parameters:
       - name: localInstanceId
         in: path
@@ -175,6 +177,7 @@ paths:
       summary: Disconnect a Local binary instance
       description: Disconnect a Local binary instance
       operationId: disconnectLocalBinaryInstance
+      x-cli-section: "Instances"
       parameters:
       - name: localInstanceId
         in: path

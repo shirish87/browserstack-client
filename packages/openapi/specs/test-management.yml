@@ -31,6 +31,7 @@ paths:
       tags: [Projects]
       summary: Get list of projects
       operationId: getTestManagementProjects
+      x-cli-section: "Projects"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -60,6 +61,7 @@ paths:
       tags: [Projects]
       summary: Create a project
       operationId: createTestManagementProject
+      x-cli-section: "Projects"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -96,6 +98,7 @@ paths:
       tags: [Projects]
       summary: Get project details
       operationId: getTestManagementProject
+      x-cli-section: "Projects"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -118,6 +121,7 @@ paths:
       tags: [Projects]
       summary: Update a project
       operationId: updateTestManagementProject
+      x-cli-section: "Projects"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -154,6 +158,7 @@ paths:
       tags: [Projects]
       summary: Delete a project
       operationId: deleteTestManagementProject
+      x-cli-section: "Projects"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
       responses:
@@ -176,6 +181,7 @@ paths:
       tags: [Folders]
       summary: Get list of folders in a project
       operationId: getTestManagementFolders
+      x-cli-section: "Folders"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -206,6 +212,7 @@ paths:
       tags: [Folders]
       summary: Create a folder
       operationId: createTestManagementFolder
+      x-cli-section: "Folders"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -245,6 +252,7 @@ paths:
       tags: [Folders]
       summary: Get folder details
       operationId: getTestManagementFolder
+      x-cli-section: "Folders"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -268,6 +276,7 @@ paths:
       tags: [Folders]
       summary: Update a folder
       operationId: updateTestManagementFolder
+      x-cli-section: "Folders"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -305,6 +314,7 @@ paths:
       tags: [Folders]
       summary: Delete a folder
       operationId: deleteTestManagementFolder
+      x-cli-section: "Folders"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/FolderId' }
@@ -325,6 +335,7 @@ paths:
       tags: [Folders]
       summary: Move a folder
       operationId: moveTestManagementFolder
+      x-cli-section: "Folders"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -360,6 +371,7 @@ paths:
       tags: [TestCases]
       summary: Get list of test cases
       operationId: getTestManagementTestCases
+      x-cli-section: "Test Cases"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -377,7 +389,14 @@ paths:
         - { name: priority, in: query, schema: { type: string } }
         - { name: owner, in: query, schema: { type: string } }
         - { name: case_type, in: query, schema: { type: string } }
-        - { name: folder_id, in: query, schema: { type: integer } }
+        - name: folder_id
+          in: query
+          schema: { type: integer }
+          x-cli-picker:
+            source: test-management.list-folders
+            valueField: id
+            labelFields: [id, name]
+            filterBy: [projectId]
         - { name: tags, in: query, schema: { type: string } }
         - { name: issue_ids, in: query, schema: { type: string } }
         - { name: issue_type, in: query, schema: { type: string } }
@@ -399,6 +418,7 @@ paths:
       tags: [TestCases]
       summary: Bulk edit test cases
       operationId: bulkEditTestManagementTestCases
+      x-cli-section: "Test Cases (Bulk)"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
       requestBody:
@@ -439,6 +459,7 @@ paths:
       tags: [TestCases]
       summary: Bulk delete test cases
       operationId: bulkDeleteTestManagementTestCases
+      x-cli-section: "Test Cases (Bulk)"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
       requestBody:
@@ -468,6 +489,7 @@ paths:
       tags: [TestCases]
       summary: Bulk archive test cases
       operationId: bulkArchiveTestManagementTestCases
+      x-cli-section: "Test Cases (Bulk)"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
       requestBody:
@@ -498,6 +520,7 @@ paths:
       tags: [TestCases]
       summary: Bulk unarchive test cases
       operationId: bulkUnarchiveTestManagementTestCases
+      x-cli-section: "Test Cases (Bulk)"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
       requestBody:
@@ -528,6 +551,7 @@ paths:
       tags: [TestCases]
       summary: Bulk edit test cases with operations
       operationId: bulkEditTestManagementTestCasesWithOperations
+      x-cli-section: "Test Cases (Bulk)"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
       requestBody:
@@ -561,6 +585,7 @@ paths:
       tags: [TestCases]
       summary: Create a test case
       operationId: createTestManagementTestCase
+      x-cli-section: "Test Cases"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -628,6 +653,7 @@ paths:
       tags: [TestCases]
       summary: Update a test case
       operationId: updateTestManagementTestCase
+      x-cli-section: "Test Cases"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -695,6 +721,7 @@ paths:
       tags: [TestCases]
       summary: Delete a test case
       operationId: deleteTestManagementTestCase
+      x-cli-section: "Test Cases"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/TestCaseId' }
@@ -715,6 +742,7 @@ paths:
       tags: [TestCases]
       summary: Archive a test case
       operationId: archiveTestManagementTestCase
+      x-cli-section: "Test Cases"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -741,6 +769,7 @@ paths:
       tags: [TestCases]
       summary: Unarchive a test case
       operationId: unarchiveTestManagementTestCase
+      x-cli-section: "Test Cases"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -767,6 +796,7 @@ paths:
       tags: [TestCases]
       summary: Move a test case to a different folder
       operationId: moveTestManagementTestCase
+      x-cli-section: "Test Cases"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -802,6 +832,7 @@ paths:
       tags: [Attachments]
       summary: Get attachments for a test case
       operationId: getTestManagementTestCaseAttachments
+      x-cli-section: "Test Case Attachments"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -828,6 +859,7 @@ paths:
       tags: [Attachments]
       summary: Add attachment to a test case
       operationId: addTestManagementTestCaseAttachment
+      x-cli-section: "Test Case Attachments"
       x-request-transform:
         codec: multipart
         config:
@@ -871,6 +903,7 @@ paths:
       tags: [Attachments]
       summary: Delete attachment from a test case
       operationId: deleteTestManagementTestCaseAttachment
+      x-cli-section: "Test Case Attachments"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/TestCaseId' }
@@ -892,6 +925,7 @@ paths:
       tags: [TestResults]
       summary: Get test results for a test case across all test runs
       operationId: getTestManagementTestCaseResults
+      x-cli-section: "Test Cases"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -922,6 +956,7 @@ paths:
       tags: [TestRuns]
       summary: Get list of test runs
       operationId: getTestManagementTestRuns
+      x-cli-section: "Test Runs"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -932,7 +967,14 @@ paths:
         - { name: closed_after, in: query, schema: { type: string } }
         - { name: created_before, in: query, schema: { type: string } }
         - { name: created_after, in: query, schema: { type: string } }
-        - { name: test_plan_id, in: query, schema: { type: string } }
+        - name: test_plan_id
+          in: query
+          schema: { type: string }
+          x-cli-picker:
+            source: test-management.list-test-plans
+            valueField: id
+            labelFields: [id, name]
+            filterBy: [projectId]
         - { name: assignee, in: query, schema: { type: string } }
         - { name: include_closed, in: query, schema: { type: boolean } }
         - { name: run_state, in: query, schema: { type: string } }
@@ -953,6 +995,7 @@ paths:
       tags: [TestRuns]
       summary: Create a test run
       operationId: createTestManagementTestRun
+      x-cli-section: "Test Runs"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -984,6 +1027,7 @@ paths:
       tags: [TestRuns]
       summary: Get test run details
       operationId: getTestManagementTestRun
+      x-cli-section: "Test Runs"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1010,6 +1054,7 @@ paths:
       tags: [TestRuns]
       summary: Get test cases of a test run
       operationId: getTestManagementTestRunTestCases
+      x-cli-section: "Test Runs"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1041,6 +1086,7 @@ paths:
       tags: [TestRuns]
       summary: Partially update a test run
       operationId: patchTestManagementTestRun
+      x-cli-section: "Test Runs"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1072,6 +1118,7 @@ paths:
       tags: [TestRuns]
       summary: Fully update a test run (replaces test cases)
       operationId: updateTestManagementTestRun
+      x-cli-section: "Test Runs"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1105,6 +1152,7 @@ paths:
       tags: [TestRuns]
       summary: Update assignees of test cases within a test run
       operationId: assignTestManagementTestRunTestCases
+      x-cli-section: "Test Runs"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/TestRunId' }
@@ -1141,6 +1189,7 @@ paths:
       tags: [TestRuns]
       summary: Close a test run
       operationId: closeTestManagementTestRun
+      x-cli-section: "Test Runs"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1166,6 +1215,7 @@ paths:
       tags: [TestRuns]
       summary: Delete a test run
       operationId: deleteTestManagementTestRun
+      x-cli-section: "Test Runs"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/TestRunId' }
@@ -1187,6 +1237,7 @@ paths:
       tags: [TestResults]
       summary: Get all test results for a test run
       operationId: getTestManagementTestRunResults
+      x-cli-section: "Test Run Results"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1214,6 +1265,7 @@ paths:
       tags: [TestResults]
       summary: Add test result(s) to a test run
       operationId: addTestManagementTestRunResults
+      x-cli-section: "Test Run Results"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/TestRunId' }
@@ -1257,6 +1309,7 @@ paths:
       tags: [TestResults]
       summary: Get test results for a specific test case in a test run
       operationId: getTestManagementTestRunTestCaseResults
+      x-cli-section: "Test Run Results"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1286,6 +1339,7 @@ paths:
       tags: [Attachments]
       summary: Get attachments for a test result
       operationId: getTestManagementTestResultAttachments
+      x-cli-section: "Test Result Attachments"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1312,6 +1366,7 @@ paths:
       tags: [Attachments]
       summary: Add attachment to a test result
       operationId: addTestManagementTestResultAttachment
+      x-cli-section: "Test Result Attachments"
       x-request-transform:
         codec: multipart
         config:
@@ -1354,6 +1409,7 @@ paths:
       tags: [Attachments]
       summary: Delete attachment from a test result
       operationId: deleteTestManagementTestResultAttachment
+      x-cli-section: "Test Result Attachments"
       parameters:
         - { $ref: '#/components/parameters/ProjectId' }
         - { $ref: '#/components/parameters/TestResultId' }
@@ -1377,6 +1433,7 @@ paths:
       tags: [TestPlans]
       summary: Get list of test plans
       operationId: getTestManagementTestPlans
+      x-cli-section: "Test Plans"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1403,6 +1460,7 @@ paths:
       tags: [TestPlans]
       summary: Create a test plan
       operationId: createTestManagementTestPlan
+      x-cli-section: "Test Plans"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1435,6 +1493,7 @@ paths:
       tags: [TestPlans]
       summary: Get test plan details
       operationId: getTestManagementTestPlan
+      x-cli-section: "Test Plans"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1460,6 +1519,7 @@ paths:
       tags: [TestPlans]
       summary: Update a test plan
       operationId: updateTestManagementTestPlan
+      x-cli-section: "Test Plans"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1502,6 +1562,7 @@ paths:
       tags: [TestPlans]
       summary: Get test runs linked to a test plan
       operationId: getTestManagementTestPlanTestRuns
+      x-cli-section: "Test Plans"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1533,6 +1594,7 @@ paths:
       tags: [Configurations]
       summary: Get all configurations
       operationId: getTestManagementConfigurations
+      x-cli-section: "Configurations"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1558,6 +1620,7 @@ paths:
       tags: [Configurations]
       summary: Add a custom configuration
       operationId: createTestManagementConfiguration
+      x-cli-section: "Configurations"
       requestBody:
         required: true
         content:
@@ -1585,6 +1648,7 @@ paths:
       tags: [Configurations]
       summary: Get configuration by ID
       operationId: getTestManagementConfiguration
+      x-cli-section: "Configurations"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1611,6 +1675,7 @@ paths:
       tags: [CustomFields]
       summary: Get all custom fields
       operationId: getTestManagementCustomFields
+      x-cli-section: "Custom Fields"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1632,6 +1697,7 @@ paths:
       tags: [CustomFields]
       summary: Create a custom field
       operationId: createTestManagementCustomField
+      x-cli-section: "Custom Fields"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1678,6 +1744,7 @@ paths:
       tags: [CustomFields]
       summary: Update a custom field
       operationId: updateTestManagementCustomField
+      x-cli-section: "Custom Fields"
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1716,6 +1783,7 @@ paths:
       tags: [CustomFields]
       summary: Delete a custom field
       operationId: deleteTestManagementCustomField
+      x-cli-section: "Custom Fields"
       parameters:
         - { $ref: '#/components/parameters/CustomFieldId' }
       responses:
@@ -1739,46 +1807,90 @@ components:
   parameters:
     ProjectId:
       name: projectId
+      x-cli-picker:
+        source: test-management.list-projects
+        valueField: id
+        labelFields: [id, name]
       in: path
       required: true
       schema: { type: string }
     FolderId:
       name: folderId
+      x-cli-picker:
+        source: test-management.list-folders
+        valueField: id
+        labelFields: [id, name]
+        filterBy: [projectId]
       in: path
       required: true
       schema: { type: integer }
     TestCaseId:
       name: testCaseId
+      x-cli-picker:
+        source: test-management.list-test-cases
+        valueField: id
+        labelFields: [id, name]
+        filterBy: [projectId]
       in: path
       required: true
       schema: { type: string }
     TestRunId:
       name: testRunId
+      x-cli-picker:
+        source: test-management.list-test-runs
+        valueField: id
+        labelFields: [id, name]
+        filterBy: [projectId]
       in: path
       required: true
       schema: { type: string }
     TestPlanId:
       name: testPlanId
+      x-cli-picker:
+        source: test-management.list-test-plans
+        valueField: id
+        labelFields: [id, name]
+        filterBy: [projectId]
       in: path
       required: true
       schema: { type: string }
     TestResultId:
       name: testResultId
+      x-cli-picker:
+        source: test-management.list-test-run-results
+        valueField: id
+        labelFields: [id]
+        filterBy: [projectId, testRunId]
       in: path
       required: true
       schema: { type: integer }
     AttachmentId:
       name: attachmentId
+      x-cli-picker:
+        source: test-management.list-test-case-attachments
+        valueField: id
+        labelFields: [id, name]
+        filterBy: [projectId, testCaseId]
       in: path
       required: true
       schema: { type: integer }
     ConfigurationId:
       name: configurationId
+      x-cli-picker:
+        source: test-management.list-configurations
+        valueField: id
+        labelFields: [id, name]
+        filterBy: [projectId]
       in: path
       required: true
       schema: { type: string }
     CustomFieldId:
       name: customFieldId
+      x-cli-picker:
+        source: test-management.list-custom-fields
+        valueField: id
+        labelFields: [id, name]
+        filterBy: [projectId]
       in: path
       required: true
       schema: { type: string }

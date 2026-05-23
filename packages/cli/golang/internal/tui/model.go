@@ -52,7 +52,7 @@ type executedMsg struct {
 func NewModel(version string, executor Executor) *Model {
 	items := make([]listItem, len(Manifest))
 	for i, p := range Manifest {
-		items[i] = listItem{id: p.ID, label: p.Title, description: p.Description}
+		items[i] = listItem{id: p.ID, label: StripBrand(p.Title), description: p.Description}
 	}
 	return &Model{
 		version:     version,
@@ -73,6 +73,19 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.termHeight = msg.Height
 		if m.result != nil {
 			m.result.setSize(msg.Width, msg.Height-8)
+		}
+		if m.form != nil {
+			m.form.setHeight(msg.Height)
+			m.form.setWidth(msg.Width)
+		}
+		if m.productList != nil {
+			m.productList.setHeight(msg.Height)
+		}
+		if m.resourceList != nil {
+			m.resourceList.setHeight(msg.Height)
+		}
+		if m.actionList != nil {
+			m.actionList.setHeight(msg.Height)
 		}
 		return m, nil
 
@@ -157,7 +170,50 @@ func (m *Model) updateActionList(msg tea.Msg) (tea.Model, tea.Cmd) {
 				break
 			}
 		}
-		m.form = newFormView(m.action.Fields, fmt.Sprintf("%s → %s", m.product.Title, m.action.ID))
+		if len(m.action.Fields) == 0 {
+			m.step = stepLoading
+			m.loadingMsg = "Running…"
+			exec := m.executor
+			product := m.product
+			actionRef := m.action
+			return m, func() tea.Msg {
+				out, err := exec(product, actionRef, map[string]string{})
+				if err != nil {
+					return executedMsg{output: out, err: err.Error()}
+				}
+				return executedMsg{output: out, err: ""}
+			}
+		}
+		m.form = newFormView(m.action.Fields, fmt.Sprintf("%s → %s", StripBrand(m.product.Title), m.action.ID))
+		if m.termHeight > 0 {
+			m.form.setHeight(m.termHeight)
+		}
+		if m.termWidth > 0 {
+			m.form.setWidth(m.termWidth)
+		}
+		// Provide a picker fetcher that resolves productID/actionID via the manifest then calls executor.
+		exec := m.executor
+		m.form.setFetcher(func(productID, actionID string, args map[string]string) (string, error) {
+			var prod *Product
+			var act *Action
+			for i := range Manifest {
+				if Manifest[i].ID != productID {
+					continue
+				}
+				prod = &Manifest[i]
+				for j := range prod.Resources {
+					for k := range prod.Resources[j].Actions {
+						if prod.Resources[j].Actions[k].ID == actionID {
+							act = &prod.Resources[j].Actions[k]
+						}
+					}
+				}
+			}
+			if prod == nil || act == nil {
+				return "", fmt.Errorf("picker source not found: %s.%s", productID, actionID)
+			}
+			return exec(prod, act, args)
+		})
 		m.step = stepForm
 	case listBack:
 		isFlat := len(m.product.Resources) == 1 && m.product.Resources[0].ID == "default"
@@ -214,26 +270,66 @@ func (m *Model) gotoResource() {
 	for i, r := range m.product.Resources {
 		items[i] = listItem{id: r.ID, label: r.Label}
 	}
-	m.resourceList = newListView(m.product.Title+" → select a resource", items)
+	m.resourceList = newListView(StripBrand(m.product.Title)+" → select a resource", items)
+	if m.termHeight > 0 {
+		m.resourceList.setHeight(m.termHeight)
+	}
 	m.step = stepResource
 }
 
 func (m *Model) gotoAction() {
-	items := make([]listItem, len(m.resource.Actions))
-	for i, a := range m.resource.Actions {
-		label := a.Summary
-		if label == "" {
-			label = a.ID
-		}
-		items[i] = listItem{id: a.ID, label: label}
-	}
+	items := groupedActionItems(m.resource.Actions)
 	isFlat := len(m.product.Resources) == 1 && m.product.Resources[0].ID == "default"
-	title := m.product.Title
+	title := StripBrand(m.product.Title)
 	if !isFlat {
 		title += " → " + m.resource.Label
 	}
 	m.actionList = newListView(title+" → select an action", items)
+	if m.termHeight > 0 {
+		m.actionList.setHeight(m.termHeight)
+	}
 	m.step = stepAction
+}
+
+func groupedActionItems(actions []Action) []listItem {
+	type bucket struct {
+		name    string
+		actions []Action
+	}
+	order := []string{}
+	bySection := map[string][]Action{}
+	for _, a := range actions {
+		key := a.Section
+		if key == "" {
+			key = "General"
+		}
+		if _, ok := bySection[key]; !ok {
+			order = append(order, key)
+		}
+		bySection[key] = append(bySection[key], a)
+	}
+	mkLabel := func(a Action) string {
+		if a.Summary != "" {
+			return a.Summary
+		}
+		return a.ID
+	}
+	// One section → flat list, no headers.
+	if len(order) == 1 {
+		out := make([]listItem, len(actions))
+		for i, a := range actions {
+			out[i] = listItem{id: a.ID, label: mkLabel(a)}
+		}
+		return out
+	}
+	out := []listItem{}
+	for _, section := range order {
+		out = append(out, listItem{id: "__section_" + section, label: section, header: true})
+		for _, a := range bySection[section] {
+			out = append(out, listItem{id: a.ID, label: mkLabel(a)})
+		}
+	}
+	return out
 }
 
 func (m *Model) View() string {

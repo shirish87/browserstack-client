@@ -13,6 +13,7 @@ paths:
       tags: [TestReporting]
       summary: Get Project List
       operationId: getTestReportingProjects
+      x-cli-section: "Projects"
       parameters:
         - name: next_page
           in: query
@@ -37,8 +38,13 @@ paths:
       tags: [TestReporting]
       summary: Get Build List for Project
       operationId: getTestReportingProjectBuilds
+      x-cli-section: "Projects"
       parameters:
         - name: projectId
+          x-cli-picker:
+            source: test-reporting.list-projects
+            valueField: id
+            labelFields: [id, name]
           in: path
           required: true
           schema: { type: integer }
@@ -86,6 +92,7 @@ paths:
       tags: [TestReporting]
       summary: Start Build (ingestion)
       operationId: startTestReportingBuild
+      x-cli-section: "Builds"
       requestBody:
         required: true
         content:
@@ -108,8 +115,13 @@ paths:
       tags: [TestReporting]
       summary: Get Latest Build
       operationId: getTestReportingLatestBuild
+      x-cli-section: "Builds"
       parameters:
         - name: project_name
+          x-cli-picker:
+            source: test-reporting.list-projects
+            valueField: name
+            labelFields: [name]
           in: query
           required: true
           schema: { type: string }
@@ -138,8 +150,14 @@ paths:
       tags: [TestReporting]
       summary: Get Build Details
       operationId: getTestReportingBuild
+      x-cli-section: "Builds"
       parameters:
         - name: buildId
+          x-cli-picker:
+            source: test-reporting.list-project-builds
+            valueField: hashed_id
+            labelFields: [hashed_id, name, status]
+            filterBy: [projectId]
           in: path
           required: true
           schema: { type: string }
@@ -154,8 +172,14 @@ paths:
       tags: [TestReporting]
       summary: Update Build Metadata
       operationId: updateTestReportingBuild
+      x-cli-section: "Builds"
       parameters:
         - name: buildId
+          x-cli-picker:
+            source: test-reporting.list-project-builds
+            valueField: hashed_id
+            labelFields: [hashed_id, name, status]
+            filterBy: [projectId]
           in: path
           required: true
           schema: { type: string }
@@ -185,8 +209,13 @@ paths:
       tags: [TestReporting]
       summary: Finish Build (ingestion)
       operationId: finishTestReportingBuild
+      x-cli-section: "Builds"
       parameters:
         - name: buildHashedId
+          x-cli-picker:
+            source: test-reporting.list-project-builds
+            valueField: hashed_id
+            labelFields: [hashed_id, name, status]
           in: path
           required: true
           schema: { type: string }
@@ -215,8 +244,13 @@ paths:
       tags: [TestReporting]
       summary: Start Test Run (ingestion)
       operationId: startTestReportingTestRun
+      x-cli-section: "Test Runs"
       parameters:
         - name: buildHashedId
+          x-cli-picker:
+            source: test-reporting.list-project-builds
+            valueField: hashed_id
+            labelFields: [hashed_id, name, status]
           in: path
           required: true
           schema: { type: string }
@@ -242,8 +276,13 @@ paths:
       tags: [TestReporting]
       summary: Finish Test Run (ingestion)
       operationId: finishTestReportingTestRun
+      x-cli-section: "Test Runs"
       parameters:
         - name: buildHashedId
+          x-cli-picker:
+            source: test-reporting.list-project-builds
+            valueField: hashed_id
+            labelFields: [hashed_id, name, status]
           in: path
           required: true
           schema: { type: string }
@@ -273,8 +312,13 @@ paths:
       tags: [TestReporting]
       summary: Start Hook Run (ingestion)
       operationId: startTestReportingHookRun
+      x-cli-section: "Hook Runs"
       parameters:
         - name: buildHashedId
+          x-cli-picker:
+            source: test-reporting.list-project-builds
+            valueField: hashed_id
+            labelFields: [hashed_id, name, status]
           in: path
           required: true
           schema: { type: string }
@@ -300,8 +344,13 @@ paths:
       tags: [TestReporting]
       summary: Finish Hook Run (ingestion)
       operationId: finishTestReportingHookRun
+      x-cli-section: "Hook Runs"
       parameters:
         - name: buildHashedId
+          x-cli-picker:
+            source: test-reporting.list-project-builds
+            valueField: hashed_id
+            labelFields: [hashed_id, name, status]
           in: path
           required: true
           schema: { type: string }
@@ -331,8 +380,13 @@ paths:
       tags: [TestReporting]
       summary: Add Build Logs (ingestion)
       operationId: addTestReportingBuildLogs
+      x-cli-section: "Builds"
       parameters:
         - name: buildHashedId
+          x-cli-picker:
+            source: test-reporting.list-project-builds
+            valueField: hashed_id
+            labelFields: [hashed_id, name, status]
           in: path
           required: true
           schema: { type: string }
@@ -365,8 +419,14 @@ paths:
       tags: [TestReporting]
       summary: Get Test List
       operationId: getTestReportingTestRuns
+      x-cli-section: "Test Runs"
       parameters:
         - name: buildId
+          x-cli-picker:
+            source: test-reporting.list-project-builds
+            valueField: hashed_id
+            labelFields: [hashed_id, name, status]
+            filterBy: [projectId]
           in: path
           required: true
           schema: { type: string }
@@ -404,6 +464,7 @@ paths:
       tags: [TestReporting]
       summary: Get Self-Healing Report
       operationId: getTestReportingSelfHealingReport
+      x-cli-section: "Reports"
       parameters:
         - name: buildUuid
           in: path
@@ -425,6 +486,7 @@ paths:
       tags: [TestReporting]
       summary: Get Quality Gate Status
       operationId: getTestReportingQualityGateStatus
+      x-cli-section: "Quality Gate"
       parameters:
         - name: buildUuid
           in: path
@@ -443,8 +505,13 @@ paths:
       tags: [TestReporting]
       summary: Get Quality Gate Settings
       operationId: getTestReportingQualityGateSettings
+      x-cli-section: "Quality Gate"
       parameters:
         - name: projectName
+          x-cli-picker:
+            source: test-reporting.list-projects
+            valueField: name
+            labelFields: [name]
           in: path
           required: true
           schema: { type: string }
@@ -459,8 +526,13 @@ paths:
       tags: [TestReporting]
       summary: Update Quality Gate Settings
       operationId: updateTestReportingQualityGateSettings
+      x-cli-section: "Quality Gate"
       parameters:
         - name: projectName
+          x-cli-picker:
+            source: test-reporting.list-projects
+            valueField: name
+            labelFields: [name]
           in: path
           required: true
           schema: { type: string }
@@ -488,8 +560,13 @@ paths:
       tags: [TestReporting]
       summary: Create Quality Gate Profile
       operationId: createTestReportingQualityGateProfile
+      x-cli-section: "Quality Gate Profiles"
       parameters:
         - name: projectName
+          x-cli-picker:
+            source: test-reporting.list-projects
+            valueField: name
+            labelFields: [name]
           in: path
           required: true
           schema: { type: string }
@@ -515,8 +592,13 @@ paths:
       tags: [TestReporting]
       summary: Get Quality Gate Profile
       operationId: getTestReportingQualityGateProfile
+      x-cli-section: "Quality Gate Profiles"
       parameters:
         - name: projectName
+          x-cli-picker:
+            source: test-reporting.list-projects
+            valueField: name
+            labelFields: [name]
           in: path
           required: true
           schema: { type: string }
@@ -535,8 +617,13 @@ paths:
       tags: [TestReporting]
       summary: Update Quality Gate Profile
       operationId: updateTestReportingQualityGateProfile
+      x-cli-section: "Quality Gate Profiles"
       parameters:
         - name: projectName
+          x-cli-picker:
+            source: test-reporting.list-projects
+            valueField: name
+            labelFields: [name]
           in: path
           required: true
           schema: { type: string }
@@ -564,8 +651,13 @@ paths:
       tags: [TestReporting]
       summary: Delete Quality Gate Profile
       operationId: deleteTestReportingQualityGateProfile
+      x-cli-section: "Quality Gate Profiles"
       parameters:
         - name: projectName
+          x-cli-picker:
+            source: test-reporting.list-projects
+            valueField: name
+            labelFields: [name]
           in: path
           required: true
           schema: { type: string }
@@ -588,8 +680,13 @@ paths:
       tags: [TestReporting]
       summary: Toggle Quality Gate Profile
       operationId: toggleTestReportingQualityGateProfile
+      x-cli-section: "Quality Gate Profiles"
       parameters:
         - name: projectName
+          x-cli-picker:
+            source: test-reporting.list-projects
+            valueField: name
+            labelFields: [name]
           in: path
           required: true
           schema: { type: string }
@@ -621,6 +718,7 @@ paths:
       tags: [TestReporting]
       summary: Upload Test Reports (JUnit or Allure)
       operationId: uploadTestReportingReport
+      x-cli-section: "Reports"
       x-request-transform:
         codec: multipart
         config:

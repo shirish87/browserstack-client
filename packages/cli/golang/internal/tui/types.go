@@ -17,6 +17,13 @@ const (
 	LocationBody  FieldLocation = "body"
 )
 
+type PickerConfig struct {
+	Source      string   // "product.action-id"
+	ValueField  string   // field in each list item that becomes the value
+	LabelFields []string // fields shown in the picker UI; defaults to [ValueField]
+	FilterBy    []string // sibling field names that filter results
+}
+
 type Field struct {
 	Name        string
 	Label       string
@@ -25,12 +32,14 @@ type Field struct {
 	Required    bool
 	Location    FieldLocation
 	Enum        []string
+	Picker      *PickerConfig
 }
 
 type Action struct {
 	ID          string
 	Summary     string
 	Description string
+	Section     string
 	Fields      []Field
 }
 

@@ -3,10 +3,43 @@ import { Box, Text, useApp, useInput } from "ink";
 import { TUI_MANIFEST } from "../tui-manifest.generated.ts";
 import type { TUIProduct, TUIResource, TUIAction } from "../tui-types.ts";
 import { Logo } from "./logo.tsx";
-import { SelectList } from "./select-list.tsx";
+import { SelectList, type SelectItem } from "./select-list.tsx";
 import { Form } from "./form.tsx";
 import { Result } from "./result.tsx";
 import { executeAction } from "./execute.ts";
+
+function productLabel(p: { title: string; id: string }): string {
+  return p.title
+    .replace(/^BrowserStack\s+/i, "")
+    .replace(/\s*\([^)]+\)\s*$/, "")
+    .trim() || p.id;
+}
+
+function groupedActionItems(actions: TUIAction[]): SelectItem[] {
+  // Preserve first-seen section order; ungrouped actions go to "General" at the end.
+  const sectionOrder: string[] = [];
+  const bySection = new Map<string, TUIAction[]>();
+  for (const a of actions) {
+    const key = (a.section && a.section.trim()) || "General";
+    if (!bySection.has(key)) {
+      bySection.set(key, []);
+      sectionOrder.push(key);
+    }
+    bySection.get(key)!.push(a);
+  }
+  // If there's only one section, skip headers entirely.
+  if (sectionOrder.length === 1) {
+    return bySection.get(sectionOrder[0])!.map(a => ({ id: a.id, label: a.summary || a.id }));
+  }
+  const items: SelectItem[] = [];
+  for (const section of sectionOrder) {
+    items.push({ id: `__section_${section}`, label: section, header: true });
+    for (const a of bySection.get(section)!) {
+      items.push({ id: a.id, label: a.summary || a.id });
+    }
+  }
+  return items;
+}
 
 type Step = "product" | "resource" | "action" | "form" | "loading" | "result";
 
@@ -42,7 +75,7 @@ export function App({ version }: { version?: string }) {
         <Logo version={version} />
         <SelectList
           title="Select a product"
-          items={TUI_MANIFEST.map(p => ({ id: p.id, label: p.title, description: p.description }))}
+          items={TUI_MANIFEST.map(p => ({ id: p.id, label: productLabel(p), description: p.description }))}
           onSelect={item => {
             const product = TUI_MANIFEST.find(p => p.id === item.id)!;
             const resources = product.resources;
@@ -62,7 +95,7 @@ export function App({ version }: { version?: string }) {
       <Box flexDirection="column">
         <Logo version={version} />
         <SelectList
-          title={`${state.product.title} → select a resource`}
+          title={`${productLabel(state.product)} → select a resource`}
           items={state.product.resources.map(r => ({ id: r.id, label: r.label }))}
           onSelect={item => {
             const resource = state.product!.resources.find(r => r.id === item.id)!;
@@ -80,10 +113,17 @@ export function App({ version }: { version?: string }) {
       <Box flexDirection="column">
         <Logo version={version} />
         <SelectList
-          title={`${state.product.title}${isFlat ? "" : ` → ${state.resource.label}`} → select an action`}
-          items={state.resource.actions.map(a => ({ id: a.id, label: a.summary || a.id }))}
+          title={`${productLabel(state.product)}${isFlat ? "" : ` → ${state.resource.label}`} → select an action`}
+          items={groupedActionItems(state.resource.actions)}
           onSelect={item => {
             const action = state.resource!.actions.find(a => a.id === item.id)!;
+            if (action.fields.length === 0) {
+              setState(s => ({ ...s, action, step: "loading" }));
+              executeAction(state.product!, action, {}).then(({ output, error }) => {
+                setState(s => ({ ...s, output, error, step: "result" }));
+              });
+              return;
+            }
             setState({ ...state, action, step: "form" });
           }}
           onBack={() =>
@@ -101,7 +141,7 @@ export function App({ version }: { version?: string }) {
       <Box flexDirection="column">
         <Logo version={version} />
         <Form
-          title={`${state.product!.title} → ${state.action.id}`}
+          title={`${productLabel(state.product!)} → ${state.action.id}`}
           fields={state.action.fields}
           onBack={() => setState({ ...state, action: null, step: "action" })}
           onSubmit={values => {
