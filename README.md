@@ -6,7 +6,13 @@ This monorepo contains TypeScript clients for all REST APIs offered by [BrowserS
 
 ## Installation
 
-Install the specific product client you need:
+Install all BrowserStack clients at once:
+
+```bash
+$ npm i @dot-slash/browserstack-client
+```
+
+Or install only the client(s) you need:
 
 ```bash
 # Automate
@@ -15,14 +21,20 @@ $ npm i @dot-slash/browserstack-automate
 # App Automate
 $ npm i @dot-slash/browserstack-app-automate
 
+# Local Testing (API & Binary)
+$ npm i @dot-slash/browserstack-local-testing-api @dot-slash/browserstack-local-testing
+
 # Accessibility
 $ npm i @dot-slash/browserstack-accessibility
 
 # Test Management
 $ npm i @dot-slash/browserstack-test-management
 
-# Local Testing (API & Binary)
-$ npm i @dot-slash/browserstack-local-testing-api @dot-slash/browserstack-local-testing
+# Test Reporting & Analytics
+$ npm i @dot-slash/browserstack-test-reporting
+
+# Screenshots
+$ npm i @dot-slash/browserstack-screenshots
 ```
 
 ## Requirements
