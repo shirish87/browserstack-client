@@ -76,8 +76,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.8.3))
       zod:
-        specifier: ^4.4.1
-        version: 4.4.2
+        specifier: ^4.4.3
+        version: 4.4.3
 
   packages/accessibility:
     devDependencies:
@@ -130,8 +130,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.8.3))
       zod:
-        specifier: ^4.4.2
-        version: 4.4.2
+        specifier: ^4.4.3
+        version: 4.4.3
 
   packages/automate:
     devDependencies:
@@ -157,8 +157,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.8.3))
       zod:
-        specifier: ^4.4.2
-        version: 4.4.2
+        specifier: ^4.4.3
+        version: 4.4.3
 
   packages/cli/typescript:
     dependencies:
@@ -175,8 +175,8 @@ importers:
         specifier: ^3.0.7
         version: 3.0.7
       zod:
-        specifier: ^4.4.1
-        version: 4.4.2
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@dot-slash/browserstack-accessibility':
         specifier: workspace:*
@@ -268,8 +268,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.8.3))
       zod:
-        specifier: ^4.4.2
-        version: 4.4.2
+        specifier: ^4.4.3
+        version: 4.4.3
 
   packages/local-testing-binary:
     dependencies:
@@ -370,8 +370,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.8.3))
       zod:
-        specifier: ^4.4.2
-        version: 4.4.2
+        specifier: ^4.4.3
+        version: 4.4.3
 
   packages/test-management:
     devDependencies:
@@ -3361,8 +3361,8 @@ packages:
     resolution: {integrity: sha512-YnOmtSbv4MTf7RGJMK0FvZ+KD8OEe/J5BNnR0GHhD8J/XcG/Qvxgszm0Un6FTHWW4uHlTgP0IztiXQnGyIR45g==}
     engines: {node: '>=8'}
 
-  zod@4.4.2:
-    resolution: {integrity: sha512-IynmDyxsEsb9RKzO3J9+4SxXnl2FTFSzNBaKKaMV6tsSk0rw9gYw9gs+JFCq/qk2LCZ78KDwyj+Z289TijSkUw==}
+  zod@4.4.3:
+    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -6387,6 +6387,6 @@ snapshots:
     dependencies:
       '@types/yoga-layout': 1.9.2
 
-  zod@4.4.2: {}
+  zod@4.4.3: {}
 
   zwitch@2.0.4: {}
