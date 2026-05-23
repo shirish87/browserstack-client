@@ -95,7 +95,7 @@ async function writeDataToFd(
   encoding: BufferEncoding | undefined
 ): Promise<void> {
   if (Buffer.isBuffer(data)) {
-    await promisify(fs.write)(fd, data, 0, data.length, 0);
+    await promisify(fs.write)(fd, data as unknown as Uint8Array, 0, data.length, 0);
   } else if (data != null) {
     await promisify(fs.write)(fd, String(data), 0, encoding || "utf8");
   }

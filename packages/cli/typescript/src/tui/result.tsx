@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Box, Text, useInput, useStdout } from "ink";
 
 export function Result({
@@ -19,7 +19,7 @@ export function Result({
   const maxScroll = Math.max(0, lines.length - height);
   const visible = lines.slice(scroll, scroll + height);
 
-  useInput((input, key) => {
+  useInput((_input, key) => {
     if (key.escape || key.return) {
       onBack();
     } else if (key.upArrow) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Box, Text, useApp, useInput } from "ink";
 import { TUI_MANIFEST } from "../tui-manifest.generated.ts";
 import type { TUIProduct, TUIResource, TUIAction } from "../tui-types.ts";

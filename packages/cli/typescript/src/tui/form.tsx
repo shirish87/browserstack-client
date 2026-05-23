@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Box, Text, useInput, useStdout } from "ink";
 import type { TUIField } from "../tui-types.ts";
 import { PickerOverlay } from "./picker-list.tsx";
