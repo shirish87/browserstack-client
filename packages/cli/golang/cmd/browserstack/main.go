@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/mattn/go-isatty"
+
 	"github.com/browserstack/browserstack-client/generated/accessibility"
 	appautomate "github.com/browserstack/browserstack-client/generated/app-automate"
 	"github.com/browserstack/browserstack-client/generated/automate"
@@ -11,6 +14,7 @@ import (
 	testmanagement "github.com/browserstack/browserstack-client/generated/test-management"
 	testreporting "github.com/browserstack/browserstack-client/generated/test-reporting"
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
+	"github.com/browserstack/browserstack-client/internal/tui"
 )
 
 // version is set at build time via -ldflags "-X main.version=<ver>"
@@ -19,6 +23,22 @@ var version = "dev"
 func main() {
 	if len(os.Args) >= 2 && os.Args[1] == "version" {
 		fmt.Printf("browserstack-client %s\n", version)
+		return
+	}
+
+	if len(os.Args) == 1 && isatty.IsTerminal(os.Stdout.Fd()) {
+		username := os.Getenv("BROWSERSTACK_USERNAME")
+		accessKey := os.Getenv("BROWSERSTACK_ACCESS_KEY")
+		if username == "" || accessKey == "" {
+			fmt.Fprintln(os.Stderr, "BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY must be set")
+			os.Exit(1)
+		}
+		model := tui.NewModel(version, makeExecutor(username, accessKey))
+		p := tea.NewProgram(model, tea.WithAltScreen())
+		if _, err := p.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "TUI error: %v\n", err)
+			os.Exit(1)
+		}
 		return
 	}
 
