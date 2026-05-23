@@ -4,7 +4,7 @@ import process from "node:process";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { cliContext } from "./setup.ts";
 
-const LONG_TIMEOUT = 30_000;
+const LONG_TIMEOUT = 60_000;
 
 describe("LocalCLI", () => {
   beforeAll(() => {
@@ -20,7 +20,8 @@ describe("LocalCLI", () => {
         info() {},
         error() {},
       }, "--", false);
-    }
+    },
+    LONG_TIMEOUT
   );
 
   describe("Test help command", () => {
@@ -78,7 +79,7 @@ describe("LocalCLI", () => {
           expect(message).toBeFalsy();
         },
       }, "--", false);
-    });
+    }, LONG_TIMEOUT);
 
     test("list", async () => {
       await runLocalCli(["list"], {
@@ -89,7 +90,7 @@ describe("LocalCLI", () => {
           expect(message).toBeFalsy();
         },
       }, "--", false);
-    });
+    }, LONG_TIMEOUT);
 
     test("stop", async () => {
       await runLocalCli(["stop"], {
@@ -105,6 +106,6 @@ describe("LocalCLI", () => {
           );
         },
       }, "--", false);
-    });
+    }, LONG_TIMEOUT);
   });
 }, LONG_TIMEOUT);

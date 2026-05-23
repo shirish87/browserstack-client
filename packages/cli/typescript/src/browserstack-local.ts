@@ -499,14 +499,15 @@ export async function main(
     const statusPath = join(binHome, "status.json");
 
     const more = passThrough.length ? passThrough : undefined;
+    const { commandTimeoutMs } = options;
 
     switch (action) {
       case BrowserStackLocalAction.start: {
-        await start({ accessKey, binHome, localIdentifier, more }, statusPath, logger);
+        await start({ accessKey, binHome, localIdentifier, more, commandTimeoutMs }, statusPath, logger);
         break;
       }
       case BrowserStackLocalAction.stop: {
-        await stop({ accessKey, binHome, localIdentifier, more }, statusPath, logger);
+        await stop({ accessKey, binHome, localIdentifier, more, commandTimeoutMs }, statusPath, logger);
         break;
       }
       case BrowserStackLocalAction.list: {
@@ -515,7 +516,7 @@ export async function main(
       }
       case BrowserStackLocalAction.runWith: {
         await runWith(
-          { accessKey, binHome, localIdentifier, more },
+          { accessKey, binHome, localIdentifier, more, commandTimeoutMs },
           statusPath,
           runWithArgs!,
           logger,
