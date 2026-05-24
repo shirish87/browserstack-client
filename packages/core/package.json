@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "6.1.0",
+  "version": "7.0.0",
   "type": "module",
   "description": "Shared runtime utilities: APIClient base, auth, error handling, HTTP adapters",
   "engines": {
