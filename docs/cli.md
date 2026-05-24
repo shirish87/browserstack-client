@@ -23,7 +23,7 @@ The BrowserStack Client project provides a unified, high-performance **native Go
 
 #### x64 (AMD64)
 ```bash
-wget https://github.com/shirish87/browserstack-client/releases/download/v6.1.0/browserstack-client-linux-amd64 -O browserstack-client
+wget https://github.com/shirish87/browserstack-client/releases/download/v7.0.0/browserstack-client-linux-amd64 -O browserstack-client
 chmod +x browserstack-client
 ```
 </div>
@@ -32,7 +32,7 @@ chmod +x browserstack-client
 
 #### ARM64
 ```bash
-wget https://github.com/shirish87/browserstack-client/releases/download/v6.1.0/browserstack-client-linux-arm64 -O browserstack-client
+wget https://github.com/shirish87/browserstack-client/releases/download/v7.0.0/browserstack-client-linux-arm64 -O browserstack-client
 chmod +x browserstack-client
 ```
 </div>
@@ -47,13 +47,13 @@ chmod +x browserstack-client
 
 #### Apple Silicon (ARM64)
 ```bash
-wget https://github.com/shirish87/browserstack-client/releases/download/v6.1.0/browserstack-client-darwin-arm64 -O browserstack-client
+wget https://github.com/shirish87/browserstack-client/releases/download/v7.0.0/browserstack-client-darwin-arm64 -O browserstack-client
 chmod +x browserstack-client
 ```
 
 #### Intel (x64)
 ```bash
-wget https://github.com/shirish87/browserstack-client/releases/download/v6.1.0/browserstack-client-darwin-amd64 -O browserstack-client
+wget https://github.com/shirish87/browserstack-client/releases/download/v7.0.0/browserstack-client-darwin-amd64 -O browserstack-client
 chmod +x browserstack-client
 ```
 
@@ -63,7 +63,7 @@ chmod +x browserstack-client
 <summary><b>Windows (x64)</b></summary>
 
 ```powershell
-wget https://github.com/shirish87/browserstack-client/releases/download/v6.1.0/browserstack-client-windows-amd64.exe -OutFile browserstack-client.exe
+wget https://github.com/shirish87/browserstack-client/releases/download/v7.0.0/browserstack-client-windows-amd64.exe -OutFile browserstack-client.exe
 ```
 </details>
 
