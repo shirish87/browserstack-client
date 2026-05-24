@@ -318,6 +318,7 @@ func (l *listView) view() string {
 	if len(filtered) == 0 {
 		sb.WriteString(StyleDim.Render("  No matches."))
 		sb.WriteString("\n")
+		return sb.String()
 	}
 	for i := lo; i < hi; i++ {
 		item := filtered[i]
