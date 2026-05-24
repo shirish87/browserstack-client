@@ -12,7 +12,7 @@ import (
 	"github.com/browserstack/browserstack-client/internal/output"
 )
 
-const testReportingBaseURL = "https://api-test-reporting.browserstack.com"
+const testReportingBaseURL = "https://api-automation.browserstack.com/ext/v1"
 const testReportingUploadURL = "https://upload-automation.browserstack.com"
 
 func runTestReporting(username, accessKey, action string, args []string) error {
@@ -37,7 +37,7 @@ func runTestReporting(username, accessKey, action string, args []string) error {
 		return err
 	}
 
-	return output.Print(res)
+	return output.PrintWithColumns(res, testreporting.DisplayColumns(action))
 }
 
 func runUploadReport(username, accessKey string, ctx context.Context, args []string) error {

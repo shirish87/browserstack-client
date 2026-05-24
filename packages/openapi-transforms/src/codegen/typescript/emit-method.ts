@@ -7,8 +7,8 @@ export interface EmitMethodInput {
   methodName: string;
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
-  pathParams: Array<{ name: string; tsType: string }>;
-  queryParams: Array<{ name: string; baseName?: string; tsType: string; required: boolean }>;
+  pathParams: Array<{ name: string; tsType: string; description?: string }>;
+  queryParams: Array<{ name: string; baseName?: string; tsType: string; required: boolean; description?: string }>;
   hasRequestBody: boolean;
   operationsKey: string;
   returnType: string;
@@ -18,6 +18,16 @@ export interface EmitMethodInput {
   overrides?: OperationOverrides;
   summary?: string;
   description?: string;
+}
+
+function buildJsDoc(description: string | undefined, paramTags: string[]): string {
+  if (!paramTags.length && description) {
+    return `/** ${description.replace(/\*\//g, "* /")} */\n  `;
+  }
+  const lines: string[] = [];
+  if (description) { lines.push(` * ${description.replace(/\*\//g, "* /")}`, " *"); }
+  for (const tag of paramTags) lines.push(` * ${tag}`);
+  return `/**\n${lines.join("\n")}\n */\n  `;
 }
 
 export function emitMethod(input: EmitMethodInput): string {
@@ -78,8 +88,13 @@ export function emitMethod(input: EmitMethodInput): string {
     : "undefined";
 
   const docText = input.description ?? input.summary;
-  const jsdoc = docText
-    ? `/** ${docText.replace(/\*\//g, "* /")} */\n  `
+  const paramDocs = [
+    ...camelPathParams.filter((p) => p.description).map((p) => `@param ${p.camelName} - ${p.description}`),
+    ...camelQueryParams.filter((p) => p.description).map((p) => `@param ${p.camelName} - ${p.description}`),
+    `@param options - Optional abort signal and other request options`,
+  ];
+  const jsdoc = docText || paramDocs.length
+    ? buildJsDoc(docText, paramDocs)
     : "";
 
   // Named aliases (from deriveReturnType) already include DeepCamelCase — don't double-wrap.

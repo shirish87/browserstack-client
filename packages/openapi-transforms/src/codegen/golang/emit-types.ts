@@ -105,15 +105,19 @@ function goType(prop: SchemaProperty, required: boolean, knownTypes: Set<string>
   }
 }
 
-function mergeAllOf(schema: SchemaObject): SchemaObject {
+function mergeAllOf(schema: SchemaObject, schemas?: Schemas): SchemaObject {
   if (!schema.allOf) return schema;
   const merged: SchemaObject = { type: "object", properties: {}, required: [] };
   for (const part of schema.allOf) {
-    if (part.properties) {
-      Object.assign(merged.properties!, part.properties);
+    // Resolve $ref parts so their fields are flattened in.
+    const resolved = (part.$ref && schemas)
+      ? schemas[part.$ref.replace(/^.*\//, "")] ?? part
+      : part;
+    if (resolved.properties) {
+      Object.assign(merged.properties!, resolved.properties);
     }
-    if (part.required) {
-      merged.required!.push(...part.required);
+    if (resolved.required) {
+      merged.required!.push(...resolved.required);
     }
   }
   if (schema.properties) Object.assign(merged.properties!, schema.properties);
@@ -121,8 +125,8 @@ function mergeAllOf(schema: SchemaObject): SchemaObject {
   return merged;
 }
 
-function emitStruct(name: string, rawSchema: SchemaObject, knownTypes: Set<string>): string {
-  const schema = mergeAllOf(rawSchema);
+function emitStruct(name: string, rawSchema: SchemaObject, knownTypes: Set<string>, schemas?: Schemas): string {
+  const schema = mergeAllOf(rawSchema, schemas);
   const required = new Set(schema.required ?? []);
   const fields: string[] = [];
   if (rawSchema._baseEmbed) {
@@ -170,7 +174,7 @@ export function emitGoTypes(product: string, schemas: Schemas): string {
       }
       seenDecls.add(goName);
       if (schema.type === "array") return emitArrayAlias(name, schema, knownTypes);
-      return emitStruct(name, schema, knownTypes);
+      return emitStruct(name, schema, knownTypes, schemas);
     })
     .filter(decl => decl !== "")
     .join("\n\n");

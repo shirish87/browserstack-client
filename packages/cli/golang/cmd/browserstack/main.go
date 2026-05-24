@@ -13,6 +13,7 @@ import (
 	"github.com/browserstack/browserstack-client/generated/screenshots"
 	testmanagement "github.com/browserstack/browserstack-client/generated/test-management"
 	testreporting "github.com/browserstack/browserstack-client/generated/test-reporting"
+	websitescanner "github.com/browserstack/browserstack-client/generated/website-scanner"
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 	"github.com/browserstack/browserstack-client/internal/tui"
 )
@@ -53,10 +54,10 @@ func main() {
 	if len(os.Args) < 3 {
 		fmt.Fprintln(os.Stderr, "Usage: browserstack-client <product> <action> [args...]")
 		fmt.Fprintln(os.Stderr, "       browserstack-client version")
-		fmt.Fprintf(os.Stderr, "Products: local, %s, %s, %s, %s, %s, %s\n",
+		fmt.Fprintf(os.Stderr, "Products: local, %s, %s, %s, %s, %s, %s, %s\n",
 			automate.ProductAutomate, appautomate.ProductAppAutomate,
 			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting,
-			screenshots.ProductScreenshots)
+			screenshots.ProductScreenshots, websitescanner.ProductWebsiteScanner)
 		os.Exit(1)
 	}
 
@@ -67,17 +68,18 @@ func main() {
 	if product == "help" {
 		fmt.Fprintln(os.Stdout, "Usage: browserstack-client <product> <action> [args...]")
 		fmt.Fprintln(os.Stdout, "       browserstack-client version")
-		fmt.Printf("Products: local, %s, %s, %s, %s, %s, %s\n",
+		fmt.Printf("Products: local, %s, %s, %s, %s, %s, %s, %s\n",
 			automate.ProductAutomate, appautomate.ProductAppAutomate,
 			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting,
-			screenshots.ProductScreenshots)
+			screenshots.ProductScreenshots, websitescanner.ProductWebsiteScanner)
 		return
 	}
 
-	apiClient := browserstackhttp.New("https://api.browserstack.com", username, accessKey)
-	accessibilityClient := browserstackhttp.New("https://api-accessibility.browserstack.com", username, accessKey)
-	testManagementClient := browserstackhttp.New("https://test-management.browserstack.com", username, accessKey)
-	screenshotsClient := browserstackhttp.New("https://www.browserstack.com", username, accessKey)
+	apiClient := browserstackhttp.New(baseURLAPI, username, accessKey)
+	accessibilityClient := browserstackhttp.New(baseURLAccessibility, username, accessKey)
+	testManagementClient := browserstackhttp.New(baseURLTestManagement, username, accessKey)
+	screenshotsClient := browserstackhttp.New(baseURLScreenshots, username, accessKey)
+	websiteScannerClient := browserstackhttp.New(baseURLWebsiteScanner, username, accessKey)
 
 	var err error
 	switch product {
@@ -96,6 +98,8 @@ func main() {
 	case testreporting.ProductTestReporting:
 		// test-reporting uses a different base URL; its handler creates its own client
 		err = runTestReporting(username, accessKey, action, args)
+	case websitescanner.ProductWebsiteScanner:
+		err = runWebsiteScanner(websiteScannerClient, action, args)
 	default:
 		fmt.Fprintf(os.Stderr, "unknown product: %s\n", product)
 		os.Exit(1)

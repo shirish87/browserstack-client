@@ -5,6 +5,7 @@ import {
 } from "@dot-slash/browserstack-core";
 import { BrowserStackError, OpenAPIError } from "@dot-slash/browserstack-core";
 import { operations, components } from "@dot-slash/browserstack-openapi/local-testing";
+import type { operations as localBinaryOperations } from "@dot-slash/browserstack-openapi/local-testing-binary";
 import { GeneratedLocalTestingClient } from "@dot-slash/browserstack-openapi/local-testing/client";
 import { unzipSync } from "fflate";
 
@@ -124,7 +125,7 @@ export class LocalTestingClient extends GeneratedLocalTestingClient {
   }
 
   downloadBinary(
-    osArch: operations["downloadLocalBinary"]["parameters"]["path"]["osArch"],
+    osArch: localBinaryOperations["downloadLocalBinary"]["parameters"]["path"]["osArch"],
     filenamePrefix: string = "BrowserStackLocal",
     options?: ExecuteOptions
   ): Promise<{

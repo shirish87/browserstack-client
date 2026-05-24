@@ -18,6 +18,7 @@ paths:
       description: Returns a paginated list of all Workflow Analyzer accessibility reports for your account.
       operationId: getAccessibilityWorkflowAnalyzerReports
       x-cli-section: "Workflow Analyzer"
+      x-cli-display: [id, name, status, wcagVersion, createdBy]
       responses:
         '200':
           description: Successful response
@@ -84,6 +85,7 @@ paths:
       description: Returns a paginated list of all Assisted Test accessibility reports for your account.
       operationId: getAccessibilityAssistedTestReports
       x-cli-section: "Assisted Tests"
+      x-cli-display: [id, name, status, wcagVersion, createdBy]
       responses:
         '200':
           description: Successful response
@@ -150,6 +152,7 @@ paths:
       description: Returns all saved authentication configurations used by the Website Scanner for login-protected pages.
       operationId: getAccessibilityWebsiteScannerAuthConfigs
       x-cli-section: "Website Scanner Auth"
+      x-cli-display: [id, name, type]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -208,6 +211,7 @@ paths:
       description: Returns a paginated list of all configured Website Scanner scans for your account.
       operationId: getAccessibilityWebsiteScannerScans
       x-cli-section: "Website Scanner Scans"
+      x-cli-display: [id, name, status, wcagVersion, scan_url]
       responses:
         '200':
           description: Successful response
@@ -278,6 +282,7 @@ paths:
       description: Returns a paginated list of all scan runs for a specific Website Scanner scan, including status and issue counts.
       operationId: getAccessibilityWebsiteScannerScanRuns
       x-cli-section: "Website Scanner Runs"
+      x-cli-display: [id, scanDate, status]
       parameters:
         - name: scan_id
           x-cli-picker:
@@ -462,6 +467,7 @@ paths:
       description: Returns a paginated list of all Automated Test accessibility projects for your account.
       operationId: getAccessibilityAutomatedTestProjects
       x-cli-section: "Automated Tests"
+      x-cli-display: [id, name, createdAt]
       parameters:
         - name: next_page
           in: query
@@ -480,6 +486,7 @@ paths:
       description: Returns a paginated list of Automated Test accessibility builds, optionally filtered by project.
       operationId: getAccessibilityAutomatedTestBuilds
       x-cli-section: "Automated Tests"
+      x-cli-display: [id, name, status, wcagVersion, startedAt]
       parameters:
         - name: next_page
           in: query
@@ -506,6 +513,7 @@ paths:
       description: Returns the paginated list of test cases and their accessibility results for a specific Automated Test build.
       operationId: getAccessibilityAutomatedTestBuildTestCases
       x-cli-section: "Automated Tests"
+      x-cli-display: [id, name, status, time]
       x-response-transform:
         codec: json-unwrap
         config:

@@ -50,16 +50,44 @@ type executedMsg struct {
 }
 
 func NewModel(version string, executor Executor) *Model {
-	items := make([]listItem, len(Manifest))
-	for i, p := range Manifest {
-		items[i] = listItem{id: p.ID, label: StripBrand(p.Title), description: p.Description}
-	}
 	return &Model{
 		version:     version,
 		step:        stepProduct,
-		productList: newListView("Select a product", items),
+		productList: newListView("Select a product", groupedProductItems(Manifest)),
 		executor:    executor,
 	}
+}
+
+func groupedProductItems(products []Product) []listItem {
+	type bucket struct{ name string; items []Product }
+	order := []string{}
+	byCategory := map[string][]Product{}
+	for _, p := range products {
+		cat := p.Category
+		if cat == "" {
+			cat = "Other"
+		}
+		if _, ok := byCategory[cat]; !ok {
+			order = append(order, cat)
+		}
+		byCategory[cat] = append(byCategory[cat], p)
+	}
+	// Single category → flat list, no headers.
+	if len(order) == 1 {
+		out := make([]listItem, len(products))
+		for i, p := range products {
+			out[i] = listItem{id: p.ID, label: StripBrand(p.Title), description: p.Description}
+		}
+		return out
+	}
+	out := []listItem{}
+	for _, cat := range order {
+		out = append(out, listItem{id: "__cat_" + cat, label: cat, header: true})
+		for _, p := range byCategory[cat] {
+			out = append(out, listItem{id: p.ID, label: StripBrand(p.Title), description: p.Description})
+		}
+	}
+	return out
 }
 
 func (m *Model) Init() tea.Cmd {

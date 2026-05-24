@@ -46,10 +46,15 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
  * @internal
  */
 export class APIClient {
+  /** Base URLs used for API requests. */
   protected readonly baseUrls: { sdk: string; sdkCloud: string };
+  /** HTTP Basic Auth header derived from username and access key. */
   protected readonly authHeader?: string;
+  /** User-Agent string sent with every request. */
   protected readonly userAgent: string;
+  /** Fetch implementation used to make HTTP requests. */
   protected readonly fetchFn: typeof fetch;
+  /** Registry of request and response codecs. */
   protected readonly registry: CodecRegistry;
   private readonly executeOptions: {
     maxErrorBodySize?: number;

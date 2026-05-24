@@ -99,4 +99,80 @@ describe("emitMethod", () => {
     // sidecar: custom_id → appId (snake→camel); inverted for toSnakeCase: appId → custom_id
     expect(src).toContain('"appId":"custom_id"');
   });
+
+  it("emits @param JSDoc tags for path params with descriptions", () => {
+    const src = emitMethod({
+      operationId: "getAutomateSession",
+      methodName: "getAutomateSession",
+      method: "GET",
+      path: "/automate/sessions/{sessionId}",
+      pathParams: [{ name: "sessionId", tsType: "string", description: "ID of your session" }],
+      queryParams: [],
+      hasRequestBody: false,
+      operationsKey: "getAutomateSession",
+      returnType: "unknown",
+      annotations: { responseCodec: "json", responseCodecConfig: {}, requestCodec: "json", requestCodecConfig: {}, custom: { response: false, request: false } },
+      baseUrl: "sdk",
+    });
+    expect(src).toContain("@param sessionId - ID of your session");
+  });
+
+  it("emits @param JSDoc tags for query params with descriptions", () => {
+    const src = emitMethod({
+      operationId: "listBuilds",
+      methodName: "listBuilds",
+      method: "GET",
+      path: "/automate/builds.json",
+      pathParams: [],
+      queryParams: [{ name: "limit", tsType: "number", required: false, description: "Number of results to return" }],
+      hasRequestBody: false,
+      operationsKey: "listBuilds",
+      returnType: "unknown",
+      annotations: { responseCodec: "json", responseCodecConfig: {}, requestCodec: "json", requestCodecConfig: {}, custom: { response: false, request: false } },
+      baseUrl: "sdk",
+    });
+    expect(src).toContain("@param limit - Number of results to return");
+  });
+
+  it("does not emit @param tags for path/query params without descriptions", () => {
+    const src = emitMethod({
+      operationId: "getAutomateSession",
+      methodName: "getAutomateSession",
+      method: "GET",
+      path: "/automate/sessions/{sessionId}",
+      pathParams: [{ name: "sessionId", tsType: "string" }],
+      queryParams: [],
+      hasRequestBody: false,
+      operationsKey: "getAutomateSession",
+      returnType: "unknown",
+      annotations: { responseCodec: "json", responseCodecConfig: {}, requestCodec: "json", requestCodecConfig: {}, custom: { response: false, request: false } },
+      baseUrl: "sdk",
+    });
+    expect(src).not.toContain("@param sessionId");
+    expect(src).toContain("@param options");
+  });
+
+  it("combines method description and @param tags in a single JSDoc block", () => {
+    const src = emitMethod({
+      operationId: "getAutomateSession",
+      methodName: "getAutomateSession",
+      method: "GET",
+      path: "/automate/sessions/{sessionId}",
+      pathParams: [{ name: "sessionId", tsType: "string", description: "ID of your session" }],
+      queryParams: [],
+      hasRequestBody: false,
+      operationsKey: "getAutomateSession",
+      returnType: "unknown",
+      annotations: { responseCodec: "json", responseCodecConfig: {}, requestCodec: "json", requestCodecConfig: {}, custom: { response: false, request: false } },
+      baseUrl: "sdk",
+      description: "Fetches a session by ID.",
+    });
+    expect(src).toContain("Fetches a session by ID.");
+    expect(src).toContain("@param sessionId - ID of your session");
+    // Both should be in a single JSDoc block (one /** ... */)
+    const jsdocMatch = src.match(/\/\*\*[\s\S]*?\*\//);
+    expect(jsdocMatch).not.toBeNull();
+    expect(jsdocMatch![0]).toContain("Fetches a session by ID.");
+    expect(jsdocMatch![0]).toContain("@param sessionId - ID of your session");
+  });
 });

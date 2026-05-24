@@ -13,6 +13,7 @@ import (
 	"github.com/browserstack/browserstack-client/generated/screenshots"
 	testmanagement "github.com/browserstack/browserstack-client/generated/test-management"
 	testreporting "github.com/browserstack/browserstack-client/generated/test-reporting"
+	websitescanner "github.com/browserstack/browserstack-client/generated/website-scanner"
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 	"github.com/browserstack/browserstack-client/internal/tui"
 )
@@ -147,10 +148,11 @@ func withCapturedOutput(fn func() error) (string, error) {
 }
 
 func makeExecutor(username, accessKey string) tui.Executor {
-	apiClient := browserstackhttp.New("https://api.browserstack.com", username, accessKey)
-	accessibilityClient := browserstackhttp.New("https://api-accessibility.browserstack.com", username, accessKey)
-	testManagementClient := browserstackhttp.New("https://test-management.browserstack.com", username, accessKey)
-	screenshotsClient := browserstackhttp.New("https://www.browserstack.com", username, accessKey)
+	apiClient := browserstackhttp.New(baseURLAPI, username, accessKey)
+	accessibilityClient := browserstackhttp.New(baseURLAccessibility, username, accessKey)
+	testManagementClient := browserstackhttp.New(baseURLTestManagement, username, accessKey)
+	screenshotsClient := browserstackhttp.New(baseURLScreenshots, username, accessKey)
+	websiteScannerClient := browserstackhttp.New(baseURLWebsiteScanner, username, accessKey)
 
 	return func(product *tui.Product, action *tui.Action, values map[string]string) (string, error) {
 		args := buildArgs(action, values)
@@ -178,6 +180,8 @@ func makeExecutor(username, accessKey string) tui.Executor {
 				return runTestManagement(testManagementClient, actionName, rest)
 			case testreporting.ProductTestReporting:
 				return runTestReporting(username, accessKey, actionName, rest)
+			case websitescanner.ProductWebsiteScanner:
+				return runWebsiteScanner(websiteScannerClient, actionName, rest)
 			}
 			return fmt.Errorf("unknown product: %s", product.ID)
 		})

@@ -14,6 +14,7 @@ paths:
       summary: Get Project List
       operationId: getTestReportingProjects
       x-cli-section: "Projects"
+      x-cli-display: [id, name, updated_at, observability_url]
       parameters:
         - name: next_page
           in: query
@@ -39,6 +40,7 @@ paths:
       summary: Get Build List for Project
       operationId: getTestReportingProjectBuilds
       x-cli-section: "Projects"
+      x-cli-display: [build_id, name, status, started_at, finished_at]
       parameters:
         - name: projectId
           x-cli-picker:
@@ -420,6 +422,7 @@ paths:
       summary: Get Test List
       operationId: getTestReportingTestRuns
       x-cli-section: "Test Runs"
+      x-cli-display: [name, status, duration]
       parameters:
         - name: buildId
           x-cli-picker:

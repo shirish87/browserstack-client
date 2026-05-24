@@ -1,0 +1,42 @@
+{
+  "name": "@dot-slash/browserstack-website-scanner",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "6.1.0",
+  "type": "module",
+  "description": "BrowserStack Website Scanner API client",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./test": {
+      "types": "./dist/test/index.d.ts",
+      "import": "./dist/test/index.js",
+      "require": "./dist/test/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit || true"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@dot-slash/browserstack-core": "workspace:*",
+    "@dot-slash/browserstack-openapi": "workspace:*",
+    "@dot-slash/browserstack-openapi-transforms": "workspace:*",
+    "@types/node": "20.0.0",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.4"
+  }
+}

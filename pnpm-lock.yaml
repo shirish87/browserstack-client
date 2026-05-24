@@ -402,6 +402,9 @@ importers:
       '@dot-slash/browserstack-test-reporting':
         specifier: workspace:*
         version: link:../test-reporting
+      '@dot-slash/browserstack-website-scanner':
+        specifier: workspace:*
+        version: link:../website-scanner
     devDependencies:
       tsup:
         specifier: ^8.5.1
@@ -435,6 +438,30 @@ importers:
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.8.3))
 
   packages/test-reporting:
+    devDependencies:
+      '@dot-slash/browserstack-core':
+        specifier: workspace:*
+        version: link:../core
+      '@dot-slash/browserstack-openapi':
+        specifier: workspace:*
+        version: link:../openapi
+      '@dot-slash/browserstack-openapi-transforms':
+        specifier: workspace:*
+        version: link:../openapi-transforms
+      '@types/node':
+        specifier: 20.0.0
+        version: 20.0.0
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(postcss@8.5.10)(typescript@6.0.3)(yaml@2.8.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^4.1.4
+        version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.8.3))
+
+  packages/website-scanner:
     devDependencies:
       '@dot-slash/browserstack-core':
         specifier: workspace:*

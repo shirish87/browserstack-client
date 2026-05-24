@@ -41,6 +41,7 @@ paths:
         the binary should have been started with the --enable-logging-for-api parameter.
       operationId: getLocalBinaryInstances
       x-cli-section: "Instances"
+      x-cli-display: [id, localIdentifier, startTime, hostname]
       parameters:
       - name: auth_token
         in: query

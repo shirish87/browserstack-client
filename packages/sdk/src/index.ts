@@ -5,4 +5,5 @@ export * from "./accessibility/index";
 export * from "./test-management/index";
 export * from "./test-reporting/index";
 export * from "./screenshots/index";
+export * from "./website-scanner/index";
 export * from "./core/index";

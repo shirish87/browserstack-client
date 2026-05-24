@@ -25,5 +25,5 @@ func runTestManagement(c *browserstackhttp.Client, action string, args []string)
 		return err
 	}
 
-	return output.Print(res)
+	return output.PrintWithColumns(res, testmanagement.DisplayColumns(action))
 }

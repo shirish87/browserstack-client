@@ -29,7 +29,12 @@ export type GetScreenshotsBrowsersError = HttpError<
 >;
 
 export class GeneratedScreenshotsClient extends APIClient {
-/** Fetches a screenshot job */
+/**
+ * Fetches a screenshot job
+ *
+ * @param jobId - ID of your screenshot job
+ * @param options - Optional abort signal and other request options
+ */
   getJob(jobId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getScreenshotsJob"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/screenshots/{jobId}.json",
@@ -46,7 +51,11 @@ export class GeneratedScreenshotsClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getScreenshotsJob"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Take a screenshot of a website on a particular browser */
+/**
+ * Take a screenshot of a website on a particular browser
+ *
+ * @param options - Optional abort signal and other request options
+ */
   createJob(body: DeepCamelCase<operations["createScreenshotsJob"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["createScreenshotsJob"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/screenshots",
@@ -63,7 +72,11 @@ export class GeneratedScreenshotsClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["createScreenshotsJob"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Fetches list of browsers supported by Screenshots API */
+/**
+ * Fetches list of browsers supported by Screenshots API
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getBrowsers(options?: ExecuteOptions): Promise<DeepCamelCase<operations["getScreenshotsBrowsers"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/screenshots/browsers.json",

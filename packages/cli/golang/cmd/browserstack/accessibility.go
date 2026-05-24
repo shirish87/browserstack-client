@@ -25,5 +25,5 @@ func runAccessibility(c *browserstackhttp.Client, action string, args []string) 
 		return err
 	}
 
-	return output.Print(res)
+	return output.PrintWithColumns(res, accessibility.DisplayColumns(action))
 }

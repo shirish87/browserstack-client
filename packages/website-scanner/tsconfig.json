@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "noEmit": true,
+    "paths": {
+      "@dot-slash/browserstack-core": ["../core/src/index.ts"],
+      "@dot-slash/browserstack-openapi": ["../openapi/generated/index.ts"],
+      "@dot-slash/browserstack-openapi/*": ["../openapi/generated/*.ts"],
+      "@dot-slash/browserstack-openapi-transforms": ["../openapi-transforms/src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}

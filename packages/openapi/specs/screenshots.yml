@@ -104,6 +104,7 @@ paths:
       description: Fetches list of browsers supported by Screenshots API
       operationId: getScreenshotsBrowsers
       x-cli-section: "Browsers"
+      x-cli-display: [browser, browser_version, os, os_version, device]
       responses:
         '200':
           description: Successful operation

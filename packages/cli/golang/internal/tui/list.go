@@ -236,6 +236,9 @@ func rowHeightOf(items []listItem, i int) int {
 		}
 		return 2
 	}
+	if items[i].description != "" {
+		return 2
+	}
 	return 1
 }
 
@@ -296,7 +299,7 @@ func (l *listView) view() string {
 	hiddenBelow := len(filtered) - hi
 
 	var sb strings.Builder
-	sb.WriteString(StyleSection.Render(l.title))
+	sb.WriteString(StylePrompt.Render(l.title))
 	if l.query != "" {
 		sb.WriteString(StyleDim.Render(fmt.Sprintf("  (%d of %d match)", matchedSelectable, totalSelectable)))
 	} else if hiddenAbove > 0 || hiddenBelow > 0 {
@@ -339,6 +342,11 @@ func (l *listView) view() string {
 		sb.WriteString(marker)
 		sb.WriteString(line)
 		sb.WriteString("\n")
+		if item.description != "" {
+			sb.WriteString("    ")
+			sb.WriteString(StyleDim.Render(item.description))
+			sb.WriteString("\n")
+		}
 	}
 	if hiddenBelow > 0 {
 		sb.WriteString(StyleDim.Render(fmt.Sprintf("  ↓ %d more below", hiddenBelow)))

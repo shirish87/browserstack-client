@@ -8,7 +8,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
   {
     "id": "automate",
     "title": "BrowserStack Automate",
-    "description": "BrowserStack Automate API",
+    "description": "Browser automation cloud",
+    "category": "Test Automation",
     "resources": [
       {
         "id": "default",
@@ -788,7 +789,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
   {
     "id": "app-automate",
     "title": "BrowserStack App Automate",
-    "description": "BrowserStack App Automate API",
+    "description": "Mobile app automation cloud",
+    "category": "Test Automation",
     "resources": [
       {
         "id": "default",
@@ -2131,7 +2133,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
   {
     "id": "local-testing",
     "title": "BrowserStack Local Testing",
-    "description": "BrowserStack Local Testing API",
+    "description": "Test on internal & staging environments",
+    "category": "Test Automation",
     "resources": [
       {
         "id": "default",
@@ -2228,7 +2231,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
   {
     "id": "accessibility",
     "title": "BrowserStack Accessibility",
-    "description": "",
+    "description": "Automate web compliance",
+    "category": "Web Testing",
     "resources": [
       {
         "id": "default",
@@ -2952,7 +2956,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
   {
     "id": "test-management",
     "title": "BrowserStack Test Management",
-    "description": "BrowserStack Test Management API",
+    "description": "Plan, track, and manage tests",
+    "category": "Management & Optimization",
     "resources": [
       {
         "id": "Projects",
@@ -6490,7 +6495,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
   {
     "id": "test-reporting",
     "title": "BrowserStack Test Reporting & Analytics (TestReporting)",
-    "description": "API for BrowserStack Test Reporting & Analytics",
+    "description": "Monitor & optimize tests",
+    "category": "Management & Optimization",
     "resources": [
       {
         "id": "default",
@@ -8031,7 +8037,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
   {
     "id": "screenshots",
     "title": "BrowserStack Screenshots",
-    "description": "BrowserStack Screenshots API",
+    "description": "Automated screenshot testing",
+    "category": "Test Automation",
     "resources": [
       {
         "id": "default",
@@ -8147,6 +8154,347 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "description": "Fetches list of browsers supported by Screenshots API",
             "section": "Browsers",
             "fields": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "website-scanner",
+    "title": "BrowserStack Website Scanner",
+    "description": "All-in-one website checker",
+    "category": "Automation without Coding",
+    "resources": [
+      {
+        "id": "default",
+        "label": "BrowserStack Website Scanner",
+        "actions": [
+          {
+            "id": "list-website-scanner-auth-configs",
+            "summary": "List Website Scanner auth configs",
+            "description": "Returns all saved authentication configurations used by the Website Scanner for login-protected pages.",
+            "section": "Auth Config",
+            "fields": []
+          },
+          {
+            "id": "create-website-scanner-auth-config",
+            "summary": "Create Website Scanner auth config",
+            "description": "Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans.",
+            "section": "Auth Config",
+            "fields": [
+              {
+                "name": "name",
+                "label": "Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "type",
+                "label": "Type",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body",
+                "enum": [
+                  "basic",
+                  "form_2"
+                ]
+              },
+              {
+                "name": "authData.username",
+                "label": "AuthData › Username",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.password",
+                "label": "AuthData › Password",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.url",
+                "label": "AuthData › URL",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.usernameSelector",
+                "label": "AuthData › UsernameSelector",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.passwordSelector",
+                "label": "AuthData › PasswordSelector",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.submitSelector",
+                "label": "AuthData › SubmitSelector",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
+          },
+          {
+            "id": "list-website-scanner-scans",
+            "summary": "List Website Scanner scans",
+            "description": "Returns a paginated list of all configured Website Scanner scans for your account.",
+            "section": "Scans",
+            "fields": [
+              {
+                "name": "page",
+                "label": "Page",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "page_size",
+                "label": "Page Size",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "get-website-scanner-scan",
+            "summary": "Get Website Scanner scan",
+            "description": "Returns details for a specific Website Scanner scan project.",
+            "section": "Scans",
+            "fields": [
+              {
+                "name": "proj_id",
+                "label": "Proj ID",
+                "description": "The unique ID of the scan project",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "website-scanner.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "create-website-scanner-scan",
+            "summary": "Create Website Scanner scan",
+            "description": "Creates a new Website Scanner scan project with the specified configuration.",
+            "section": "Scans",
+            "fields": [
+              {
+                "name": "name",
+                "label": "Name",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "scanData.urlSet",
+                "label": "ScanData › UrlSet",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "recurring",
+                "label": "Recurring",
+                "description": "",
+                "type": "boolean",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "instantRun",
+                "label": "InstantRun",
+                "description": "",
+                "type": "boolean",
+                "required": false,
+                "location": "body"
+              }
+            ]
+          },
+          {
+            "id": "trigger-website-scanner-scan-run",
+            "summary": "Trigger Website Scanner scan run",
+            "description": "Triggers a new scan run for an existing Website Scanner scan project.",
+            "section": "Scan Runs",
+            "fields": [
+              {
+                "name": "project_id",
+                "label": "Project ID",
+                "description": "The unique ID of the scan project",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "website-scanner.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-website-scanner-scan-runs",
+            "summary": "List Website Scanner scan runs",
+            "description": "Returns a paginated list of all scan runs for a specific Website Scanner scan project.",
+            "section": "Scan Runs",
+            "fields": [
+              {
+                "name": "proj_id",
+                "label": "Proj ID",
+                "description": "The unique ID of the scan project",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "website-scanner.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "page",
+                "label": "Page",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "page_size",
+                "label": "Page Size",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "list-website-scanner-scan-run-status",
+            "summary": "Get Website Scanner scan run status",
+            "description": "Returns the current execution status of a specific Website Scanner scan run.",
+            "section": "Scan Runs",
+            "fields": [
+              {
+                "name": "proj_id",
+                "label": "Proj ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "website-scanner.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "report_id",
+                "label": "Report ID",
+                "description": "The unique ID of the scan run report",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "website-scanner.list-website-scanner-scan-runs",
+                  "valueField": "scanRunId",
+                  "labelFields": [
+                    "scanRunId"
+                  ],
+                  "filterBy": [
+                    "projId"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "get-website-scanner-scan-run-summary",
+            "summary": "Get Website Scanner scan run summary",
+            "description": "Returns the summary for a specific Website Scanner scan run, including issue counts and scan metadata.",
+            "section": "Scan Runs",
+            "fields": [
+              {
+                "name": "proj_id",
+                "label": "Proj ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "website-scanner.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "report_id",
+                "label": "Report ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "website-scanner.list-website-scanner-scan-runs",
+                  "valueField": "scanRunId",
+                  "labelFields": [
+                    "scanRunId"
+                  ],
+                  "filterBy": [
+                    "projId"
+                  ]
+                }
+              },
+              {
+                "name": "product",
+                "label": "Product",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              }
+            ]
           }
         ]
       }

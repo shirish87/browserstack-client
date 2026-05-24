@@ -26,6 +26,8 @@
     "./accessibility/client": "./generated/accessibility.client.ts",
     "./test-reporting": "./generated/test-reporting.ts",
     "./test-reporting/client": "./generated/test-reporting.client.ts",
+    "./website-scanner": "./generated/website-scanner.ts",
+    "./website-scanner/client": "./generated/website-scanner.client.ts",
     "./package.json": "./package.json"
   },
   "scripts": {

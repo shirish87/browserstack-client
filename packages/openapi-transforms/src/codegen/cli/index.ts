@@ -45,6 +45,7 @@ interface SpecOp {
   "x-cli-action"?: string;
   "x-cli-resource"?: string;
   "x-cli-section"?: string;
+  "x-cli-display"?: string[];
 }
 
 interface SpecDoc {
@@ -72,6 +73,8 @@ export interface CLIActionMetadata {
   summary?: string;
   description?: string;
   section?: string;
+  /** Columns to display in CLI table output for list results. Populated from x-cli-display in spec. */
+  displayColumns?: string[];
   /** Go response type for this action, e.g. "AutomatePlan", "string", "[]byte". Populated by build.mjs after Go codegen. */
   responseGoType?: string;
   /** Field name in DispatchResult for this action, e.g. "GetPlan". Populated by build.mjs after Go codegen. */
@@ -157,6 +160,7 @@ export async function extractCLIMetadata(specPath: string, product: string): Pro
         summary: op.summary,
         description: op.description,
         section: op["x-cli-section"],
+        displayColumns: op["x-cli-display"],
       };
     }
   }

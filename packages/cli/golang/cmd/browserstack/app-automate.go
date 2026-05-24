@@ -142,5 +142,5 @@ func runAppAutomate(c *browserstackhttp.Client, action string, args []string) er
 		}
 	}
 
-	return output.Print(res)
+	return output.PrintWithColumns(res, appautomate.DisplayColumns(action))
 }

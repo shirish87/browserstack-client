@@ -35,5 +35,5 @@ func runLocalTesting(c *browserstackhttp.Client, action string, args []string) e
 		}
 	}
 
-	return output.Print(res)
+	return output.PrintWithColumns(res, localtesting.DisplayColumns(action))
 }

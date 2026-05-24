@@ -32,6 +32,7 @@ paths:
       summary: Get list of projects
       operationId: getTestManagementProjects
       x-cli-section: "Projects"
+      x-cli-display: [identifier, name]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -182,6 +183,7 @@ paths:
       summary: Get list of folders in a project
       operationId: getTestManagementFolders
       x-cli-section: "Folders"
+      x-cli-display: [id, name, parent_id]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -372,6 +374,7 @@ paths:
       summary: Get list of test cases
       operationId: getTestManagementTestCases
       x-cli-section: "Test Cases"
+      x-cli-display: [identifier, name, status, priority, automation_status]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -833,6 +836,7 @@ paths:
       summary: Get attachments for a test case
       operationId: getTestManagementTestCaseAttachments
       x-cli-section: "Test Case Attachments"
+      x-cli-display: [id, filename, file_size, created_at]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -926,6 +930,7 @@ paths:
       summary: Get test results for a test case across all test runs
       operationId: getTestManagementTestCaseResults
       x-cli-section: "Test Cases"
+      x-cli-display: [id, status, created_at, created_by]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -957,6 +962,7 @@ paths:
       summary: Get list of test runs
       operationId: getTestManagementTestRuns
       x-cli-section: "Test Runs"
+      x-cli-display: [identifier, name, run_state, created_at]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1055,6 +1061,7 @@ paths:
       summary: Get test cases of a test run
       operationId: getTestManagementTestRunTestCases
       x-cli-section: "Test Runs"
+      x-cli-display: [identifier, name, status, latest_status]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1238,6 +1245,7 @@ paths:
       summary: Get all test results for a test run
       operationId: getTestManagementTestRunResults
       x-cli-section: "Test Run Results"
+      x-cli-display: [id, status, created_at, created_by]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1434,6 +1442,7 @@ paths:
       summary: Get list of test plans
       operationId: getTestManagementTestPlans
       x-cli-section: "Test Plans"
+      x-cli-display: [identifier, name, plan_status, created_at]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1563,6 +1572,7 @@ paths:
       summary: Get test runs linked to a test plan
       operationId: getTestManagementTestPlanTestRuns
       x-cli-section: "Test Plans"
+      x-cli-display: [identifier, name, run_state, created_at]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1595,6 +1605,7 @@ paths:
       summary: Get all configurations
       operationId: getTestManagementConfigurations
       x-cli-section: "Configurations"
+      x-cli-display: [id, name, created_at]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1676,6 +1687,7 @@ paths:
       summary: Get all custom fields
       operationId: getTestManagementCustomFields
       x-cli-section: "Custom Fields"
+      x-cli-display: [id, field_name, field_type, is_required]
       x-response-transform:
         codec: json-unwrap
         config:

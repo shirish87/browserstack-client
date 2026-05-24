@@ -14,7 +14,10 @@ export type GetLogsError = HttpError<unknown>;
 export type GetProjectResult = DeepCamelCase<(operations["getProject"]["responses"][200]["content"]["application/json"] & Record<"project", unknown>)["project"]>;
 
 export class TinyClient extends APIClient {
-getProject(projectId: number, options?: ExecuteOptions): Promise<GetProjectResult> {
+/**
+ * @param options - Optional abort signal and other request options
+ */
+  getProject(projectId: number, options?: ExecuteOptions): Promise<GetProjectResult> {
     return (this.execute({
       path: "/projects/{projectId}",
       params: { path: { projectId: projectId } },
@@ -30,7 +33,10 @@ getProject(projectId: number, options?: ExecuteOptions): Promise<GetProjectResul
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetProjectResult>;
   }
 
-getLogs(options?: ExecuteOptions): Promise<string> {
+/**
+ * @param options - Optional abort signal and other request options
+ */
+  getLogs(options?: ExecuteOptions): Promise<string> {
     return (this.execute({
       path: "/logs",
       params: undefined,

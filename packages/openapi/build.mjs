@@ -1,4 +1,3 @@
-import SwaggerParser from "@apidevtools/swagger-parser";
 import fs from "node:fs/promises";
 import path from "node:path";
 import openapiTS, { astToString } from "openapi-typescript";
@@ -12,28 +11,9 @@ import { extractCLIMetadata, generateTSConstants, generateTSSchemas, generateGoC
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const origSpecPath = path.join(__dirname, "../../openapi.yml");
 const outDir = path.join(__dirname, "generated");
 
-console.log("Bundling and validating OpenAPI spec...");
-
-// 1. Bundle and validate the original spec
-const api = await SwaggerParser.bundle(origSpecPath);
-api.info.version = process.env.npm_package_version ?? api.info.version;
-await SwaggerParser.validate(api);
-
-// 2. Write bundled JSON
 await fs.mkdir(outDir, { recursive: true });
-await fs.writeFile(
-  path.join(outDir, "openapi.json"),
-  JSON.stringify(api, null, 2)
-);
-
-console.log("Generating TypeScript types...");
-
-// 3. Generate comprehensive types from the spec
-// For now, generate a single comprehensive type file
-const specUrl = new URL("../../openapi.yml", import.meta.url);
 
 const blobType = ts.factory.createTypeReferenceNode("Blob");
 const blobOrNull = ts.factory.createUnionTypeNode([
@@ -41,87 +21,25 @@ const blobOrNull = ts.factory.createUnionTypeNode([
   ts.factory.createLiteralTypeNode(ts.factory.createNull()),
 ]);
 
-const ast = await openapiTS(specUrl, {
-  transform(schemaObject) {
-    if (schemaObject.format === "binary") {
-      return schemaObject.nullable ? blobOrNull : blobType;
-    }
-  },
-});
-
-await fs.writeFile(
-  path.join(outDir, "openapi.ts"),
-  astToString(ast)
-    .replace(/ \* @description /g, " * ")
-    .replace(/\/\*\* @description /g, "/** ")
-);
-
-console.log("✓ Generated openapi.ts");
-
-// 4. Generate per-product type aliases/re-exports
-const products = {
-  automate: {
-    pathPatterns: [/^\/automate\//],
-    description: "Automate product types",
-  },
-  "app-automate": {
-    pathPatterns: [/^\/app-automate\//],
-    description: "App Automate product types",
-  },
-  screenshots: {
-    pathPatterns: [/^\/screenshots/],
-    description: "Screenshots product types",
-  },
-  "local-testing": {
-    pathPatterns: [/^\/local\//],
-    description: "Local Testing product types",
-  },
-  "local-testing-binary": {
-    pathPatterns: [/^\/browserstack-local/],
-    description: "Local Testing Binary product types",
-  },
-};
-
-// Standalone specs that have their own server base URL and are not part of openapi.yml
-const standaloneSpecs = [
-  { product: "test-management", description: "Test Management product types" },
-  { product: "test-reporting", description: "Test Reporting & Analytics product types" },
-  { product: "accessibility", description: "Accessibility product types" },
+// All products — each has its own spec in specs/<product>.yml
+const allProducts = [
+  "automate",
+  "app-automate",
+  "screenshots",
+  "local-testing",
+  "local-testing-binary",
+  "test-management",
+  "test-reporting",
+  "accessibility",
+  "website-scanner",
 ];
 
-// Generate per-product type files by filtering paths
-const paths = Object.keys(api.paths || {});
+console.log("Generating TypeScript types...");
 
-for (const [productName, productConfig] of Object.entries(products)) {
-  const productPaths = paths.filter((path) =>
-    productConfig.pathPatterns.some((pattern) => pattern.test(path))
-  );
-
-  // Generate a type file for this product
-  // For now, just re-export from openapi.ts and filter at the paths level
-  const productTypeContent = `/**
- * Types for BrowserStack ${productConfig.description}
- * @internal - This is generated code. Do not modify.
- */
-export type * from "./openapi.js";
-
-// Re-export the paths type for this product
-import type { paths as allPaths } from "./openapi.js";
-export type paths = Pick<allPaths, ${productPaths.map((p) => `"${p}"`).join(" | ")}>;
-`;
-
-  await fs.writeFile(
-    path.join(outDir, `${productName}.ts`),
-    productTypeContent
-  );
-  console.log(`✓ Generated ${productName}.ts (${productPaths.length} operations)`);
-}
-
-// 5. Generate types for standalone specs (separate server, not in openapi.yml)
-for (const { product, description } of standaloneSpecs) {
+async function generateTSTypes(product) {
   const specPath = path.join(__dirname, "specs", `${product}.yml`);
-  const specUrl = new URL(`specs/${product}.yml`, import.meta.url);
-  const standaloneAst = await openapiTS(specUrl, {
+  const mergedDoc = await loadSpecWithShared(specPath);
+  const ast = await openapiTS(mergedDoc, {
     transform(schemaObject) {
       if (schemaObject.format === "binary") {
         return schemaObject.nullable ? blobOrNull : blobType;
@@ -130,29 +48,28 @@ for (const { product, description } of standaloneSpecs) {
   });
   await fs.writeFile(
     path.join(outDir, `${product}.ts`),
-    astToString(standaloneAst)
+    astToString(ast)
+      .replace(/ \* @description /g, " * ")
+      .replace(/\/\*\* @description /g, "/** ")
   );
-  console.log(`✓ Generated ${product}.ts (standalone spec)`);
+  console.log(`  ✓ ${product}.ts`);
 }
 
-// 6. Generate index.ts re-exporting all
-const products_list = [
-  ...Object.keys(products),
-  ...standaloneSpecs.map((s) => s.product),
-];
+for (const product of allProducts) {
+  await generateTSTypes(product);
+}
+
+// Generate index.ts re-exporting all products
 const indexContent = `/**
  * Generated OpenAPI types for all BrowserStack products
  * @internal - This is generated code. Do not modify.
  */
-export type * from "./openapi.js";
-
-// Product-specific re-exports
-${products_list.map((p) => `export * as ${p.replace(/-/g, "_")} from "./${p}.js";`).join("\n")}
+${allProducts.map((p) => `export * as ${p.replace(/-/g, "_")} from "./${p}.js";`).join("\n")}
 `;
 
 await fs.writeFile(path.join(outDir, "index.ts"), indexContent);
 
-console.log("✓ Generated index.ts");
+console.log("  ✓ index.ts");
 console.log("✓ OpenAPI code generation complete");
 
 console.log("Generating transform-based client modules...");
@@ -167,6 +84,7 @@ const productSpecs = [
   { product: "test-management", baseUrl: "sdk" },
   { product: "test-reporting", baseUrl: "sdk" },
   { product: "screenshots", baseUrl: "sdk" },
+  { product: "website-scanner", baseUrl: "sdk" },
 ];
 
 const fieldOverridesPath = path.join(__dirname, "field-overrides.yaml");
@@ -239,6 +157,26 @@ async function generateGoModules() {
 await generateGoModules();
 
 console.log("Generating CLI constants...");
+const PRODUCT_CATEGORIES = {
+  "automate":          "Test Automation",
+  "app-automate":      "Test Automation",
+  "screenshots":       "Test Automation",
+  "local-testing":     "Test Automation",
+  "accessibility":     "Web Testing",
+  "test-management":   "Management & Optimization",
+  "test-reporting":    "Management & Optimization",
+  "website-scanner":   "Automation without Coding",
+};
+const PRODUCT_DESCRIPTIONS = {
+  "automate":          "Browser automation cloud",
+  "app-automate":      "Mobile app automation cloud",
+  "screenshots":       "Automated screenshot testing",
+  "local-testing":     "Test on internal & staging environments",
+  "accessibility":     "Automate web compliance",
+  "test-management":   "Plan, track, and manage tests",
+  "test-reporting":    "Monitor & optimize tests",
+  "website-scanner":   "All-in-one website checker",
+};
 const cliMetadata = [];
 const specInfoMap = {};
 const specDocMap = {};
@@ -249,7 +187,8 @@ for (const { product } of productSpecs) {
   const doc = yaml.parse(raw);
   specInfoMap[product] = {
     title: doc.info?.title ?? product,
-    description: doc.info?.description ?? "",
+    description: PRODUCT_DESCRIPTIONS[product] ?? "",
+    category: PRODUCT_CATEGORIES[product] ?? "",
   };
   specDocMap[product] = doc;
 }

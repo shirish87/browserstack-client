@@ -85,4 +85,35 @@ describe("emitGoTypes", () => {
     const result = emitGoTypes("test-management", {});
     expect(result.trimStart()).toMatch(/^package testmanagement/);
   });
+
+  it("flattens allOf $ref into struct fields", () => {
+    const result = emitGoTypes("automate", {
+      Browser: {
+        type: "object",
+        required: ["browser", "browser_version"],
+        properties: {
+          browser: { type: "string" },
+          browser_version: { type: "string" },
+        },
+      },
+      BrowserPlatform: {
+        allOf: [
+          { $ref: "#/components/schemas/Browser" },
+          {
+            type: "object",
+            required: ["os", "os_version"],
+            properties: {
+              os: { type: "string" },
+              os_version: { type: "string" },
+              device: { type: "string" },
+            },
+          },
+        ],
+      },
+    });
+    expect(result).toContain('Browser string `json:"browser"`');
+    expect(result).toContain('BrowserVersion string `json:"browser_version"`');
+    expect(result).toContain('Os string `json:"os"`');
+    expect(result).toContain('Device *string `json:"device"`');
+  });
 });

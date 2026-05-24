@@ -200,6 +200,7 @@ paths:
       operationId: getAppAutomateMediaFilesByCustomId
       x-cli-section: "Media Files"
       x-cli-action: list-media-files-by-custom-id
+      x-cli-display: [media_id, media_name, media_url, uploaded_at]
       parameters:
       - name: customId
         in: path
@@ -295,6 +296,7 @@ paths:
       description: Fetches list of recently uploaded apps
       operationId: getAppAutomateApps
       x-cli-section: "Apps"
+      x-cli-display: [app_url, app_name, app_version, uploaded_at]
       responses:
         '200':
           description: Successful operation
@@ -331,6 +333,7 @@ paths:
       description: Fetches list of recently uploaded media files for the entire group
       operationId: getAppAutomateGroupMediaFiles
       x-cli-section: "Media Files"
+      x-cli-display: [media_id, media_name, media_url, uploaded_at]
       responses:
         '200':
           description: Successful operation
@@ -715,6 +718,7 @@ paths:
       description: Fetches list of recently uploaded XCUITest apps
       operationId: getAppAutomateXCUITestApps
       x-cli-section: "XCUITest Apps"
+      x-cli-display: [app_url, app_name, app_version, uploaded_at]
       parameters:
       - name: scope
         in: query
@@ -1206,6 +1210,7 @@ paths:
       description: Fetches list of devices supported by App Automate
       operationId: getAppAutomateDevices
       x-cli-section: "Account"
+      x-cli-display: [device, os_version, real_mobile]
       responses:
         '200':
           description: Successful operation
@@ -1479,6 +1484,7 @@ paths:
       description: Fetches list of recently uploaded Espresso apps
       operationId: getAppAutomateEspressoApps
       x-cli-section: "Espresso Apps"
+      x-cli-display: [app_url, app_name, app_version, uploaded_at]
       parameters:
       - name: scope
         in: query
@@ -1729,6 +1735,7 @@ paths:
         also limit the number of projects and paginate through your data
       operationId: getAppAutomateProjects
       x-cli-section: "Projects"
+      x-cli-display: [id, name, created_at, updated_at]
       parameters:
       - name: limit
         in: query
@@ -1921,6 +1928,7 @@ paths:
       description: Fetches list of recently uploaded media files
       operationId: getAppAutomateMediaFiles
       x-cli-section: "Media Files"
+      x-cli-display: [media_id, media_name, media_url, uploaded_at]
       responses:
         '200':
           description: Successful operation
@@ -1958,6 +1966,7 @@ paths:
       operationId: getAppAutomateFlutteriOSApps
       x-cli-section: "Flutter iOS Apps"
       x-cli-action: list-flutter-ios-apps
+      x-cli-display: [test_package_url, test_package_name, uploaded_at]
       parameters:
       - name: scope
         in: query
@@ -2083,6 +2092,7 @@ paths:
       description: Fetches list of recently uploaded apps for the entire group
       operationId: getAppAutomateGroupApps
       x-cli-section: "Apps"
+      x-cli-display: [app_url, app_name, app_version, uploaded_at]
       responses:
         '200':
           description: Successful operation
@@ -2186,6 +2196,7 @@ paths:
       description: Fetches list of uploaded apps by custom ID
       operationId: getAppAutomateAppsByCustomId
       x-cli-section: "Apps"
+      x-cli-display: [app_url, app_name, app_version, uploaded_at]
       parameters:
       - name: customId
         in: path
@@ -2230,6 +2241,7 @@ paths:
       description: Fetches list of recently uploaded Flutter apps
       operationId: getAppAutomateFlutterAndroidApps
       x-cli-section: "Flutter Android Apps"
+      x-cli-display: [app_url, app_name, app_version, uploaded_at]
       parameters:
       - name: scope
         in: query
@@ -2387,6 +2399,7 @@ paths:
         You can also limit the number of builds and paginate through your data
       operationId: getAppAutomateBuilds
       x-cli-section: "Builds"
+      x-cli-display: [hashed_id, name, status, framework, duration]
       parameters:
       - name: projectId
         x-cli-picker:

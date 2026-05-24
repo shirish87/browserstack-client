@@ -25,5 +25,5 @@ func runScreenshots(c *browserstackhttp.Client, action string, args []string) er
 		return err
 	}
 
-	return output.Print(res)
+	return output.PrintWithColumns(res, screenshots.DisplayColumns(action))
 }

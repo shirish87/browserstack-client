@@ -24,6 +24,9 @@
   "propertiesFormat": "table",
   "typeDeclarationFormat": "table",
   "indexFormat": "table",
+  "tableColumnSettings": {
+    "hideModifiers": true
+  },
   "blockTags": ["@param", "@returns", "@throws", "@example", "@see", "@deprecated", "@since", "@module", "@internal", "@packageDocumentation", "@default", "@description"],
   "modifierTags": ["@description"],
   "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"]

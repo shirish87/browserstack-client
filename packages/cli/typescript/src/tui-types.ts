@@ -42,5 +42,6 @@ export interface TUIProduct {
   id: string;
   title: string;
   description: string;
+  category?: string;
   resources: TUIResource[];
 }

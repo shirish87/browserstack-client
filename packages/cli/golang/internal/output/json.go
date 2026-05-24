@@ -6,10 +6,14 @@ import (
 )
 
 func Print(v any) error {
-	b, err := json.MarshalIndent(v, "", "  ")
-	if err != nil {
+	return PrintWithColumns(v, nil)
+}
+
+func PrintWithColumns(v any, cols []string) error {
+	// Validate marshalability first so callers get an error on bad input.
+	if _, err := json.Marshal(v); err != nil {
 		return err
 	}
-	fmt.Println(string(b))
+	fmt.Println(Format(v, cols))
 	return nil
 }

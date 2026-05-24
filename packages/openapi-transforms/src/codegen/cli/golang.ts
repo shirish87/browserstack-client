@@ -134,6 +134,20 @@ export function generateGoDispatch(m: CLIMetadata): string {
   }
 
   out += `\tdefault:\n\t\treturn nil, fmt.Errorf("unknown action: %s", action)\n\t}\n`;
+  out += `}\n\n`;
+
+  // DisplayColumns returns the spec-declared display columns for a list action, or nil.
+  out += `func DisplayColumns(action string) []string {\n`;
+  out += `\tswitch action {\n`;
+  for (const [, resMeta] of Object.entries(m.resources)) {
+    for (const [action, actionMeta] of Object.entries(resMeta.actions)) {
+      if (actionMeta.displayColumns && actionMeta.displayColumns.length > 0) {
+        const cols = actionMeta.displayColumns.map(c => `"${c}"`).join(", ");
+        out += `\tcase "${action}":\n\t\treturn []string{${cols}}\n`;
+      }
+    }
+  }
+  out += `\tdefault:\n\t\treturn nil\n\t}\n`;
   out += `}\n`;
 
   return out;

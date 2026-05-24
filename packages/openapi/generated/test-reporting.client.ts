@@ -51,7 +51,11 @@ export type ToggleTestReportingQualityGateProfileError = HttpError<unknown>;
 export type UploadTestReportingReportError = HttpError<unknown>;
 
 export class GeneratedTestReportingClient extends APIClient {
-/** Get Project List */
+/**
+ * Get Project List
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getProjects(nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjects"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/projects",
@@ -68,7 +72,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingProjects"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Get Build List for Project */
+/**
+ * Get Build List for Project
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getProjectBuilds(projectId: number, uniqueBuildNames?: string, buildTags?: string, buildStatus?: string, users?: string, frameworks?: string, isArchived?: string, dateRange?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjectBuilds"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/projects/{projectId}/builds",
@@ -85,7 +93,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingProjectBuilds"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Start Build (ingestion) */
+/**
+ * Start Build (ingestion)
+ *
+ * @param options - Optional abort signal and other request options
+ */
   startBuild(body: DeepCamelCase<operations["startTestReportingBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["startTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/start",
@@ -102,7 +114,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["startTestReportingBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Get Latest Build */
+/**
+ * Get Latest Build
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getLatestBuild(projectName?: string, buildName?: string, userName?: string, buildTags?: string, framework?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingLatestBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/latest",
@@ -119,7 +135,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingLatestBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Get Build Details */
+/**
+ * Get Build Details
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getBuild(buildId: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildId}",
@@ -136,7 +156,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Update Build Metadata */
+/**
+ * Update Build Metadata
+ *
+ * @param options - Optional abort signal and other request options
+ */
   updateBuild(buildId: string, body: DeepCamelCase<operations["updateTestReportingBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildId}",
@@ -153,7 +177,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateTestReportingBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Finish Build (ingestion) */
+/**
+ * Finish Build (ingestion)
+ *
+ * @param options - Optional abort signal and other request options
+ */
   finishBuild(buildHashedId: string, body: DeepCamelCase<operations["finishTestReportingBuild"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["finishTestReportingBuild"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/finish",
@@ -170,7 +198,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["finishTestReportingBuild"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Start Test Run (ingestion) */
+/**
+ * Start Test Run (ingestion)
+ *
+ * @param options - Optional abort signal and other request options
+ */
   startTestRun(buildHashedId: string, body: DeepCamelCase<operations["startTestReportingTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["startTestReportingTestRun"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/tests/start",
@@ -187,7 +219,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["startTestReportingTestRun"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Finish Test Run (ingestion) */
+/**
+ * Finish Test Run (ingestion)
+ *
+ * @param options - Optional abort signal and other request options
+ */
   finishTestRun(buildHashedId: string, testRunUuid: string, body: DeepCamelCase<operations["finishTestReportingTestRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["finishTestReportingTestRun"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/tests/{testRunUuid}/finish",
@@ -204,7 +240,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["finishTestReportingTestRun"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Start Hook Run (ingestion) */
+/**
+ * Start Hook Run (ingestion)
+ *
+ * @param options - Optional abort signal and other request options
+ */
   startHookRun(buildHashedId: string, body: DeepCamelCase<operations["startTestReportingHookRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["startTestReportingHookRun"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/hooks/start",
@@ -221,7 +261,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["startTestReportingHookRun"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Finish Hook Run (ingestion) */
+/**
+ * Finish Hook Run (ingestion)
+ *
+ * @param options - Optional abort signal and other request options
+ */
   finishHookRun(buildHashedId: string, hookRunUuid: string, body: DeepCamelCase<operations["finishTestReportingHookRun"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["finishTestReportingHookRun"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/hooks/{hookRunUuid}/finish",
@@ -238,7 +282,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["finishTestReportingHookRun"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Add Build Logs (ingestion) */
+/**
+ * Add Build Logs (ingestion)
+ *
+ * @param options - Optional abort signal and other request options
+ */
   addBuildLogs(buildHashedId: string, body: DeepCamelCase<operations["addTestReportingBuildLogs"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["addTestReportingBuildLogs"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildHashedId}/logs",
@@ -255,7 +303,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["addTestReportingBuildLogs"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Get Test List */
+/**
+ * Get Test List
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getTestRuns(buildId: string, reRuns?: string, testStatuses?: string, isFlaky?: string, isNewFailure?: string, sort?: string, order?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingTestRuns"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildId}/testRuns",
@@ -272,7 +324,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingTestRuns"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Get Self-Healing Report */
+/**
+ * Get Self-Healing Report
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getSelfHealingReport(buildUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingSelfHealingReport"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildUuid}/selfHealingReport",
@@ -289,7 +345,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingSelfHealingReport"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Get Quality Gate Status */
+/**
+ * Get Quality Gate Status
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getQualityGateStatus(buildUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingQualityGateStatus"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{buildUuid}",
@@ -306,7 +366,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingQualityGateStatus"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Get Quality Gate Settings */
+/**
+ * Get Quality Gate Settings
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getQualityGateSettings(projectName: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingQualityGateSettings"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/settings",
@@ -323,7 +387,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingQualityGateSettings"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Update Quality Gate Settings */
+/**
+ * Update Quality Gate Settings
+ *
+ * @param options - Optional abort signal and other request options
+ */
   updateQualityGateSettings(projectName: string, body: DeepCamelCase<operations["updateTestReportingQualityGateSettings"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateTestReportingQualityGateSettings"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/settings",
@@ -340,7 +408,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateTestReportingQualityGateSettings"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Create Quality Gate Profile */
+/**
+ * Create Quality Gate Profile
+ *
+ * @param options - Optional abort signal and other request options
+ */
   createQualityGateProfile(projectName: string, body: DeepCamelCase<operations["createTestReportingQualityGateProfile"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["createTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/profiles",
@@ -357,7 +429,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["createTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Get Quality Gate Profile */
+/**
+ * Get Quality Gate Profile
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getQualityGateProfile(projectName: string, profileUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/profiles/{profileUuid}",
@@ -374,7 +450,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Update Quality Gate Profile */
+/**
+ * Update Quality Gate Profile
+ *
+ * @param options - Optional abort signal and other request options
+ */
   updateQualityGateProfile(projectName: string, profileUuid: string, body: DeepCamelCase<operations["updateTestReportingQualityGateProfile"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["updateTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/profiles/{profileUuid}",
@@ -391,7 +471,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["updateTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Delete Quality Gate Profile */
+/**
+ * Delete Quality Gate Profile
+ *
+ * @param options - Optional abort signal and other request options
+ */
   deleteQualityGateProfile(projectName: string, profileUuid: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["deleteTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/profiles/{profileUuid}",
@@ -408,7 +492,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["deleteTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Toggle Quality Gate Profile */
+/**
+ * Toggle Quality Gate Profile
+ *
+ * @param options - Optional abort signal and other request options
+ */
   toggleQualityGateProfile(projectName: string, profileUuid: string, body: DeepCamelCase<operations["toggleTestReportingQualityGateProfile"]["requestBody"] extends { content: { "application/json": infer B } } ? B : never>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["toggleTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/quality-gates/{projectName}/profiles/{profileUuid}/toggle",
@@ -425,7 +513,11 @@ export class GeneratedTestReportingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["toggleTestReportingQualityGateProfile"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Upload Test Reports (JUnit or Allure) */
+/**
+ * Upload Test Reports (JUnit or Allure)
+ *
+ * @param options - Optional abort signal and other request options
+ */
   uploadReport(body: ({ file: Blob } | { url: string }) & { fileName: string } & Record<string, unknown>, options?: ExecuteOptions): Promise<DeepCamelCase<operations["uploadTestReportingReport"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/upload",

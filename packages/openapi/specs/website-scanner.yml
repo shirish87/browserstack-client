@@ -1,0 +1,557 @@
+servers:
+  - url: "{scheme}://{host}"
+    variables:
+      scheme:
+        default: https
+      host:
+        default: api-scanner.browserstack.com
+openapi: 3.0.2
+info:
+  title: BrowserStack Website Scanner
+  version: 1.0.0
+security:
+  - basicAuth: []
+paths:
+  /api/v1/scanner/auth_configs:
+    get:
+      summary: List Website Scanner auth configs
+      description: Returns all saved authentication configurations used by the Website Scanner for login-protected pages.
+      operationId: listWebsiteScannerAuthConfigs
+      x-cli-section: "Auth Config"
+      x-cli-display: [id, name, type]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWebsiteScannerAuthConfigsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Create Website Scanner auth config
+      description: Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans.
+      operationId: createWebsiteScannerAuthConfig
+      x-cli-section: "Auth Config"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebsiteScannerAuthConfigRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWebsiteScannerAuthConfigResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/v1/scanner:
+    get:
+      summary: List Website Scanner scans
+      description: Returns a paginated list of all configured Website Scanner scans for your account.
+      operationId: listWebsiteScannerScans
+      x-cli-section: "Scans"
+      x-cli-display: [id, name, status, scan_url]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWebsiteScannerScansResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/v1/scanner/{proj_id}:
+    get:
+      summary: Get Website Scanner scan
+      description: Returns details for a specific Website Scanner scan project.
+      operationId: getWebsiteScannerScan
+      x-cli-section: "Scans"
+      parameters:
+        - name: proj_id
+          x-cli-picker:
+            source: website-scanner.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The unique ID of the scan project
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWebsiteScannerScanResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/v1/scanner/create:
+    post:
+      summary: Create Website Scanner scan
+      description: Creates a new Website Scanner scan project with the specified configuration.
+      operationId: createWebsiteScannerScan
+      x-cli-section: "Scans"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebsiteScannerScanRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWebsiteScannerScanResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/v1/scanner/scans/{project_id}/new_scan:
+    post:
+      summary: Trigger Website Scanner scan run
+      description: Triggers a new scan run for an existing Website Scanner scan project.
+      operationId: triggerWebsiteScannerScanRun
+      x-cli-section: "Scan Runs"
+      parameters:
+        - name: project_id
+          x-cli-picker:
+            source: website-scanner.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The unique ID of the scan project
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriggerWebsiteScannerScanRunResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/v1/scanner/{proj_id}/scan_builds:
+    get:
+      summary: List Website Scanner scan runs
+      description: Returns a paginated list of all scan runs for a specific Website Scanner scan project.
+      operationId: listWebsiteScannerScanRuns
+      x-cli-section: "Scan Runs"
+      x-cli-display: [id, scanDate, status]
+      parameters:
+        - name: proj_id
+          x-cli-picker:
+            source: website-scanner.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The unique ID of the scan project
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWebsiteScannerScanRunsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/v1/scanner/{proj_id}/scan_builds/{report_id}/status:
+    get:
+      summary: Get Website Scanner scan run status
+      description: Returns the current execution status of a specific Website Scanner scan run.
+      operationId: getWebsiteScannerScanRunStatus
+      x-cli-section: "Scan Runs"
+      parameters:
+        - name: proj_id
+          x-cli-picker:
+            source: website-scanner.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: report_id
+          x-cli-picker:
+            source: website-scanner.list-website-scanner-scan-runs
+            valueField: scanRunId
+            labelFields: [scanRunId]
+            filterBy: [projId]
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The unique ID of the scan run report
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWebsiteScannerScanRunStatusResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/v1/scanner/{proj_id}/scan_builds/{report_id}:
+    get:
+      summary: Get Website Scanner scan run summary
+      description: Returns the summary for a specific Website Scanner scan run, including issue counts and scan metadata.
+      operationId: getWebsiteScannerScanRunSummary
+      x-cli-section: "Scan Runs"
+      parameters:
+        - name: proj_id
+          x-cli-picker:
+            source: website-scanner.list-website-scanner-scans
+            valueField: id
+            labelFields: [id, name]
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: report_id
+          x-cli-picker:
+            source: website-scanner.list-website-scanner-scan-runs
+            valueField: scanRunId
+            labelFields: [scanRunId]
+            filterBy: [projId]
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: product
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWebsiteScannerScanRunSummaryResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    UnprocessableEntity:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+    AuthConfigData:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        url:
+          type: string
+        usernameSelector:
+          type: string
+        passwordSelector:
+          type: string
+        submitSelector:
+          type: string
+    AuthConfig:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        url:
+          type: string
+        usernameSelector:
+          type: string
+        passwordSelector:
+          type: string
+        submitSelector:
+          type: string
+    ScanProject:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        recurring:
+          type: boolean
+        active:
+          type: boolean
+        isRunning:
+          type: boolean
+    ScanCreatedData:
+      type: object
+      properties:
+        projectId:
+          type: integer
+        reportId:
+          type: integer
+    ScanRunTriggeredData:
+      type: object
+      properties:
+        scanRunId:
+          type: integer
+    ScanData:
+      type: object
+      required:
+        - urlSet
+      properties:
+        urlSet:
+          type: array
+          items:
+            type: string
+    ScansData:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        info:
+          type: object
+          additionalProperties: true
+    ListWebsiteScannerAuthConfigsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          additionalProperties: true
+    CreateWebsiteScannerAuthConfigRequest:
+      type: object
+      required:
+        - name
+        - type
+        - authData
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - basic
+            - form_2
+        authData:
+          $ref: '#/components/schemas/AuthConfigData'
+    CreateWebsiteScannerAuthConfigResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/AuthConfig'
+    ListWebsiteScannerScansResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ScansData'
+    GetWebsiteScannerScanResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ScanProject'
+    CreateWebsiteScannerScanRequest:
+      type: object
+      required:
+        - name
+        - scanData
+      properties:
+        name:
+          type: string
+        scanData:
+          $ref: '#/components/schemas/ScanData'
+        recurring:
+          type: boolean
+        instantRun:
+          type: boolean
+    CreateWebsiteScannerScanResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ScanCreatedData'
+    TriggerWebsiteScannerScanRunResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ScanRunTriggeredData'
+    ListWebsiteScannerScanRunsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          additionalProperties: true
+    GetWebsiteScannerScanRunStatusResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        status:
+          type: string
+          enum:
+            - queued
+            - processing
+            - finalizing
+            - completed
+            - failed
+    GetWebsiteScannerScanRunSummaryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          additionalProperties: true

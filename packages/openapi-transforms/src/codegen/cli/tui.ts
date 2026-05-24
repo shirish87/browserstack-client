@@ -1,7 +1,7 @@
 import { CLIMetadata, CLIActionMetadata, PickerConfig } from "./index";
 
 export interface SpecInfoMap {
-  [product: string]: { title: string; description: string };
+  [product: string]: { title: string; description: string; category?: string };
 }
 
 /** Parsed OpenAPI documents keyed by product, used to resolve $ref inside body schemas. */
@@ -87,6 +87,7 @@ interface TUIProductData {
   id: string;
   title: string;
   description: string;
+  category?: string;
   resources: TUIResourceData[];
 }
 
@@ -223,6 +224,7 @@ function buildManifest(metadata: CLIMetadata[], specInfoMap: SpecInfoMap, specDo
       id: m.product,
       title: info.title,
       description: info.description,
+      ...(info.category ? { category: info.category } : {}),
       resources,
     };
   });
@@ -318,6 +320,7 @@ export function generateTUIManifestGo(metadata: CLIMetadata[], specInfoMap: Spec
     out += `\t\tID:          ${jsonStr(p.id)},\n`;
     out += `\t\tTitle:       ${jsonStr(p.title)},\n`;
     out += `\t\tDescription: ${jsonStr(p.description)},\n`;
+    out += `\t\tCategory:    ${jsonStr(p.category ?? "")},\n`;
     out += `\t\tResources:   ${resourcesStr},\n`;
     out += `\t},\n`;
   }

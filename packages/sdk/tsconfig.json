@@ -13,7 +13,10 @@
       "@dot-slash/browserstack-accessibility": ["../accessibility/src/index.ts"],
       "@dot-slash/browserstack-test-management": ["../test-management/src/index.ts"],
       "@dot-slash/browserstack-test-reporting": ["../test-reporting/src/index.ts"],
-      "@dot-slash/browserstack-screenshots": ["../screenshots/src/index.ts"]
+      "@dot-slash/browserstack-screenshots": ["../screenshots/src/index.ts"],
+      "@dot-slash/browserstack-website-scanner": ["../website-scanner/src/index.ts"],
+      "@dot-slash/browserstack-openapi": ["../openapi/generated/index.ts"],
+      "@dot-slash/browserstack-openapi/*": ["../openapi/generated/*.ts"]
     }
   },
   "include": ["src"]

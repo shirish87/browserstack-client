@@ -170,5 +170,5 @@ func runAutomate(c *browserstackhttp.Client, action string, args []string) error
 		return nil
 	}
 
-	return output.Print(res)
+	return output.PrintWithColumns(res, automate.DisplayColumns(action))
 }

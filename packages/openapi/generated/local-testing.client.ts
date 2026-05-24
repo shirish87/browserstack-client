@@ -29,7 +29,11 @@ export type DisconnectLocalBinaryInstanceError = HttpError<
 >;
 
 export class GeneratedLocalTestingClient extends APIClient {
-/** Fetches list of recent binary instances for local testing. Note that the binary should have been started with the --enable-logging-for-api parameter. */
+/**
+ * Fetches list of recent binary instances for local testing. Note that the binary should have been started with the --enable-logging-for-api parameter.
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getInstances(authToken?: string, last?: string, state?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/local/v1/list",
@@ -46,7 +50,11 @@ export class GeneratedLocalTestingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getLocalBinaryInstances"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Fetches details of a Local binary instance used for local testing. Note that the binary should have been started with the --enable-logging-for-api parameter. */
+/**
+ * Fetches details of a Local binary instance used for local testing. Note that the binary should have been started with the --enable-logging-for-api parameter.
+ *
+ * @param options - Optional abort signal and other request options
+ */
   getInstance(localInstanceId: string, authToken?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/local/v1/{localInstanceId}",
@@ -63,7 +71,11 @@ export class GeneratedLocalTestingClient extends APIClient {
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>>;
   }
 
-/** Disconnect a Local binary instance */
+/**
+ * Disconnect a Local binary instance
+ *
+ * @param options - Optional abort signal and other request options
+ */
   disconnectInstance(localInstanceId: string, authToken?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["disconnectLocalBinaryInstance"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/local/v1/{localInstanceId}",

@@ -10,6 +10,7 @@ export default defineConfig({
     "test-management/index": "src/test-management/index.ts",
     "test-reporting/index": "src/test-reporting/index.ts",
     "screenshots/index": "src/screenshots/index.ts",
+    "website-scanner/index": "src/website-scanner/index.ts",
     "core/index": "src/core/index.ts",
   },
   format: ["esm", "cjs"],
@@ -27,6 +28,7 @@ export default defineConfig({
     "@dot-slash/browserstack-test-management",
     "@dot-slash/browserstack-test-reporting",
     "@dot-slash/browserstack-screenshots",
+    "@dot-slash/browserstack-website-scanner",
     "@dot-slash/browserstack-core",
   ],
 });

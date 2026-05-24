@@ -23,6 +23,7 @@ interface SpecParam {
   in: string;
   schema?: { type?: string };
   $ref?: string;
+  description?: string;
 }
 
 interface SpecDoc {
@@ -46,18 +47,19 @@ interface SpecOp {
 }
 
 function resolvePathQueryParams(resolvedParams: SpecParam[]): {
-  pathParams: Array<{ name: string; tsType: string }>;
-  queryParams: Array<{ name: string; baseName: string; tsType: string; required: boolean }>;
+  pathParams: Array<{ name: string; tsType: string; description?: string }>;
+  queryParams: Array<{ name: string; baseName: string; tsType: string; required: boolean; description?: string }>;
 } {
   const pathParams = resolvedParams.filter((p) => p.in === "path").map((p) => ({
     name: p.name, tsType: p.schema?.type === "integer" ? "number" : "string",
+    ...(p.description ? { description: p.description } : {}),
   }));
   const queryParams = resolvedParams.filter((p) => p.in === "query").map((p) => {
     const isArray = p.name.endsWith("[]");
     const baseName = isArray ? p.name.slice(0, -2) : p.name;
     const itemType = p.schema?.type === "integer" ? "number" : "string";
     const tsType = isArray ? `${itemType}[]` : itemType;
-    return { name: p.name, baseName, tsType, required: false };
+    return { name: p.name, baseName, tsType, required: false, ...(p.description ? { description: p.description } : {}) };
   });
   return { pathParams, queryParams };
 }

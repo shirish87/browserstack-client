@@ -54,5 +54,6 @@ type Product struct {
 	ID          string
 	Title       string
 	Description string
+	Category    string
 	Resources   []Resource
 }

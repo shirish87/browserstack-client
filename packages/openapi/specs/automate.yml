@@ -40,6 +40,7 @@ paths:
       description: Fetches all automate browsers.
       operationId: getAutomateBrowsers
       x-cli-section: "Account"
+      x-cli-display: [browser, browser_version, os, os_version, device]
       responses:
         '200':
           description: Successful operation
@@ -869,6 +870,7 @@ paths:
       description: Fetches list of sessions for a particular build
       operationId: getAutomateSessions
       x-cli-section: "Sessions"
+      x-cli-display: [hashed_id, name, status, os, os_version, browser, browser_version]
       x-response-transform:
         codec: json-unwrap
         config:
@@ -1199,6 +1201,7 @@ paths:
       description: Fetches list of recently uploaded media files
       operationId: getAutomateMediaFiles
       x-cli-section: "Media Files"
+      x-cli-display: [media_id, media_name, media_url, uploaded_at]
       responses:
         '200':
           description: Successful operation
@@ -1229,6 +1232,7 @@ paths:
         that follows in this document
       operationId: getAutomateProjects
       x-cli-section: "Projects"
+      x-cli-display: [id, name, created_at, updated_at]
       responses:
         '200':
           description: Successful operation
@@ -1342,6 +1346,7 @@ paths:
         can also limit the number of builds and paginate through your data
       operationId: getAutomateBuilds
       x-cli-section: "Builds"
+      x-cli-display: [hashed_id, name, status, framework, duration]
       x-response-transform:
         codec: json-unwrap
         config:
