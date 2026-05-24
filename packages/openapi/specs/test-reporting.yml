@@ -735,24 +735,70 @@ paths:
                 file:
                   type: string
                   format: binary
+                  description: "JUnit XML file or zip archive containing multiple XML files (max 100 MB)"
                 file_name:
                   type: string
+                  description: "Override the uploaded file's name"
                 project_name:
                   type: string
+                  description: "Project name to associate this build with"
                 build_name:
                   type: string
+                  description: "Build name for this test run"
                 format:
                   type: string
                   enum: [junit, allure]
                   default: junit
+                  description: "Report format"
                 build_identifier:
                   type: string
+                  description: "Unique identifier to correlate split or re-run uploads (expires after 6 hours)"
                 tags:
                   type: string
+                  description: "Comma-separated tags (e.g. 'regression, nightly')"
                 ci:
                   type: string
+                  description: "CI job URL (e.g. 'https://ci.example.com/builds/42')"
                 framework_version:
                   type: string
+                  description: "Framework name and version (e.g. 'junit, 5.8')"
+                version_control:
+                  type: object
+                  description: "Git/version-control metadata for this build"
+                  properties:
+                    sha:
+                      type: string
+                      description: "Commit SHA"
+                    short_sha:
+                      type: string
+                      description: "Short commit SHA"
+                    branch:
+                      type: string
+                      description: "Branch name"
+                    tag:
+                      type: string
+                      description: "Git tag"
+                    commit_message:
+                      type: string
+                      description: "Commit message"
+                    committer_name:
+                      type: string
+                      description: "Committer name"
+                    committer_email:
+                      type: string
+                      description: "Committer email"
+                    author_name:
+                      type: string
+                      description: "Author name"
+                    author_email:
+                      type: string
+                      description: "Author email"
+                    committed_at:
+                      type: string
+                      description: "Commit timestamp"
+                    remote_url:
+                      type: string
+                      description: "Remote repository URL"
       responses:
         '200':
           description: Successful operation

@@ -1245,20 +1245,56 @@ export interface operations {
         requestBody: {
             content: {
                 "multipart/form-data": {
-                    /** Format: binary */
+                    /**
+                     * Format: binary
+                     * @description JUnit XML file or zip archive containing multiple XML files (max 100 MB)
+                     */
                     file: Blob;
+                    /** @description Override the uploaded file's name */
                     file_name?: string;
+                    /** @description Project name to associate this build with */
                     project_name: string;
+                    /** @description Build name for this test run */
                     build_name: string;
                     /**
+                     * @description Report format
                      * @default junit
                      * @enum {string}
                      */
                     format?: "junit" | "allure";
+                    /** @description Unique identifier to correlate split or re-run uploads (expires after 6 hours) */
                     build_identifier?: string;
+                    /** @description Comma-separated tags (e.g. 'regression, nightly') */
                     tags?: string;
+                    /** @description CI job URL (e.g. 'https://ci.example.com/builds/42') */
                     ci?: string;
+                    /** @description Framework name and version (e.g. 'junit, 5.8') */
                     framework_version?: string;
+                    /** @description Git/version-control metadata for this build */
+                    version_control?: {
+                        /** @description Commit SHA */
+                        sha?: string;
+                        /** @description Short commit SHA */
+                        short_sha?: string;
+                        /** @description Branch name */
+                        branch?: string;
+                        /** @description Git tag */
+                        tag?: string;
+                        /** @description Commit message */
+                        commit_message?: string;
+                        /** @description Committer name */
+                        committer_name?: string;
+                        /** @description Committer email */
+                        committer_email?: string;
+                        /** @description Author name */
+                        author_name?: string;
+                        /** @description Author email */
+                        author_email?: string;
+                        /** @description Commit timestamp */
+                        committed_at?: string;
+                        /** @description Remote repository URL */
+                        remote_url?: string;
+                    };
                 };
             };
         };
