@@ -18,6 +18,6 @@ describe("codegen snapshot", () => {
       baseUrl: "sdk",
     });
     const expected = await fs.readFile(path.resolve(__dirname, "../fixtures/tiny-spec.expected.ts"), "utf8");
-    expect(actual).toBe(expected);
+    expect(actual.replace(/\r\n/g, "\n")).toBe(expected.replace(/\r\n/g, "\n"));
   });
 });

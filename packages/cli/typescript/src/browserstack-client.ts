@@ -3,6 +3,7 @@
 import process from "node:process";
 import { resolve } from "node:path";
 import { realpathSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 
 import { main as runLocal } from "./browserstack-local.ts";
 import { main as runAppAutomate } from "./browserstack-app-automate.ts";
@@ -90,11 +91,11 @@ export async function main(inputArgs: string[] = process.argv.slice(2)) {
 }
 
 const isMain =
-  import.meta.url === `file://${process.argv[1]}` ||
-  import.meta.url === `file://${resolve(process.argv[1])}` ||
+  import.meta.url === pathToFileURL(process.argv[1]).href ||
+  import.meta.url === pathToFileURL(resolve(process.argv[1])).href ||
   (() => {
     try {
-      return import.meta.url === `file://${realpathSync(process.argv[1])}`;
+      return import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
     } catch {
       return false;
     }

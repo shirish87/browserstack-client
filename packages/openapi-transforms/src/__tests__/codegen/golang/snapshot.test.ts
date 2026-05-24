@@ -16,7 +16,7 @@ describe("generateGoModule snapshot", () => {
       path.resolve(__dirname, "../../fixtures/tiny-spec-go.expected/types.go"),
       "utf8"
     );
-    expect(typesGo).toBe(expected);
+    expect(typesGo.replace(/\r\n/g, "\n")).toBe(expected.replace(/\r\n/g, "\n"));
   });
 
   it("matches golden client.go for tiny-spec", async () => {
@@ -29,6 +29,6 @@ describe("generateGoModule snapshot", () => {
       path.resolve(__dirname, "../../fixtures/tiny-spec-go.expected/client.go"),
       "utf8"
     );
-    expect(clientGo).toBe(expected);
+    expect(clientGo.replace(/\r\n/g, "\n")).toBe(expected.replace(/\r\n/g, "\n"));
   });
 });
