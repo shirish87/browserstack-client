@@ -41,7 +41,7 @@ export async function main(inputArgs: string[] = process.argv.slice(2)) {
   try {
     if (inputArgs.length === 0 && process.stdout.isTTY) {
       const ver = (globalThis as Record<string, unknown>)["__CLI_VERSION__"] as string | undefined
-        ?? (await import("../package.json", { with: { type: "json" } })).default.version;
+        ?? (await import("../package.json", { assert: { type: "json" } })).default.version;
       const { render } = await import("ink");
       const React = (await import("react")).default;
       const { App } = await import("./tui/index.tsx");
@@ -60,7 +60,7 @@ export async function main(inputArgs: string[] = process.argv.slice(2)) {
 
     if (productInput === "version") {
       const ver = (globalThis as Record<string, unknown>)["__CLI_VERSION__"] as string | undefined
-        ?? (await import("../package.json", { with: { type: "json" } })).default.version;
+        ?? (await import("../package.json", { assert: { type: "json" } })).default.version;
       process.stdout.write(`browserstack-client ${ver}\n`);
       return;
     }
