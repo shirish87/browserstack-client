@@ -29,6 +29,7 @@ packages/cli/golang/dist/
 packages/cli/golang/browserstack
 packages/cli/golang/browserstack-client
 packages/cli/golang/browserstack.err
+browserstack.err
 
 # Generated files (produced by pnpm build:types / pnpm build)
 packages/cli/golang/generated/
