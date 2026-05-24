@@ -1080,7 +1080,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -1096,7 +1096,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "url",
-                "label": "Url",
+                "label": "URL",
                 "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
                 "type": "string",
                 "required": false,
@@ -1112,7 +1112,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -1128,7 +1128,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "url",
-                "label": "Url",
+                "label": "URL",
                 "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
                 "type": "string",
                 "required": false,
@@ -1156,7 +1156,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -1211,7 +1211,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -1227,7 +1227,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "url",
-                "label": "Url",
+                "label": "URL",
                 "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
                 "type": "string",
                 "required": false,
@@ -1243,7 +1243,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -1259,7 +1259,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "url",
-                "label": "Url",
+                "label": "URL",
                 "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android",
                 "type": "string",
                 "required": false,
@@ -1275,7 +1275,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -1291,7 +1291,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "url",
-                "label": "Url",
+                "label": "URL",
                 "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
                 "type": "string",
                 "required": false,
@@ -1510,7 +1510,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Custom ID for the media file. This ID is used to specify the media files to be used in your tests.",
                 "type": "string",
                 "required": false,
@@ -1538,7 +1538,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -1787,7 +1787,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -1811,7 +1811,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -1827,7 +1827,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "url",
-                "label": "Url",
+                "label": "URL",
                 "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
                 "type": "string",
                 "required": false,
@@ -1850,7 +1850,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -1866,7 +1866,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "url",
-                "label": "Url",
+                "label": "URL",
                 "description": "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
                 "type": "string",
                 "required": false,
@@ -1910,7 +1910,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "custom_id",
-                "label": "Custom Id",
+                "label": "Custom ID",
                 "description": "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
                 "type": "string",
                 "required": false,
@@ -2181,7 +2181,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "url",
-                "label": "Url",
+                "label": "URL",
                 "description": "",
                 "type": "string",
                 "required": true,
@@ -2189,7 +2189,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "callback_url",
-                "label": "Callback Url",
+                "label": "Callback URL",
                 "description": "Public URL to which the screenshot will be posted.",
                 "type": "string",
                 "required": false,
@@ -2588,7 +2588,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "folder.parent_id",
-                "label": "Folder › Parent Id",
+                "label": "Folder › Parent ID",
                 "description": "",
                 "type": "number",
                 "required": false,
@@ -2784,7 +2784,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "parent_id",
-                "label": "Parent Id",
+                "label": "Parent ID",
                 "description": "",
                 "type": "number",
                 "required": false,
@@ -2874,7 +2874,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "id",
-                "label": "Id",
+                "label": "ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -2914,7 +2914,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "folder_id",
-                "label": "Folder Id",
+                "label": "Folder ID",
                 "description": "",
                 "type": "number",
                 "required": false,
@@ -3711,7 +3711,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "destination_folder_id",
-                "label": "Destination Folder Id",
+                "label": "Destination Folder ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -4294,7 +4294,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "test_case_id",
-                "label": "Test Case Id",
+                "label": "Test Case ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -4302,7 +4302,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "configuration_id",
-                "label": "Configuration Id",
+                "label": "Configuration ID",
                 "description": "",
                 "type": "number",
                 "required": false,
@@ -4450,7 +4450,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "test_plan_id",
-                "label": "Test Plan Id",
+                "label": "Test Plan ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -4589,7 +4589,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "test_run.test_plan_id",
-                "label": "Test Run › Test Plan Id",
+                "label": "Test Run › Test Plan ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -5049,7 +5049,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "test_run.test_plan_id",
-                "label": "Test Run › Test Plan Id",
+                "label": "Test Run › Test Plan ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -5911,7 +5911,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "report_id",
-                "label": "Report Id",
+                "label": "Report ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -5935,7 +5935,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "report_id",
-                "label": "Report Id",
+                "label": "Report ID",
                 "description": "",
                 "type": "number",
                 "required": false,
@@ -5951,7 +5951,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "task_id",
-                "label": "Task Id",
+                "label": "Task ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -5982,7 +5982,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "report_id",
-                "label": "Report Id",
+                "label": "Report ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -6006,7 +6006,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "report_id",
-                "label": "Report Id",
+                "label": "Report ID",
                 "description": "",
                 "type": "number",
                 "required": false,
@@ -6022,7 +6022,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "task_id",
-                "label": "Task Id",
+                "label": "Task ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6069,7 +6069,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "authData.url",
-                "label": "AuthData › Url",
+                "label": "AuthData › URL",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6132,7 +6132,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "scan_url",
-                "label": "Scan Url",
+                "label": "Scan URL",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6148,7 +6148,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "scan_id",
-                "label": "Scan Id",
+                "label": "Scan ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -6172,7 +6172,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "scan_id",
-                "label": "Scan Id",
+                "label": "Scan ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -6212,7 +6212,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "scan_id",
-                "label": "Scan Id",
+                "label": "Scan ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -6228,7 +6228,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "scan_run_id",
-                "label": "Scan Run Id",
+                "label": "Scan Run ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -6254,7 +6254,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "scan_id",
-                "label": "Scan Id",
+                "label": "Scan ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -6270,7 +6270,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "scan_run_id",
-                "label": "Scan Run Id",
+                "label": "Scan Run ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -6296,7 +6296,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "scan_id",
-                "label": "Scan Id",
+                "label": "Scan ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -6312,7 +6312,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "scan_run_id",
-                "label": "Scan Run Id",
+                "label": "Scan Run ID",
                 "description": "",
                 "type": "number",
                 "required": false,
@@ -6330,7 +6330,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "task_id",
-                "label": "Task Id",
+                "label": "Task ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6354,7 +6354,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "scan_id",
-                "label": "Scan Id",
+                "label": "Scan ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -6370,7 +6370,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "scan_run_id",
-                "label": "Scan Run Id",
+                "label": "Scan Run ID",
                 "description": "",
                 "type": "number",
                 "required": true,
@@ -6492,7 +6492,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "fields": [
               {
                 "name": "build_id",
-                "label": "Build Id",
+                "label": "Build ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6508,7 +6508,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "task_id",
-                "label": "Task Id",
+                "label": "Task ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6540,7 +6540,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "test_case_id",
-                "label": "Test Case Id",
+                "label": "Test Case ID",
                 "description": "",
                 "type": "string",
                 "required": true,
@@ -6591,7 +6591,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "task_id",
-                "label": "Task Id",
+                "label": "Task ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6819,7 +6819,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "ci_info.name",
-                "label": "Ci Info › Name",
+                "label": "CI Info › Name",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6827,7 +6827,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "ci_info.build_url",
-                "label": "Ci Info › Build Url",
+                "label": "CI Info › Build URL",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6835,7 +6835,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "ci_info.url",
-                "label": "Ci Info › Url",
+                "label": "CI Info › URL",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6843,7 +6843,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "ci_info.build_number",
-                "label": "Ci Info › Build Number",
+                "label": "CI Info › Build Number",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -6851,7 +6851,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "ci_info.job_name",
-                "label": "Ci Info › Job Name",
+                "label": "CI Info › Job Name",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -7300,7 +7300,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "test_run_id",
-                "label": "Test Run Id",
+                "label": "Test Run ID",
                 "description": "",
                 "type": "string",
                 "required": false,
@@ -8044,7 +8044,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "ci",
-                "label": "Ci",
+                "label": "CI",
                 "description": "CI job URL (e.g. 'https://ci.example.com/builds/42')",
                 "type": "string",
                 "required": false,
@@ -8140,7 +8140,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               },
               {
                 "name": "version_control.remote_url",
-                "label": "Version Control › Remote Url",
+                "label": "Version Control › Remote URL",
                 "description": "Remote repository URL",
                 "type": "string",
                 "required": false,

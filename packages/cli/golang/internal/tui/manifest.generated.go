@@ -998,7 +998,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -1018,7 +1018,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "url",
-							Label:       "Url",
+							Label:       "URL",
 							Description: "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
 							Type:        "string",
 							Required:    false,
@@ -1036,7 +1036,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -1056,7 +1056,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "url",
-							Label:       "Url",
+							Label:       "URL",
 							Description: "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
 							Type:        "string",
 							Required:    false,
@@ -1084,7 +1084,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -1147,7 +1147,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -1167,7 +1167,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "url",
-							Label:       "Url",
+							Label:       "URL",
 							Description: "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
 							Type:        "string",
 							Required:    false,
@@ -1185,7 +1185,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -1205,7 +1205,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "url",
-							Label:       "Url",
+							Label:       "URL",
 							Description: "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android",
 							Type:        "string",
 							Required:    false,
@@ -1223,7 +1223,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -1243,7 +1243,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "url",
-							Label:       "Url",
+							Label:       "URL",
 							Description: "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
 							Type:        "string",
 							Required:    false,
@@ -1459,7 +1459,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Custom ID for the media file. This ID is used to specify the media files to be used in your tests.",
 							Type:        "string",
 							Required:    false,
@@ -1487,7 +1487,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -1741,7 +1741,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -1769,7 +1769,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -1789,7 +1789,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "url",
-							Label:       "Url",
+							Label:       "URL",
 							Description: "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
 							Type:        "string",
 							Required:    false,
@@ -1814,7 +1814,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Custom ID for the app. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -1834,7 +1834,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "url",
-							Label:       "Url",
+							Label:       "URL",
 							Description: "URL of the app file. Ensure that its a publicly accessible URL as BrowserStack will attempt to download the app from this location. Supported file formats are .apk and .aab files for Android and .ipa file for iOS",
 							Type:        "string",
 							Required:    false,
@@ -1880,7 +1880,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "custom_id",
-							Label:       "Custom Id",
+							Label:       "Custom ID",
 							Description: "Filter recently uploaded apps by custom ID. Accepted characters are A-Z, a-z, 0-9, ., -, _. All other characters are ignored. Character limit is 100.",
 							Type:        "string",
 							Required:    false,
@@ -2148,7 +2148,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "url",
-							Label:       "Url",
+							Label:       "URL",
 							Description: "",
 							Type:        "string",
 							Required:    true,
@@ -2158,7 +2158,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "callback_url",
-							Label:       "Callback Url",
+							Label:       "Callback URL",
 							Description: "Public URL to which the screenshot will be posted.",
 							Type:        "string",
 							Required:    false,
@@ -2585,7 +2585,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "folder.parent_id",
-							Label:       "Folder › Parent Id",
+							Label:       "Folder › Parent ID",
 							Description: "",
 							Type:        "number",
 							Required:    false,
@@ -2767,7 +2767,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "parent_id",
-							Label:       "Parent Id",
+							Label:       "Parent ID",
 							Description: "",
 							Type:        "number",
 							Required:    false,
@@ -2867,7 +2867,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "id",
-							Label:       "Id",
+							Label:       "ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -2917,7 +2917,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "folder_id",
-							Label:       "Folder Id",
+							Label:       "Folder ID",
 							Description: "",
 							Type:        "number",
 							Required:    false,
@@ -3775,7 +3775,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "destination_folder_id",
-							Label:       "Destination Folder Id",
+							Label:       "Destination Folder ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -4341,7 +4341,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "test_case_id",
-							Label:       "Test Case Id",
+							Label:       "Test Case ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -4351,7 +4351,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "configuration_id",
-							Label:       "Configuration Id",
+							Label:       "Configuration ID",
 							Description: "",
 							Type:        "number",
 							Required:    false,
@@ -4504,7 +4504,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "test_plan_id",
-							Label:       "Test Plan Id",
+							Label:       "Test Plan ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -4662,7 +4662,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "test_run.test_plan_id",
-							Label:       "Test Run › Test Plan Id",
+							Label:       "Test Run › Test Plan ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -5174,7 +5174,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "test_run.test_plan_id",
-							Label:       "Test Run › Test Plan Id",
+							Label:       "Test Run › Test Plan ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -6068,7 +6068,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "report_id",
-							Label:       "Report Id",
+							Label:       "Report ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6091,7 +6091,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "report_id",
-							Label:       "Report Id",
+							Label:       "Report ID",
 							Description: "",
 							Type:        "number",
 							Required:    false,
@@ -6106,7 +6106,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "task_id",
-							Label:       "Task Id",
+							Label:       "Task ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -6141,7 +6141,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "report_id",
-							Label:       "Report Id",
+							Label:       "Report ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6164,7 +6164,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "report_id",
-							Label:       "Report Id",
+							Label:       "Report ID",
 							Description: "",
 							Type:        "number",
 							Required:    false,
@@ -6179,7 +6179,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "task_id",
-							Label:       "Task Id",
+							Label:       "Task ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -6234,7 +6234,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "authData.url",
-							Label:       "AuthData › Url",
+							Label:       "AuthData › URL",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -6309,7 +6309,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "scan_url",
-							Label:       "Scan Url",
+							Label:       "Scan URL",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -6327,7 +6327,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "scan_id",
-							Label:       "Scan Id",
+							Label:       "Scan ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6350,7 +6350,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "scan_id",
-							Label:       "Scan Id",
+							Label:       "Scan ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6393,7 +6393,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "scan_id",
-							Label:       "Scan Id",
+							Label:       "Scan ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6408,7 +6408,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "scan_run_id",
-							Label:       "Scan Run Id",
+							Label:       "Scan Run ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6431,7 +6431,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "scan_id",
-							Label:       "Scan Id",
+							Label:       "Scan ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6446,7 +6446,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "scan_run_id",
-							Label:       "Scan Run Id",
+							Label:       "Scan Run ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6469,7 +6469,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "scan_id",
-							Label:       "Scan Id",
+							Label:       "Scan ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6484,7 +6484,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "scan_run_id",
-							Label:       "Scan Run Id",
+							Label:       "Scan Run ID",
 							Description: "",
 							Type:        "number",
 							Required:    false,
@@ -6499,7 +6499,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "task_id",
-							Label:       "Task Id",
+							Label:       "Task ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -6527,7 +6527,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "scan_id",
-							Label:       "Scan Id",
+							Label:       "Scan ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6542,7 +6542,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "scan_run_id",
-							Label:       "Scan Run Id",
+							Label:       "Scan Run ID",
 							Description: "",
 							Type:        "number",
 							Required:    true,
@@ -6672,7 +6672,7 @@ var Manifest = []Product{
 					Fields:      []Field{
 						{
 							Name:        "build_id",
-							Label:       "Build Id",
+							Label:       "Build ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -6687,7 +6687,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "task_id",
-							Label:       "Task Id",
+							Label:       "Task ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -6725,7 +6725,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "test_case_id",
-							Label:       "Test Case Id",
+							Label:       "Test Case ID",
 							Description: "",
 							Type:        "string",
 							Required:    true,
@@ -6778,7 +6778,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "task_id",
-							Label:       "Task Id",
+							Label:       "Task ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -7041,7 +7041,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "ci_info.name",
-							Label:       "Ci Info › Name",
+							Label:       "CI Info › Name",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -7051,7 +7051,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "ci_info.build_url",
-							Label:       "Ci Info › Build Url",
+							Label:       "CI Info › Build URL",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -7061,7 +7061,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "ci_info.url",
-							Label:       "Ci Info › Url",
+							Label:       "CI Info › URL",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -7071,7 +7071,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "ci_info.build_number",
-							Label:       "Ci Info › Build Number",
+							Label:       "CI Info › Build Number",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -7081,7 +7081,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "ci_info.job_name",
-							Label:       "Ci Info › Job Name",
+							Label:       "CI Info › Job Name",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -7572,7 +7572,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "test_run_id",
-							Label:       "Test Run Id",
+							Label:       "Test Run ID",
 							Description: "",
 							Type:        "string",
 							Required:    false,
@@ -8376,7 +8376,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "ci",
-							Label:       "Ci",
+							Label:       "CI",
 							Description: "CI job URL (e.g. 'https://ci.example.com/builds/42')",
 							Type:        "string",
 							Required:    false,
@@ -8496,7 +8496,7 @@ var Manifest = []Product{
 						},
 						{
 							Name:        "version_control.remote_url",
-							Label:       "Version Control › Remote Url",
+							Label:       "Version Control › Remote URL",
 							Description: "Remote repository URL",
 							Type:        "string",
 							Required:    false,

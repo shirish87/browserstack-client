@@ -39,8 +39,14 @@ function resolveSchema(
   return schema;
 }
 
+const LABEL_ACRONYMS = new Set(["ci", "id", "url", "uuid", "api", "sdk", "xml", "json", "html", "css"]);
+
 function toLabel(name: string): string {
-  return name.replace(/-/g, " ").replace(/_/g, " ").replace(/\./g, " › ").replace(/\b\w/g, c => c.toUpperCase());
+  return name
+    .replace(/-/g, " ")
+    .replace(/_/g, " ")
+    .replace(/\./g, " › ")
+    .replace(/\b\w+/g, w => LABEL_ACRONYMS.has(w.toLowerCase()) ? w.toUpperCase() : w.replace(/^\w/, c => c.toUpperCase()));
 }
 
 function deriveFieldType(schema: Record<string, unknown> | undefined): string {
