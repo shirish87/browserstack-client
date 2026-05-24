@@ -19,7 +19,8 @@ describe("LocalBinary", () => {
           // BrowserStackLocal process instance not found
           await client.stop().catch(() => null);
         }
-      }
+      },
+      LONG_TIMEOUT
     );
 
     test("version", async () => {
