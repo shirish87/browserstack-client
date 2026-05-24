@@ -31,10 +31,18 @@ function setNested(target: Record<string, unknown>, dottedKey: string, value: un
   let cur: Record<string, unknown> = target;
   for (let i = 0; i < parts.length - 1; i++) {
     const p = parts[i];
-    if (!cur[p] || typeof cur[p] !== "object") cur[p] = {};
-    cur = cur[p] as Record<string, unknown>;
+    if (Object.prototype.hasOwnProperty.call(cur, p) && typeof cur[p] === "object" && cur[p] !== null) {
+      cur = cur[p] as Record<string, unknown>;
+    } else {
+      const next: Record<string, unknown> = Object.create(null);
+      cur[p] = next;
+      cur = next;
+    }
   }
-  cur[parts[parts.length - 1]] = value;
+  const lastKey = parts[parts.length - 1];
+  if (!UNSAFE_KEYS.has(lastKey)) {
+    cur[lastKey] = value;
+  }
 }
 
 function coerceBodyValue(field: TUIField, raw: string): unknown {
