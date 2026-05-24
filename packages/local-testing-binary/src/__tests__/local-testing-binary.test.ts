@@ -14,9 +14,11 @@ describe("LocalBinary", () => {
   describe("Test instance start-stop", () => {
     afterEach<BrowserStackTestContext>(
       async () => {
-      const { client  } = localTestingBinaryContext;
-        // BrowserStackLocal process instance not found
-        await client.stop().catch(() => null);
+        const { client } = localTestingBinaryContext;
+        if (client.state !== "stopped") {
+          // BrowserStackLocal process instance not found
+          await client.stop().catch(() => null);
+        }
       }
     );
 

@@ -478,7 +478,7 @@ describe("CLI E2E Orchestrator", () => {
         if (process.platform !== "win32") return;
         const result = await run(["local", "run-with", "---", "echo", "hello"]);
         expect(result.stderr.toLowerCase()).not.toMatch(/separator/);
-      });
+      }, TEST_TIMEOUT_TUNNEL);
     });
 
     // ─── local integration (requires real BROWSERSTACK credentials) ─────────
