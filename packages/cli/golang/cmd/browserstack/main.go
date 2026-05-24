@@ -54,8 +54,9 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Usage: browserstack-client <product> <action> [args...]")
 		fmt.Fprintln(os.Stderr, "       browserstack-client version")
 		fmt.Fprintf(os.Stderr, "Products: local, %s, %s, %s, %s, %s, %s\n",
-			automate.ProductAutomate, appautomate.ProductAppAutomate, screenshots.ProductScreenshots,
-			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting)
+			automate.ProductAutomate, appautomate.ProductAppAutomate,
+			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting,
+			screenshots.ProductScreenshots)
 		os.Exit(1)
 	}
 
@@ -67,8 +68,9 @@ func main() {
 		fmt.Fprintln(os.Stdout, "Usage: browserstack-client <product> <action> [args...]")
 		fmt.Fprintln(os.Stdout, "       browserstack-client version")
 		fmt.Printf("Products: local, %s, %s, %s, %s, %s, %s\n",
-			automate.ProductAutomate, appautomate.ProductAppAutomate, screenshots.ProductScreenshots,
-			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting)
+			automate.ProductAutomate, appautomate.ProductAppAutomate,
+			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting,
+			screenshots.ProductScreenshots)
 		return
 	}
 

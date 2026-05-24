@@ -162,11 +162,11 @@ registerAllBuiltins(registry);
 const productSpecs = [
   { product: "automate", baseUrl: "sdk" },
   { product: "app-automate", baseUrl: "sdk" },
-  { product: "screenshots", baseUrl: "sdk" },
   { product: "local-testing", baseUrl: "sdk" },
-  { product: "test-management", baseUrl: "sdk" },
   { product: "accessibility", baseUrl: "sdk" },
+  { product: "test-management", baseUrl: "sdk" },
   { product: "test-reporting", baseUrl: "sdk" },
+  { product: "screenshots", baseUrl: "sdk" },
 ];
 
 const fieldOverridesPath = path.join(__dirname, "field-overrides.yaml");

@@ -45,11 +45,14 @@ pnpm build:types
 - **`packages/core`** — Shared runtime: `APIClient` base class (wraps `openapi-fetch`), auth helpers, error types, env resolution, HTTP adapter interfaces (fetch/axios/got). Every API client package depends on this.
 - **`packages/automate`** — BrowserStack Automate API client
 - **`packages/app-automate`** — BrowserStack App Automate API client
-- **`packages/js-testing`** — BrowserStack JavaScript Testing API client
-- **`packages/screenshots`** — BrowserStack Screenshots API client
 - **`packages/local-testing`** — BrowserStack Local Testing API client
 - **`packages/local-testing-binary`** — Node.js-specific: manages the BrowserStackLocal binary (download, start, stop). Uses `node:*` modules.
-- **`packages/cli`** — CLI entry points for local testing and app-automate
+- **`packages/accessibility`** — BrowserStack Accessibility API client
+- **`packages/test-management`** — BrowserStack Test Management API client
+- **`packages/test-reporting`** — BrowserStack Test Reporting & Analytics API client
+- **`packages/screenshots`** — BrowserStack Screenshots API client
+- **`packages/js-testing`** — BrowserStack JavaScript Testing API client (stub)
+- **`packages/cli`** — CLI entry points for all products
 
 ### Key Patterns
 

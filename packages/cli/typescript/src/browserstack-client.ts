@@ -29,10 +29,10 @@ async function runLocalCombined(args: string[]) {
 
 const products: Record<string, (args: string[]) => Promise<void>> = {
   local: runLocalCombined,
-  [Product.AppAutomate]: runAppAutomate,
   [Product.Automate]: runAutomate,
-  [Product.TestManagement]: runTestManagement,
+  [Product.AppAutomate]: runAppAutomate,
   [Product.Accessibility]: runAccessibility,
+  [Product.TestManagement]: runTestManagement,
   [Product.TestReporting]: runTestReporting,
   [Product.Screenshots]: runScreenshots,
 };

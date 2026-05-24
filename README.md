@@ -72,22 +72,6 @@ await tunnel.start();
 await tunnel.stop();
 ```
 
-### Screenshots — cross-browser screenshots
-
-```ts
-import { ScreenshotsClient } from "@dot-slash/browserstack-client/screenshots";
-
-const client = new ScreenshotsClient();
-
-await client.launch(
-  {
-    url: "https://example.com",
-    browsers: [{ browser: "chrome", browser_version: "latest", os: "Windows", os_version: "11" }],
-  },
-  (screenshot) => console.log("captured:", screenshot.imageUrl)
-);
-```
-
 ### Accessibility
 
 ```ts
@@ -122,6 +106,22 @@ const build = await client.startBuild({
 // ... run tests ...
 
 await client.finishBuild(build.buildHashedId, { status: "passed" });
+```
+
+### Screenshots — cross-browser screenshots
+
+```ts
+import { ScreenshotsClient } from "@dot-slash/browserstack-client/screenshots";
+
+const client = new ScreenshotsClient();
+
+await client.launch(
+  {
+    url: "https://example.com",
+    browsers: [{ browser: "chrome", browser_version: "latest", os: "Windows", os_version: "11" }],
+  },
+  (screenshot) => console.log("captured:", screenshot.imageUrl)
+);
 ```
 
 ## CLI

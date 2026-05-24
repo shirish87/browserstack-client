@@ -2129,130 +2129,6 @@ export const TUI_MANIFEST: TUIProduct[] = [
     ]
   },
   {
-    "id": "screenshots",
-    "title": "BrowserStack Screenshots",
-    "description": "BrowserStack Screenshots API",
-    "resources": [
-      {
-        "id": "default",
-        "label": "BrowserStack Screenshots",
-        "actions": [
-          {
-            "id": "get-job",
-            "summary": "Fetches a screenshot job",
-            "description": "Fetches a screenshot job",
-            "section": "Jobs",
-            "fields": [
-              {
-                "name": "jobId",
-                "label": "JobId",
-                "description": "ID of your screenshot job",
-                "type": "string",
-                "required": true,
-                "location": "path"
-              }
-            ]
-          },
-          {
-            "id": "create-job",
-            "summary": "Take a screenshot",
-            "description": "Take a screenshot of a website on a particular browser",
-            "section": "Jobs",
-            "fields": [
-              {
-                "name": "browsers",
-                "label": "Browsers",
-                "description": "",
-                "type": "string",
-                "required": true,
-                "location": "body"
-              },
-              {
-                "name": "orientation",
-                "label": "Orientation",
-                "description": "Screen orientation for a mobile device. Default: portrait",
-                "type": "string",
-                "required": false,
-                "location": "body",
-                "enum": [
-                  "portrait",
-                  "landscape"
-                ]
-              },
-              {
-                "name": "url",
-                "label": "URL",
-                "description": "",
-                "type": "string",
-                "required": true,
-                "location": "body"
-              },
-              {
-                "name": "callback_url",
-                "label": "Callback URL",
-                "description": "Public URL to which the screenshot will be posted.",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "win_res",
-                "label": "Win Res",
-                "description": "Sceen resolution of the Windows machine. Values: 1024x768, 1280x1024. Default: 1024x768",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "mac_res",
-                "label": "Mac Res",
-                "description": "Sceen resolution of the Mac machine. Values: 1024x768, 1280x960, 1280x1024, 1600x1200, 1920x1080. Default: 1024x768",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "quality",
-                "label": "Quality",
-                "description": "Quality of the screenshot. Default: Compressed",
-                "type": "string",
-                "required": false,
-                "location": "body",
-                "enum": [
-                  "Compressed",
-                  "Original"
-                ]
-              },
-              {
-                "name": "local",
-                "label": "Local",
-                "description": "Set to true if URL is local and a Local Testing connection has been set up. Default: false",
-                "type": "boolean",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "wait_time",
-                "label": "Wait Time",
-                "description": "Time in seconds to wait before taking the screenshot. Default: 5",
-                "type": "number",
-                "required": false,
-                "location": "body"
-              }
-            ]
-          },
-          {
-            "id": "list-browsers",
-            "summary": "Fetches list of browsers",
-            "description": "Fetches list of browsers supported by Screenshots API",
-            "section": "Browsers",
-            "fields": []
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "local-testing",
     "title": "BrowserStack Local Testing",
     "description": "BrowserStack Local Testing API",
@@ -2339,6 +2215,730 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "name": "auth_token",
                 "label": "Auth Token",
                 "description": "Your BrowserStack access token",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "accessibility",
+    "title": "BrowserStack Accessibility",
+    "description": "",
+    "resources": [
+      {
+        "id": "default",
+        "label": "BrowserStack Accessibility",
+        "actions": [
+          {
+            "id": "list-workflow-analyzer-reports",
+            "summary": "List Workflow Analyzer reports",
+            "description": "Returns a paginated list of all Workflow Analyzer accessibility reports for your account.",
+            "section": "Workflow Analyzer",
+            "fields": []
+          },
+          {
+            "id": "get-workflow-analyzer-report-summary",
+            "summary": "Get Workflow Analyzer report summary",
+            "description": "Returns the summary for a specific Workflow Analyzer report, including score, issue counts, and scan metadata.",
+            "section": "Workflow Analyzer",
+            "fields": [
+              {
+                "name": "report_id",
+                "label": "Report ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-workflow-analyzer-reports",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-workflow-analyzer-report-issues",
+            "summary": "Get Workflow Analyzer report issues",
+            "description": "Returns the paginated list of accessibility issues for a specific Workflow Analyzer report, optionally filtered by task.",
+            "section": "Workflow Analyzer",
+            "fields": [
+              {
+                "name": "report_id",
+                "label": "Report ID",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "query",
+                "picker": {
+                  "source": "accessibility.list-workflow-analyzer-reports",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "task_id",
+                "label": "Task ID",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "next_page",
+                "label": "Next Page",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "list-assisted-test-reports",
+            "summary": "List Assisted Test reports",
+            "description": "Returns a paginated list of all Assisted Test accessibility reports for your account.",
+            "section": "Assisted Tests",
+            "fields": []
+          },
+          {
+            "id": "get-assisted-test-report-summary",
+            "summary": "Get Assisted Test report summary",
+            "description": "Returns the summary for a specific Assisted Test report, including score, issue counts, and scan metadata.",
+            "section": "Assisted Tests",
+            "fields": [
+              {
+                "name": "report_id",
+                "label": "Report ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-workflow-analyzer-reports",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-assisted-test-report-issues",
+            "summary": "Get Assisted Test report issues",
+            "description": "Returns the paginated list of accessibility issues for a specific Assisted Test report, optionally filtered by task.",
+            "section": "Assisted Tests",
+            "fields": [
+              {
+                "name": "report_id",
+                "label": "Report ID",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "query",
+                "picker": {
+                  "source": "accessibility.list-workflow-analyzer-reports",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "task_id",
+                "label": "Task ID",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "next_page",
+                "label": "Next Page",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "list-website-scanner-auth-configs",
+            "summary": "List Website Scanner auth configs",
+            "description": "Returns all saved authentication configurations used by the Website Scanner for login-protected pages.",
+            "section": "Website Scanner Auth",
+            "fields": []
+          },
+          {
+            "id": "create-website-scanner-auth-config",
+            "summary": "Create Website Scanner auth config",
+            "description": "Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans.",
+            "section": "Website Scanner Auth",
+            "fields": [
+              {
+                "name": "name",
+                "label": "Name",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "type",
+                "label": "Type",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.url",
+                "label": "AuthData › URL",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.username",
+                "label": "AuthData › Username",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.password",
+                "label": "AuthData › Password",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.usernameSelector",
+                "label": "AuthData › UsernameSelector",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.passwordSelector",
+                "label": "AuthData › PasswordSelector",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "authData.submitSelector",
+                "label": "AuthData › SubmitSelector",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
+          },
+          {
+            "id": "list-website-scanner-scans",
+            "summary": "List Website Scanner scans",
+            "description": "Returns a paginated list of all configured Website Scanner scans for your account.",
+            "section": "Website Scanner Scans",
+            "fields": []
+          },
+          {
+            "id": "create-website-scanner-scan",
+            "summary": "Create Website Scanner scan",
+            "description": "Creates and triggers a new Website Scanner accessibility scan for the specified URL.",
+            "section": "Website Scanner Scans",
+            "fields": [
+              {
+                "name": "scan_url",
+                "label": "Scan URL",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              }
+            ]
+          },
+          {
+            "id": "get-website-scanner-scan-overview",
+            "summary": "Get Website Scanner scan overview",
+            "description": "Returns the configuration overview for a specific Website Scanner scan, including URL list and scan settings.",
+            "section": "Website Scanner Scans",
+            "fields": [
+              {
+                "name": "scan_id",
+                "label": "Scan ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-website-scanner-scan-runs",
+            "summary": "List Website Scanner scan runs",
+            "description": "Returns a paginated list of all scan runs for a specific Website Scanner scan, including status and issue counts.",
+            "section": "Website Scanner Runs",
+            "fields": [
+              {
+                "name": "scan_id",
+                "label": "Scan ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "page",
+                "label": "Page",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "page_size",
+                "label": "Page Size",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "get-website-scanner-scan-run-summary",
+            "summary": "Get Website Scanner scan run summary",
+            "description": "Returns a detailed summary for a specific scan run, including score, issue counts, and changes since the last run.",
+            "section": "Website Scanner Runs",
+            "fields": [
+              {
+                "name": "scan_id",
+                "label": "Scan ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "scan_run_id",
+                "label": "Scan Run ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scan-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "scan_id"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-website-scanner-scan-run-status",
+            "summary": "Get Website Scanner scan run status",
+            "description": "Returns the current execution status of a specific Website Scanner scan run.",
+            "section": "Website Scanner Runs",
+            "fields": [
+              {
+                "name": "scan_id",
+                "label": "Scan ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "scan_run_id",
+                "label": "Scan Run ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scan-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "scan_id"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-website-scanner-scan-run-issues",
+            "summary": "Get Website Scanner scan run issues",
+            "description": "Returns paginated accessibility issues found during a specific Website Scanner scan run, optionally filtered by task.",
+            "section": "Website Scanner Runs",
+            "fields": [
+              {
+                "name": "scan_id",
+                "label": "Scan ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "scan_run_id",
+                "label": "Scan Run ID",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "query",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scan-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "scan_id"
+                  ]
+                }
+              },
+              {
+                "name": "task_id",
+                "label": "Task ID",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "next_page",
+                "label": "Next Page",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "list-website-scanner-scan-run-logs",
+            "summary": "Get Website Scanner scan run logs",
+            "description": "Returns the crawl logs for a specific Website Scanner scan run, including per-URL status, redirects, and errors.",
+            "section": "Website Scanner Runs",
+            "fields": [
+              {
+                "name": "scan_id",
+                "label": "Scan ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scans",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "scan_run_id",
+                "label": "Scan Run ID",
+                "description": "",
+                "type": "number",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-website-scanner-scan-runs",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id"
+                  ],
+                  "filterBy": [
+                    "scan_id"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-automated-test-projects",
+            "summary": "List Automated Test projects",
+            "description": "Returns a paginated list of all Automated Test accessibility projects for your account.",
+            "section": "Automated Tests",
+            "fields": [
+              {
+                "name": "next_page",
+                "label": "Next Page",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "list-automated-test-builds",
+            "summary": "List Automated Test builds",
+            "description": "Returns a paginated list of Automated Test accessibility builds, optionally filtered by project.",
+            "section": "Automated Tests",
+            "fields": [
+              {
+                "name": "next_page",
+                "label": "Next Page",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "projectId",
+                "label": "ProjectId",
+                "description": "",
+                "type": "number",
+                "required": false,
+                "location": "query",
+                "picker": {
+                  "source": "accessibility.list-automated-test-projects",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-automated-test-build-test-cases",
+            "summary": "List test cases for an Automated Test build",
+            "description": "Returns the paginated list of test cases and their accessibility results for a specific Automated Test build.",
+            "section": "Automated Tests",
+            "fields": [
+              {
+                "name": "thBuildId",
+                "label": "ThBuildId",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "path"
+              },
+              {
+                "name": "next_page",
+                "label": "Next Page",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "get-automated-test-build-summary",
+            "summary": "Get Automated Test build summary",
+            "description": "Returns the summary for a specific Automated Test build, including score, health stats, and issue counts.",
+            "section": "Automated Tests",
+            "fields": [
+              {
+                "name": "thBuildId",
+                "label": "ThBuildId",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "path"
+              },
+              {
+                "name": "next_page",
+                "label": "Next Page",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "list-automated-test-build-issues",
+            "summary": "Get Automated Test build issues",
+            "description": "Returns paginated accessibility issues for a specific Automated Test build, optionally filtered by task.",
+            "section": "Automated Tests",
+            "fields": [
+              {
+                "name": "build_id",
+                "label": "Build ID",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query",
+                "picker": {
+                  "source": "accessibility.list-automated-test-builds",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ]
+                }
+              },
+              {
+                "name": "task_id",
+                "label": "Task ID",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "next_page",
+                "label": "Next Page",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "get-automated-test-build-test-case-summary",
+            "summary": "Get Automated Test case summary",
+            "description": "Returns the accessibility summary for a specific test case within an Automated Test build.",
+            "section": "Automated Tests",
+            "fields": [
+              {
+                "name": "thBuildId",
+                "label": "ThBuildId",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "path"
+              },
+              {
+                "name": "test_case_id",
+                "label": "Test Case ID",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "accessibility.list-automated-test-build-test-cases",
+                  "valueField": "id",
+                  "labelFields": [
+                    "id",
+                    "name"
+                  ],
+                  "filterBy": [
+                    "build_id"
+                  ]
+                }
+              },
+              {
+                "name": "next_page",
+                "label": "Next Page",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              }
+            ]
+          },
+          {
+            "id": "list-automated-test-build-test-case-issues",
+            "summary": "Get Automated Test case issues",
+            "description": "Returns paginated accessibility issues for a specific test case within an Automated Test build.",
+            "section": "Automated Tests",
+            "fields": [
+              {
+                "name": "thBuildId",
+                "label": "ThBuildId",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "path"
+              },
+              {
+                "name": "test_case",
+                "label": "Test Case",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "task_id",
+                "label": "Task ID",
+                "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "next_page",
+                "label": "Next Page",
+                "description": "",
                 "type": "string",
                 "required": false,
                 "location": "query"
@@ -5888,730 +6488,6 @@ export const TUI_MANIFEST: TUIProduct[] = [
     ]
   },
   {
-    "id": "accessibility",
-    "title": "BrowserStack Accessibility",
-    "description": "",
-    "resources": [
-      {
-        "id": "default",
-        "label": "BrowserStack Accessibility",
-        "actions": [
-          {
-            "id": "list-workflow-analyzer-reports",
-            "summary": "List Workflow Analyzer reports",
-            "description": "Returns a paginated list of all Workflow Analyzer accessibility reports for your account.",
-            "section": "Workflow Analyzer",
-            "fields": []
-          },
-          {
-            "id": "get-workflow-analyzer-report-summary",
-            "summary": "Get Workflow Analyzer report summary",
-            "description": "Returns the summary for a specific Workflow Analyzer report, including score, issue counts, and scan metadata.",
-            "section": "Workflow Analyzer",
-            "fields": [
-              {
-                "name": "report_id",
-                "label": "Report ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-workflow-analyzer-reports",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "id": "list-workflow-analyzer-report-issues",
-            "summary": "Get Workflow Analyzer report issues",
-            "description": "Returns the paginated list of accessibility issues for a specific Workflow Analyzer report, optionally filtered by task.",
-            "section": "Workflow Analyzer",
-            "fields": [
-              {
-                "name": "report_id",
-                "label": "Report ID",
-                "description": "",
-                "type": "number",
-                "required": false,
-                "location": "query",
-                "picker": {
-                  "source": "accessibility.list-workflow-analyzer-reports",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              },
-              {
-                "name": "task_id",
-                "label": "Task ID",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              },
-              {
-                "name": "next_page",
-                "label": "Next Page",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              }
-            ]
-          },
-          {
-            "id": "list-assisted-test-reports",
-            "summary": "List Assisted Test reports",
-            "description": "Returns a paginated list of all Assisted Test accessibility reports for your account.",
-            "section": "Assisted Tests",
-            "fields": []
-          },
-          {
-            "id": "get-assisted-test-report-summary",
-            "summary": "Get Assisted Test report summary",
-            "description": "Returns the summary for a specific Assisted Test report, including score, issue counts, and scan metadata.",
-            "section": "Assisted Tests",
-            "fields": [
-              {
-                "name": "report_id",
-                "label": "Report ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-workflow-analyzer-reports",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "id": "list-assisted-test-report-issues",
-            "summary": "Get Assisted Test report issues",
-            "description": "Returns the paginated list of accessibility issues for a specific Assisted Test report, optionally filtered by task.",
-            "section": "Assisted Tests",
-            "fields": [
-              {
-                "name": "report_id",
-                "label": "Report ID",
-                "description": "",
-                "type": "number",
-                "required": false,
-                "location": "query",
-                "picker": {
-                  "source": "accessibility.list-workflow-analyzer-reports",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              },
-              {
-                "name": "task_id",
-                "label": "Task ID",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              },
-              {
-                "name": "next_page",
-                "label": "Next Page",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              }
-            ]
-          },
-          {
-            "id": "list-website-scanner-auth-configs",
-            "summary": "List Website Scanner auth configs",
-            "description": "Returns all saved authentication configurations used by the Website Scanner for login-protected pages.",
-            "section": "Website Scanner Auth",
-            "fields": []
-          },
-          {
-            "id": "create-website-scanner-auth-config",
-            "summary": "Create Website Scanner auth config",
-            "description": "Creates a new authentication configuration for the Website Scanner to access login-protected pages during scans.",
-            "section": "Website Scanner Auth",
-            "fields": [
-              {
-                "name": "name",
-                "label": "Name",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "type",
-                "label": "Type",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "authData.url",
-                "label": "AuthData › URL",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "authData.username",
-                "label": "AuthData › Username",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "authData.password",
-                "label": "AuthData › Password",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "authData.usernameSelector",
-                "label": "AuthData › UsernameSelector",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "authData.passwordSelector",
-                "label": "AuthData › PasswordSelector",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              },
-              {
-                "name": "authData.submitSelector",
-                "label": "AuthData › SubmitSelector",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              }
-            ]
-          },
-          {
-            "id": "list-website-scanner-scans",
-            "summary": "List Website Scanner scans",
-            "description": "Returns a paginated list of all configured Website Scanner scans for your account.",
-            "section": "Website Scanner Scans",
-            "fields": []
-          },
-          {
-            "id": "create-website-scanner-scan",
-            "summary": "Create Website Scanner scan",
-            "description": "Creates and triggers a new Website Scanner accessibility scan for the specified URL.",
-            "section": "Website Scanner Scans",
-            "fields": [
-              {
-                "name": "scan_url",
-                "label": "Scan URL",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "body"
-              }
-            ]
-          },
-          {
-            "id": "get-website-scanner-scan-overview",
-            "summary": "Get Website Scanner scan overview",
-            "description": "Returns the configuration overview for a specific Website Scanner scan, including URL list and scan settings.",
-            "section": "Website Scanner Scans",
-            "fields": [
-              {
-                "name": "scan_id",
-                "label": "Scan ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-website-scanner-scans",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "id": "list-website-scanner-scan-runs",
-            "summary": "List Website Scanner scan runs",
-            "description": "Returns a paginated list of all scan runs for a specific Website Scanner scan, including status and issue counts.",
-            "section": "Website Scanner Runs",
-            "fields": [
-              {
-                "name": "scan_id",
-                "label": "Scan ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-website-scanner-scans",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              },
-              {
-                "name": "page",
-                "label": "Page",
-                "description": "",
-                "type": "number",
-                "required": false,
-                "location": "query"
-              },
-              {
-                "name": "page_size",
-                "label": "Page Size",
-                "description": "",
-                "type": "number",
-                "required": false,
-                "location": "query"
-              }
-            ]
-          },
-          {
-            "id": "get-website-scanner-scan-run-summary",
-            "summary": "Get Website Scanner scan run summary",
-            "description": "Returns a detailed summary for a specific scan run, including score, issue counts, and changes since the last run.",
-            "section": "Website Scanner Runs",
-            "fields": [
-              {
-                "name": "scan_id",
-                "label": "Scan ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-website-scanner-scans",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              },
-              {
-                "name": "scan_run_id",
-                "label": "Scan Run ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-website-scanner-scan-runs",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id"
-                  ],
-                  "filterBy": [
-                    "scan_id"
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "id": "list-website-scanner-scan-run-status",
-            "summary": "Get Website Scanner scan run status",
-            "description": "Returns the current execution status of a specific Website Scanner scan run.",
-            "section": "Website Scanner Runs",
-            "fields": [
-              {
-                "name": "scan_id",
-                "label": "Scan ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-website-scanner-scans",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              },
-              {
-                "name": "scan_run_id",
-                "label": "Scan Run ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-website-scanner-scan-runs",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id"
-                  ],
-                  "filterBy": [
-                    "scan_id"
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "id": "list-website-scanner-scan-run-issues",
-            "summary": "Get Website Scanner scan run issues",
-            "description": "Returns paginated accessibility issues found during a specific Website Scanner scan run, optionally filtered by task.",
-            "section": "Website Scanner Runs",
-            "fields": [
-              {
-                "name": "scan_id",
-                "label": "Scan ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-website-scanner-scans",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              },
-              {
-                "name": "scan_run_id",
-                "label": "Scan Run ID",
-                "description": "",
-                "type": "number",
-                "required": false,
-                "location": "query",
-                "picker": {
-                  "source": "accessibility.list-website-scanner-scan-runs",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id"
-                  ],
-                  "filterBy": [
-                    "scan_id"
-                  ]
-                }
-              },
-              {
-                "name": "task_id",
-                "label": "Task ID",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              },
-              {
-                "name": "next_page",
-                "label": "Next Page",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              }
-            ]
-          },
-          {
-            "id": "list-website-scanner-scan-run-logs",
-            "summary": "Get Website Scanner scan run logs",
-            "description": "Returns the crawl logs for a specific Website Scanner scan run, including per-URL status, redirects, and errors.",
-            "section": "Website Scanner Runs",
-            "fields": [
-              {
-                "name": "scan_id",
-                "label": "Scan ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-website-scanner-scans",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              },
-              {
-                "name": "scan_run_id",
-                "label": "Scan Run ID",
-                "description": "",
-                "type": "number",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-website-scanner-scan-runs",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id"
-                  ],
-                  "filterBy": [
-                    "scan_id"
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "id": "list-automated-test-projects",
-            "summary": "List Automated Test projects",
-            "description": "Returns a paginated list of all Automated Test accessibility projects for your account.",
-            "section": "Automated Tests",
-            "fields": [
-              {
-                "name": "next_page",
-                "label": "Next Page",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              }
-            ]
-          },
-          {
-            "id": "list-automated-test-builds",
-            "summary": "List Automated Test builds",
-            "description": "Returns a paginated list of Automated Test accessibility builds, optionally filtered by project.",
-            "section": "Automated Tests",
-            "fields": [
-              {
-                "name": "next_page",
-                "label": "Next Page",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              },
-              {
-                "name": "projectId",
-                "label": "ProjectId",
-                "description": "",
-                "type": "number",
-                "required": false,
-                "location": "query",
-                "picker": {
-                  "source": "accessibility.list-automated-test-projects",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "id": "list-automated-test-build-test-cases",
-            "summary": "List test cases for an Automated Test build",
-            "description": "Returns the paginated list of test cases and their accessibility results for a specific Automated Test build.",
-            "section": "Automated Tests",
-            "fields": [
-              {
-                "name": "thBuildId",
-                "label": "ThBuildId",
-                "description": "",
-                "type": "string",
-                "required": true,
-                "location": "path"
-              },
-              {
-                "name": "next_page",
-                "label": "Next Page",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              }
-            ]
-          },
-          {
-            "id": "get-automated-test-build-summary",
-            "summary": "Get Automated Test build summary",
-            "description": "Returns the summary for a specific Automated Test build, including score, health stats, and issue counts.",
-            "section": "Automated Tests",
-            "fields": [
-              {
-                "name": "thBuildId",
-                "label": "ThBuildId",
-                "description": "",
-                "type": "string",
-                "required": true,
-                "location": "path"
-              },
-              {
-                "name": "next_page",
-                "label": "Next Page",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              }
-            ]
-          },
-          {
-            "id": "list-automated-test-build-issues",
-            "summary": "Get Automated Test build issues",
-            "description": "Returns paginated accessibility issues for a specific Automated Test build, optionally filtered by task.",
-            "section": "Automated Tests",
-            "fields": [
-              {
-                "name": "build_id",
-                "label": "Build ID",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query",
-                "picker": {
-                  "source": "accessibility.list-automated-test-builds",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ]
-                }
-              },
-              {
-                "name": "task_id",
-                "label": "Task ID",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              },
-              {
-                "name": "next_page",
-                "label": "Next Page",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              }
-            ]
-          },
-          {
-            "id": "get-automated-test-build-test-case-summary",
-            "summary": "Get Automated Test case summary",
-            "description": "Returns the accessibility summary for a specific test case within an Automated Test build.",
-            "section": "Automated Tests",
-            "fields": [
-              {
-                "name": "thBuildId",
-                "label": "ThBuildId",
-                "description": "",
-                "type": "string",
-                "required": true,
-                "location": "path"
-              },
-              {
-                "name": "test_case_id",
-                "label": "Test Case ID",
-                "description": "",
-                "type": "string",
-                "required": true,
-                "location": "path",
-                "picker": {
-                  "source": "accessibility.list-automated-test-build-test-cases",
-                  "valueField": "id",
-                  "labelFields": [
-                    "id",
-                    "name"
-                  ],
-                  "filterBy": [
-                    "build_id"
-                  ]
-                }
-              },
-              {
-                "name": "next_page",
-                "label": "Next Page",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              }
-            ]
-          },
-          {
-            "id": "list-automated-test-build-test-case-issues",
-            "summary": "Get Automated Test case issues",
-            "description": "Returns paginated accessibility issues for a specific test case within an Automated Test build.",
-            "section": "Automated Tests",
-            "fields": [
-              {
-                "name": "thBuildId",
-                "label": "ThBuildId",
-                "description": "",
-                "type": "string",
-                "required": true,
-                "location": "path"
-              },
-              {
-                "name": "test_case",
-                "label": "Test Case",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              },
-              {
-                "name": "task_id",
-                "label": "Task ID",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              },
-              {
-                "name": "next_page",
-                "label": "Next Page",
-                "description": "",
-                "type": "string",
-                "required": false,
-                "location": "query"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "test-reporting",
     "title": "BrowserStack Test Reporting & Analytics (TestReporting)",
     "description": "API for BrowserStack Test Reporting & Analytics",
@@ -8147,6 +8023,130 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "location": "body"
               }
             ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "screenshots",
+    "title": "BrowserStack Screenshots",
+    "description": "BrowserStack Screenshots API",
+    "resources": [
+      {
+        "id": "default",
+        "label": "BrowserStack Screenshots",
+        "actions": [
+          {
+            "id": "get-job",
+            "summary": "Fetches a screenshot job",
+            "description": "Fetches a screenshot job",
+            "section": "Jobs",
+            "fields": [
+              {
+                "name": "jobId",
+                "label": "JobId",
+                "description": "ID of your screenshot job",
+                "type": "string",
+                "required": true,
+                "location": "path"
+              }
+            ]
+          },
+          {
+            "id": "create-job",
+            "summary": "Take a screenshot",
+            "description": "Take a screenshot of a website on a particular browser",
+            "section": "Jobs",
+            "fields": [
+              {
+                "name": "browsers",
+                "label": "Browsers",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "orientation",
+                "label": "Orientation",
+                "description": "Screen orientation for a mobile device. Default: portrait",
+                "type": "string",
+                "required": false,
+                "location": "body",
+                "enum": [
+                  "portrait",
+                  "landscape"
+                ]
+              },
+              {
+                "name": "url",
+                "label": "URL",
+                "description": "",
+                "type": "string",
+                "required": true,
+                "location": "body"
+              },
+              {
+                "name": "callback_url",
+                "label": "Callback URL",
+                "description": "Public URL to which the screenshot will be posted.",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "win_res",
+                "label": "Win Res",
+                "description": "Sceen resolution of the Windows machine. Values: 1024x768, 1280x1024. Default: 1024x768",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "mac_res",
+                "label": "Mac Res",
+                "description": "Sceen resolution of the Mac machine. Values: 1024x768, 1280x960, 1280x1024, 1600x1200, 1920x1080. Default: 1024x768",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "quality",
+                "label": "Quality",
+                "description": "Quality of the screenshot. Default: Compressed",
+                "type": "string",
+                "required": false,
+                "location": "body",
+                "enum": [
+                  "Compressed",
+                  "Original"
+                ]
+              },
+              {
+                "name": "local",
+                "label": "Local",
+                "description": "Set to true if URL is local and a Local Testing connection has been set up. Default: false",
+                "type": "boolean",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "wait_time",
+                "label": "Wait Time",
+                "description": "Time in seconds to wait before taking the screenshot. Default: 5",
+                "type": "number",
+                "required": false,
+                "location": "body"
+              }
+            ]
+          },
+          {
+            "id": "list-browsers",
+            "summary": "Fetches list of browsers",
+            "description": "Fetches list of browsers supported by Screenshots API",
+            "section": "Browsers",
+            "fields": []
           }
         ]
       }
