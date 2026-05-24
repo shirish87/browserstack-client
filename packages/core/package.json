@@ -7,7 +7,7 @@
   "type": "module",
   "description": "Shared runtime utilities: APIClient base, auth, error handling, HTTP adapters",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "exports": {
     ".": {

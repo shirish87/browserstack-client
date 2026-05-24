@@ -7,7 +7,7 @@
   "type": "module",
   "description": "BrowserStack Screenshots API client for cross-browser screenshot automation",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "exports": {
     ".": {

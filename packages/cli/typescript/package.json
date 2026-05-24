@@ -7,7 +7,7 @@
   "type": "module",
   "description": "Command-line interface for BrowserStack Local Testing and App Automate",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "bin": {
     "browserstack-cli": "./dist/browserstack-client.js",

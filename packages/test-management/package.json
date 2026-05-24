@@ -7,7 +7,7 @@
   "type": "module",
   "description": "BrowserStack Test Management API client",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "exports": {
     ".": {

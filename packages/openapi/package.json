@@ -33,7 +33,7 @@
     "typecheck": "true"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^12.1.0",

@@ -7,7 +7,7 @@
   "type": "module",
   "description": "BrowserStack Automate API client for browser automation testing",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "exports": {
     ".": {

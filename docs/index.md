@@ -34,7 +34,7 @@ features:
 npm install @dot-slash/browserstack-client
 ```
 
-**Node.js 20 or higher** required. A BrowserStack account with the relevant product subscriptions is needed for each API.
+**Node.js 22 or higher** required. A BrowserStack account with the relevant product subscriptions is needed for each API.
 
 ## Authentication
 

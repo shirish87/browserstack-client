@@ -7,7 +7,7 @@
   "type": "module",
   "description": "BrowserStack Local Testing API client for local development",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "exports": {
     ".": {
