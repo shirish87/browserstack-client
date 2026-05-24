@@ -8,6 +8,74 @@ import (
 	"testing"
 )
 
+func downloadURL(osArch string) string {
+	return downloadBaseURL + "/BrowserStackLocal-" + osArch + ".zip"
+}
+
+func noMusl() bool  { return false }
+func yesMusl() bool { return true }
+
+func TestResolveOSArch(t *testing.T) {
+	tests := []struct {
+		goos    string
+		goarch  string
+		isMusl  func() bool
+		want    string
+		wantErr bool
+	}{
+		// darwin: arm64 and x64 must both resolve to darwin-x64 (no arm64 binary exists)
+		{"darwin", "amd64", noMusl, "darwin-x64", false},
+		{"darwin", "arm64", noMusl, "darwin-x64", false},
+		// linux glibc variants
+		{"linux", "amd64", noMusl, "linux-x64", false},
+		{"linux", "arm64", noMusl, "linux-x64", false},
+		{"linux", "386", noMusl, "linux-ia32", false},
+		// linux musl (Alpine)
+		{"linux", "amd64", yesMusl, "alpine", false},
+		{"linux", "arm64", yesMusl, "alpine", false},
+		// windows
+		{"windows", "amd64", noMusl, "win32", false},
+		{"windows", "386", noMusl, "win32", false},
+		// unsupported
+		{"freebsd", "amd64", noMusl, "", true},
+	}
+
+	for _, tc := range tests {
+		name := tc.goos + "/" + tc.goarch
+		t.Run(name, func(t *testing.T) {
+			got, err := resolveOSArch(tc.goos, tc.goarch, tc.isMusl)
+			if tc.wantErr {
+				if err == nil {
+					t.Errorf("resolveOSArch(%q, %q) expected error, got %q", tc.goos, tc.goarch, got)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("resolveOSArch(%q, %q) unexpected error: %v", tc.goos, tc.goarch, err)
+			}
+			if got != tc.want {
+				t.Errorf("resolveOSArch(%q, %q) = %q, want %q", tc.goos, tc.goarch, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestResolveOSArch_darwinNeverProducesArm64URL(t *testing.T) {
+	for _, arch := range []string{"amd64", "arm64"} {
+		osArch, err := resolveOSArch("darwin", arch, noMusl)
+		if err != nil {
+			t.Fatalf("unexpected error for darwin/%s: %v", arch, err)
+		}
+		url := downloadURL(osArch)
+		if strings.Contains(url, "arm64") {
+			t.Errorf("darwin/%s produced arm64 URL %q; no such binary exists", arch, url)
+		}
+		if url != downloadURL("darwin-x64") {
+			t.Errorf("darwin/%s URL = %q, want %q", arch, url, downloadURL("darwin-x64"))
+		}
+	}
+}
+
 func TestCurrentOSArch_returnsKnownValue(t *testing.T) {
 	arch, err := currentOSArch()
 	if err != nil {
@@ -17,12 +85,11 @@ func TestCurrentOSArch_returnsKnownValue(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	valid := map[string]bool{
-		"linux-x64":    true,
-		"linux-ia32":   true,
-		"alpine":       true,
-		"darwin-x64":   true,
-		"darwin-arm64": true,
-		"win32":        true,
+		"linux-x64":  true,
+		"linux-ia32": true,
+		"alpine":     true,
+		"darwin-x64": true,
+		"win32":      true,
 	}
 	if !valid[arch] {
 		t.Errorf("currentOSArch() = %q, not a recognized value", arch)

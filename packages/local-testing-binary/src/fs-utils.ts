@@ -115,40 +115,46 @@ export async function ensureDirExists(
   }
 }
 
-export async function currentOSArch(): Promise<
-  operations["downloadLocalBinary"]["parameters"]["path"]["osArch"] | undefined
-> {
-  if (["x64", "ia32", "arm64"].includes(currentArch)) {
-    // BrowserStackLocal binaries: darwin-x64, win32, linux-x64, linux-ia32, alpine
-    // No native arm64 binary exists; darwin/arm64 falls back to darwin-x64 (Rosetta 2)
+type OSArch = operations["downloadLocalBinary"]["parameters"]["path"]["osArch"];
 
-    switch (currentPlatform) {
-      case "darwin":
-        return "darwin-x64";
-      case "win32":
-      case "cygwin":
-        return "win32";
-      case "linux":
-        if (currentArch === "ia32") {
-          return "linux-ia32";
-        }
-
-        try {
-          const maps = await readFile("/proc/self/maps", "utf8");
-          if (maps.includes("musl")) {
-            return "alpine";
-          }
-        } catch {
-          /* ignore failed alpine/musl check */
-        }
-
-        return "linux-x64";
-    }
+/** @internal — exported for testing only */
+export async function resolveOSArch(
+  platform: string,
+  arch: string,
+  readMapsFile: () => Promise<string> = () => readFile("/proc/self/maps", "utf8")
+): Promise<OSArch | undefined> {
+  if (!["x64", "ia32", "arm64"].includes(arch)) {
+    throw new BrowserStackError(`Unsupported platform/arch: ${platform}/${arch}`);
   }
 
-  throw new BrowserStackError(
-    `Unsupported platform/arch: ${currentPlatform}/${currentArch}`
-  );
+  // BrowserStackLocal binaries: darwin-x64, win32, linux-x64, linux-ia32, alpine
+  // No native arm64 binary exists; darwin/arm64 falls back to darwin-x64 (Rosetta 2)
+  switch (platform) {
+    case "darwin":
+      return "darwin-x64";
+    case "win32":
+    case "cygwin":
+      return "win32";
+    case "linux":
+      if (arch === "ia32") {
+        return "linux-ia32";
+      }
+      try {
+        const maps = await readMapsFile();
+        if (maps.includes("musl")) {
+          return "alpine";
+        }
+      } catch {
+        /* ignore failed alpine/musl check */
+      }
+      return "linux-x64";
+    default:
+      throw new BrowserStackError(`Unsupported platform/arch: ${platform}/${arch}`);
+  }
+}
+
+export async function currentOSArch(): Promise<OSArch | undefined> {
+  return resolveOSArch(currentPlatform, currentArch);
 }
 
 export async function saveFile(

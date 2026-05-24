@@ -180,24 +180,28 @@ func binaryPath(binHome string) string {
 
 // currentOSArch returns the BrowserStack OS/arch string for the current platform.
 func currentOSArch() (string, error) {
-	switch runtime.GOOS {
+	return resolveOSArch(runtime.GOOS, runtime.GOARCH, isMusl)
+}
+
+// resolveOSArch maps a GOOS/GOARCH pair to the BrowserStack binary osArch token.
+// isMuslFn is injectable for testing; production code passes isMusl.
+func resolveOSArch(goos, goarch string, isMuslFn func() bool) (string, error) {
+	switch goos {
 	case "darwin":
-		if runtime.GOARCH == "arm64" {
-			return "darwin-arm64", nil
-		}
+		// No native arm64 binary exists; fall back to darwin-x64 (runs via Rosetta 2).
 		return "darwin-x64", nil
 	case "windows":
 		return "win32", nil
 	case "linux":
-		if isMusl() {
+		if isMuslFn() {
 			return "alpine", nil
 		}
-		if runtime.GOARCH == "386" {
+		if goarch == "386" {
 			return "linux-ia32", nil
 		}
 		return "linux-x64", nil
 	default:
-		return "", fmt.Errorf("unsupported OS: %s", runtime.GOOS)
+		return "", fmt.Errorf("unsupported OS: %s", goos)
 	}
 }
 

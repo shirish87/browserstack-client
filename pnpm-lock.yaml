@@ -373,6 +373,43 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
 
+  packages/sdk:
+    dependencies:
+      '@dot-slash/browserstack-accessibility':
+        specifier: workspace:*
+        version: link:../accessibility
+      '@dot-slash/browserstack-app-automate':
+        specifier: workspace:*
+        version: link:../app-automate
+      '@dot-slash/browserstack-automate':
+        specifier: workspace:*
+        version: link:../automate
+      '@dot-slash/browserstack-core':
+        specifier: workspace:*
+        version: link:../core
+      '@dot-slash/browserstack-local-testing':
+        specifier: workspace:*
+        version: link:../local-testing-binary
+      '@dot-slash/browserstack-local-testing-api':
+        specifier: workspace:*
+        version: link:../local-testing
+      '@dot-slash/browserstack-screenshots':
+        specifier: workspace:*
+        version: link:../screenshots
+      '@dot-slash/browserstack-test-management':
+        specifier: workspace:*
+        version: link:../test-management
+      '@dot-slash/browserstack-test-reporting':
+        specifier: workspace:*
+        version: link:../test-reporting
+    devDependencies:
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(postcss@8.5.10)(typescript@6.0.3)(yaml@2.8.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   packages/test-management:
     devDependencies:
       '@dot-slash/browserstack-core':
