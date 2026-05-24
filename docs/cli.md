@@ -127,6 +127,7 @@ browserstack-client <product> <action> [args...]
 - `app-automate`
 - `screenshots`
 - `accessibility`
+- `website-scanner`
 - `test-management`
 - `test-reporting`
 - `local`
