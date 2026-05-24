@@ -24,6 +24,9 @@ const localBinaryOptions: LocalTestingBinaryOptions = {
     process.env.BROWSERSTACK_LOCAL_BINARY_PATH ||
     process.env.VITE_BROWSERSTACK_LOCAL_BINARY_PATH ||
     defaultBinHome(),
+  commandTimeoutMs: process.env.BROWSERSTACK_LOCAL_COMMAND_TIMEOUT_MS
+    ? parseInt(process.env.BROWSERSTACK_LOCAL_COMMAND_TIMEOUT_MS, 10)
+    : undefined,
 };
 
 const localTestingBinary = new LocalTestingBinary(localBinaryOptions);

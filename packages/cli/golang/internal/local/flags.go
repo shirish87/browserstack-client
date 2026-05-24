@@ -3,6 +3,7 @@ package local
 import (
 	"fmt"
 	"math/rand" // math/rand global is auto-seeded since Go 1.20; math/rand/v2 requires Go 1.22
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -66,13 +67,14 @@ type Options struct {
 func ParseArgs(args []string, accessKey string) (*Options, error) {
 	opts := &Options{
 		AccessKey:      accessKey,
-		CommandTimeout: 20 * time.Second,
+		CommandTimeout: defaultCommandTimeout(),
 	}
 
 	i := 0
 	// Support positional local-identifier as first argument
 	if len(args) > 0 && !strings.HasPrefix(args[0], "--") {
 		opts.LocalIdentifier = args[0]
+		opts.ExplicitLocalIdentifier = true
 		i = 1
 	}
 
@@ -338,4 +340,16 @@ func randomIdentifier() string {
 		b[i] = chars[rand.Intn(len(chars))]
 	}
 	return string(b)
+}
+
+// defaultCommandTimeout returns the daemon-command timeout, allowing an
+// override via BROWSERSTACK_LOCAL_COMMAND_TIMEOUT_MS for CI environments
+// where tunnel establishment can exceed the standard 20s default.
+func defaultCommandTimeout() time.Duration {
+	if v := os.Getenv("BROWSERSTACK_LOCAL_COMMAND_TIMEOUT_MS"); v != "" {
+		if ms, err := strconv.Atoi(v); err == nil && ms > 0 {
+			return time.Duration(ms) * time.Millisecond
+		}
+	}
+	return 20 * time.Second
 }

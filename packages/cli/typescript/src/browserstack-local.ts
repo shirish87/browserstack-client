@@ -421,6 +421,16 @@ export async function main(
       return;
     }
 
+    // Allow CI / test environments to override the default 20s spawnSync timeout
+    // via BROWSERSTACK_LOCAL_COMMAND_TIMEOUT_MS without changing the operational default.
+    if (options.commandTimeoutMs === undefined) {
+      const envMs = process.env.BROWSERSTACK_LOCAL_COMMAND_TIMEOUT_MS;
+      if (envMs) {
+        const parsed = parseInt(envMs, 10);
+        if (parsed > 0) options = { ...options, commandTimeoutMs: parsed };
+      }
+    }
+
     const action = ensureValidAction(actionInput);
     let localIdentifier: string | undefined;
     let accessKey: string | undefined;

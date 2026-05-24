@@ -7,6 +7,7 @@ import (
 )
 
 func TestParseArgs_defaults(t *testing.T) {
+	t.Setenv("BROWSERSTACK_LOCAL_COMMAND_TIMEOUT_MS", "")
 	opts, err := ParseArgs([]string{}, "mykey")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)

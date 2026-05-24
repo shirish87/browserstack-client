@@ -48,6 +48,10 @@ env:
   BROWSERSTACK_USERNAME: "${{ secrets.VITE_BROWSERSTACK_USERNAME }}"
   BROWSERSTACK_KEY: "${{ secrets.VITE_BROWSERSTACK_KEY }}"
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  # CI runners (especially macOS) can take longer than the 20s default to
+  # establish a BrowserStack Local tunnel. This raises the spawnSync /
+  # context timeout for daemon commands only, without changing the SDK default.
+  BROWSERSTACK_LOCAL_COMMAND_TIMEOUT_MS: "55000"
 
 jobs:
   # ── 1. Build everything once + SonarQube scan ────────────────────────────────
