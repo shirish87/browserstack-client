@@ -35,8 +35,8 @@ export async function main(
   logger: Logger = globalThis.console
 ) {
   try {
-    ensureAccessKeyExists(undefined);
-    ensureUsernameExists(undefined);
+    ensureAccessKeyExists();
+    ensureUsernameExists();
 
     const args = inputArgs.map((a) => a.trim());
     const actionInput = args[0]?.toLowerCase();

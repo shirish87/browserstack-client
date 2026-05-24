@@ -48,7 +48,7 @@ docker run --rm \
   -Dsonar.sources=. \
   -Dsonar.tests=. \
   -Dsonar.test.inclusions="**/*.test.ts,**/*.spec.ts,**/*_test.go,**/__tests__/**,**/test/**" \
-  -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/dist-binary/**" \
+  -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/dist-binary/**,**/generated/**,**/*.generated.ts" \
   -Dsonar.host.url=http://localhost:9000 \
   -Dsonar.token=$SONAR_TOKEN
 

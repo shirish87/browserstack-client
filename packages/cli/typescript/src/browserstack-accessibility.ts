@@ -26,8 +26,8 @@ export async function main(args: string[]): Promise<void> {
   };
 
   try {
-    const username = ensureUsernameExists(undefined);
-    const accessKey = ensureAccessKeyExists(undefined);
+    const username = ensureUsernameExists();
+    const accessKey = ensureAccessKeyExists();
     const opts: ClientOptions = { username, accessKey };
 
     const actionInput = args[0]?.toLowerCase();

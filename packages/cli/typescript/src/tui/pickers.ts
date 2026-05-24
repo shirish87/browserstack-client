@@ -112,7 +112,7 @@ export async function fetchPickerItemsForAction(
   const found = findAction(picker.source);
   if (!found) return [];
   const { product, action } = found;
-  const cacheKey = picker.source + ":" + Object.entries(filterValues).sort().map(([k, v]) => `${k}=${v}`).join("&");
+  const cacheKey = picker.source + ":" + Object.entries(filterValues).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => `${k}=${v}`).join("&");
   if (cache.has(cacheKey)) return cache.get(cacheKey)!;
   const { output, error } = await executeAction(product, action, filterValues);
   if (error) {

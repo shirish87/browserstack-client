@@ -21,7 +21,7 @@ export async function main(
   logger: Logger = globalThis.console
 ) {
   try {
-    const accessKey = ensureAccessKeyExists(undefined);
+    const accessKey = ensureAccessKeyExists();
     const client = new LocalTestingClient({ accessKey });
 
     const args = inputArgs.map((a) => a.trim());

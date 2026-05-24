@@ -12,7 +12,7 @@ import { isHttpError } from "@dot-slash/browserstack-openapi-transforms";
  *
  * @internal
  */
-export function ensureAccessKeyExists(accessKey: string | undefined): string {
+export function ensureAccessKeyExists(accessKey?: string): string {
   const resolved = resolveAccessKey(accessKey);
   if (typeof resolved !== "string" || !resolved.trim().length) {
     throw new BrowserStackError("Missing accessKey");
@@ -31,7 +31,7 @@ export function ensureAccessKeyExists(accessKey: string | undefined): string {
  *
  * @internal
  */
-export function ensureUsernameExists(data: string | undefined): string {
+export function ensureUsernameExists(data?: string): string {
   const username = resolveUsername(data);
   if (typeof username !== "string" || !username.trim().length) {
     throw new BrowserStackError("Missing username");

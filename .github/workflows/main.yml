@@ -134,7 +134,7 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.tests=. \
             -Dsonar.test.inclusions="**/*.test.ts,**/*.spec.ts,**/*_test.go,**/__tests__/**,**/test/**" \
-            -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/dist-binary/**" \
+            -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/dist-binary/**,**/generated/**,**/*.generated.ts" \
             -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.token=$SONAR_TOKEN
           
@@ -255,6 +255,14 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-2025]
+        include:
+          # Node.js v24.15.0 has a native crash regression on Windows Server 2025
+          # (STATUS_STACK_BUFFER_OVERRUN / exit 3221226505) fixed in v24.16.0.
+          # Pin Windows to 24.16.0; macOS stays on lts/*.
+          - os: windows-2025
+            node-version: "24.16.0"
+          - os: macos-latest
+            node-version: "lts/*"
     runs-on: ${{ matrix.os }}
     environment: BrowserStackEnv
     steps:
@@ -263,7 +271,7 @@ jobs:
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
-          node-version: "lts/*"
+          node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
       - name: Install dependencies

@@ -267,7 +267,7 @@ async function ensureBinHomeExists(
  *
  * @internal
  */
-function ensureAccessKeyExists(accessKey: string | undefined): string {
+function ensureAccessKeyExists(accessKey?: string): string {
   const resolved = resolveAccessKey(accessKey);
   if (typeof resolved !== "string" || !resolved.trim().length) {
     throw new BrowserStackError("Missing accessKey");
