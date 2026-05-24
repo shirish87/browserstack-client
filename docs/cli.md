@@ -146,6 +146,24 @@ The `local` product provides powerful wrappers around the `BrowserStackLocal` bi
 
 ## Examples
 
+### Local Testing
+```bash
+# Start a tunnel (blocks until ready)
+browserstack-client local start
+
+# Start a named tunnel
+browserstack-client local start my-tunnel
+
+# List active tunnels
+browserstack-client local list
+
+# Stop a named tunnel
+browserstack-client local stop my-tunnel
+
+# Run a command inside a tunnel, then auto-stop
+browserstack-client local run-with my-tunnel -- npm test
+```
+
 ### Automate
 ```bash
 # List all projects
@@ -153,6 +171,9 @@ browserstack-client automate list-projects
 
 # Get details of a specific project
 browserstack-client automate get-project <project-id>
+
+# List sessions for a build
+browserstack-client automate list-sessions <build-id>
 ```
 
 ### App Automate
@@ -186,6 +207,35 @@ browserstack-client test-management list-projects
 
 # List test runs for a project
 browserstack-client test-management list-test-runs <project-id>
+```
+
+### Test Reporting & Analytics
+```bash
+# Upload a JUnit XML report
+browserstack-client test-reporting upload-report ./results.xml \
+  --project-name "My Project" \
+  --build-name "Build #42"
+
+# Upload with optional metadata
+browserstack-client test-reporting upload-report ./results.xml \
+  --project-name "My Project" \
+  --build-name "Build #42" \
+  --format junit \
+  --tags "regression, nightly" \
+  --ci "https://ci.example.com/builds/42"
+
+# Upload an Allure report archive
+browserstack-client test-reporting upload-report ./allure-results.zip \
+  --project-name "My Project" \
+  --build-name "Build #42" \
+  --format allure
+
+# List projects
+browserstack-client test-reporting list-projects
+
+# Get the latest build for a project
+browserstack-client test-reporting get-latest-build \
+  "My Project" "Build #42"
 ```
 
 ## Help and Version

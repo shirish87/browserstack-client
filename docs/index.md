@@ -148,10 +148,57 @@ const build = await client.startBuild({
 await client.finishBuild(build.buildHashedId, { status: "passed" });
 ```
 
-## CLI
+## CLI {#cli-usage}
+
+Two CLIs are available. The Go CLI is the recommended option — it has no runtime dependency and is the most complete.
+
+### Go CLI (recommended)
+
+A single self-contained binary. No Node.js, no npm.
+
+**Download:**
+
+| Platform | Architecture | Link |
+|---|---|---|
+| Linux | x64 | `browserstack-client-linux-amd64` |
+| Linux | ARM64 | `browserstack-client-linux-arm64` |
+| macOS | Apple Silicon | `browserstack-client-darwin-arm64` |
+| macOS | Intel | `browserstack-client-darwin-amd64` |
+| Windows | x64 | `browserstack-client-windows-amd64.exe` |
+
+See the [CLI installation guide](/cli#pre-compiled-binaries) for download commands.
+
+```bash
+# Local Testing tunnel
+browserstack-client local start
+browserstack-client local run-with my-tunnel -- npm test
+browserstack-client local stop
+
+# Upload a JUnit XML report
+browserstack-client test-reporting upload-report ./results.xml \
+  --project-name "My Project" --build-name "Build #42"
+
+# Upload an Allure report
+browserstack-client test-reporting upload-report ./allure-results.zip \
+  --project-name "My Project" --build-name "Build #42" --format allure
+
+# Automate
+browserstack-client automate list-projects
+browserstack-client automate get-project <project-id>
+
+# App Automate
+browserstack-client app-automate upload-flutter-android-app ./my-app.apk
+browserstack-client app-automate list-apps
+```
+
+### Node.js CLI
+
+Requires Node.js 22+. Install via npm:
 
 ```bash
 npx @dot-slash/browserstack-cli local start
+npx @dot-slash/browserstack-cli test-reporting upload-report ./results.xml \
+  --project-name "My Project" --build-name "Build #42"
 npx @dot-slash/browserstack-cli local run-with -- npm test
 npx @dot-slash/browserstack-cli local stop
 ```
