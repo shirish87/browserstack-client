@@ -262,11 +262,12 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest]
         include:
-          # Node.js 24 has native crash regressions on Windows Server 2025
-          # (0xC0000409 STATUS_STACK_BUFFER_OVERRUN and 0xC0000005 STATUS_ACCESS_VIOLATION).
-          # Use windows-latest (Server 2022) which is stable with lts/*.
+          # Node.js 24 has native crash regressions on Windows (STATUS_STACK_BUFFER_OVERRUN
+          # and STATUS_ACCESS_VIOLATION / exit 3221226505) when spawning child Node processes
+          # that make HTTPS calls. lts/* now resolves to Node 24 which is affected.
+          # Pin Windows to Node 22 LTS which is stable; macOS runs lts/*.
           - os: windows-latest
-            node-version: "lts/*"
+            node-version: "22"
           - os: macos-latest
             node-version: "lts/*"
     runs-on: ${{ matrix.os }}
