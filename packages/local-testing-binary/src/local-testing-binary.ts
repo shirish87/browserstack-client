@@ -17,6 +17,7 @@ import { randomBytes } from "node:crypto";
 import { unlink } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
+import { setTimeout as sleep } from "node:timers/promises";
 
 export type {
   LocalBinaryFlags,
@@ -25,6 +26,20 @@ export type {
   LocalTestingBinaryOptions,
   ProxyParams,
 } from "./local-testing-binary-options.ts";
+
+async function waitForProcessExit(pid: number, pollMs = 200, maxWaitMs = 5_000): Promise<void> {
+  // signal 0 is not reliable on Windows; skip the wait there.
+  if (process.platform === "win32") return;
+  const deadline = Date.now() + maxWaitMs;
+  while (Date.now() < deadline) {
+    try {
+      process.kill(pid, 0);
+    } catch {
+      return; // ESRCH — process is gone
+    }
+    await sleep(pollMs);
+  }
+}
 
 function parseJsonOutput(raw: string | undefined): Record<string, unknown> | undefined {
   if (!raw) return undefined;
@@ -354,9 +369,21 @@ export class LocalTestingBinary extends LocalTestingClient {
             this.child.pid = stdoutJson.pid as number ?? child.pid;
             // remove --key
             this.child.args = binArgs.slice(2);
+            return resolve();
           } else if (command.action === "stop") {
+            const stoppedPid = this.child.pid;
             this.child.pid = undefined;
             this.child.args = [];
+            // Wait for the daemon process to actually exit before resolving.
+            // The --daemon stop parent exits quickly but the background process
+            // may still be alive briefly — a subsequent start with the same
+            // localIdentifier would hang if it finds the old process.
+            if (stoppedPid) {
+              waitForProcessExit(stoppedPid).then(resolve, resolve);
+            } else {
+              resolve();
+            }
+            return;
           }
           return resolve();
         }
