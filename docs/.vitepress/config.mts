@@ -21,7 +21,7 @@ export default withMermaid(defineConfig({
       },
       {
         text: "npm",
-        link: "https://www.npmjs.com/package/browserstack-client",
+        link: "https://www.npmjs.com/package/@dot-slash/browserstack-client",
       },
     ],
     sidebar: [

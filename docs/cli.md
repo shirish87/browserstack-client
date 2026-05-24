@@ -45,27 +45,18 @@ chmod +x browserstack-client
 <details id="install-macos">
 <summary><b>macOS</b></summary>
 
-<div class="arch-amd64">
+#### Apple Silicon (ARM64)
+```bash
+wget https://github.com/shirish87/browserstack-client/releases/download/v6.1.0/browserstack-client-darwin-arm64 -O browserstack-client
+chmod +x browserstack-client
+```
 
 #### Intel (x64)
 ```bash
 wget https://github.com/shirish87/browserstack-client/releases/download/v6.1.0/browserstack-client-darwin-amd64 -O browserstack-client
 chmod +x browserstack-client
 ```
-</div>
 
-<div class="arch-arm64">
-
-#### Apple Silicon (ARM64)
-```bash
-wget https://github.com/shirish87/browserstack-client/releases/download/v6.1.0/browserstack-client-darwin-arm64 -O browserstack-client
-chmod +x browserstack-client
-```
-</div>
-
-<div class="arch-toggle" style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
-  <a href="#" onclick="window.showAllArch(); return false;">Not your architecture? Show all.</a>
-</div>
 </details>
 
 <details id="install-windows">
@@ -84,19 +75,11 @@ import { onMounted } from 'vue'
 onMounted(() => {
   const ua = window.navigator.userAgent.toLowerCase()
   let osId = null
-  let arch = 'amd64' // Default
 
   // OS Detection
   if (ua.includes('linux')) osId = 'install-linux'
   else if (ua.includes('mac')) osId = 'install-macos'
   else if (ua.includes('win')) osId = 'install-windows'
-
-  // Architecture Detection
-  // Check UA and platform
-  const platform = window.navigator.platform?.toLowerCase() || ''
-  if (ua.includes('arm64') || ua.includes('aarch64') || platform.includes('arm64') || platform.includes('aarch64')) {
-    arch = 'arm64'
-  }
 
   // Open appropriate OS section
   if (osId) {
@@ -104,18 +87,21 @@ onMounted(() => {
     if (el) el.setAttribute('open', '')
   }
 
+  // Architecture detection for Linux only (macOS always shows both).
+  // Browsers on macOS ARM don't reliably expose arm64 in the UA string.
+  if (osId === 'install-linux') {
+    const platform = window.navigator.platform?.toLowerCase() || ''
+    const isArm = ua.includes('arm64') || ua.includes('aarch64') || platform.includes('arm64') || platform.includes('aarch64')
+    const arch = isArm ? 'arm64' : 'amd64'
+    const hideClass = arch === 'arm64' ? 'arch-amd64' : 'arch-arm64'
+    document.querySelectorAll(`#install-linux .${hideClass}`).forEach(el => el.style.display = 'none')
+  }
+
   // Define global toggle function
   window.showAllArch = () => {
     document.querySelectorAll('.arch-amd64, .arch-arm64').forEach(el => el.style.display = 'block')
     document.querySelectorAll('.arch-toggle').forEach(el => el.style.display = 'none')
   }
-
-  // Filter architectures initially
-  const showClass = `arch-${arch}`
-  const hideClass = `arch-${arch === 'arm64' ? 'amd64' : 'arm64'}`
-  
-  document.querySelectorAll(`.${hideClass}`).forEach(el => el.style.display = 'none')
-  document.querySelectorAll(`.${showClass}`).forEach(el => el.style.display = 'block')
 })
 </script>
 
