@@ -66,3 +66,13 @@ pnpm build:types
 Tests are **integration tests** that hit the live BrowserStack API. They require valid credentials in environment variables. Each package has `src/__tests__/setup.ts` that creates client instances and helpers (e.g., `randomBuildId()`, `randomSessionId()`). Shared test utilities are in `packages/core/src/__tests__/test-utils.ts`.
 
 Test framework: Vitest with workspace configuration (`vitest.workspace.ts`) — each package is a separate test project.
+
+## Testing Requirements
+
+Every new feature, bug fix, or behavior change MUST follow TDD — no exceptions:
+
+1. Write a failing test first and confirm it fails for the right reason
+2. Write minimal code to make it pass
+3. No production code without a corresponding test
+
+Use `pnpm test -- --project <package>` to run tests for the affected package. For unit-level tests (no live API needed), use a mock fetch via `packages/core/src/__tests__/mock-fetch.ts`.
