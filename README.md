@@ -29,31 +29,34 @@ Or pass them explicitly to any client constructor.
 
 ## Usage
 
-Import from the root or from a product subpath — only the code you use is bundled:
-
 ```ts
-// Root (all clients)
-import { AutomateClient, ScreenshotsClient } from "@dot-slash/browserstack-client";
-
-// Subpath (tree-shakeable)
-import { AutomateClient } from "@dot-slash/browserstack-client/automate";
+import {
+  AutomateClient,
+  AppAutomateClient,
+  LocalTestingBinary,
+  AccessibilityClient,
+  TestManagementClient,
+  TestReportingClient,
+  ScreenshotsClient,
+} from "@dot-slash/browserstack-client";
 ```
+
+> **Tree-shaking:** If bundle size matters (e.g. Lambda, browser), import from the product subpath instead — `@dot-slash/browserstack-client/automate`, `/app-automate`, `/local-testing`, `/accessibility`, `/test-management`, `/test-reporting`, `/screenshots`. Bundlers will then include only that product's code.
 
 ### Automate — browser automation
 
 ```ts
-import { AutomateClient } from "@dot-slash/browserstack-client/automate";
+import { AutomateClient } from "@dot-slash/browserstack-client";
 
 const client  = new AutomateClient();
 const plan    = await client.getPlan();
 const builds  = await client.getBuilds();
-const sessions = await client.getSessions(builds[0].automation_build.hashed_id);
 ```
 
 ### App Automate — mobile app automation
 
 ```ts
-import { AppAutomateClient } from "@dot-slash/browserstack-client/app-automate";
+import { AppAutomateClient } from "@dot-slash/browserstack-client";
 
 const client   = new AppAutomateClient();
 const projects = await client.getProjects();
@@ -63,7 +66,7 @@ const builds   = await client.getBuilds(projects[0].id);
 ### Local Testing — tunnel management
 
 ```ts
-import { LocalTestingBinary } from "@dot-slash/browserstack-client/local-testing";
+import { LocalTestingBinary } from "@dot-slash/browserstack-client";
 
 const tunnel = new LocalTestingBinary({ accessKey: process.env.BROWSERSTACK_ACCESS_KEY });
 
@@ -75,7 +78,7 @@ await tunnel.stop();
 ### Accessibility
 
 ```ts
-import { AccessibilityClient } from "@dot-slash/browserstack-client/accessibility";
+import { AccessibilityClient } from "@dot-slash/browserstack-client";
 
 const client  = new AccessibilityClient();
 const reports = await client.getWorkflowAnalyzerReports();
@@ -84,7 +87,7 @@ const reports = await client.getWorkflowAnalyzerReports();
 ### Test Management
 
 ```ts
-import { TestManagementClient } from "@dot-slash/browserstack-client/test-management";
+import { TestManagementClient } from "@dot-slash/browserstack-client";
 
 const client   = new TestManagementClient();
 const projects = await client.getProjects();
@@ -93,7 +96,7 @@ const projects = await client.getProjects();
 ### Test Reporting & Analytics
 
 ```ts
-import { TestReportingClient } from "@dot-slash/browserstack-client/test-reporting";
+import { TestReportingClient } from "@dot-slash/browserstack-client";
 
 const client = new TestReportingClient();
 
@@ -111,7 +114,7 @@ await client.finishBuild(build.buildHashedId, { status: "passed" });
 ### Screenshots — cross-browser screenshots
 
 ```ts
-import { ScreenshotsClient } from "@dot-slash/browserstack-client/screenshots";
+import { ScreenshotsClient } from "@dot-slash/browserstack-client";
 
 const client = new ScreenshotsClient();
 

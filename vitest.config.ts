@@ -75,6 +75,7 @@ export default defineConfig({
       project("test-management", "./packages/test-management", "packages/test-management/package.json"),
       project("accessibility", "./packages/accessibility", "packages/accessibility/package.json"),
       project("test-reporting", "./packages/test-reporting", "packages/test-reporting/package.json"),
+      project("sdk", "./packages/sdk", "packages/sdk/package.json"),
     ],
   },
 });
