@@ -68,7 +68,7 @@
   "scripts": {
     "build": "tsup",
     "build:binary-bundle": "tsup --config tsup.binary.config.ts",
-    "build:binary": "pnpm build:binary-bundle && pkg dist-binary/browserstack-client.cjs --targets node18-linux-x64,node18-linux-arm64,node18-macos-x64,node18-macos-arm64,node18-win-x64 --output dist-binary/browserstack-client-ts --compress GZip --fallback-to-source && node -e \"const fs=require('fs'); const renames=[['linux-x64','linux-amd64'],['macos-x64','darwin-amd64'],['macos-arm64','darwin-arm64'],['win-x64.exe','windows-amd64.exe']]; renames.forEach(([oldS,newS])=>{ const p='./dist-binary/browserstack-client-ts-'+oldS; if(fs.existsSync(p)) fs.renameSync(p, './dist-binary/browserstack-client-ts-'+newS); })\"",
+    "build:binary": "pnpm build:binary-bundle && pkg dist-binary/browserstack-client.cjs --targets node20-linux-x64,node20-linux-arm64,node20-macos-x64,node20-macos-arm64,node20-win-x64 --output dist-binary/browserstack-client-ts --compress GZip --fallback-to-source && node -e \"const fs=require('fs'); const renames=[['linux-x64','linux-amd64'],['macos-x64','darwin-amd64'],['macos-arm64','darwin-arm64'],['win-x64.exe','windows-amd64.exe']]; renames.forEach(([oldS,newS])=>{ const p='./dist-binary/browserstack-client-ts-'+oldS; if(fs.existsSync(p)) fs.renameSync(p, './dist-binary/browserstack-client-ts-'+newS); })\"",
     "typecheck": "tsc --noEmit || true"
   },
   "pkg": {
