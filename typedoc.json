@@ -11,6 +11,7 @@
     "./packages/accessibility",
     "./packages/test-management",
     "./packages/test-reporting",
+    "./packages/website-scanner",
     "./packages/core"
   ],
   "entryPointStrategy": "packages",

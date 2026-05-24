@@ -19,7 +19,7 @@ hero:
 
 features:
   - title: Multi-Product Support
-    details: Unified access to Automate, App Automate, Screenshots, Local Testing, Accessibility, Test Management, and Test Reporting.
+    details: Unified access to Automate, App Automate, Screenshots, Local Testing, Accessibility, Test Management, Test Reporting, and Website Scanner.
   - title: Type Safe
     details: Full TypeScript support with types generated directly from the latest OpenAPI specifications.
   - title: Subpath Imports
@@ -148,6 +148,15 @@ const build = await client.startBuild({
 await client.finishBuild(build.buildHashedId, { status: "passed" });
 ```
 
+### Website Scanner
+
+```ts
+import { WebsiteScannerClient } from "@dot-slash/browserstack-client/website-scanner";
+
+const client = new WebsiteScannerClient();
+const scans  = await client.listWebsiteScannerScans();
+```
+
 ## CLI {#cli-usage}
 
 Two CLIs are available. The Go CLI is the recommended option — it has no runtime dependency and is the most complete.
@@ -216,6 +225,7 @@ See [CLI docs](/cli) for the full command reference.
 | `.../accessibility` | `AccessibilityClient` | Accessibility testing |
 | `.../test-management` | `TestManagementClient` | Test case management |
 | `.../test-reporting` | `TestReportingClient` | Test analytics |
+| `.../website-scanner` | `WebsiteScannerClient` | Website Scanner |
 | `.../core` | `APIClient`, error types | Shared runtime |
 
 ## Individual packages
@@ -231,3 +241,4 @@ Only need one product? Install the focused package directly:
 | `@dot-slash/browserstack-test-management` | Test case management |
 | `@dot-slash/browserstack-test-reporting` | Test analytics |
 | `@dot-slash/browserstack-screenshots` | Screenshot automation |
+| `@dot-slash/browserstack-website-scanner` | Website Scanner |
