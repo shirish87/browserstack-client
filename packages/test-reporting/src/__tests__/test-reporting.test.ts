@@ -180,4 +180,66 @@ describe("TestReportingClient", () => {
       expect((data as { testRunId?: string }).testRunId).toBe("tr-001");
     });
   });
+
+  describe("uploadReport", () => {
+    function makeCapturingClient() {
+      let capturedUrl = "";
+      let capturedBody: FormData | undefined;
+      const fetchFn = async (url: string | URL | Request, init?: RequestInit) => {
+        capturedUrl = url.toString();
+        capturedBody = init?.body as FormData;
+        return new Response(JSON.stringify({ status: "success", message: "ok" }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      };
+      const client = new TestReportingClient({ username: "u", accessKey: "k", fetchFn });
+      return { client, getCaptured: () => ({ url: capturedUrl, body: capturedBody }) };
+    }
+
+    it("sends to upload-automation.browserstack.com, not api-automation", async () => {
+      const { client, getCaptured } = makeCapturingClient();
+      await client.uploadReport({
+        file: new Blob(["<xml/>"], { type: "text/xml" }),
+        fileName: "report.xml",
+        projectName: "my-project",
+        buildName: "build-1",
+      });
+      expect(getCaptured().url).toMatch(/^https:\/\/upload-automation\.browserstack\.com/);
+      expect(getCaptured().url).not.toMatch(/api-automation/);
+    });
+
+    it("uses 'data' as the file form field name, not 'file'", async () => {
+      const { client, getCaptured } = makeCapturingClient();
+      await client.uploadReport({
+        file: new Blob(["<xml/>"], { type: "text/xml" }),
+        fileName: "report.xml",
+        projectName: "my-project",
+        buildName: "build-1",
+      });
+      const fd = getCaptured().body!;
+      expect(fd.get("data")).toBeInstanceOf(Blob);
+      expect(fd.get("file")).toBeNull();
+    });
+
+    it("sends projectName and buildName as camelCase form fields", async () => {
+      const { client, getCaptured } = makeCapturingClient();
+      await client.uploadReport({
+        file: new Blob(["<xml/>"], { type: "text/xml" }),
+        fileName: "report.xml",
+        projectName: "my-project",
+        buildName: "build-1",
+        format: "allure",
+        tags: "regression",
+      });
+      const fd = getCaptured().body!;
+      expect(fd.get("projectName")).toBe("my-project");
+      expect(fd.get("buildName")).toBe("build-1");
+      expect(fd.get("format")).toBe("allure");
+      expect(fd.get("tags")).toBe("regression");
+      // snake_case variants must NOT appear
+      expect(fd.get("project_name")).toBeNull();
+      expect(fd.get("build_name")).toBeNull();
+    });
+  });
 });

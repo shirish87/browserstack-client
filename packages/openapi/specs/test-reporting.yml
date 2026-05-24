@@ -719,10 +719,11 @@ paths:
       summary: Upload Test Reports (JUnit or Allure)
       operationId: uploadTestReportingReport
       x-cli-section: "Reports"
+      x-base-url: sdkCloud
       x-request-transform:
         codec: multipart
         config:
-          fileField: file
+          fileField: data
           filenameFrom: "$.file_name"
       requestBody:
         required: true
