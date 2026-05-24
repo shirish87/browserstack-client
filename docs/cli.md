@@ -195,9 +195,37 @@ browserstack-client screenshots list-screenshots
 ```bash
 # List all Workflow Analyzer reports
 browserstack-client accessibility list-workflow-analyzer-reports
+```
 
-# List Website Scanner scans
-browserstack-client accessibility list-website-scanner-scans
+### Website Scanner
+```bash
+# List all scans
+browserstack-client website-scanner list-website-scanner-scans
+
+# List scans filtered by project and status
+browserstack-client website-scanner list-website-scanner-scans <project-id> <status>
+
+# Get a specific scan
+browserstack-client website-scanner get-website-scanner-scan <proj_id>
+
+# Create a new scan
+browserstack-client website-scanner create-website-scanner-scan
+
+# Trigger a scan run
+browserstack-client website-scanner trigger-website-scanner-scan-run <project_id>
+
+# List scan runs for a scan
+browserstack-client website-scanner list-website-scanner-scan-runs <proj_id> [page] [page_size]
+
+# Get scan run status
+browserstack-client website-scanner list-website-scanner-scan-run-status <proj_id> <report_id>
+
+# Get scan run summary
+browserstack-client website-scanner get-website-scanner-scan-run-summary <proj_id> <report_id> [product]
+
+# Manage auth configs
+browserstack-client website-scanner list-website-scanner-auth-configs
+browserstack-client website-scanner create-website-scanner-auth-config
 ```
 
 ### Test Management
