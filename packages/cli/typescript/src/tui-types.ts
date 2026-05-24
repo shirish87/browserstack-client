@@ -21,6 +21,7 @@ export interface TUIField {
   location: FieldLocation;
   enum?: string[];
   picker?: PickerConfig;
+  secret?: boolean;
 }
 
 export interface TUIAction {

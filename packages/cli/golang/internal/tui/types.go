@@ -33,6 +33,7 @@ type Field struct {
 	Location    FieldLocation
 	Enum        []string
 	Picker      *PickerConfig
+	Secret      bool
 }
 
 type Action struct {
