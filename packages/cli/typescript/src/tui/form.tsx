@@ -20,7 +20,18 @@ export function Form({
   onBack: () => void;
 }) {
   const [values, setValues] = useState<Record<string, string>>(() =>
-    Object.fromEntries(fields.map(f => [f.name, ""]))
+    Object.fromEntries(
+      fields.map(f => {
+        if (f.secret) {
+          const val =
+            process.env["BROWSERSTACK_KEY"] ??
+            process.env["BROWSERSTACK_ACCESS_KEY"] ??
+            "";
+          return [f.name, val];
+        }
+        return [f.name, ""];
+      })
+    )
   );
   const [focus, setFocus] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -248,7 +259,10 @@ export function Form({
             <Box paddingLeft={4} marginTop={0}>
               <Box borderStyle="round" borderColor={borderColor} paddingX={1} minWidth={32}>
                 {hasValue ? (
-                  <Text>{value}{isFocused ? <Text color="cyan">▎</Text> : null}</Text>
+                  <Text>
+                    {field.secret ? "•".repeat([...value].length) : value}
+                    {isFocused ? <Text color="cyan">▎</Text> : null}
+                  </Text>
                 ) : (
                   <Text dimColor>{placeholder}{isFocused ? <Text color="cyan">▎</Text> : null}</Text>
                 )}

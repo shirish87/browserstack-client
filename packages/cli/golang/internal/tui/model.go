@@ -35,6 +35,7 @@ type Model struct {
 	action   *Action
 
 	executor Executor
+	prefills map[string]string
 
 	termWidth  int
 	termHeight int
@@ -49,12 +50,13 @@ type executedMsg struct {
 	err    string
 }
 
-func NewModel(version string, executor Executor) *Model {
+func NewModel(version string, executor Executor, prefills map[string]string) *Model {
 	return &Model{
 		version:     version,
 		step:        stepProduct,
 		productList: newListView("Select a product", groupedProductItems(Manifest)),
 		executor:    executor,
+		prefills:    prefills,
 	}
 }
 
@@ -212,7 +214,7 @@ func (m *Model) updateActionList(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return executedMsg{output: out, err: ""}
 			}
 		}
-		m.form = newFormView(m.action.Fields, fmt.Sprintf("%s → %s", StripBrand(m.product.Title), m.action.ID))
+		m.form = newFormView(m.action.Fields, fmt.Sprintf("%s → %s", StripBrand(m.product.Title), m.action.ID), m.prefills)
 		if m.termHeight > 0 {
 			m.form.setHeight(m.termHeight)
 		}

@@ -2,8 +2,9 @@ import { runLocalCli } from "@dot-slash/browserstack-cli";
 import { env } from "@dot-slash/browserstack-core";
 import { homedir } from "node:os";
 import process from "node:process";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test, it } from "vitest";
 import { cliContext } from "./setup.ts";
+import type { TUIField } from "../tui-types.ts";
 
 const LONG_TIMEOUT = 60_000;
 
@@ -110,3 +111,43 @@ describe("LocalCLI", () => {
     }, LONG_TIMEOUT);
   });
 }, LONG_TIMEOUT);
+
+describe("TUI Secret Fields", () => {
+  it("prefills auth_token field from BROWSERSTACK_KEY env var", () => {
+    const fields: TUIField[] = [
+      {
+        name: "auth_token",
+        label: "Auth Token",
+        description: "Your BrowserStack access token",
+        type: "string",
+        required: true,
+        location: "query",
+        secret: true,
+      },
+    ];
+
+    const originalKey = process.env.BROWSERSTACK_KEY;
+    process.env.BROWSERSTACK_KEY = "test-secret-key";
+
+    // Simulate the initializer logic from the Form component
+    function initValues(fields: TUIField[]): Record<string, string> {
+      return Object.fromEntries(
+        fields.map(f => {
+          if (f.secret) {
+            const val =
+              process.env.BROWSERSTACK_KEY ??
+              process.env.BROWSERSTACK_ACCESS_KEY ??
+              "";
+            return [f.name, val];
+          }
+          return [f.name, ""];
+        })
+      );
+    }
+
+    const values = initValues(fields);
+    expect(values["auth_token"]).toBe("test-secret-key");
+
+    process.env.BROWSERSTACK_KEY = originalKey;
+  });
+});

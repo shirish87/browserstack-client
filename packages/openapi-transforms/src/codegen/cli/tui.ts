@@ -1,5 +1,11 @@
 import { CLIMetadata, CLIActionMetadata, PickerConfig } from "./index";
 
+const SECRET_FIELD_NAMES = new Set(["auth_token", "password", "authData.password"]);
+
+function isSecretField(name: string): boolean {
+  return SECRET_FIELD_NAMES.has(name);
+}
+
 export interface SpecInfoMap {
   [product: string]: { title: string; description: string; category?: string };
 }
@@ -66,6 +72,7 @@ interface TUIFieldData {
   location: string;
   enum?: string[];
   picker?: PickerConfig;
+  secret?: boolean;
 }
 
 interface TUIActionData {
@@ -111,6 +118,7 @@ function buildFields(actionMeta: CLIActionMetadata, doc: Record<string, unknown>
       location: p.in === "path" ? "path" : "query",
       enum: enumValues,
       picker,
+      ...(isSecretField(p.name) ? { secret: true } : {}),
     });
   }
 
@@ -194,6 +202,7 @@ function buildFields(actionMeta: CLIActionMetadata, doc: Record<string, unknown>
         location: "body",
         enum: enumValues,
         picker,
+        ...(isSecretField(entry.name) ? { secret: true } : {}),
       });
     }
   }
@@ -272,6 +281,7 @@ function goField(f: TUIFieldData, indent: string): string {
     `${indent}\tLocation:    "${f.location}",`,
     `${indent}\tEnum:        ${goStringSlice(f.enum ?? [])},`,
     `${indent}\tPicker:      ${goPicker(f.picker, indent)},`,
+    `${indent}\tSecret:      ${f.secret ? "true" : "false"},`,
     `${indent}}`,
   ];
   return lines.join("\n");

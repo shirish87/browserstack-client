@@ -34,7 +34,10 @@ func main() {
 			fmt.Fprintln(os.Stderr, "BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY must be set")
 			os.Exit(1)
 		}
-		model := tui.NewModel(version, makeExecutor(username, accessKey))
+		prefills := map[string]string{
+			"auth_token": accessKey,
+		}
+		model := tui.NewModel(version, makeExecutor(username, accessKey), prefills)
 		p := tea.NewProgram(model, tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
 			fmt.Fprintf(os.Stderr, "TUI error: %v\n", err)

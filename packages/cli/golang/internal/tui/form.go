@@ -28,11 +28,19 @@ type formView struct {
 	fetcher    PickerFetcher
 }
 
-func newFormView(fields []Field, title string) *formView {
+func newFormView(fields []Field, title string, prefills map[string]string) *formView {
+	vals := make([]string, len(fields))
+	for i, fld := range fields {
+		if fld.Secret {
+			if v, ok := prefills[fld.Name]; ok && v != "" {
+				vals[i] = v
+			}
+		}
+	}
 	return &formView{
 		title:      title,
 		fields:     fields,
-		vals:       make([]string, len(fields)),
+		vals:       vals,
 		focus:      0,
 		termHeight: 30,
 		termWidth:  80,
@@ -328,6 +336,11 @@ func (f *formView) view() string {
 		v := f.vals[i]
 		focused := i == f.focus
 
+		displayV := v
+		if f.fields[i].Secret && v != "" {
+			displayV = strings.Repeat("•", len([]rune(v)))
+		}
+
 		var placeholder string
 		switch {
 		case fld.Picker != nil:
@@ -345,10 +358,10 @@ func (f *formView) view() string {
 		}
 
 		var inner string
-		if v == "" {
+		if displayV == "" {
 			inner = StyleDim.Render(placeholder)
 		} else {
-			inner = v
+			inner = displayV
 		}
 		if focused {
 			inner += lipgloss.NewStyle().Foreground(lipgloss.Color("14")).Render("▎")

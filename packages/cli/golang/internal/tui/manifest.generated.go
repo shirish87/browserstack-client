@@ -48,6 +48,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"buildId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -71,6 +72,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -94,6 +96,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"buildId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -104,6 +107,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -122,6 +126,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -145,6 +150,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"buildId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -168,6 +174,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"buildId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "status",
@@ -178,6 +185,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"passed", "failed"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "reason",
@@ -188,6 +196,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "name",
@@ -198,6 +207,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -221,6 +231,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"buildId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -239,6 +250,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -257,6 +269,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -280,6 +293,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -303,6 +317,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "name",
@@ -313,6 +328,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "build_tag",
@@ -323,6 +339,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -346,6 +363,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -369,6 +387,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"buildId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -387,6 +406,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -417,6 +437,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "limit",
@@ -427,6 +448,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "offset",
@@ -437,6 +459,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "status",
@@ -447,6 +470,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"running", "timeout", "failed", "done"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -470,6 +494,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -493,6 +518,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "name",
@@ -503,6 +529,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -526,6 +553,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -549,6 +577,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"buildId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -572,6 +601,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -582,6 +612,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -619,6 +650,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"buildId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -642,6 +674,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"buildId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -665,6 +698,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "limit",
@@ -675,6 +709,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "offset",
@@ -685,6 +720,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "status",
@@ -695,6 +731,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"running", "timeout", "failed", "done"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -718,6 +755,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"buildId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -756,6 +794,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -779,6 +818,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "build_tag",
@@ -789,6 +829,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -812,6 +853,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -830,6 +872,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -853,6 +896,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "sessionId",
@@ -863,6 +907,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -900,6 +945,7 @@ var Manifest = []Product{
 								LabelFields: []string{"app_url", "app_name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -923,6 +969,7 @@ var Manifest = []Product{
 								LabelFields: []string{"app_url", "app_name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -946,6 +993,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "sessionId",
@@ -956,6 +1004,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -979,6 +1028,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -989,6 +1039,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1007,6 +1058,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -1017,6 +1069,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "url",
@@ -1027,6 +1080,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1045,6 +1099,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -1055,6 +1110,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "url",
@@ -1065,6 +1121,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1083,6 +1140,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"group", "user"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "custom_id",
@@ -1093,6 +1151,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "limit",
@@ -1103,6 +1162,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1121,6 +1181,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -1131,6 +1192,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1156,6 +1218,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -1166,6 +1229,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "url",
@@ -1176,6 +1240,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1194,6 +1259,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -1204,6 +1270,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "url",
@@ -1214,6 +1281,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1232,6 +1300,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -1242,6 +1311,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "url",
@@ -1252,6 +1322,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1275,6 +1346,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -1298,6 +1370,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "name",
@@ -1308,6 +1381,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1331,6 +1405,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -1361,6 +1436,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "sessionId",
@@ -1371,6 +1447,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1394,6 +1471,7 @@ var Manifest = []Product{
 								LabelFields: []string{"app_url", "app_name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -1417,6 +1495,7 @@ var Manifest = []Product{
 								LabelFields: []string{"app_url", "app_name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -1440,6 +1519,7 @@ var Manifest = []Product{
 								LabelFields: []string{"app_url", "app_name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -1458,6 +1538,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "custom_id",
@@ -1468,6 +1549,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1486,6 +1568,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"group", "user"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "custom_id",
@@ -1496,6 +1579,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "limit",
@@ -1506,6 +1590,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1529,6 +1614,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "sessionId",
@@ -1539,6 +1625,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1557,6 +1644,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1575,6 +1663,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "status",
@@ -1585,6 +1674,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"passed", "failed"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "reason",
@@ -1595,6 +1685,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1613,6 +1704,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1631,6 +1723,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "offset",
@@ -1641,6 +1734,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "status",
@@ -1651,6 +1745,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"running", "timeout", "failed", "done"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1669,6 +1764,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1692,6 +1788,7 @@ var Manifest = []Product{
 								LabelFields: []string{"app_url", "app_name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -1715,6 +1812,7 @@ var Manifest = []Product{
 								LabelFields: []string{"app_url", "app_name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -1740,6 +1838,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"group", "user"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "custom_id",
@@ -1750,6 +1849,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "limit",
@@ -1760,6 +1860,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1778,6 +1879,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -1788,6 +1890,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "url",
@@ -1798,6 +1901,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1823,6 +1927,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -1833,6 +1938,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "url",
@@ -1843,6 +1949,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1861,6 +1968,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1879,6 +1987,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"group", "user"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "custom_id",
@@ -1889,6 +1998,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "limit",
@@ -1899,6 +2009,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1922,6 +2033,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "sessionId",
@@ -1932,6 +2044,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1955,6 +2068,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "sessionId",
@@ -1965,6 +2079,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -1988,6 +2103,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "limit",
@@ -1998,6 +2114,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "offset",
@@ -2008,6 +2125,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "status",
@@ -2018,6 +2136,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"running", "timeout", "failed", "done"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2041,6 +2160,7 @@ var Manifest = []Product{
 								LabelFields: []string{"app_url", "app_name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -2064,6 +2184,7 @@ var Manifest = []Product{
 								LabelFields: []string{"app_url", "app_name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -2087,6 +2208,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -2120,6 +2242,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      true,
 						},
 						{
 							Name:        "last",
@@ -2130,6 +2253,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "state",
@@ -2140,6 +2264,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"running", "all"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2158,6 +2283,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "auth_token",
@@ -2168,6 +2294,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      true,
 						},
 					},
 				},
@@ -2186,6 +2313,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "auth_token",
@@ -2196,6 +2324,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      true,
 						},
 					},
 				},
@@ -2241,6 +2370,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -2264,6 +2394,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "task_id",
@@ -2274,6 +2405,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "next_page",
@@ -2284,6 +2416,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2314,6 +2447,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -2337,6 +2471,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "task_id",
@@ -2347,6 +2482,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "next_page",
@@ -2357,6 +2493,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2382,6 +2519,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "type",
@@ -2392,6 +2530,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "authData.url",
@@ -2402,6 +2541,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "authData.username",
@@ -2412,6 +2552,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "authData.password",
@@ -2422,6 +2563,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      true,
 						},
 						{
 							Name:        "authData.usernameSelector",
@@ -2432,6 +2574,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "authData.passwordSelector",
@@ -2442,6 +2585,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "authData.submitSelector",
@@ -2452,6 +2596,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2477,6 +2622,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2500,6 +2646,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -2523,6 +2670,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "page",
@@ -2533,6 +2681,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "page_size",
@@ -2543,6 +2692,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2566,6 +2716,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "scan_run_id",
@@ -2581,6 +2732,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id"},
 								FilterBy:    []string{"scan_id"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -2604,6 +2756,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "scan_run_id",
@@ -2619,6 +2772,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id"},
 								FilterBy:    []string{"scan_id"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -2642,6 +2796,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "scan_run_id",
@@ -2657,6 +2812,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id"},
 								FilterBy:    []string{"scan_id"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "task_id",
@@ -2667,6 +2823,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "next_page",
@@ -2677,6 +2834,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2700,6 +2858,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "scan_run_id",
@@ -2715,6 +2874,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id"},
 								FilterBy:    []string{"scan_id"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -2733,6 +2893,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2751,6 +2912,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "projectId",
@@ -2766,6 +2928,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -2784,6 +2947,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "next_page",
@@ -2794,6 +2958,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2812,6 +2977,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "next_page",
@@ -2822,6 +2988,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2845,6 +3012,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "task_id",
@@ -2855,6 +3023,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "next_page",
@@ -2865,6 +3034,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2883,6 +3053,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case_id",
@@ -2898,6 +3069,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"build_id"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "next_page",
@@ -2908,6 +3080,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2926,6 +3099,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case",
@@ -2936,6 +3110,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "task_id",
@@ -2946,6 +3121,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "next_page",
@@ -2956,6 +3132,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -2989,6 +3166,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "page_size",
@@ -2999,6 +3177,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"30", "300"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3017,6 +3196,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "project.description",
@@ -3027,6 +3207,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3050,6 +3231,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -3073,6 +3255,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "project.name",
@@ -3083,6 +3266,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "project.description",
@@ -3093,6 +3277,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3116,6 +3301,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -3146,6 +3332,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "p",
@@ -3156,6 +3343,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "page_size",
@@ -3166,6 +3354,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"30", "300"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3189,6 +3378,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "folder.name",
@@ -3199,6 +3389,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "folder.description",
@@ -3209,6 +3400,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "folder.parent_id",
@@ -3219,6 +3411,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3242,6 +3435,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "folderId",
@@ -3257,6 +3451,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -3280,6 +3475,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "folderId",
@@ -3295,6 +3491,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "folder.name",
@@ -3305,6 +3502,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "folder.description",
@@ -3315,6 +3513,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3338,6 +3537,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "folderId",
@@ -3353,6 +3553,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -3376,6 +3577,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "folderId",
@@ -3391,6 +3593,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "parent_id",
@@ -3401,6 +3604,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3431,6 +3635,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "p",
@@ -3441,6 +3646,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "page_size",
@@ -3451,6 +3657,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"30", "300"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "updated_after",
@@ -3461,6 +3668,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "updated_before",
@@ -3471,6 +3679,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "archived",
@@ -3481,6 +3690,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "minify",
@@ -3491,6 +3701,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "id",
@@ -3501,6 +3712,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "status",
@@ -3511,6 +3723,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "priority",
@@ -3521,6 +3734,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "owner",
@@ -3531,6 +3745,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "case_type",
@@ -3541,6 +3756,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "folder_id",
@@ -3556,6 +3772,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "tags",
@@ -3566,6 +3783,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "issue_ids",
@@ -3576,6 +3794,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "issue_type",
@@ -3586,6 +3805,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3609,6 +3829,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "ids",
@@ -3619,6 +3840,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.preconditions",
@@ -3629,6 +3851,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.owner",
@@ -3639,6 +3862,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.tags",
@@ -3649,6 +3873,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.custom_fields",
@@ -3659,6 +3884,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.automation_status",
@@ -3669,6 +3895,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.case_type",
@@ -3679,6 +3906,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.priority",
@@ -3689,6 +3917,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.status",
@@ -3699,6 +3928,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3722,6 +3952,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "ids",
@@ -3732,6 +3963,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3755,6 +3987,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "ids",
@@ -3765,6 +3998,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3788,6 +4022,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "ids",
@@ -3798,6 +4033,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3821,6 +4057,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "ids",
@@ -3831,6 +4068,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case",
@@ -3841,6 +4079,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -3864,6 +4103,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "folderId",
@@ -3879,6 +4119,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.name",
@@ -3889,6 +4130,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.template",
@@ -3899,6 +4141,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.description",
@@ -3909,6 +4152,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.owner",
@@ -3919,6 +4163,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.preconditions",
@@ -3929,6 +4174,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.test_case_steps",
@@ -3939,6 +4185,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.issues",
@@ -3949,6 +4196,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.issue_tracker.name",
@@ -3959,6 +4207,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.issue_tracker.host",
@@ -3969,6 +4218,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.tags",
@@ -3979,6 +4229,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.case_type",
@@ -3989,6 +4240,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.priority",
@@ -3999,6 +4251,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.custom_fields",
@@ -4009,6 +4262,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.feature",
@@ -4019,6 +4273,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.scenario",
@@ -4029,6 +4284,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.background",
@@ -4039,6 +4295,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -4062,6 +4319,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testCaseId",
@@ -4077,6 +4335,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.name",
@@ -4087,6 +4346,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.case_type",
@@ -4097,6 +4357,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.priority",
@@ -4107,6 +4368,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.status",
@@ -4117,6 +4379,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.description",
@@ -4127,6 +4390,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.owner",
@@ -4137,6 +4401,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.preconditions",
@@ -4147,6 +4412,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.test_case_steps",
@@ -4157,6 +4423,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.issues",
@@ -4167,6 +4434,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.issue_tracker.name",
@@ -4177,6 +4445,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.issue_tracker.host",
@@ -4187,6 +4456,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.tags",
@@ -4197,6 +4467,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.custom_fields",
@@ -4207,6 +4478,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.automation_status",
@@ -4217,6 +4489,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.feature",
@@ -4227,6 +4500,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.scenario",
@@ -4237,6 +4511,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case.background",
@@ -4247,6 +4522,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -4270,6 +4546,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testCaseId",
@@ -4285,6 +4562,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -4308,6 +4586,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testCaseId",
@@ -4323,6 +4602,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -4346,6 +4626,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testCaseId",
@@ -4361,6 +4642,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -4384,6 +4666,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testCaseId",
@@ -4399,6 +4682,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "destination_folder_id",
@@ -4409,6 +4693,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -4439,6 +4724,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testCaseId",
@@ -4454,6 +4740,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "p",
@@ -4464,6 +4751,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -4487,6 +4775,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testCaseId",
@@ -4502,6 +4791,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "inline",
@@ -4512,6 +4802,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -4522,6 +4813,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file_name",
@@ -4532,6 +4824,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -4555,6 +4848,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testCaseId",
@@ -4570,6 +4864,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "attachmentId",
@@ -4585,6 +4880,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId", "testCaseId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -4608,6 +4904,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testResultId",
@@ -4623,6 +4920,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id"},
 								FilterBy:    []string{"projectId", "testRunId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "p",
@@ -4633,6 +4931,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -4656,6 +4955,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testResultId",
@@ -4671,6 +4971,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id"},
 								FilterBy:    []string{"projectId", "testRunId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "file",
@@ -4681,6 +4982,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file_name",
@@ -4691,6 +4993,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -4714,6 +5017,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testResultId",
@@ -4729,6 +5033,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id"},
 								FilterBy:    []string{"projectId", "testRunId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "attachmentId",
@@ -4744,6 +5049,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId", "testCaseId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -4774,6 +5080,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testCaseId",
@@ -4789,6 +5096,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "p",
@@ -4799,6 +5107,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -4822,6 +5131,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunId",
@@ -4837,6 +5147,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "p",
@@ -4847,6 +5158,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "validate_tc",
@@ -4857,6 +5169,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -4880,6 +5193,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunId",
@@ -4895,6 +5209,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "test_result.status",
@@ -4905,6 +5220,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_result.comment",
@@ -4915,6 +5231,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_result.duration",
@@ -4925,6 +5242,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_result.issues",
@@ -4935,6 +5253,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_result.issue_tracker.name",
@@ -4945,6 +5264,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_result.issue_tracker.host",
@@ -4955,6 +5275,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_result.custom_fields",
@@ -4965,6 +5286,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_case_id",
@@ -4975,6 +5297,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "configuration_id",
@@ -4985,6 +5308,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "results",
@@ -4995,6 +5319,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -5018,6 +5343,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunId",
@@ -5033,6 +5359,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testCaseId",
@@ -5048,6 +5375,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "p",
@@ -5058,6 +5386,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -5088,6 +5417,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "closed_before",
@@ -5098,6 +5428,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "closed_after",
@@ -5108,6 +5439,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "created_before",
@@ -5118,6 +5450,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "created_after",
@@ -5128,6 +5461,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan_id",
@@ -5143,6 +5477,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "assignee",
@@ -5153,6 +5488,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "include_closed",
@@ -5163,6 +5499,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "run_state",
@@ -5173,6 +5510,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -5196,6 +5534,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.name",
@@ -5206,6 +5545,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.description",
@@ -5216,6 +5556,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.run_state",
@@ -5226,6 +5567,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.assignee",
@@ -5236,6 +5578,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.test_case_assignee",
@@ -5246,6 +5589,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.tags",
@@ -5256,6 +5600,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.issues",
@@ -5266,6 +5611,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.issue_tracker.name",
@@ -5276,6 +5622,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.issue_tracker.host",
@@ -5286,6 +5633,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.test_plan_id",
@@ -5296,6 +5644,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.configurations",
@@ -5306,6 +5655,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.configuration_map",
@@ -5316,6 +5666,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.test_cases",
@@ -5326,6 +5677,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.folder_ids",
@@ -5336,6 +5688,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.include_all",
@@ -5346,6 +5699,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.status",
@@ -5356,6 +5710,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.priority",
@@ -5366,6 +5721,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.case_type",
@@ -5376,6 +5732,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.owner",
@@ -5386,6 +5743,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.tags",
@@ -5396,6 +5754,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.custom_fields",
@@ -5406,6 +5765,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -5429,6 +5789,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunId",
@@ -5444,6 +5805,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "minify",
@@ -5454,6 +5816,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -5477,6 +5840,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunId",
@@ -5492,6 +5856,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "p",
@@ -5502,6 +5867,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "fetch_steps",
@@ -5512,6 +5878,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "minify",
@@ -5522,6 +5889,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -5545,6 +5913,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunId",
@@ -5560,6 +5929,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.name",
@@ -5570,6 +5940,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.run_state",
@@ -5580,6 +5951,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.tags",
@@ -5590,6 +5962,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.configurations",
@@ -5600,6 +5973,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.configuration_map",
@@ -5610,6 +5984,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.status",
@@ -5620,6 +5995,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.priority",
@@ -5630,6 +6006,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.case_type",
@@ -5640,6 +6017,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.owner",
@@ -5650,6 +6028,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.tags",
@@ -5660,6 +6039,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.custom_fields",
@@ -5670,6 +6050,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -5693,6 +6074,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunId",
@@ -5708,6 +6090,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.name",
@@ -5718,6 +6101,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.description",
@@ -5728,6 +6112,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.run_state",
@@ -5738,6 +6123,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.assignee",
@@ -5748,6 +6134,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.test_case_assignee",
@@ -5758,6 +6145,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.tags",
@@ -5768,6 +6156,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.issues",
@@ -5778,6 +6167,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.issue_tracker.name",
@@ -5788,6 +6178,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.issue_tracker.host",
@@ -5798,6 +6189,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.test_plan_id",
@@ -5808,6 +6200,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.configurations",
@@ -5818,6 +6211,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.configuration_map",
@@ -5828,6 +6222,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.test_cases",
@@ -5838,6 +6233,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.folder_ids",
@@ -5848,6 +6244,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.include_all",
@@ -5858,6 +6255,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.status",
@@ -5868,6 +6266,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.priority",
@@ -5878,6 +6277,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.case_type",
@@ -5888,6 +6288,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.owner",
@@ -5898,6 +6299,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.tags",
@@ -5908,6 +6310,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run.filter_test_cases.custom_fields",
@@ -5918,6 +6321,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -5941,6 +6345,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunId",
@@ -5956,6 +6361,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "assign_to",
@@ -5966,6 +6372,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -5989,6 +6396,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunId",
@@ -6004,6 +6412,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -6027,6 +6436,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunId",
@@ -6042,6 +6452,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -6072,6 +6483,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "p",
@@ -6082,6 +6494,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "page_size",
@@ -6092,6 +6505,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"30", "300"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -6115,6 +6529,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan.name",
@@ -6125,6 +6540,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan.plan_status",
@@ -6135,6 +6551,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan.description",
@@ -6145,6 +6562,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan.start_date",
@@ -6155,6 +6573,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan.end_date",
@@ -6165,6 +6584,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -6188,6 +6608,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testPlanId",
@@ -6203,6 +6624,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -6226,6 +6648,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testPlanId",
@@ -6241,6 +6664,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan.name",
@@ -6251,6 +6675,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan.plan_status",
@@ -6261,6 +6686,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan.description",
@@ -6271,6 +6697,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan.start_date",
@@ -6281,6 +6708,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_plan.end_date",
@@ -6291,6 +6719,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -6314,6 +6743,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testPlanId",
@@ -6329,6 +6759,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "p",
@@ -6339,6 +6770,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -6364,6 +6796,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "page_size",
@@ -6374,6 +6807,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"30", "300"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -6392,6 +6826,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -6415,6 +6850,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -6447,6 +6883,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "place_holder_text",
@@ -6457,6 +6894,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "field_type",
@@ -6467,6 +6905,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"string", "dropdown", "text", "user", "boolean", "url", "date", "int"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "is_required",
@@ -6477,6 +6916,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "options",
@@ -6487,6 +6927,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "applies_to_all_projects",
@@ -6497,6 +6938,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "field_entity_type",
@@ -6507,6 +6949,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"test_case", "test_result"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "link_to_future_projects",
@@ -6517,6 +6960,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "assigned_projects",
@@ -6527,6 +6971,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -6550,6 +6995,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "field_name",
@@ -6560,6 +7006,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "place_holder_text",
@@ -6570,6 +7017,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "field_type",
@@ -6580,6 +7028,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "is_required",
@@ -6590,6 +7039,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "options",
@@ -6600,6 +7050,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "applies_to_all_projects",
@@ -6610,6 +7061,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "field_entity_type",
@@ -6620,6 +7072,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "link_to_future_projects",
@@ -6630,6 +7083,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "assigned_projects",
@@ -6640,6 +7094,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -6663,6 +7118,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -6696,6 +7152,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -6719,6 +7176,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "unique_build_names",
@@ -6729,6 +7187,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "build_tags",
@@ -6739,6 +7198,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "build_status",
@@ -6749,6 +7209,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"passed", "failed", "unknown", "skipped", "running"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "users",
@@ -6759,6 +7220,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "frameworks",
@@ -6769,6 +7231,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "is_archived",
@@ -6779,6 +7242,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "date_range",
@@ -6789,6 +7253,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "next_page",
@@ -6799,6 +7264,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -6817,6 +7283,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "project_name",
@@ -6827,6 +7294,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "started_at",
@@ -6837,6 +7305,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "tags",
@@ -6847,6 +7316,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "build_run_identifier",
@@ -6857,6 +7327,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "host_info.hostname",
@@ -6867,6 +7338,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "host_info.platform",
@@ -6877,6 +7349,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "host_info.type",
@@ -6887,6 +7360,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "host_info.version",
@@ -6897,6 +7371,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "host_info.arch",
@@ -6907,6 +7382,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "ci_info.name",
@@ -6917,6 +7393,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "ci_info.build_url",
@@ -6927,6 +7404,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "ci_info.url",
@@ -6937,6 +7415,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "ci_info.build_number",
@@ -6947,6 +7426,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "ci_info.job_name",
@@ -6957,6 +7437,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control",
@@ -6967,6 +7448,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "framework.name",
@@ -6977,6 +7459,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "framework.version",
@@ -6987,6 +7470,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7010,6 +7494,7 @@ var Manifest = []Product{
 								LabelFields: []string{"name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "build_name",
@@ -7020,6 +7505,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "user_name",
@@ -7030,6 +7516,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "build_tags",
@@ -7040,6 +7527,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "framework",
@@ -7050,6 +7538,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7073,6 +7562,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -7096,6 +7586,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "build_tags",
@@ -7106,6 +7597,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7129,6 +7621,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "finished_at",
@@ -7139,6 +7632,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7162,6 +7656,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "name",
@@ -7172,6 +7667,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file_name",
@@ -7182,6 +7678,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "scopes",
@@ -7192,6 +7689,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "started_at",
@@ -7202,6 +7700,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "tags",
@@ -7212,6 +7711,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "location",
@@ -7222,6 +7722,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "result",
@@ -7232,6 +7733,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "custom_metadata",
@@ -7242,6 +7744,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "environment",
@@ -7252,6 +7755,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7275,6 +7779,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "testRunUuid",
@@ -7285,6 +7790,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "result",
@@ -7295,6 +7801,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"passed", "failed", "skipped", "timeout"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "finished_at",
@@ -7305,6 +7812,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file_name",
@@ -7315,6 +7823,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "scopes",
@@ -7325,6 +7834,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "duration_in_ms",
@@ -7335,6 +7845,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "failure",
@@ -7345,6 +7856,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "custom_metadata",
@@ -7355,6 +7867,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "environment",
@@ -7365,6 +7878,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7388,6 +7902,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "hook_type",
@@ -7398,6 +7913,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "name",
@@ -7408,6 +7924,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file_name",
@@ -7418,6 +7935,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "scopes",
@@ -7428,6 +7946,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "started_at",
@@ -7438,6 +7957,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_run_id",
@@ -7448,6 +7968,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "tags",
@@ -7458,6 +7979,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "location",
@@ -7468,6 +7990,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "custom_metadata",
@@ -7478,6 +8001,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7501,6 +8025,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "hookRunUuid",
@@ -7511,6 +8036,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "hook_type",
@@ -7521,6 +8047,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "result",
@@ -7531,6 +8058,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"passed", "failed", "skipped", "timeout"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "finished_at",
@@ -7541,6 +8069,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file_name",
@@ -7551,6 +8080,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "scopes",
@@ -7561,6 +8091,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "duration_in_ms",
@@ -7571,6 +8102,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "failure",
@@ -7581,6 +8113,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "custom_metadata",
@@ -7591,6 +8124,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "environment",
@@ -7601,6 +8135,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7624,6 +8159,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "logs",
@@ -7634,6 +8170,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7657,6 +8194,7 @@ var Manifest = []Product{
 								LabelFields: []string{"hashed_id", "name", "status"},
 								FilterBy:    []string{"projectId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "re_runs",
@@ -7667,6 +8205,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "test_statuses",
@@ -7677,6 +8216,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "is_flaky",
@@ -7687,6 +8227,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "is_new_failure",
@@ -7697,6 +8238,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "sort",
@@ -7707,6 +8249,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"EXECUTION_ORDER", "TOP_LEVEL_NAME", "DURATION", "FAILED_TEST", "PLATFORM"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "order",
@@ -7717,6 +8260,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        []string{"Asc", "Desc"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "next_page",
@@ -7727,6 +8271,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7745,6 +8290,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7763,6 +8309,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7786,6 +8333,7 @@ var Manifest = []Product{
 								LabelFields: []string{"name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -7809,6 +8357,7 @@ var Manifest = []Product{
 								LabelFields: []string{"name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "enabled",
@@ -7819,6 +8368,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7842,6 +8392,7 @@ var Manifest = []Product{
 								LabelFields: []string{"name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "name",
@@ -7852,6 +8403,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "enabled",
@@ -7862,6 +8414,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "is_global_profile",
@@ -7872,6 +8425,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "rules",
@@ -7882,6 +8436,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "applicable_builds.all_builds",
@@ -7892,6 +8447,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "applicable_builds.build_tags",
@@ -7902,6 +8458,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "applicable_builds.build_names",
@@ -7912,6 +8469,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "rule_status",
@@ -7922,6 +8480,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"pass", "fail"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "hooks_visibility",
@@ -7932,6 +8491,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"failed", "none", "beforeFailed", "all"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7955,6 +8515,7 @@ var Manifest = []Product{
 								LabelFields: []string{"name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "profileUuid",
@@ -7965,6 +8526,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -7988,6 +8550,7 @@ var Manifest = []Product{
 								LabelFields: []string{"name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "profileUuid",
@@ -7998,6 +8561,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "name",
@@ -8008,6 +8572,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "enabled",
@@ -8018,6 +8583,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "is_global_profile",
@@ -8028,6 +8594,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "rules",
@@ -8038,6 +8605,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "applicable_builds.all_builds",
@@ -8048,6 +8616,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "applicable_builds.build_tags",
@@ -8058,6 +8627,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "applicable_builds.build_names",
@@ -8068,6 +8638,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "rule_status",
@@ -8078,6 +8649,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"pass", "fail"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "hooks_visibility",
@@ -8088,6 +8660,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"failed", "none", "beforeFailed", "all"},
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -8111,6 +8684,7 @@ var Manifest = []Product{
 								LabelFields: []string{"name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "profileUuid",
@@ -8121,6 +8695,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -8144,6 +8719,7 @@ var Manifest = []Product{
 								LabelFields: []string{"name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "profileUuid",
@@ -8154,6 +8730,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "enabled",
@@ -8164,6 +8741,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -8182,6 +8760,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "file_name",
@@ -8192,6 +8771,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "project_name",
@@ -8202,6 +8782,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "build_name",
@@ -8212,6 +8793,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "format",
@@ -8222,6 +8804,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"junit", "allure"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "build_identifier",
@@ -8232,6 +8815,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "tags",
@@ -8242,6 +8826,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "ci",
@@ -8252,6 +8837,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "framework_version",
@@ -8262,6 +8848,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.sha",
@@ -8272,6 +8859,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.short_sha",
@@ -8282,6 +8870,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.branch",
@@ -8292,6 +8881,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.tag",
@@ -8302,6 +8892,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.commit_message",
@@ -8312,6 +8903,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.committer_name",
@@ -8322,6 +8914,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.committer_email",
@@ -8332,6 +8925,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.author_name",
@@ -8342,6 +8936,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.author_email",
@@ -8352,6 +8947,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.committed_at",
@@ -8362,6 +8958,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "version_control.remote_url",
@@ -8372,6 +8969,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -8405,6 +9003,7 @@ var Manifest = []Product{
 							Location:    "path",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -8423,6 +9022,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "orientation",
@@ -8433,6 +9033,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"portrait", "landscape"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "url",
@@ -8443,6 +9044,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "callback_url",
@@ -8453,6 +9055,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "win_res",
@@ -8463,6 +9066,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "mac_res",
@@ -8473,6 +9077,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "quality",
@@ -8483,6 +9088,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"Compressed", "Original"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "local",
@@ -8493,6 +9099,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "wait_time",
@@ -8503,6 +9110,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -8550,6 +9158,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "type",
@@ -8560,6 +9169,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        []string{"basic", "form_2"},
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "authData.username",
@@ -8570,6 +9180,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "authData.password",
@@ -8580,6 +9191,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      true,
 						},
 						{
 							Name:        "authData.url",
@@ -8590,6 +9202,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "authData.usernameSelector",
@@ -8600,6 +9213,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "authData.passwordSelector",
@@ -8610,6 +9224,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "authData.submitSelector",
@@ -8620,6 +9235,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -8638,6 +9254,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "page_size",
@@ -8648,6 +9265,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -8671,6 +9289,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -8689,6 +9308,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "scanData.urlSet",
@@ -8699,6 +9319,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "recurring",
@@ -8709,6 +9330,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "instantRun",
@@ -8719,6 +9341,7 @@ var Manifest = []Product{
 							Location:    "body",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -8742,6 +9365,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -8765,6 +9389,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "page",
@@ -8775,6 +9400,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 						{
 							Name:        "page_size",
@@ -8785,6 +9411,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},
@@ -8808,6 +9435,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "report_id",
@@ -8823,6 +9451,7 @@ var Manifest = []Product{
 								LabelFields: []string{"scanRunId"},
 								FilterBy:    []string{"projId"},
 							},
+							Secret:      false,
 						},
 					},
 				},
@@ -8846,6 +9475,7 @@ var Manifest = []Product{
 								LabelFields: []string{"id", "name"},
 								FilterBy:    nil,
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "report_id",
@@ -8861,6 +9491,7 @@ var Manifest = []Product{
 								LabelFields: []string{"scanRunId"},
 								FilterBy:    []string{"projId"},
 							},
+							Secret:      false,
 						},
 						{
 							Name:        "product",
@@ -8871,6 +9502,7 @@ var Manifest = []Product{
 							Location:    "query",
 							Enum:        nil,
 							Picker:      nil,
+							Secret:      false,
 						},
 					},
 				},

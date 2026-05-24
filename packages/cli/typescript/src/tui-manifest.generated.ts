@@ -2152,7 +2152,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "Your BrowserStack access token",
                 "type": "string",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "secret": true
               },
               {
                 "name": "last",
@@ -2196,7 +2197,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "Your BrowserStack access token",
                 "type": "string",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "secret": true
               }
             ]
           },
@@ -2220,7 +2222,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "Your BrowserStack access token",
                 "type": "string",
                 "required": false,
-                "location": "query"
+                "location": "query",
+                "secret": true
               }
             ]
           }
@@ -2431,7 +2434,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "body"
+                "location": "body",
+                "secret": true
               },
               {
                 "name": "authData.usernameSelector",
@@ -8216,7 +8220,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "body"
+                "location": "body",
+                "secret": true
               },
               {
                 "name": "authData.url",
