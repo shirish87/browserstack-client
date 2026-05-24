@@ -23,8 +23,11 @@ const runners: Record<string, Runner> = {
   "local": runLocal,
 };
 
+const UNSAFE_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
 function setNested(target: Record<string, unknown>, dottedKey: string, value: unknown) {
   const parts = dottedKey.split(".");
+  if (parts.some(p => UNSAFE_KEYS.has(p))) return;
   let cur: Record<string, unknown> = target;
   for (let i = 0; i < parts.length - 1; i++) {
     const p = parts[i];

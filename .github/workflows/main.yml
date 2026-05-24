@@ -59,6 +59,8 @@ jobs:
     name: "Build"
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
@@ -216,6 +218,8 @@ jobs:
     timeout-minutes: 15
     needs: [build]
     environment: BrowserStackEnv
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
@@ -252,6 +256,8 @@ jobs:
     name: "Test CLI (${{ matrix.os }})"
     needs: [build, test-sdk]
     timeout-minutes: 15
+    permissions:
+      contents: read
     strategy:
       matrix:
         os: [macos-latest, windows-2025]
@@ -356,6 +362,8 @@ jobs:
     needs: [test-sdk, test-cli]
     if: github.event_name != 'pull_request'
     environment: BrowserStackEnv
+    permissions:
+      contents: read
     outputs:
       published: ${{ steps.check-version.outputs.already_published == 'false' }}
       version: ${{ steps.get-version.outputs.version }}

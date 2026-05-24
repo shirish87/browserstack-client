@@ -191,6 +191,9 @@ async function runWith(
 
   try {
     const [cmd, ...args] = runWithArgs;
+    // On Windows, .cmd/.bat files require shell: true to execute via cmd.exe.
+    // Avoid blanket shell: true (shell injection risk) — scope it to batch files only.
+    const needsShell = process.platform === "win32" && /\.(cmd|bat)$/i.test(cmd);
     const childProcess = cp.spawnSync(cmd, args, {
       cwd: process.cwd(),
       stdio: ["pipe", "inherit", "inherit"],
@@ -200,8 +203,7 @@ async function runWith(
         BROWSERSTACK_LOCAL_ID: localIdentifier,
         BROWSERSTACK_LOCAL_IDENTIFIER: localIdentifier,
       },
-      // https://stackoverflow.com/a/54515183
-      ...(process.platform === "win32" ? { shell: true } : {}),
+      shell: needsShell,
     });
 
     if (childProcess.error) {
