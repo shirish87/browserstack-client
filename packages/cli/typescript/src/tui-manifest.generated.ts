@@ -7985,7 +7985,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "file",
                 "label": "File",
-                "description": "",
+                "description": "JUnit XML file or zip archive containing multiple XML files (max 100 MB)",
                 "type": "file",
                 "required": true,
                 "location": "body"
@@ -7993,7 +7993,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "file_name",
                 "label": "File Name",
-                "description": "",
+                "description": "Override the uploaded file's name",
                 "type": "string",
                 "required": false,
                 "location": "body"
@@ -8001,7 +8001,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "project_name",
                 "label": "Project Name",
-                "description": "",
+                "description": "Project name to associate this build with",
                 "type": "string",
                 "required": true,
                 "location": "body"
@@ -8009,7 +8009,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "build_name",
                 "label": "Build Name",
-                "description": "",
+                "description": "Build name for this test run",
                 "type": "string",
                 "required": true,
                 "location": "body"
@@ -8017,7 +8017,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "format",
                 "label": "Format",
-                "description": "",
+                "description": "Report format",
                 "type": "string",
                 "required": false,
                 "location": "body",
@@ -8029,7 +8029,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "build_identifier",
                 "label": "Build Identifier",
-                "description": "",
+                "description": "Unique identifier to correlate split or re-run uploads (expires after 6 hours)",
                 "type": "string",
                 "required": false,
                 "location": "body"
@@ -8037,7 +8037,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "tags",
                 "label": "Tags",
-                "description": "",
+                "description": "Comma-separated tags (e.g. 'regression, nightly')",
                 "type": "string",
                 "required": false,
                 "location": "body"
@@ -8045,7 +8045,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "ci",
                 "label": "Ci",
-                "description": "",
+                "description": "CI job URL (e.g. 'https://ci.example.com/builds/42')",
                 "type": "string",
                 "required": false,
                 "location": "body"
@@ -8053,7 +8053,95 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "framework_version",
                 "label": "Framework Version",
-                "description": "",
+                "description": "Framework name and version (e.g. 'junit, 5.8')",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.sha",
+                "label": "Version Control › Sha",
+                "description": "Commit SHA",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.short_sha",
+                "label": "Version Control › Short Sha",
+                "description": "Short commit SHA",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.branch",
+                "label": "Version Control › Branch",
+                "description": "Branch name",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.tag",
+                "label": "Version Control › Tag",
+                "description": "Git tag",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.commit_message",
+                "label": "Version Control › Commit Message",
+                "description": "Commit message",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.committer_name",
+                "label": "Version Control › Committer Name",
+                "description": "Committer name",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.committer_email",
+                "label": "Version Control › Committer Email",
+                "description": "Committer email",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.author_name",
+                "label": "Version Control › Author Name",
+                "description": "Author name",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.author_email",
+                "label": "Version Control › Author Email",
+                "description": "Author email",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.committed_at",
+                "label": "Version Control › Committed At",
+                "description": "Commit timestamp",
+                "type": "string",
+                "required": false,
+                "location": "body"
+              },
+              {
+                "name": "version_control.remote_url",
+                "label": "Version Control › Remote Url",
+                "description": "Remote repository URL",
                 "type": "string",
                 "required": false,
                 "location": "body"

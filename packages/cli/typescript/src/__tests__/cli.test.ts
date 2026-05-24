@@ -1,5 +1,6 @@
 import { runLocalCli } from "@dot-slash/browserstack-cli";
 import { env } from "@dot-slash/browserstack-core";
+import { homedir } from "node:os";
 import process from "node:process";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { cliContext } from "./setup.ts";
@@ -8,7 +9,7 @@ const LONG_TIMEOUT = 60_000;
 
 describe("LocalCLI", () => {
   beforeAll(() => {
-    env.BROWSERSTACK_LOCAL_BINARY_PATH = `${env.HOME}/.browserstack`;
+    env.BROWSERSTACK_LOCAL_BINARY_PATH = `${homedir()}/.browserstack`;
   });
 
   beforeEach(

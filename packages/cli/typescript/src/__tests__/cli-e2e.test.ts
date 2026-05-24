@@ -2,12 +2,13 @@ import { describe, it, expect, beforeEach, beforeAll, afterAll } from "vitest";
 import { execFile } from "node:child_process";
 import { mkdtemp, rm, symlink, readdir, writeFile } from "node:fs/promises";
 import { promisify } from "node:util";
-import { resolve, join } from "node:path";
+import { resolve, join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { tmpdir, homedir } from "node:os";
 
 const execFileAsync = promisify(execFile);
 
-const __dirname = new URL(".", import.meta.url).pathname;
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const monorepoRoot = resolve(__dirname, "../../../../..");
 
 const platformSuffix = process.platform === "win32"

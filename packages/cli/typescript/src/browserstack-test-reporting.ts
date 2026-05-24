@@ -55,23 +55,49 @@ export async function main(
 
     const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);
 
-    // Special handling for upload
+    // upload-report: file path as first positional, everything else as --flags
     if (action === TestReporting.Action.UploadReport) {
-        if (!rest[0]) throw new BrowserStackError("Missing <file-path>");
-        const filePath = resolve(rest[0]);
-        const data = await readFile(filePath);
-        const filename = basename(filePath);
-        // Note: UploadReport schema might be empty positional, but we need these manually for now
-        // since the API takes an object that isn't fully captured as a body in the spec sometimes
-        await client.uploadReport({
-          file: new Blob([new Uint8Array(data)]),
-          fileName: filename,
-          projectName: rest[1],
-          buildName: rest[2],
-          format: rest[3] as never,
-        });
-        logger.info(`Report ${filename} uploaded.`);
-        return;
+      const uploadUsage =
+        "Usage: test-reporting upload-report <file.xml|file.zip> " +
+        "--project-name <name> --build-name <name> " +
+        "[--format junit|allure] [--build-identifier <id>] " +
+        "[--tags <tags>] [--ci <url>] [--framework-version <ver>]";
+
+      // Parse flags from rest, first non-flag token is the file path
+      const flags: Record<string, string> = {};
+      let filePath: string | undefined;
+      for (let i = 0; i < rest.length; i++) {
+        const arg = rest[i];
+        if (arg.startsWith("--")) {
+          const key = arg.slice(2);
+          const val = rest[i + 1] && !rest[i + 1].startsWith("--") ? rest[++i] : "true";
+          flags[key] = val;
+        } else if (!filePath) {
+          filePath = arg;
+        }
+      }
+
+      if (!filePath) throw new BrowserStackError(`Missing <file-path>\n${uploadUsage}`);
+      if (!flags["project-name"]) throw new BrowserStackError(`--project-name is required\n${uploadUsage}`);
+      if (!flags["build-name"]) throw new BrowserStackError(`--build-name is required\n${uploadUsage}`);
+
+      const absPath = resolve(filePath);
+      const data = await readFile(absPath);
+      const filename = basename(absPath);
+
+      const result = await client.uploadReport({
+        file: new Blob([new Uint8Array(data)]),
+        fileName: filename,
+        projectName: flags["project-name"],
+        buildName: flags["build-name"],
+        ...(flags["format"] && { format: flags["format"] as "junit" | "allure" }),
+        ...(flags["build-identifier"] && { buildIdentifier: flags["build-identifier"] }),
+        ...(flags["tags"] && { tags: flags["tags"] }),
+        ...(flags["ci"] && { ci: flags["ci"] }),
+        ...(flags["framework-version"] && { frameworkVersion: flags["framework-version"] }),
+      });
+      logger.info(JSON.stringify(result, null, 2));
+      return;
     }
 
     const result = await schemaConfig.call(client, parsed);
