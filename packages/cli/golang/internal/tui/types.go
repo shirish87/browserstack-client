@@ -15,6 +15,7 @@ const (
 	LocationPath  FieldLocation = "path"
 	LocationQuery FieldLocation = "query"
 	LocationBody  FieldLocation = "body"
+	LocationNone  FieldLocation = "none" // TUI-only: shown in form but not sent to the API
 )
 
 type PickerConfig struct {

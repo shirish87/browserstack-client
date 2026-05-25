@@ -115,7 +115,7 @@ function buildFields(actionMeta: CLIActionMetadata, doc: Record<string, unknown>
       description: desc,
       type: deriveFieldType(schema),
       required: p.required,
-      location: p.in === "path" ? "path" : "query",
+      location: p.in === "path" ? "path" : p.in === "none" ? "none" : "query",
       enum: enumValues,
       picker,
       ...(isSecretField(p.name) ? { secret: true } : {}),

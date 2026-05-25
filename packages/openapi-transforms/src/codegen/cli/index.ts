@@ -30,6 +30,13 @@ interface SpecOp {
     $ref?: string;
     "x-cli-picker"?: PickerConfig;
   }>;
+  /** TUI-only parameters that appear in the form but are not sent to the API (e.g. a buildId picker that filters a sessionId picker). */
+  "x-cli-param"?: Array<{
+    name: string;
+    description?: string;
+    schema?: Record<string, unknown>;
+    "x-cli-picker"?: PickerConfig;
+  }>;
   requestBody?: {
     content?: Record<string, {
       schema?: Record<string, unknown>;
@@ -151,6 +158,18 @@ export async function extractCLIMetadata(specPath: string, product: string): Pro
       }
 
       const allParams = resolveParams(pathItem, op, doc);
+
+      // Append TUI-only parameters (x-cli-param) as location "none" — shown in the form but not sent to the API.
+      for (const p of op["x-cli-param"] ?? []) {
+        allParams.push({
+          name: p.name,
+          in: "none",
+          required: false,
+          description: p.description,
+          schema: p.schema,
+          picker: p["x-cli-picker"],
+        });
+      }
 
       metadata.resources[resKey].actions[action] = {
         operationId: op.operationId,

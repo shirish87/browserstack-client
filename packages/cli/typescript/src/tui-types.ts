@@ -1,5 +1,5 @@
 export type FieldType = "string" | "number" | "boolean" | "file";
-export type FieldLocation = "path" | "query" | "body";
+export type FieldLocation = "path" | "query" | "body" | "none";
 
 export interface PickerConfig {
   /** Source action ID, "product.action-id" (e.g. "screenshots.list-browsers"). */

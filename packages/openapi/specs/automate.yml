@@ -94,6 +94,16 @@ paths:
       x-cli-section: "Session Logs"
       x-response-transform:
         codec: text
+      x-cli-param:
+      - name: buildId
+        description: ID of the build containing the session
+        schema:
+          type: string
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          itemPath: automation_build
       parameters:
       - name: sessionId
         x-cli-picker:
@@ -419,6 +429,16 @@ paths:
       description: Delete a session on the server. Sessions once deleted cannot be recovered
       operationId: deleteAutomateSession
       x-cli-section: "Sessions"
+      x-cli-param:
+      - name: buildId
+        description: ID of the build containing the session
+        schema:
+          type: string
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          itemPath: automation_build
       parameters:
       - name: sessionId
         x-cli-picker:
@@ -743,6 +763,16 @@ paths:
       x-cli-section: "Session Logs"
       x-response-transform:
         codec: text
+      x-cli-param:
+      - name: buildId
+        description: ID of the build containing the session
+        schema:
+          type: string
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          itemPath: automation_build
       parameters:
       - name: sessionId
         x-cli-picker:
@@ -1102,6 +1132,16 @@ paths:
       x-cli-section: "Session Logs"
       x-response-transform:
         codec: text
+      x-cli-param:
+      - name: buildId
+        description: ID of the build containing the session
+        schema:
+          type: string
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          itemPath: automation_build
       parameters:
       - name: sessionId
         x-cli-picker:
@@ -1277,6 +1317,16 @@ paths:
       x-cli-section: "Session Logs"
       x-response-transform:
         codec: text
+      x-cli-param:
+      - name: buildId
+        description: ID of the build containing the session
+        schema:
+          type: string
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          itemPath: automation_build
       parameters:
       - name: sessionId
         x-cli-picker:
@@ -1322,6 +1372,16 @@ paths:
       x-cli-section: "Session Logs"
       x-response-transform:
         codec: binary
+      x-cli-param:
+      - name: buildId
+        description: ID of the build containing the session
+        schema:
+          type: string
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          itemPath: automation_build
       parameters:
       - name: sessionId
         x-cli-picker:
@@ -1437,6 +1497,16 @@ paths:
         are available to you in HAR (HTTP Archive) format.
       operationId: getAutomateSessionNetworkLogs
       x-cli-section: "Session Logs"
+      x-cli-param:
+      - name: buildId
+        description: ID of the build containing the session
+        schema:
+          type: string
+        x-cli-picker:
+          source: automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          itemPath: automation_build
       parameters:
       - name: sessionId
         x-cli-picker:

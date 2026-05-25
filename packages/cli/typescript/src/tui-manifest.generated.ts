@@ -55,6 +55,24 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "itemPath": "automation_session"
                 }
+              },
+              {
+                "name": "buildId",
+                "label": "BuildId",
+                "description": "ID of the build containing the session",
+                "type": "string",
+                "required": false,
+                "location": "none",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "itemPath": "automation_build"
+                }
               }
             ]
           },
@@ -247,6 +265,24 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "itemPath": "automation_session"
                 }
+              },
+              {
+                "name": "buildId",
+                "label": "BuildId",
+                "description": "ID of the build containing the session",
+                "type": "string",
+                "required": false,
+                "location": "none",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "itemPath": "automation_build"
+                }
               }
             ]
           },
@@ -410,6 +446,24 @@ export const TUI_MANIFEST: TUIProduct[] = [
                     "buildId"
                   ],
                   "itemPath": "automation_session"
+                }
+              },
+              {
+                "name": "buildId",
+                "label": "BuildId",
+                "description": "ID of the build containing the session",
+                "type": "string",
+                "required": false,
+                "location": "none",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "itemPath": "automation_build"
                 }
               }
             ]
@@ -602,6 +656,24 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "itemPath": "automation_session"
                 }
+              },
+              {
+                "name": "buildId",
+                "label": "BuildId",
+                "description": "ID of the build containing the session",
+                "type": "string",
+                "required": false,
+                "location": "none",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "itemPath": "automation_build"
+                }
               }
             ]
           },
@@ -682,6 +754,24 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "itemPath": "automation_session"
                 }
+              },
+              {
+                "name": "buildId",
+                "label": "BuildId",
+                "description": "ID of the build containing the session",
+                "type": "string",
+                "required": false,
+                "location": "none",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "itemPath": "automation_build"
+                }
               }
             ]
           },
@@ -710,6 +800,24 @@ export const TUI_MANIFEST: TUIProduct[] = [
                     "buildId"
                   ],
                   "itemPath": "automation_session"
+                }
+              },
+              {
+                "name": "buildId",
+                "label": "BuildId",
+                "description": "ID of the build containing the session",
+                "type": "string",
+                "required": false,
+                "location": "none",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "itemPath": "automation_build"
                 }
               }
             ]
@@ -793,6 +901,24 @@ export const TUI_MANIFEST: TUIProduct[] = [
                     "buildId"
                   ],
                   "itemPath": "automation_session"
+                }
+              },
+              {
+                "name": "buildId",
+                "label": "BuildId",
+                "description": "ID of the build containing the session",
+                "type": "string",
+                "required": false,
+                "location": "none",
+                "picker": {
+                  "source": "automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "itemPath": "automation_build"
                 }
               }
             ]
