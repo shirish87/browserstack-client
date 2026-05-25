@@ -42,6 +42,7 @@ paths:
           valueField: hashed_id
           labelFields: [hashed_id, name, status]
           filterBy: [projectId]
+          itemPath: automation_build
         in: path
         description: ID of your build
         required: true
@@ -89,6 +90,7 @@ paths:
           valueField: hashed_id
           labelFields: [hashed_id, name, status]
           filterBy: [projectId]
+          itemPath: automation_build
         in: path
         description: ID of your build
         required: true
@@ -157,6 +159,7 @@ paths:
           valueField: hashed_id
           labelFields: [hashed_id, name, status]
           filterBy: [projectId]
+          itemPath: automation_build
         in: path
         description: ID of your build
         required: true
@@ -255,6 +258,7 @@ paths:
           valueField: hashed_id
           labelFields: [hashed_id, name, status]
           filterBy: [projectId]
+          itemPath: automation_build
         in: path
         description: ID of your build
         required: true
@@ -477,6 +481,7 @@ paths:
           valueField: hashed_id
           labelFields: [hashed_id, name, status]
           filterBy: [projectId]
+          itemPath: automation_build
         in: path
         description: ID of your build
         required: true
@@ -530,6 +535,7 @@ paths:
           valueField: hashed_id
           labelFields: [hashed_id, name, status]
           filterBy: [projectId]
+          itemPath: automation_build
         in: path
         description: ID of your build
         required: true
@@ -1249,6 +1255,7 @@ paths:
           valueField: hashed_id
           labelFields: [hashed_id, name, status]
           filterBy: [projectId]
+          itemPath: automation_build
         in: path
         description: ID of your build
         required: true
@@ -1550,6 +1557,7 @@ paths:
           valueField: hashed_id
           labelFields: [hashed_id, name, status]
           filterBy: [projectId]
+          itemPath: automation_build
         in: path
         description: ID of your build
         required: true
@@ -2308,6 +2316,7 @@ paths:
           valueField: hashed_id
           labelFields: [hashed_id, name, status]
           filterBy: [projectId]
+          itemPath: automation_build
         in: path
         description: ID of your build
         required: true
@@ -2358,6 +2367,7 @@ paths:
           valueField: hashed_id
           labelFields: [hashed_id, name, status]
           filterBy: [projectId]
+          itemPath: automation_build
         in: path
         description: ID of your build
         required: true
