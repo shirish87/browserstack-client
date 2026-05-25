@@ -266,6 +266,7 @@ function goPicker(p: PickerConfig | undefined, indent: string): string {
     `${indent}\t\tValueField:  ${jsonStr(p.valueField)},`,
     `${indent}\t\tLabelFields: ${goStringSlice(labelFields)},`,
     `${indent}\t\tFilterBy:    ${goStringSlice(filterBy)},`,
+    `${indent}\t\tItemPath:    ${jsonStr(p.itemPath ?? "")},`,
     `${indent}\t}`,
   ].join("\n");
 }
