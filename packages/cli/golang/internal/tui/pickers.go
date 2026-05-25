@@ -78,25 +78,36 @@ func pickValue(raw map[string]any, path string) string {
 
 // flattenJSON walks parsed JSON and produces a list of object items.
 // Recognises common wrapper keys like data/items/results/projects/builds/sessions.
+// itemPath is the per-item envelope key from PickerConfig (e.g. "automation_build").
 var listWrapKeys = []string{
 	"data", "items", "results",
 	"automation_builds", "automation_sessions", "automate_builds",
 	"projects", "builds", "sessions",
+	"reports", "scans", "scan_runs", "testCases",
 }
 
-func flattenJSON(v any) []map[string]any {
+func flattenJSON(v any, itemPath string) []map[string]any {
 	switch t := v.(type) {
 	case []any:
 		var out []map[string]any
 		for _, el := range t {
-			out = append(out, flattenJSON(el)...)
+			out = append(out, flattenJSON(el, itemPath)...)
 		}
 		return out
 	case map[string]any:
+		// List-level unwrap: {projects:[...]} → [...]
 		for _, key := range listWrapKeys {
 			if inner, ok := t[key]; ok {
 				if _, isList := inner.([]any); isList {
-					return flattenJSON(inner)
+					return flattenJSON(inner, itemPath)
+				}
+			}
+		}
+		// Per-item envelope unwrap using itemPath hint from PickerConfig
+		if itemPath != "" {
+			if inner, ok := t[itemPath]; ok {
+				if m, ok := inner.(map[string]any); ok {
+					return []map[string]any{m}
 				}
 			}
 		}
@@ -150,7 +161,7 @@ func FetchPickerItems(picker *PickerConfig, fetcher PickerFetcher, filterValues 
 	if e := json.Unmarshal([]byte(output), &parsed); e != nil {
 		return nil, fmt.Errorf("parse picker source response: %w", e)
 	}
-	rows := flattenJSON(parsed)
+	rows := flattenJSON(parsed, picker.ItemPath)
 
 	labelFields := picker.LabelFields
 	if len(labelFields) == 0 {
