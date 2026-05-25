@@ -10,6 +10,8 @@ export interface PickerConfig {
   labelFields?: string[];
   /** Sibling field names that filter the picker results (e.g. ["os","os_version"]). */
   filterBy?: string[];
+  /** Per-item envelope key to unwrap (e.g. "automation_build" for [{automation_build:{...}}]). */
+  itemPath?: string;
 }
 
 export interface TUIField {
