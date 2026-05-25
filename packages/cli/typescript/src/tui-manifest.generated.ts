@@ -52,7 +52,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "buildId"
-                  ]
+                  ],
+                  "itemPath": "automation_session"
                 }
               }
             ]
@@ -104,7 +105,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "buildId"
-                  ]
+                  ],
+                  "itemPath": "automation_session"
                 }
               },
               {
@@ -156,7 +158,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "buildId"
-                  ]
+                  ],
+                  "itemPath": "automation_session"
                 }
               }
             ]
@@ -184,7 +187,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "buildId"
-                  ]
+                  ],
+                  "itemPath": "automation_session"
                 }
               },
               {
@@ -240,7 +244,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "buildId"
-                  ]
+                  ],
+                  "itemPath": "automation_session"
                 }
               }
             ]
@@ -300,7 +305,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               }
             ]
@@ -328,7 +334,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
@@ -372,7 +379,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               }
             ]
@@ -400,7 +408,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "buildId"
-                  ]
+                  ],
+                  "itemPath": "automation_session"
                 }
               }
             ]
@@ -451,7 +460,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
@@ -589,7 +599,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "buildId"
-                  ]
+                  ],
+                  "itemPath": "automation_session"
                 }
               }
             ]
@@ -617,7 +628,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
@@ -667,7 +679,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "buildId"
-                  ]
+                  ],
+                  "itemPath": "automation_session"
                 }
               }
             ]
@@ -695,7 +708,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "buildId"
-                  ]
+                  ],
+                  "itemPath": "automation_session"
                 }
               }
             ]
@@ -777,7 +791,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "buildId"
-                  ]
+                  ],
+                  "itemPath": "automation_session"
                 }
               }
             ]
@@ -819,7 +834,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               }
             ]
@@ -847,7 +863,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
@@ -883,7 +900,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               }
             ]
@@ -927,7 +945,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
@@ -1025,7 +1044,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
@@ -1061,7 +1081,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
@@ -1411,7 +1432,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
@@ -1579,7 +1601,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
@@ -1951,7 +1974,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
@@ -1987,7 +2011,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   ],
                   "filterBy": [
                     "projectId"
-                  ]
+                  ],
+                  "itemPath": "automation_build"
                 }
               },
               {
