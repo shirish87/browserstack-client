@@ -194,6 +194,15 @@ func (f *formView) update(msg tea.Msg) (formAction, tea.Cmd) {
 		pv := newPickerView(fld.Picker, fld.Label, filters)
 		pv.setSize(f.termWidth, f.termHeight)
 		f.picker = pv
+		// If a required filter value is missing, show a hint instead of fetching.
+		for _, k := range fld.Picker.FilterBy {
+			if filters[k] == "" {
+				missing := k
+				return formNone, func() tea.Msg {
+					return pickerLoadedMsg{err: fmt.Errorf("fill in %s first", missing)}
+				}
+			}
+		}
 		// Dispatch async fetch
 		fetcher := f.fetcher
 		picker := fld.Picker
