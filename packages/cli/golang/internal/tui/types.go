@@ -22,6 +22,7 @@ type PickerConfig struct {
 	ValueField  string   // field in each list item that becomes the value
 	LabelFields []string // fields shown in the picker UI; defaults to [ValueField]
 	FilterBy    []string // sibling field names that filter results
+	ItemPath    string   // per-item envelope key, e.g. "automation_build" for [{automation_build:{...}}]
 }
 
 type Field struct {
