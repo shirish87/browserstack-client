@@ -48,7 +48,7 @@ const LIST_WRAP_KEYS = [
   "reports", "scans", "scan_runs", "testCases",
 ] as const;
 
-function flatten(json: unknown, itemPath?: string): Record<string, unknown>[] {
+export function flatten(json: unknown, itemPath?: string): Record<string, unknown>[] {
   if (Array.isArray(json)) {
     return json.flatMap(el => flatten(el, itemPath)) as Record<string, unknown>[];
   }
@@ -56,6 +56,7 @@ function flatten(json: unknown, itemPath?: string): Record<string, unknown>[] {
     const obj = json as Record<string, unknown>;
     for (const key of LIST_WRAP_KEYS) {
       if (Array.isArray(obj[key])) return flatten(obj[key], itemPath);
+      if (obj[key] && typeof obj[key] === "object" && !Array.isArray(obj[key])) return flatten(obj[key], itemPath);
     }
     // Per-item envelope unwrap using itemPath hint from PickerConfig
     if (itemPath && obj[itemPath] && typeof obj[itemPath] === "object" && !Array.isArray(obj[itemPath])) {

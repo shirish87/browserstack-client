@@ -96,9 +96,13 @@ func flattenJSON(v any, itemPath string) []map[string]any {
 		return out
 	case map[string]any:
 		// List-level unwrap: {projects:[...]} → [...]
+		// Also recurse into object values of wrap keys (e.g. {data:{projects:[...]}})
 		for _, key := range listWrapKeys {
 			if inner, ok := t[key]; ok {
-				if _, isList := inner.([]any); isList {
+				switch inner.(type) {
+				case []any:
+					return flattenJSON(inner, itemPath)
+				case map[string]any:
 					return flattenJSON(inner, itemPath)
 				}
 			}
