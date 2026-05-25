@@ -1,6 +1,6 @@
 import type { TUIProduct, TUIAction, PickerConfig } from "../tui-types.ts";
 import { TUI_MANIFEST } from "../tui-manifest.generated.ts";
-import { executeAction } from "./execute.ts";
+import { dispatchPickerAction } from "./picker-dispatch.ts";
 
 export interface PickerItem {
   /** Raw object from the source API. */
@@ -41,17 +41,26 @@ function pickValue(item: Record<string, unknown>, path: string): string {
   return typeof cur === "string" ? cur : JSON.stringify(cur);
 }
 
-function flatten(json: unknown): Record<string, unknown>[] {
+const LIST_WRAP_KEYS = [
+  "data", "items", "results",
+  "automation_builds", "automation_sessions", "automate_builds",
+  "projects", "builds", "sessions",
+  "reports", "scans", "scan_runs", "testCases",
+] as const;
+
+function flatten(json: unknown, itemPath?: string): Record<string, unknown>[] {
   if (Array.isArray(json)) {
-    return json.flatMap(flatten) as Record<string, unknown>[];
+    return json.flatMap(el => flatten(el, itemPath)) as Record<string, unknown>[];
   }
   if (json && typeof json === "object") {
     const obj = json as Record<string, unknown>;
-    // Common wrapper: { data: [...] } / { items: [...] } / { results: [...] }
-    for (const key of ["data", "items", "results", "automation_builds", "automation_sessions", "projects", "builds", "sessions"]) {
-      if (Array.isArray(obj[key])) return flatten(obj[key]);
+    for (const key of LIST_WRAP_KEYS) {
+      if (Array.isArray(obj[key])) return flatten(obj[key], itemPath);
     }
-    // Single object: treat as a one-item list
+    // Per-item envelope unwrap using itemPath hint from PickerConfig
+    if (itemPath && obj[itemPath] && typeof obj[itemPath] === "object" && !Array.isArray(obj[itemPath])) {
+      return [obj[itemPath] as Record<string, unknown>];
+    }
     return [obj];
   }
   return [];
@@ -71,23 +80,21 @@ export async function fetchPickerItems(picker: PickerConfig): Promise<PickerItem
   }
 
   const { product, action } = found;
-  // Build minimum positional args — for now, only invoke if action has no required path/query params.
-  // Many list-* actions are parameterless (list-projects, list-browsers); list-builds takes projectId
-  // (handled via filterBy at runtime); list-sessions takes buildId. For those, we can't pre-fetch
-  // without a parent value — the runtime should call fetchPickerItemsForAction with the parent value.
+  // Defer if action has required path/query params — caller must supply filter values.
   if (action.fields.some(f => f.required && f.location !== "body")) {
-    // Defer: the runtime will call fetchPickerItemsForAction with filter values.
     return [];
   }
 
-  const { output, error } = await executeAction(product, action, {});
-  if (error) {
+  let output: string;
+  try {
+    output = await dispatchPickerAction(product.id, action, {});
+  } catch {
     cache.set(picker.source, []);
     return [];
   }
   try {
     const json = JSON.parse(output);
-    const rows = flatten(json);
+    const rows = flatten(json, picker.itemPath);
     const items: PickerItem[] = rows.map(raw => ({
       raw,
       value: pickValue(raw, picker.valueField),
@@ -114,14 +121,16 @@ export async function fetchPickerItemsForAction(
   const { product, action } = found;
   const cacheKey = picker.source + ":" + Object.entries(filterValues).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => `${k}=${v}`).join("&");
   if (cache.has(cacheKey)) return cache.get(cacheKey)!;
-  const { output, error } = await executeAction(product, action, filterValues);
-  if (error) {
+  let output: string;
+  try {
+    output = await dispatchPickerAction(product.id, action, filterValues);
+  } catch {
     cache.set(cacheKey, []);
     return [];
   }
   try {
     const json = JSON.parse(output);
-    const rows = flatten(json);
+    const rows = flatten(json, picker.itemPath);
     const items: PickerItem[] = rows.map(raw => ({
       raw,
       value: pickValue(raw, picker.valueField),
