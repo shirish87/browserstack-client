@@ -14,6 +14,34 @@ export function actionHelp(productId: string, actionId: string): string {
   return "";
 }
 
+function fieldSampleValue(f: TUIField): unknown {
+  if (f.enum && f.enum.length > 0) return f.enum[0];
+  switch (f.type) {
+    case "number": return 0;
+    case "boolean": return true;
+    default: {
+      const leaf = f.name.split(".").pop()!;
+      return `<${leaf}>`;
+    }
+  }
+}
+
+function buildBodySample(fields: TUIField[]): Record<string, unknown> | null {
+  const root: Record<string, unknown> = {};
+  for (const f of fields) {
+    if (f.type === "file") continue;
+    const val = fieldSampleValue(f);
+    const parts = f.name.split(".");
+    let cur = root;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!(parts[i] in cur)) cur[parts[i]] = {};
+      cur = cur[parts[i]] as Record<string, unknown>;
+    }
+    cur[parts[parts.length - 1]] = val;
+  }
+  return Object.keys(root).length > 0 ? root : null;
+}
+
 function formatActionHelp(
   productId: string,
   actionId: string,
@@ -21,12 +49,12 @@ function formatActionHelp(
   description: string,
   fields: TUIField[]
 ): string {
-  const visible = fields.filter((f) => f.location !== "none");
+  const pathQuery = fields.filter((f) => f.location === "path" || f.location === "query");
+  const body = fields.filter((f) => f.location === "body" && f.type !== "file");
 
-  const argParts = visible.map((f) =>
-    f.required ? `<${f.name}>` : `[${f.name}]`
-  );
-  const usageLine = `Usage: ${productId} ${actionId}${argParts.length ? " " + argParts.join(" ") : ""}`;
+  const argParts = pathQuery.map((f) => f.required ? `<${f.name}>` : `[${f.name}]`);
+  const bodyToken = body.length > 0 ? " [body]" : "";
+  const usageLine = `Usage: ${productId} ${actionId}${argParts.length ? " " + argParts.join(" ") : ""}${bodyToken}`;
 
   const lines: string[] = [usageLine];
 
@@ -35,15 +63,10 @@ function formatActionHelp(
     lines.push("", desc);
   }
 
-  if (visible.length > 0) {
+  if (pathQuery.length > 0) {
     lines.push("", "Arguments:");
-
-    const maxLen = visible.reduce((m, f) => {
-      const n = f.name.length + 2; // < > or [ ]
-      return n > m ? n : m;
-    }, 0);
-
-    for (const f of visible) {
+    const maxLen = pathQuery.reduce((m, f) => Math.max(m, f.name.length + 2), 0);
+    for (const f of pathQuery) {
       const placeholder = f.required ? `<${f.name}>` : `[${f.name}]`;
       const padding = " ".repeat(maxLen - placeholder.length + 2);
       let fieldDesc = f.description ?? "";
@@ -51,6 +74,14 @@ function formatActionHelp(
         fieldDesc += fieldDesc ? ` (${f.enum.join("|")})` : `(${f.enum.join("|")})`;
       }
       lines.push(`  ${placeholder}${padding}${fieldDesc}`);
+    }
+  }
+
+  if (body.length > 0) {
+    const sample = buildBodySample(body);
+    if (sample) {
+      lines.push("", "Body (JSON):");
+      lines.push(JSON.stringify(sample, null, 2));
     }
   }
 
