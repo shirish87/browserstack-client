@@ -7,6 +7,7 @@ import { BrowserStackOptions } from "@dot-slash/browserstack-core";
 import process from "node:process";
 import { TestManagementSchemas } from "./schemas.generated.ts";
 import { parseArgs } from "./parser.ts";
+import { actionHelp } from "./action-help.ts";
 
 interface Logger {
   info(message: string, ...params: unknown[]): void;
@@ -52,6 +53,11 @@ export async function main(
     const schemaConfig = ACTION_SCHEMA_MAP[actionInput];
     if (!schemaConfig) {
       throw new BrowserStackError(`Invalid action: ${actionInput}\n${USAGE}`);
+    }
+
+    if (rest.length > 0 && rest[rest.length - 1].toLowerCase() === "help") {
+      const h = actionHelp("test-management", actionInput);
+      if (h) { logger.info(h); return; }
     }
 
     const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);

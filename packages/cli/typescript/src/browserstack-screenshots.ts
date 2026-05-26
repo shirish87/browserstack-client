@@ -8,6 +8,7 @@ import process from "node:process";
 import { Screenshots } from "./constants.generated.ts";
 import { ScreenshotsSchemas } from "./schemas.generated.ts";
 import { parseArgs } from "./parser.ts";
+import { actionHelp } from "./action-help.ts";
 
 interface Logger {
   info(message: string, ...params: unknown[]): void;
@@ -41,6 +42,11 @@ export async function main(
     const action = Object.values(Screenshots.Action).find((a: string) => a.toLowerCase() === actionInput);
     if (!action) {
       throw new BrowserStackError(`Invalid action: ${actionInput}\n${USAGE}`);
+    }
+
+    if (rest.length > 0 && rest[rest.length - 1].toLowerCase() === "help") {
+      const h = actionHelp("screenshots", action);
+      if (h) { logger.info(h); return; }
     }
 
     const schemaConfig = ScreenshotsSchemas.ActionSchemaMap[action];

@@ -2,14 +2,6 @@
 
 The BrowserStack Client project provides a unified, high-performance **native Go-based CLI** for interacting with all BrowserStack products. This standalone tool is designed for maximum performance, fast startup times, and environment flexibility.
 
-## Features
-
-- **Native Performance**: Written in Go, providing fast execution and minimal resource footprint.
-- **Zero Dependencies**: Standalone binaries that do not require Node.js, Python, or any other runtime on your system.
-- **Unified Interface**: One tool to rule them all—Automate, App Automate, Screenshots, Accessibility, and more.
-- **Automated Local Testing**: Built-in management for the `BrowserStackLocal` binary.
-- **OpenAPI Powered**: All commands and arguments are strictly derived from the official BrowserStack OpenAPI specifications.
-
 ## Installation
 
 ### Pre-compiled Binaries
@@ -132,22 +124,206 @@ browserstack-client <product> <action> [args...]
 - `test-reporting`
 - `local`
 
-## Local Testing Features
+## Automate
 
-The `local` product provides powerful wrappers around the `BrowserStackLocal` binary.
+```bash
+# List all projects
+browserstack-client automate list-projects
 
-- **`start [localIdentifier]`**: Starts a new BrowserStack Local instance.
-- **`stop [localIdentifier]`**: Stops a running instance.
-- **`list`**: Lists all active local testing identifiers.
-- **`run-with [localIdentifier] -- <command>`**: 
-    - Automatically starts a local instance.
-    - Sets the `BROWSERSTACK_LOCAL_IDENTIFIER` environment variable for your command.
-    - Runs your command.
-    - Automatically cleans up and stops the local instance when your command finishes.
+# Get a specific project
+browserstack-client automate get-project <projectId>
 
-## Examples
+# List builds
+browserstack-client automate list-builds
 
-### Local Testing
+# List sessions for a build
+browserstack-client automate list-sessions <buildId>
+
+# Get a session
+browserstack-client automate get-session <sessionId>
+
+# Update a session (e.g. mark passed/failed)
+browserstack-client automate update-session <sessionId>
+
+# Delete a build
+browserstack-client automate delete-build <buildId>
+
+# Get Appium logs for a session
+browserstack-client automate list-session-appium-logs <sessionId>
+
+# List available browsers
+browserstack-client automate list-browsers
+
+# Get current plan usage
+browserstack-client automate get-plan
+```
+
+## App Automate
+
+```bash
+# Upload an app
+browserstack-client app-automate upload-app ./my-app.apk
+
+# List uploaded apps
+browserstack-client app-automate list-apps
+
+# List builds
+browserstack-client app-automate list-builds
+
+# Get a session
+browserstack-client app-automate get-session <sessionId>
+
+# List available devices
+browserstack-client app-automate list-devices
+
+# Upload a Flutter Android app
+browserstack-client app-automate upload-flutter-android-app ./my-app.apk
+
+# Upload an Espresso app
+browserstack-client app-automate upload-espresso-app ./my-app.apk
+
+# Delete an app
+browserstack-client app-automate delete-app <appId>
+
+# Get session logs
+browserstack-client app-automate list-session-logs <buildId> <sessionId>
+
+# Get current plan usage
+browserstack-client app-automate get-plan
+```
+
+## Screenshots
+
+```bash
+# List available browsers
+browserstack-client screenshots list-browsers
+
+# Create a screenshot job
+browserstack-client screenshots create-job
+
+# Get job status and results
+browserstack-client screenshots get-job <jobId>
+```
+
+## Accessibility
+
+```bash
+# List Workflow Analyzer reports
+browserstack-client accessibility list-workflow-analyzer-reports
+
+# Get a Workflow Analyzer report summary
+browserstack-client accessibility get-workflow-analyzer-report-summary <reportId>
+
+# List issues for a report
+browserstack-client accessibility list-workflow-analyzer-report-issues <reportId>
+
+# List Assisted Test reports
+browserstack-client accessibility list-assisted-test-reports
+
+# Get an Assisted Test report summary
+browserstack-client accessibility get-assisted-test-report-summary <reportId>
+```
+
+## Website Scanner
+
+```bash
+# List all scans
+browserstack-client website-scanner list-website-scanner-scans
+
+# Create a new scan
+browserstack-client website-scanner create-website-scanner-scan
+
+# Get scan overview
+browserstack-client website-scanner get-website-scanner-scan-overview <projId>
+
+# List scan runs
+browserstack-client website-scanner list-website-scanner-scan-runs <projId>
+
+# Get scan run summary
+browserstack-client website-scanner get-website-scanner-scan-run-summary <projId> <reportId>
+
+# Get scan run status
+browserstack-client website-scanner list-website-scanner-scan-run-status <projId> <reportId>
+
+# List scan run issues
+browserstack-client website-scanner list-website-scanner-scan-run-issues <projId> <reportId>
+
+# Manage auth configs (for scanning authenticated pages)
+browserstack-client website-scanner list-website-scanner-auth-configs
+browserstack-client website-scanner create-website-scanner-auth-config
+```
+
+## Test Management
+
+```bash
+# List projects
+browserstack-client test-management list-projects
+
+# Create a project
+browserstack-client test-management create-project
+
+# List test cases in a project
+browserstack-client test-management list-test-cases <projectId>
+
+# Create a test run
+browserstack-client test-management create-test-run
+
+# List test runs
+browserstack-client test-management list-test-runs <projectId>
+
+# Get a test run
+browserstack-client test-management get-test-run <testRunId>
+
+# Add results to a test run
+browserstack-client test-management add-test-run-results <testRunId>
+
+# Close a test run
+browserstack-client test-management close-test-run <testRunId>
+
+# List test plans
+browserstack-client test-management list-test-plans <projectId>
+
+# Create a test plan
+browserstack-client test-management create-test-plan
+```
+
+## Test Reporting & Analytics
+
+```bash
+# Upload a JUnit XML report
+browserstack-client test-reporting upload-report ./results.xml \
+  --project-name "My Project" \
+  --build-name "Build #42"
+
+# Upload an Allure report archive
+browserstack-client test-reporting upload-report ./allure-results.zip \
+  --project-name "My Project" \
+  --build-name "Build #42" \
+  --format allure
+
+# List projects
+browserstack-client test-reporting list-projects
+
+# Get the latest build for a project
+browserstack-client test-reporting get-latest-build "My Project" "Build #42"
+
+# List builds for a project
+browserstack-client test-reporting list-project-builds <projectId>
+
+# Start a build programmatically
+browserstack-client test-reporting start-build
+
+# Finish a build
+browserstack-client test-reporting finish-build <buildId>
+
+# List quality gate status
+browserstack-client test-reporting list-quality-gate-status <buildId>
+```
+
+## Local Testing
+
+The `local` product manages the `BrowserStackLocal` binary — start and stop tunnel instances, or wrap a command to run inside a tunnel.
+
 ```bash
 # Start a tunnel (blocks until ready)
 browserstack-client local start
@@ -165,109 +341,9 @@ browserstack-client local stop my-tunnel
 browserstack-client local run-with my-tunnel -- npm test
 ```
 
-### Automate
-```bash
-# List all projects
-browserstack-client automate list-projects
-
-# Get details of a specific project
-browserstack-client automate get-project <project-id>
-
-# List sessions for a build
-browserstack-client automate list-sessions <build-id>
-```
-
-### App Automate
-```bash
-# Upload an Android app for Flutter testing
-browserstack-client app-automate upload-flutter-android-app ./my-app.apk
-
-# List uploaded apps
-browserstack-client app-automate list-apps
-```
-
-### Screenshots
-```bash
-# List all generated screenshots
-browserstack-client screenshots list-screenshots
-```
-
-### Accessibility
-```bash
-# List all Workflow Analyzer reports
-browserstack-client accessibility list-workflow-analyzer-reports
-```
-
-### Website Scanner
-```bash
-# List all scans
-browserstack-client website-scanner list-website-scanner-scans
-
-# List scans filtered by project and status
-browserstack-client website-scanner list-website-scanner-scans <project-id> <status>
-
-# Get a specific scan
-browserstack-client website-scanner get-website-scanner-scan <proj_id>
-
-# Create a new scan
-browserstack-client website-scanner create-website-scanner-scan
-
-# Trigger a scan run
-browserstack-client website-scanner trigger-website-scanner-scan-run <project_id>
-
-# List scan runs for a scan
-browserstack-client website-scanner list-website-scanner-scan-runs <proj_id> [page] [page_size]
-
-# Get scan run status
-browserstack-client website-scanner list-website-scanner-scan-run-status <proj_id> <report_id>
-
-# Get scan run summary
-browserstack-client website-scanner get-website-scanner-scan-run-summary <proj_id> <report_id> [product]
-
-# Manage auth configs
-browserstack-client website-scanner list-website-scanner-auth-configs
-browserstack-client website-scanner create-website-scanner-auth-config
-```
-
-### Test Management
-```bash
-# List all Test Management projects
-browserstack-client test-management list-projects
-
-# List test runs for a project
-browserstack-client test-management list-test-runs <project-id>
-```
-
-### Test Reporting & Analytics
-```bash
-# Upload a JUnit XML report
-browserstack-client test-reporting upload-report ./results.xml \
-  --project-name "My Project" \
-  --build-name "Build #42"
-
-# Upload with optional metadata
-browserstack-client test-reporting upload-report ./results.xml \
-  --project-name "My Project" \
-  --build-name "Build #42" \
-  --format junit \
-  --tags "regression, nightly" \
-  --ci "https://ci.example.com/builds/42"
-
-# Upload an Allure report archive
-browserstack-client test-reporting upload-report ./allure-results.zip \
-  --project-name "My Project" \
-  --build-name "Build #42" \
-  --format allure
-
-# List projects
-browserstack-client test-reporting list-projects
-
-# Get the latest build for a project
-browserstack-client test-reporting get-latest-build \
-  "My Project" "Build #42"
-```
+`run-with` automatically sets `BROWSERSTACK_LOCAL_IDENTIFIER` in the child process environment and stops the tunnel when the command exits.
 
 ## Help and Version
 
-- **Help**: Run `browserstack-client help` or `<product> help` to see available actions and arguments.
+- **Help**: Run `browserstack-client help` or `browserstack-client <product> help` to see available actions and arguments.
 - **Version**: Run `browserstack-client version` to check the current version of the CLI.

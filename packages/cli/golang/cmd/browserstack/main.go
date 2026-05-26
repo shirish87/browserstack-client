@@ -37,7 +37,7 @@ func main() {
 		prefills := map[string]string{
 			"auth_token": accessKey,
 		}
-		model := tui.NewModel(version, makeExecutor(username, accessKey), prefills)
+		model := tui.NewModel(version, makeExecutor(username, accessKey), makePickerFetcher(username, accessKey), prefills)
 		p := tea.NewProgram(model, tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
 			fmt.Fprintf(os.Stderr, "TUI error: %v\n", err)
@@ -54,29 +54,37 @@ func main() {
 		os.Exit(1)
 	}
 
+	product := ""
+	if len(os.Args) >= 2 {
+		product = os.Args[1]
+	}
+
+	if product == "help" {
+		fmt.Println(`Usage: browserstack-client <product> <action> [args...]
+       browserstack-client version
+
+Products:
+  automate          Browser automation — builds, sessions, projects, logs
+  app-automate      Mobile app automation — builds, sessions, apps, devices
+  screenshots       Cross-browser screenshot jobs
+  accessibility     Accessibility reports and automated test analysis
+  website-scanner   Website compliance and accessibility scans
+  test-management   Test cases, test runs, test plans
+  test-reporting    Upload reports, track builds and quality gates
+  local             BrowserStack Local tunnel management
+
+Run 'browserstack-client <product> help' for a full list of actions.`)
+		return
+	}
+
 	if len(os.Args) < 3 {
 		fmt.Fprintln(os.Stderr, "Usage: browserstack-client <product> <action> [args...]")
-		fmt.Fprintln(os.Stderr, "       browserstack-client version")
-		fmt.Fprintf(os.Stderr, "Products: local, %s, %s, %s, %s, %s, %s, %s\n",
-			automate.ProductAutomate, appautomate.ProductAppAutomate,
-			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting,
-			screenshots.ProductScreenshots, websitescanner.ProductWebsiteScanner)
+		fmt.Fprintln(os.Stderr, "Run 'browserstack-client help' for available products and actions.")
 		os.Exit(1)
 	}
 
-	product := os.Args[1]
 	action := os.Args[2]
 	args := os.Args[3:]
-
-	if product == "help" {
-		fmt.Fprintln(os.Stdout, "Usage: browserstack-client <product> <action> [args...]")
-		fmt.Fprintln(os.Stdout, "       browserstack-client version")
-		fmt.Printf("Products: local, %s, %s, %s, %s, %s, %s, %s\n",
-			automate.ProductAutomate, appautomate.ProductAppAutomate,
-			accessibility.ProductAccessibility, testmanagement.ProductTestManagement, testreporting.ProductTestReporting,
-			screenshots.ProductScreenshots, websitescanner.ProductWebsiteScanner)
-		return
-	}
 
 	apiClient := browserstackhttp.New(baseURLAPI, username, accessKey)
 	accessibilityClient := browserstackhttp.New(baseURLAccessibility, username, accessKey)

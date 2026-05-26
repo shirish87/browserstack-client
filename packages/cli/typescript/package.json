@@ -3,6 +3,11 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "dist",
+    "dist-binary",
+    "README.md"
+  ],
   "version": "7.0.0",
   "type": "module",
   "description": "Command-line interface for BrowserStack Local Testing and App Automate",

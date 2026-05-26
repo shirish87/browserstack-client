@@ -279,7 +279,71 @@ function ensureAccessKeyExists(accessKey?: string): string {
 }
 
 const USAGE = `Usage: local <action> [args...]
-Actions: ${[...Object.values(BrowserStackLocalAction), ...Object.values(LocalTesting.Action)].join(", ")}`;
+
+Actions (Tunnel):
+  start         [--local-identifier <id>] [--proxy-host <host>] [--proxy-port <port>]
+  stop          [--local-identifier <id>]
+  list
+  run-with      [--local-identifier <id>] -- <command> [args...]
+
+Actions (Instances API):
+  list-instances
+  get-instance         <instanceId>
+  disconnect-instance  <instanceId>
+
+Note: run-with accepts -- or --- as the command separator (use --- in Windows PowerShell).`;
+
+const LOCAL_ACTION_HELP: Record<string, string> = {
+  start: `Usage: local start [--local-identifier <id>] [--proxy-host <host>] [--proxy-port <port>]
+
+Start a BrowserStack Local tunnel that routes traffic through your machine.
+Downloads the BrowserStackLocal binary to ~/.browserstack on first run.
+
+Arguments:
+  [--local-identifier <id>]   Name for this tunnel instance (default: auto-generated)
+  [--proxy-host <host>]       Proxy host for outbound connections
+  [--proxy-port <port>]       Proxy port for outbound connections`,
+
+  stop: `Usage: local stop [--local-identifier <id>]
+
+Stop a running BrowserStack Local tunnel.
+If no identifier is given, all tracked tunnels are stopped.
+
+Arguments:
+  [--local-identifier <id>]   Stop only the tunnel with this identifier`,
+
+  list: `Usage: local list
+
+List the identifiers of all currently tracked BrowserStack Local tunnels.`,
+
+  "run-with": `Usage: local run-with [--local-identifier <id>] -- <command> [args...]
+
+Start a tunnel, run a command, and stop the tunnel when the command exits.
+Use --- instead of -- as the separator in Windows PowerShell.
+
+Arguments:
+  [--local-identifier <id>]   Name for this tunnel instance
+  --                          Command separator
+  <command> [args...]         Command to run while the tunnel is active`,
+
+  "list-instances": `Usage: local list-instances
+
+List all BrowserStack Local instances via the Instances API.`,
+
+  "get-instance": `Usage: local get-instance <instanceId>
+
+Get details of a specific BrowserStack Local instance.
+
+Arguments:
+  <instanceId>   The instance identifier`,
+
+  "disconnect-instance": `Usage: local disconnect-instance <instanceId>
+
+Disconnect a BrowserStack Local instance via the Instances API.
+
+Arguments:
+  <instanceId>   The instance identifier`,
+};
 
 /**
  * Ensures that the provided action is valid.
@@ -434,6 +498,13 @@ export async function main(
     }
 
     const action = ensureValidAction(actionInput);
+
+    const restArgs = rawArgs.slice(1);
+    if (restArgs.length > 0 && restArgs[restArgs.length - 1].toLowerCase() === "help") {
+      const h = LOCAL_ACTION_HELP[action];
+      if (h) { logger.info(h); return; }
+    }
+
     let localIdentifier: string | undefined;
     let accessKey: string | undefined;
     let runWithArgs: string[] | undefined;

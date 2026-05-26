@@ -9,17 +9,77 @@ import (
 	appautomate "github.com/browserstack/browserstack-client/generated/app-automate"
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 	"github.com/browserstack/browserstack-client/internal/output"
+	"github.com/browserstack/browserstack-client/internal/tui"
 )
 
 func runAppAutomate(c *browserstackhttp.Client, action string, args []string) error {
 	client := appautomate.New(c)
 	ctx := context.Background()
 
-	const usage = "Usage: app-automate <action> [args...]"
+	const usage = `Usage: app-automate <action> [args...]
+
+Actions:
+  get-plan
+  list-devices
+  list-projects
+  get-project             <projectId>
+  update-project          <projectId>
+  delete-project          <projectId>
+  get-project-badge-key   <projectId>
+  list-builds
+  get-build               <buildId>
+  update-build            <buildId>
+  delete-build            <buildId>
+  get-session             <sessionId>
+  update-session          <sessionId>
+  delete-session          <sessionId>
+  list-session-logs       <buildId> <sessionId>
+  list-appium-logs        <buildId> <sessionId>
+  list-network-logs       <buildId> <sessionId>
+  list-device-logs        <buildId> <sessionId>
+  upload-session-terminal-logs   <sessionId>
+  upload-build-terminal-logs     <buildId>
+  list-apps
+  list-group-apps
+  list-apps-by-custom-id  <customId>
+  upload-app              <file-path>
+  delete-app              <appId>
+  list-media-files
+  list-group-media-files
+  list-media-files-by-custom-id  <customId>
+  upload-media-file       <file-path>
+  delete-media-file       <mediaId>
+  list-espresso-apps
+  get-espresso-app        <appId>
+  upload-espresso-app     <file-path>
+  delete-espresso-app     <appId>
+  list-xcui-test-apps
+  get-xcui-test-app       <appId>
+  upload-xcui-test-app    <file-path>
+  delete-xcui-test-app    <appId>
+  list-flutter-android-apps
+  get-flutter-android-app     <appId>
+  upload-flutter-android-app  <file-path>
+  delete-flutter-android-app  <appId>
+  list-flutter-ios-apps
+  get-flutter-ios-app         <appId>
+  upload-flutter-ios-app      <file-path>
+  delete-flutter-ios-app      <appId>
+  upload-detox-android-app        <file-path>
+  upload-detox-android-app-client <file-path>
+  list-app-profiling-data-v1  <buildId> <sessionId>
+  get-app-profiling-data-v2   <buildId> <sessionId>`
 
 	if action == "help" {
 		fmt.Println(usage)
 		return nil
+	}
+
+	if len(args) > 0 && args[len(args)-1] == "help" {
+		if h := tui.ActionHelp(appautomate.ProductAppAutomate, action); h != "" {
+			fmt.Println(h)
+			return nil
+		}
 	}
 
 	// Special handling for upload actions

@@ -3,8 +3,13 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "version": "7.0.0",
   "type": "module",
+  "license": "MIT",
   "description": "BrowserStack Accessibility API client",
   "engines": {
     "node": ">=22.0.0"

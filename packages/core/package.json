@@ -3,8 +3,13 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "version": "7.0.0",
   "type": "module",
+  "license": "MIT",
   "description": "Shared runtime utilities: APIClient base, auth, error handling, HTTP adapters",
   "engines": {
     "node": ">=22.0.0"

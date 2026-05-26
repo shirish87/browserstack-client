@@ -364,6 +364,7 @@ jobs:
     environment: BrowserStackEnv
     permissions:
       contents: read
+      id-token: write
     outputs:
       published: ${{ steps.check-version.outputs.already_published == 'false' }}
       version: ${{ steps.get-version.outputs.version }}
@@ -414,9 +415,7 @@ jobs:
             TAG="latest"
           fi
           echo "Publishing version $VERSION with tag $TAG"
-          pnpm publish -r --tag $TAG --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: "${{ secrets.NPM_PUBLISH_TOKEN }}"
+          pnpm publish -r --tag $TAG --no-git-checks --provenance
 
   # ── 6. Create GitHub Release (main branch only, if published) ────────────────
   release:

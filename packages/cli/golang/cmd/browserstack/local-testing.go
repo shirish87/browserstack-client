@@ -7,6 +7,7 @@ import (
 	localtesting "github.com/browserstack/browserstack-client/generated/local-testing"
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 	"github.com/browserstack/browserstack-client/internal/output"
+	"github.com/browserstack/browserstack-client/internal/tui"
 )
 
 func runLocalTesting(c *browserstackhttp.Client, action string, args []string) error {
@@ -18,6 +19,13 @@ func runLocalTesting(c *browserstackhttp.Client, action string, args []string) e
 	if action == "help" {
 		fmt.Println(usage)
 		return nil
+	}
+
+	if len(args) > 0 && args[len(args)-1] == "help" {
+		if h := tui.ActionHelp(localtesting.ProductLocalTesting, action); h != "" {
+			fmt.Println(h)
+			return nil
+		}
 	}
 
 	res, err := localtesting.Dispatch(client, ctx, action, args)

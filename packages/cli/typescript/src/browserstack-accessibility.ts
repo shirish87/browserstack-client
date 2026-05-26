@@ -8,6 +8,7 @@ import process from "node:process";
 import { Accessibility } from "./constants.generated.ts";
 import { AccessibilitySchemas } from "./schemas.generated.ts";
 import { parseArgs } from "./parser.ts";
+import { actionHelp } from "./action-help.ts";
 
 interface Logger {
   info(message: string, ...params: unknown[]): void;
@@ -43,6 +44,11 @@ export async function main(args: string[]): Promise<void> {
     const action = Object.values(Accessibility.Action).find((a: string) => a.toLowerCase() === actionInput);
     if (!action) {
       throw new BrowserStackError(`Invalid action: ${actionInput}\n${USAGE}`);
+    }
+
+    if (rest.length > 0 && rest[rest.length - 1].toLowerCase() === "help") {
+      const h = actionHelp("accessibility", action);
+      if (h) { logger.info(h); return; }
     }
 
     const schemaConfig = AccessibilitySchemas.ActionSchemaMap[action];

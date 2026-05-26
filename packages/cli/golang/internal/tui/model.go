@@ -34,8 +34,9 @@ type Model struct {
 	resource *Resource
 	action   *Action
 
-	executor Executor
-	prefills map[string]string
+	executor      Executor
+	pickerFetcher PickerFetcher
+	prefills      map[string]string
 
 	termWidth  int
 	termHeight int
@@ -50,13 +51,14 @@ type executedMsg struct {
 	err    string
 }
 
-func NewModel(version string, executor Executor, prefills map[string]string) *Model {
+func NewModel(version string, executor Executor, pickerFetcher PickerFetcher, prefills map[string]string) *Model {
 	return &Model{
-		version:     version,
-		step:        stepProduct,
-		productList: newListView("Select a product", groupedProductItems(Manifest)),
-		executor:    executor,
-		prefills:    prefills,
+		version:       version,
+		step:          stepProduct,
+		productList:   newListView("Select a product", groupedProductItems(Manifest)),
+		executor:      executor,
+		pickerFetcher: pickerFetcher,
+		prefills:      prefills,
 	}
 }
 
@@ -221,29 +223,7 @@ func (m *Model) updateActionList(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.termWidth > 0 {
 			m.form.setWidth(m.termWidth)
 		}
-		// Provide a picker fetcher that resolves productID/actionID via the manifest then calls executor.
-		exec := m.executor
-		m.form.setFetcher(func(productID, actionID string, args map[string]string) (string, error) {
-			var prod *Product
-			var act *Action
-			for i := range Manifest {
-				if Manifest[i].ID != productID {
-					continue
-				}
-				prod = &Manifest[i]
-				for j := range prod.Resources {
-					for k := range prod.Resources[j].Actions {
-						if prod.Resources[j].Actions[k].ID == actionID {
-							act = &prod.Resources[j].Actions[k]
-						}
-					}
-				}
-			}
-			if prod == nil || act == nil {
-				return "", fmt.Errorf("picker source not found: %s.%s", productID, actionID)
-			}
-			return exec(prod, act, args)
-		})
+		m.form.setFetcher(m.pickerFetcher)
 		m.step = stepForm
 	case listBack:
 		isFlat := len(m.product.Resources) == 1 && m.product.Resources[0].ID == "default"
@@ -260,7 +240,7 @@ func (m *Model) updateActionList(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *Model) updateForm(msg tea.Msg) (tea.Model, tea.Cmd) {
-	action, _ := m.form.update(msg)
+	action, cmd := m.form.update(msg)
 	switch action {
 	case formSubmit:
 		values := m.form.values()
@@ -281,7 +261,7 @@ func (m *Model) updateForm(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.form = nil
 		m.step = stepAction
 	}
-	return m, nil
+	return m, cmd
 }
 
 func (m *Model) updateResult(msg tea.Msg) (tea.Model, tea.Cmd) {

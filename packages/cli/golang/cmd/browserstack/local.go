@@ -16,13 +16,87 @@ import (
 )
 
 const UsageLocal = `Usage: local <action> [args...]
-Actions: start, stop, list, run-with, list-instances, get-instance, disconnect-instance
-Note: run-with accepts -- or --- as the command separator (use --- in Windows PowerShell)`
+
+Actions (Tunnel):
+  start         [--local-identifier <id>] [--proxy-host <host>] [--proxy-port <port>]
+                  Start a BrowserStack Local tunnel. Downloads the binary if needed.
+  stop          [--local-identifier <id>]
+                  Stop a running tunnel (stops all tracked tunnels if no identifier given).
+  list          List identifiers of all currently tracked tunnels.
+  run-with      [--local-identifier <id>] -- <command> [args...]
+                  Start a tunnel, run a command, stop the tunnel when the command exits.
+                  Use --- instead of -- in Windows PowerShell.
+
+Actions (Instances API):
+  list-instances
+  get-instance         <instanceId>
+  disconnect-instance  <instanceId>
+
+Note: run-with accepts -- or --- as the command separator (use --- in Windows PowerShell).`
+
+var localActionHelp = map[string]string{
+	"start": `Usage: local start [--local-identifier <id>] [--proxy-host <host>] [--proxy-port <port>]
+
+Start a BrowserStack Local tunnel that routes traffic through your machine.
+Downloads the BrowserStackLocal binary to ~/.browserstack on first run.
+
+Arguments:
+  [--local-identifier <id>]   Name for this tunnel instance (default: auto-generated)
+  [--proxy-host <host>]       Proxy host for outbound connections
+  [--proxy-port <port>]       Proxy port for outbound connections`,
+
+	"stop": `Usage: local stop [--local-identifier <id>]
+
+Stop a running BrowserStack Local tunnel.
+If no identifier is given, all tracked tunnels are stopped.
+
+Arguments:
+  [--local-identifier <id>]   Stop only the tunnel with this identifier`,
+
+	"list": `Usage: local list
+
+List the identifiers of all currently tracked BrowserStack Local tunnels.`,
+
+	"run-with": `Usage: local run-with [--local-identifier <id>] -- <command> [args...]
+
+Start a tunnel, run a command, and stop the tunnel when the command exits.
+Use --- instead of -- as the separator in Windows PowerShell.
+
+Arguments:
+  [--local-identifier <id>]   Name for this tunnel instance
+  --                          Command separator
+  <command> [args...]         Command to run while the tunnel is active`,
+
+	"list-instances": `Usage: local list-instances
+
+List all BrowserStack Local instances via the Instances API.`,
+
+	"get-instance": `Usage: local get-instance <instanceId>
+
+Get details of a specific BrowserStack Local instance.
+
+Arguments:
+  <instanceId>   The instance identifier`,
+
+	"disconnect-instance": `Usage: local disconnect-instance <instanceId>
+
+Disconnect a BrowserStack Local instance via the Instances API.
+
+Arguments:
+  <instanceId>   The instance identifier`,
+}
 
 func runLocalWrapper(c *browserstackhttp.Client, accessKey, action string, args []string) error {
 	if action == "help" {
 		fmt.Println(UsageLocal)
 		return nil
+	}
+
+	if len(args) > 0 && args[len(args)-1] == "help" {
+		if h, ok := localActionHelp[action]; ok {
+			fmt.Println(h)
+			return nil
+		}
 	}
 
 	binaryActions := map[string]bool{"start": true, "stop": true, "list": true, "run-with": true}

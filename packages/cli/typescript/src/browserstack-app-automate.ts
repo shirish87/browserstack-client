@@ -10,6 +10,7 @@ import process from "node:process";
 import { AppAutomate } from "./constants.generated.ts";
 import { AppAutomateSchemas } from "./schemas.generated.ts";
 import { parseArgs } from "./parser.ts";
+import { actionHelp } from "./action-help.ts";
 import { randomBytes } from "node:crypto";
 
 interface Logger {
@@ -47,13 +48,18 @@ export async function main(
       throw new BrowserStackError(`Invalid action: ${actionInput}\n${USAGE}`);
     }
 
+    if (rest.length > 0 && rest[rest.length - 1].toLowerCase() === "help") {
+      const h = actionHelp("app-automate", action);
+      if (h) { logger.info(h); return; }
+    }
+
     const schemaConfig = AppAutomateSchemas.ActionSchemaMap[action];
     if (!schemaConfig) {
         throw new BrowserStackError(`No schema found for action: ${action}`);
     }
 
     const parsed = parseArgs(schemaConfig.schema, rest, schemaConfig.argNames);
-    
+
     // Some actions need manual file reading or special handling before call
     if (
       action === AppAutomate.Action.UploadApp ||
