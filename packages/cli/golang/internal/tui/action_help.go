@@ -139,6 +139,13 @@ func buildBodySample(fields []Field) map[string]any {
 }
 
 func fieldSampleValue(f Field) any {
+	// Array-of-object fields: wrap the item sample in a one-element array.
+	if f.ItemSample != "" {
+		var item any
+		if err := json.Unmarshal([]byte(f.ItemSample), &item); err == nil {
+			return []any{item}
+		}
+	}
 	if len(f.Enum) > 0 {
 		return f.Enum[0]
 	}
@@ -148,7 +155,6 @@ func fieldSampleValue(f Field) any {
 	case "boolean":
 		return true
 	default:
-		// Use the leaf name as a placeholder string
 		parts := strings.Split(f.Name, ".")
 		return "<" + parts[len(parts)-1] + ">"
 	}

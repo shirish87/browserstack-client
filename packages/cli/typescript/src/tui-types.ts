@@ -24,6 +24,8 @@ export interface TUIField {
   enum?: string[];
   picker?: PickerConfig;
   secret?: boolean;
+  /** JSON-encoded example object for array-of-object body fields. Non-empty only when items have known properties. */
+  itemSample?: string;
 }
 
 export interface TUIAction {

@@ -4036,7 +4036,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"description\":\"<description>\",\"result\":\"<result>\"}"
               },
               {
                 "name": "test_case.issues",
@@ -4223,7 +4224,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"description\":\"<description>\",\"result\":\"<result>\"}"
               },
               {
                 "name": "test_case.issues",
@@ -5074,7 +5076,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"test_result\":{\"status\":\"<status>\",\"comment\":\"<comment>\",\"duration\":0,\"issues\":\"<issues>\",\"issue_tracker\":{\"name\":\"<name>\",\"host\":\"<host>\"},\"custom_fields\":\"<custom_fields>\"},\"test_case_id\":\"<test_case_id>\",\"configuration_id\":0}"
               }
             ]
           },
@@ -5369,7 +5372,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"test_case_id\":\"<test_case_id>\",\"configuration_ids\":\"<configuration_ids>\"}"
               },
               {
                 "name": "test_run.test_cases",
@@ -5642,7 +5646,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"test_case_id\":\"<test_case_id>\",\"configuration_ids\":\"<configuration_ids>\"}"
               },
               {
                 "name": "test_run.filter_test_cases.status",
@@ -5829,7 +5834,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"test_case_id\":\"<test_case_id>\",\"configuration_ids\":\"<configuration_ids>\"}"
               },
               {
                 "name": "test_run.test_cases",
@@ -5952,7 +5958,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"test_case_id\":\"<test_case_id>\",\"configuration_id\":0,\"assignee\":\"<assignee>\"}"
               }
             ]
           },
@@ -6477,7 +6484,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"option_value\":\"<option_value>\",\"is_default\":true}"
               },
               {
                 "name": "applies_to_all_projects",
@@ -7252,7 +7260,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": false,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"error\":\"<error>\",\"backtrace\":\"<backtrace>\"}"
               },
               {
                 "name": "custom_metadata",
@@ -7509,7 +7518,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"kind\":\"TEST_LOG\",\"test_run_uuid\":\"<test_run_uuid>\",\"hook_run_uuid\":\"<hook_run_uuid>\",\"timestamp\":\"<timestamp>\",\"level\":\"DEBUG\",\"message\":\"<message>\",\"duration\":0,\"failure\":true,\"file_name\":\"<file_name>\",\"file_size\":0}"
               }
             ]
           },
@@ -8227,7 +8237,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "description": "",
                 "type": "string",
                 "required": true,
-                "location": "body"
+                "location": "body",
+                "itemSample": "{\"browser\":\"<browser>\",\"browser_version\":\"<browser_version>\",\"os\":\"<os>\",\"os_version\":\"<os_version>\",\"device\":\"<device>\"}"
               },
               {
                 "name": "orientation",

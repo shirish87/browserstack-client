@@ -36,6 +36,9 @@ type Field struct {
 	Enum        []string
 	Picker      *PickerConfig
 	Secret      bool
+	// ItemSample is a JSON-encoded example object for array-of-object body fields (e.g. `browsers`).
+	// Non-empty only when the field is an array whose items have known properties.
+	ItemSample  string
 }
 
 type Action struct {

@@ -73,6 +73,7 @@ interface TUIFieldData {
   enum?: string[];
   picker?: PickerConfig;
   secret?: boolean;
+  itemSample?: string;
 }
 
 interface TUIActionData {
@@ -96,6 +97,37 @@ interface TUIProductData {
   description: string;
   category?: string;
   resources: TUIResourceData[];
+}
+
+/** Builds a representative sample object from an object schema's properties (depth-limited). */
+function buildObjectSample(
+  schema: Record<string, unknown>,
+  doc: Record<string, unknown> | undefined,
+  depth = 0,
+): Record<string, unknown> | undefined {
+  if (depth > 3) return undefined;
+  const resolved = resolveSchema(schema, doc);
+  if (!resolved) return undefined;
+  const props = resolved.properties as Record<string, Record<string, unknown>> | undefined;
+  if (!props || Object.keys(props).length === 0) return undefined;
+  const sample: Record<string, unknown> = {};
+  for (const [key, rawPropSchema] of Object.entries(props)) {
+    const propSchema = resolveSchema(rawPropSchema, doc) || rawPropSchema;
+    const enumVals = Array.isArray(propSchema.enum) ? propSchema.enum as string[] : undefined;
+    if (enumVals && enumVals.length > 0) {
+      sample[key] = enumVals[0];
+    } else if (propSchema.type === "boolean") {
+      sample[key] = true;
+    } else if (propSchema.type === "integer" || propSchema.type === "number") {
+      sample[key] = 0;
+    } else if (propSchema.type === "object" && propSchema.properties) {
+      const nested = buildObjectSample(propSchema, doc, depth + 1);
+      sample[key] = nested ?? {};
+    } else {
+      sample[key] = `<${key}>`;
+    }
+  }
+  return Object.keys(sample).length > 0 ? sample : undefined;
 }
 
 function buildFields(actionMeta: CLIActionMetadata, doc: Record<string, unknown> | undefined): TUIFieldData[] {
@@ -133,7 +165,7 @@ function buildFields(actionMeta: CLIActionMetadata, doc: Record<string, unknown>
     // Collect property schemas from the root, plus any oneOf/anyOf/allOf branches.
     // For oneOf/anyOf, fields are inherently optional (user fills one variant);
     // for allOf, the union of required fields applies.
-    type PropEntry = { name: string; schema: Record<string, unknown>; required: boolean };
+    type PropEntry = { name: string; schema: Record<string, unknown>; required: boolean; itemSample?: string };
     const seen = new Map<string, PropEntry>();
 
     function ingest(schema: Record<string, unknown>, prefix: string, requiredCascade: boolean, depth: number) {
@@ -148,7 +180,7 @@ function buildFields(actionMeta: CLIActionMetadata, doc: Record<string, unknown>
         const dotted = prefix ? `${prefix}.${propName}` : propName;
 
         // If the property is an object with its own properties, recurse and don't emit it as a leaf.
-        // For arrays-of-objects, we keep them as scalar (user inputs JSON).
+        // For arrays-of-objects, we keep them as scalar (user inputs JSON) but store an item sample.
         const isObject = propSchema.type === "object" && propSchema.properties && Object.keys(propSchema.properties as object).length > 0;
         const hasAllOfObject = Array.isArray(propSchema.allOf) && (propSchema.allOf as Record<string, unknown>[]).some(s => {
           const r = resolveSchema(s, doc);
@@ -159,11 +191,22 @@ function buildFields(actionMeta: CLIActionMetadata, doc: Record<string, unknown>
           continue;
         }
 
+        // For array-of-object properties, build an item sample for help output.
+        let itemSample: string | undefined;
+        if (propSchema.type === "array" && propSchema.items && typeof propSchema.items === "object") {
+          const itemsSchema = resolveSchema(propSchema.items as Record<string, unknown>, doc);
+          if (itemsSchema?.type === "object" || itemsSchema?.properties) {
+            const sample = buildObjectSample(itemsSchema ?? (propSchema.items as Record<string, unknown>), doc);
+            if (sample) itemSample = JSON.stringify(sample);
+          }
+        }
+
         const existing = seen.get(dotted);
         if (existing) {
           existing.required = existing.required || isReq;
+          if (itemSample && !existing.itemSample) existing.itemSample = itemSample;
         } else {
-          seen.set(dotted, { name: dotted, schema: propSchema, required: isReq });
+          seen.set(dotted, { name: dotted, schema: propSchema, required: isReq, itemSample });
         }
       }
       // Recurse into allOf (required cascades through).
@@ -203,6 +246,7 @@ function buildFields(actionMeta: CLIActionMetadata, doc: Record<string, unknown>
         enum: enumValues,
         picker,
         ...(isSecretField(entry.name) ? { secret: true } : {}),
+        ...(entry.itemSample ? { itemSample: entry.itemSample } : {}),
       });
     }
   }
@@ -283,6 +327,7 @@ function goField(f: TUIFieldData, indent: string): string {
     `${indent}\tEnum:        ${goStringSlice(f.enum ?? [])},`,
     `${indent}\tPicker:      ${goPicker(f.picker, indent)},`,
     `${indent}\tSecret:      ${f.secret ? "true" : "false"},`,
+    `${indent}\tItemSample:  ${jsonStr(f.itemSample ?? "")},`,
     `${indent}}`,
   ];
   return lines.join("\n");

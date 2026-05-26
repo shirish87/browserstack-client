@@ -15,6 +15,11 @@ export function actionHelp(productId: string, actionId: string): string {
 }
 
 function fieldSampleValue(f: TUIField): unknown {
+  if (f.itemSample) {
+    try {
+      return [JSON.parse(f.itemSample)];
+    } catch { /* fall through */ }
+  }
   if (f.enum && f.enum.length > 0) return f.enum[0];
   switch (f.type) {
     case "number": return 0;
