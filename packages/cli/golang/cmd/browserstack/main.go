@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/spf13/cobra"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/mattn/go-isatty"
 
 	"github.com/browserstack/browserstack-client/generated/accessibility"
 	appautomate "github.com/browserstack/browserstack-client/generated/app-automate"
 	"github.com/browserstack/browserstack-client/generated/automate"
+	localtesting "github.com/browserstack/browserstack-client/generated/local-testing"
 	"github.com/browserstack/browserstack-client/generated/screenshots"
 	testmanagement "github.com/browserstack/browserstack-client/generated/test-management"
 	testreporting "github.com/browserstack/browserstack-client/generated/test-reporting"
@@ -22,69 +24,43 @@ import (
 var version = "dev"
 
 func main() {
-	if len(os.Args) >= 2 && os.Args[1] == "version" {
-		fmt.Printf("browserstack-client %s\n", version)
-		return
+	root := buildRootCommand()
+	if err := root.Execute(); err != nil {
+		os.Exit(1)
+	}
+}
+
+func buildRootCommand() *cobra.Command {
+	root := &cobra.Command{
+		Use:           "browserstack-client",
+		Short:         "BrowserStack CLI",
+		Version:       version,
+		SilenceErrors: true,
+		SilenceUsage:  true,
+		// No args: launch TUI if stdout is a terminal, else print usage.
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if !isatty.IsTerminal(os.Stdout.Fd()) {
+				return cmd.Help()
+			}
+			username, accessKey, err := requireCreds()
+			if err != nil {
+				return err
+			}
+			prefills := map[string]string{"auth_token": accessKey}
+			model := tui.NewModel(version, makeExecutor(username, accessKey), makePickerFetcher(username, accessKey), prefills)
+			p := tea.NewProgram(model, tea.WithAltScreen())
+			if _, err := p.Run(); err != nil {
+				return fmt.Errorf("TUI error: %w", err)
+			}
+			return nil
+		},
 	}
 
-	if len(os.Args) == 1 && isatty.IsTerminal(os.Stdout.Fd()) {
-		username := os.Getenv("BROWSERSTACK_USERNAME")
-		accessKey := os.Getenv("BROWSERSTACK_ACCESS_KEY")
-		if username == "" || accessKey == "" {
-			fmt.Fprintln(os.Stderr, "BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY must be set")
-			os.Exit(1)
-		}
-		prefills := map[string]string{
-			"auth_token": accessKey,
-		}
-		model := tui.NewModel(version, makeExecutor(username, accessKey), makePickerFetcher(username, accessKey), prefills)
-		p := tea.NewProgram(model, tea.WithAltScreen())
-		if _, err := p.Run(); err != nil {
-			fmt.Fprintf(os.Stderr, "TUI error: %v\n", err)
-			os.Exit(1)
-		}
-		return
-	}
+	// Credentials are resolved lazily inside each RunE, so we only validate
+	// them when an actual API call is made (not for --help or completion).
 
 	username := os.Getenv("BROWSERSTACK_USERNAME")
 	accessKey := os.Getenv("BROWSERSTACK_ACCESS_KEY")
-
-	if username == "" || accessKey == "" {
-		fmt.Fprintln(os.Stderr, "BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY must be set")
-		os.Exit(1)
-	}
-
-	product := ""
-	if len(os.Args) >= 2 {
-		product = os.Args[1]
-	}
-
-	if product == "help" {
-		fmt.Println(`Usage: browserstack-client <product> <action> [args...]
-       browserstack-client version
-
-Products:
-  automate          Browser automation — builds, sessions, projects, logs
-  app-automate      Mobile app automation — builds, sessions, apps, devices
-  screenshots       Cross-browser screenshot jobs
-  accessibility     Accessibility reports and automated test analysis
-  website-scanner   Website compliance and accessibility scans
-  test-management   Test cases, test runs, test plans
-  test-reporting    Upload reports, track builds and quality gates
-  local             BrowserStack Local tunnel management
-
-Run 'browserstack-client <product> help' for a full list of actions.`)
-		return
-	}
-
-	if len(os.Args) < 3 {
-		fmt.Fprintln(os.Stderr, "Usage: browserstack-client <product> <action> [args...]")
-		fmt.Fprintln(os.Stderr, "Run 'browserstack-client help' for available products and actions.")
-		os.Exit(1)
-	}
-
-	action := os.Args[2]
-	args := os.Args[3:]
 
 	apiClient := browserstackhttp.New(baseURLAPI, username, accessKey)
 	accessibilityClient := browserstackhttp.New(baseURLAccessibility, username, accessKey)
@@ -92,32 +68,162 @@ Run 'browserstack-client <product> help' for a full list of actions.`)
 	screenshotsClient := browserstackhttp.New(baseURLScreenshots, username, accessKey)
 	websiteScannerClient := browserstackhttp.New(baseURLWebsiteScanner, username, accessKey)
 
-	var err error
-	switch product {
-	case "local":
-		err = runLocalWrapper(apiClient, accessKey, action, args)
-	case automate.ProductAutomate:
-		err = runAutomate(apiClient, action, args)
-	case appautomate.ProductAppAutomate:
-		err = runAppAutomate(apiClient, action, args)
-	case screenshots.ProductScreenshots:
-		err = runScreenshots(screenshotsClient, action, args)
-	case accessibility.ProductAccessibility:
-		err = runAccessibility(accessibilityClient, action, args)
-	case testmanagement.ProductTestManagement:
-		err = runTestManagement(testManagementClient, action, args)
-	case testreporting.ProductTestReporting:
-		// test-reporting uses a different base URL; its handler creates its own client
-		err = runTestReporting(username, accessKey, action, args)
-	case websitescanner.ProductWebsiteScanner:
-		err = runWebsiteScanner(websiteScannerClient, action, args)
-	default:
-		fmt.Fprintf(os.Stderr, "unknown product: %s\n", product)
-		os.Exit(1)
+	type productDef struct {
+		id          string
+		description string
+		run         func(action string, args []string) error
 	}
 
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+	products := []productDef{
+		{
+			id:          automate.ProductAutomate,
+			description: "Browser automation — builds, sessions, projects, logs",
+			run: func(action string, args []string) error {
+				_, ak, err := requireCreds()
+				if err != nil {
+					return err
+				}
+				c := browserstackhttp.New(baseURLAPI, os.Getenv("BROWSERSTACK_USERNAME"), ak)
+				return runAutomate(c, action, args)
+			},
+		},
+		{
+			id:          appautomate.ProductAppAutomate,
+			description: "Mobile app automation — builds, sessions, apps, devices",
+			run: func(action string, args []string) error {
+				_, ak, err := requireCreds()
+				if err != nil {
+					return err
+				}
+				c := browserstackhttp.New(baseURLAPI, os.Getenv("BROWSERSTACK_USERNAME"), ak)
+				return runAppAutomate(c, action, args)
+			},
+		},
+		{
+			id:          screenshots.ProductScreenshots,
+			description: "Cross-browser screenshot jobs",
+			run: func(action string, args []string) error {
+				if err := requireCredsEnv(); err != nil {
+					return err
+				}
+				return runScreenshots(screenshotsClient, action, args)
+			},
+		},
+		{
+			id:          accessibility.ProductAccessibility,
+			description: "Accessibility reports and automated test analysis",
+			run: func(action string, args []string) error {
+				if err := requireCredsEnv(); err != nil {
+					return err
+				}
+				return runAccessibility(accessibilityClient, action, args)
+			},
+		},
+		{
+			id:          testmanagement.ProductTestManagement,
+			description: "Test cases, test runs, test plans",
+			run: func(action string, args []string) error {
+				if err := requireCredsEnv(); err != nil {
+					return err
+				}
+				return runTestManagement(testManagementClient, action, args)
+			},
+		},
+		{
+			id:          testreporting.ProductTestReporting,
+			description: "Upload reports, track builds and quality gates",
+			run: func(action string, args []string) error {
+				u, ak, err := requireCreds()
+				if err != nil {
+					return err
+				}
+				return runTestReporting(u, ak, action, args)
+			},
+		},
+		{
+			id:          websitescanner.ProductWebsiteScanner,
+			description: "Website compliance and accessibility scans",
+			run: func(action string, args []string) error {
+				if err := requireCredsEnv(); err != nil {
+					return err
+				}
+				return runWebsiteScanner(websiteScannerClient, action, args)
+			},
+		},
+		{
+			id:          localtesting.ProductLocalTesting,
+			description: "BrowserStack Local tunnel instances",
+			run: func(action string, args []string) error {
+				if err := requireCredsEnv(); err != nil {
+					return err
+				}
+				return runLocalTesting(apiClient, action, args)
+			},
+		},
 	}
+
+	for _, pd := range products {
+		pd := pd // capture
+		productCmd := buildProductCommand(pd.id, pd.description, pd.run)
+		root.AddCommand(productCmd)
+	}
+
+	// local tunnel management (binary wrapper, separate from local-testing API)
+	localCmd := buildLocalCommand(apiClient, accessKey)
+	root.AddCommand(localCmd)
+
+	return root
+}
+
+// buildProductCommand builds a Cobra subcommand for a manifest-driven product.
+// Each action in the TUI manifest becomes its own sub-subcommand.
+func buildProductCommand(productID, description string, run func(action string, args []string) error) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:                productID,
+		Short:              description,
+		DisableFlagParsing: false,
+	}
+
+	for i := range tui.Manifest {
+		prod := &tui.Manifest[i]
+		if prod.ID != productID {
+			continue
+		}
+		for ri := range prod.Resources {
+			for ai := range prod.Resources[ri].Actions {
+				act := &prod.Resources[ri].Actions[ai]
+				actionID := act.ID
+				short := act.Summary
+				long := tui.ActionHelp(productID, actionID)
+
+				actionCmd := &cobra.Command{
+					Use:  actionID,
+					Short: short,
+					Long:  long,
+					Args:  cobra.ArbitraryArgs,
+					RunE: func(cmd *cobra.Command, args []string) error {
+						return run(actionID, args)
+					},
+				}
+				cmd.AddCommand(actionCmd)
+			}
+		}
+		break
+	}
+
+	return cmd
+}
+
+func requireCreds() (username, accessKey string, err error) {
+	username = os.Getenv("BROWSERSTACK_USERNAME")
+	accessKey = os.Getenv("BROWSERSTACK_ACCESS_KEY")
+	if username == "" || accessKey == "" {
+		return "", "", fmt.Errorf("BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY must be set")
+	}
+	return username, accessKey, nil
+}
+
+func requireCredsEnv() error {
+	_, _, err := requireCreds()
+	return err
 }

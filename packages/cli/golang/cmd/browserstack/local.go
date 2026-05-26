@@ -11,6 +11,7 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/spf13/cobra"
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 	browserstacklocal "github.com/browserstack/browserstack-client/internal/local"
 )
@@ -86,24 +87,104 @@ Arguments:
   <instanceId>   The instance identifier`,
 }
 
-func runLocalWrapper(c *browserstackhttp.Client, accessKey, action string, args []string) error {
-	if action == "help" {
-		fmt.Println(UsageLocal)
-		return nil
+func buildLocalCommand(apiClient *browserstackhttp.Client, accessKey string) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "local",
+		Short: "BrowserStack Local tunnel management",
+		Long:  UsageLocal,
 	}
 
-	if len(args) > 0 && args[len(args)-1] == "help" {
-		if h, ok := localActionHelp[action]; ok {
-			fmt.Println(h)
-			return nil
+	type localAction struct {
+		use  string
+		run  func(args []string) error
+	}
+
+	actions := []localAction{
+		{
+			use: "start",
+			run: func(args []string) error {
+				_, ak, err := requireCreds()
+				if err != nil {
+					return err
+				}
+				return localStart(ak, args)
+			},
+		},
+		{
+			use: "stop",
+			run: func(args []string) error {
+				_, ak, err := requireCreds()
+				if err != nil {
+					return err
+				}
+				return localStop(ak, args)
+			},
+		},
+		{
+			use: "list",
+			run: func(args []string) error { return localList() },
+		},
+		{
+			use: "run-with",
+			run: func(args []string) error {
+				_, ak, err := requireCreds()
+				if err != nil {
+					return err
+				}
+				return localRunWith(ak, args)
+			},
+		},
+		{
+			use: "list-instances",
+			run: func(args []string) error {
+				if err := requireCredsEnv(); err != nil {
+					return err
+				}
+				return runLocalTesting(apiClient, "list-instances", args)
+			},
+		},
+		{
+			use: "get-instance",
+			run: func(args []string) error {
+				if err := requireCredsEnv(); err != nil {
+					return err
+				}
+				return runLocalTesting(apiClient, "get-instance", args)
+			},
+		},
+		{
+			use: "disconnect-instance",
+			run: func(args []string) error {
+				if err := requireCredsEnv(); err != nil {
+					return err
+				}
+				return runLocalTesting(apiClient, "disconnect-instance", args)
+			},
+		},
+	}
+
+	for _, a := range actions {
+		a := a
+		sub := &cobra.Command{
+			Use:  a.use,
+			Short: localActionHelp[a.use],
+			Long:  localActionHelp[a.use],
+			Args:  cobra.ArbitraryArgs,
+			RunE: func(cmd *cobra.Command, args []string) error {
+				return a.run(args)
+			},
 		}
+		cmd.AddCommand(sub)
 	}
 
+	return cmd
+}
+
+func runLocalWrapper(c *browserstackhttp.Client, accessKey, action string, args []string) error {
 	binaryActions := map[string]bool{"start": true, "stop": true, "list": true, "run-with": true}
 	if binaryActions[action] {
 		return runLocal(accessKey, action, args)
 	}
-
 	return runLocalTesting(c, action, args)
 }
 

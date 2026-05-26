@@ -9,7 +9,6 @@ import (
 	"github.com/browserstack/browserstack-client/generated/automate"
 	browserstackhttp "github.com/browserstack/browserstack-client/internal/http"
 	"github.com/browserstack/browserstack-client/internal/output"
-	"github.com/browserstack/browserstack-client/internal/tui"
 )
 
 const threeColFmt = "%s %s %s\n"
@@ -106,51 +105,6 @@ func printAutomateResult(res *automate.DispatchResult, action string) bool {
 func runAutomate(c *browserstackhttp.Client, action string, args []string) error {
 	client := automate.New(c)
 	ctx := context.Background()
-
-	const usage = `Usage: automate <action> [args...]
-
-Actions:
-  get-plan
-  list-browsers
-  list-projects
-  get-project             <projectId>
-  update-project          <projectId>
-  delete-project          <projectId>
-  get-project-badge-key   <projectId>
-  list-builds
-  get-build               <buildId>
-  update-build            <buildId>
-  delete-build            <buildId>
-  delete-builds           <buildId[]>
-  list-sessions           <buildId> [limit [offset [status]]]
-  get-session             <sessionId>
-  update-session          <sessionId>
-  delete-session          <sessionId>
-  delete-sessions         <sessionId[]>
-  list-session-logs               <sessionId>
-  list-session-appium-logs        <sessionId>
-  list-session-selenium-logs      <sessionId>
-  list-session-console-logs       <sessionId>
-  list-session-network-logs       <sessionId>
-  list-session-telemetry-logs     <sessionId>
-  upload-session-terminal-logs    <sessionId> <file-path>
-  upload-build-terminal-logs      <buildId> <file-path>
-  list-media-files
-  upload-media-file       <file-path>
-  delete-media-file       <mediaId>
-  recycle-key`
-
-	if action == "help" {
-		fmt.Println(usage)
-		return nil
-	}
-
-	if len(args) > 0 && args[len(args)-1] == "help" {
-		if h := tui.ActionHelp(automate.ProductAutomate, action); h != "" {
-			fmt.Println(h)
-			return nil
-		}
-	}
 
 	// Special handling for upload actions
 	switch action {
