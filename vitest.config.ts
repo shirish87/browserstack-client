@@ -76,6 +76,7 @@ export default defineConfig({
       project("accessibility", "./packages/accessibility", "packages/accessibility/package.json"),
       project("test-reporting", "./packages/test-reporting", "packages/test-reporting/package.json"),
       project("sdk", "./packages/sdk", "packages/sdk/package.json"),
+      project("otel-reporter", "./packages/otel-reporter", "packages/otel-reporter/package.json"),
     ],
   },
 });
