@@ -9,6 +9,7 @@ import { toCLIAction } from "../shared/operation";
 export interface ActionResponseInfo {
   responseType: string;
   fieldName: string;
+  requestBodyType?: string;
 }
 import { toPascalCase } from "./case";
 import { stripOperationPrefix } from "../shared/operation";
@@ -412,7 +413,7 @@ export async function generateGoModule(
       const actionSlug = input.cliAction || "";
       const fieldName = toPascalCase(actionSlug.replace(/-/g, "_"));
       dispatchActions.push({ fieldName, responseType: respType });
-      actionResponseTypes.set(actionSlug, { responseType: respType, fieldName });
+      actionResponseTypes.set(actionSlug, { responseType: respType, fieldName, requestBodyType });
     }
   }
 

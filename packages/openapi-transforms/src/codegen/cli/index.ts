@@ -88,6 +88,8 @@ export interface CLIActionMetadata {
   responseGoType?: string;
   /** Field name in DispatchResult for this action, e.g. "GetPlan". Populated by build.mjs after Go codegen. */
   resultFieldName?: string;
+  /** Go request body type for this action, e.g. "UpdateAutomateSessionRequest". Populated by build.mjs after Go codegen. */
+  requestBodyGoType?: string;
 }
 
 export interface CLIMetadata {

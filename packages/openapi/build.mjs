@@ -323,6 +323,7 @@ for (const m of cliMetadata) {
         if (info) {
           actionMeta.responseGoType = info.responseType;
           actionMeta.resultFieldName = info.fieldName;
+          if (info.requestBodyType) actionMeta.requestBodyGoType = info.requestBodyType;
         }
       }
     }

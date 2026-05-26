@@ -36,7 +36,8 @@ export function generateGoConstants(m: CLIMetadata): string {
 function buildCallArgs(
   pathParams: CLIActionMetadata["parameters"],
   queryParams: CLIActionMetadata["parameters"],
-  actionMeta: CLIActionMetadata
+  actionMeta: CLIActionMetadata,
+  bodyVarName?: string
 ): string[] {
   const callArgs = ["ctx"];
   let argIndex = 0;
@@ -52,7 +53,7 @@ function buildCallArgs(
     if (isMultipart) {
       callArgs.push("nil", `""`, "nil");
     } else {
-      callArgs.push("nil");
+      callArgs.push(bodyVarName ?? "nil");
     }
   }
   return callArgs;
@@ -69,6 +70,7 @@ function emitDispatchCase(
   const queryParams = actionMeta.parameters.filter((p) => p.in === "query");
   const requiredQueryParams = queryParams.filter((p) => p.required);
   const totalRequired = pathParams.length + requiredQueryParams.length;
+  const bodyArgIndex = pathParams.length + queryParams.length;
 
   let out = `\tcase ${prefix}${toPascalCase(action)}:\n`;
 
@@ -79,7 +81,21 @@ function emitDispatchCase(
     out += `\t\t}\n`;
   }
 
-  const callArgs = buildCallArgs(pathParams, queryParams, actionMeta);
+  // Emit JSON body unmarshal when the action has a typed request body.
+  const bodyType = actionMeta.requestBodyGoType;
+  const isMultipart = actionMeta.requestBody?.content?.["multipart/form-data"];
+  let bodyVarName: string | undefined;
+  if (bodyType && !isMultipart) {
+    bodyVarName = "body";
+    out += `\t\tvar ${bodyVarName} *${bodyType}\n`;
+    out += `\t\tif raw := argAt(args, ${bodyArgIndex}); raw != "" {\n`;
+    out += `\t\t\tif err := json.Unmarshal([]byte(raw), &${bodyVarName}); err != nil {\n`;
+    out += `\t\t\t\treturn nil, fmt.Errorf("invalid JSON body: %w", err)\n`;
+    out += `\t\t\t}\n`;
+    out += `\t\t}\n`;
+  }
+
+  const callArgs = buildCallArgs(pathParams, queryParams, actionMeta, bodyVarName);
   const callExpr = `client.${toPascalCase(actionMeta.methodName)}(${callArgs.join(", ")})`;
 
   if (hasTypedResult) {
@@ -108,11 +124,16 @@ export function generateGoDispatch(m: CLIMetadata): string {
   const hasTypedResult = Object.values(m.resources).some(r =>
     Object.values(r.actions).some(a => a.resultFieldName)
   );
+  const needsJSON = Object.values(m.resources).some(r =>
+    Object.values(r.actions).some(a => a.requestBodyGoType && !a.requestBody?.content?.["multipart/form-data"])
+  );
 
   let out = `package ${pkgName}\n\n`;
   out += "// Generated CLI dispatcher. Do not modify.\n\n";
 
-  out += `import (\n\t"context"\n\t"fmt"\n)\n\n`;
+  const imports = [`"context"`, `"fmt"`];
+  if (needsJSON) imports.push(`"encoding/json"`);
+  out += `import (\n${imports.map(i => `\t${i}`).join("\n")}\n)\n\n`;
 
   out += `func argAt(args []string, i int) string {\n`;
   out += `\tif i < len(args) { return args[i] }\n`;
