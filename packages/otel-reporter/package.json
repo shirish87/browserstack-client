@@ -1,5 +1,6 @@
 {
   "name": "@dot-slash/browserstack-otel-reporter",
+  "description": "OpenTelemetry reporter bundle for BrowserStack CLI instrumentation",
   "version": "7.0.0",
   "private": true,
   "type": "module",
@@ -16,6 +17,6 @@
     "@opentelemetry/resources": "^1.30.0",
     "esbuild": "^0.27.0",
     "vitest": "^3.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^6.0.3"
   }
 }
