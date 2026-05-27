@@ -69,19 +69,27 @@ Example:
   browserstack-client otel start -- npx mocha test/**/*.spec.js`,
 		Args: cobra.ArbitraryArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Resolve endpoint from flag or env
+			// Resolve endpoint from flag or env (BROWSERSTACK_OTEL_ENDPOINT takes
+			// precedence; OTEL_EXPORTER_OTLP_ENDPOINT is also accepted so users can
+			// use standard OTEL env vars without the BROWSERSTACK_* prefix).
 			ep := endpoint
 			if ep == "" {
 				ep = os.Getenv("BROWSERSTACK_OTEL_ENDPOINT")
 			}
 			if ep == "" {
-				return fmt.Errorf("--endpoint or BROWSERSTACK_OTEL_ENDPOINT is required")
+				ep = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+			}
+			if ep == "" {
+				return fmt.Errorf("--endpoint, BROWSERSTACK_OTEL_ENDPOINT, or OTEL_EXPORTER_OTLP_ENDPOINT is required")
 			}
 
 			// Resolve headers from flag or env
 			hdrs := headers
 			if hdrs == "" {
 				hdrs = os.Getenv("BROWSERSTACK_OTEL_HEADERS")
+			}
+			if hdrs == "" {
+				hdrs = os.Getenv("OTEL_EXPORTER_OTLP_HEADERS")
 			}
 
 			// Resolve flush timeout
