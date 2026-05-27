@@ -1,0 +1,3 @@
+# Un-ignore dist for this package — dist/register.cjs is committed for Go CLI consumption.
+!dist/
+!dist/**
