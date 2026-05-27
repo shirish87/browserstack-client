@@ -206,7 +206,7 @@ const USAGE = `Usage: test-reporting watch <action> [options] -- <command> [args
 
 Actions:
   start           Wrap a test command with observability instrumentation
-  use-reporter    Print the path to the extracted reporter bundle
+  reporter    Print the path to the extracted reporter bundle
 
 Options for start:
   --endpoint <url>              OTLP base URL (or BROWSERSTACK_WATCH_ENDPOINT / OTEL_EXPORTER_OTLP_ENDPOINT)
@@ -232,7 +232,7 @@ export async function main(inputArgs: string[] = process.argv.slice(2)): Promise
     return;
   }
 
-  if (action === "use-reporter") {
+  if (action === "reporter") {
     const cacheDir = defaultCacheDir();
     const reporterPath = ensureReporter(cacheDir);
     process.stdout.write(reporterPath + "\n");

@@ -11,26 +11,56 @@ import (
 )
 
 func buildWatchCommand() *cobra.Command {
-	observe := &cobra.Command{
+	watch := &cobra.Command{
 		Use:   "watch",
-		Short: "Instrument test runs and upload results",
+		Short: "Instrument test runs with OpenTelemetry",
+		Long: `Wrap your test command to collect OpenTelemetry spans and ship them to any
+OTLP-compatible backend (Grafana, Jaeger, Tempo, Honeycomb, etc.).
+
+The embedded reporter is injected automatically — no changes to your project
+config are needed. For Playwright, the reporter is injected via --reporter so
+that terminal output is preserved alongside instrumentation.
+
+When no endpoint is configured the command runs unchanged and its exit code is
+always propagated, so this wrapper is safe to leave in CI pipelines.
+
+Subcommands:
+  start      Wrap a test command with instrumentation
+  reporter   Print the path to the extracted reporter bundle
+
+Playwright quick-start:
+  export BROWSERSTACK_WATCH_ENDPOINT=https://otlp.example.com
+  export BROWSERSTACK_WATCH_HEADERS="Authorization=Basic <base64>"
+  browserstack-client test-reporting watch start -- npx playwright test
+
+Manual reporter wiring (if you prefer explicit config):
+  browserstack-client test-reporting watch reporter
+  # paste the printed path into playwright.config.ts reporter array`,
 	}
-	observe.AddCommand(buildUseReporterCommand())
-	observe.AddCommand(buildWatchStartCommand())
-	return observe
+	watch.AddCommand(buildUseReporterCommand())
+	watch.AddCommand(buildWatchStartCommand())
+	return watch
 }
 
 func buildUseReporterCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "use-reporter",
-		Short: "Extract the embedded reporter bundle and print its path",
-		Long: `Extracts the embedded register.cjs reporter bundle to
-~/.browserstack/watch/<hash>/register.cjs (idempotent) and prints the
-absolute path to stdout.
+		Use:   "reporter",
+		Short: "Print the path to the extracted reporter bundle",
+		Long: `Extracts the embedded register.cjs bundle to
+~/.browserstack/watch/<hash>/register.cjs (idempotent, content-addressed)
+and prints the absolute path to stdout.
 
-Use this to wire the reporter manually:
+The hash changes only when the bundle content changes, so repeated calls are
+instant after the first extraction.
 
-  NODE_OPTIONS="--require $(browserstack-client test-reporting watch use-reporter)" npx playwright test`,
+Use this when you want to wire the reporter explicitly instead of using
+"watch start":
+
+  # Playwright config
+  reporter: [['list'], ['/path/from/reporter']]
+
+  # Or via NODE_OPTIONS for non-Playwright frameworks
+  NODE_OPTIONS="--require $(browserstack-client test-reporting watch reporter)" npx mocha`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cacheDir, err := internalotel.DefaultCacheDir()
 			if err != nil {
@@ -59,17 +89,37 @@ func buildWatchStartCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "start -- <command> [args...]",
-		Short: "Wrap a test command to instrument and record results",
-		Long: `Transparent process wrapper that injects the embedded reporter and
-runs your command with stdout, stderr, stdin, and exit codes passed through.
+		Short: "Wrap a test command with OpenTelemetry instrumentation",
+		Long: `Transparent process wrapper that injects the embedded OpenTelemetry reporter
+and runs your command with stdout, stderr, stdin, and exit codes passed through
+unchanged.
 
-When no endpoint is configured (no --endpoint flag and no BROWSERSTACK_WATCH_ENDPOINT
-or OTEL_EXPORTER_OTLP_ENDPOINT env var), the command is run without instrumentation
-so tests always execute and their exit code is always propagated.
+Reporter injection:
+  - Playwright   --reporter list,<path> is injected after "playwright test" so
+                 terminal output is preserved alongside instrumentation.
+  - Other        NODE_OPTIONS=--require <path> loads the reporter in each Node
+                 process via the standard require hook.
 
-Example:
+No endpoint configured? The command runs as-is with no instrumentation. The
+exit code is always propagated regardless, so this wrapper is safe to keep in
+CI even before an endpoint is set up.
+
+Environment variables (all optional — flags take precedence):
+  BROWSERSTACK_WATCH_ENDPOINT           OTLP base URL
+  BROWSERSTACK_WATCH_HEADERS            Auth headers (key=value,key=value)
+  BROWSERSTACK_WATCH_FLUSH_TIMEOUT      Max wait after exit for reporter flush
+  BROWSERSTACK_WATCH_BATCH_SIZE         Max spans per export batch
+  BROWSERSTACK_WATCH_BATCH_TIMEOUT      Max time before flushing a partial batch
+  BROWSERSTACK_WATCH_EXPORT_TIMEOUT     Per-export-request timeout
+  BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD  Max inline attachment size
+
+Playwright examples:
   browserstack-client test-reporting watch start -- npx playwright test
-  browserstack-client test-reporting watch start -- npx mocha test/**/*.spec.js`,
+  browserstack-client test-reporting watch start --project chromium -- npx playwright test
+  browserstack-client test-reporting watch start \
+    --endpoint https://otlp.example.com \
+    --headers "Authorization=Basic <base64>" \
+    -- npx playwright test --reporter list`,
 		Args: cobra.ArbitraryArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {

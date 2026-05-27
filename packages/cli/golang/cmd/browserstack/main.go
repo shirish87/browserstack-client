@@ -166,10 +166,7 @@ func buildRootCommand() *cobra.Command {
 		pd := pd // capture
 		productCmd := buildProductCommand(pd.id, pd.description, pd.run)
 		if pd.id == testreporting.ProductTestReporting {
-			// Attach watch sub-subcommands — no BrowserStack credentials required
-			for _, sub := range buildWatchCommand().Commands() {
-				productCmd.AddCommand(sub)
-			}
+			productCmd.AddCommand(buildWatchCommand())
 		}
 		root.AddCommand(productCmd)
 	}
