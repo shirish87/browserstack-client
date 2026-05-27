@@ -26,6 +26,7 @@ var version = "dev"
 func main() {
 	root := buildRootCommand()
 	if err := root.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
@@ -175,6 +176,14 @@ func buildRootCommand() *cobra.Command {
 	localCmd := buildLocalCommand(apiClient, accessKey)
 	root.AddCommand(localCmd)
 
+	root.AddCommand(&cobra.Command{
+		Use:   "version",
+		Short: "Print the version",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Printf("browserstack-client version %s\n", version)
+		},
+	})
+
 	return root
 }
 
@@ -185,6 +194,12 @@ func buildProductCommand(productID, description string, run func(action string, 
 		Use:                productID,
 		Short:              description,
 		DisableFlagParsing: false,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) > 0 {
+				return fmt.Errorf("unknown action: %s", args[0])
+			}
+			return cmd.Help()
+		},
 	}
 
 	for i := range tui.Manifest {

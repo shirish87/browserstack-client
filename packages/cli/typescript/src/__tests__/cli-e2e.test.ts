@@ -25,8 +25,8 @@ const binaries = [
   { name: "Golang CLI", path: goBinary, type: "binary" },
 ];
 
-const TEST_TIMEOUT_SLOW_API = 30000;
-const TEST_TIMEOUT_TUNNEL = 60000;
+const TEST_TIMEOUT_SLOW_API = 15_000;
+const TEST_TIMEOUT_TUNNEL = 60_000;
 
 // Real credentials from env — present only when running integration tests.
 const realUsername = process.env.BROWSERSTACK_USERNAME ?? "";
@@ -69,7 +69,8 @@ async function runCli(binary: typeof binaries[number], args: string[], binHome: 
         BROWSERSTACK_ACCESS_KEY: "dummy-key",
         BROWSERSTACK_USERNAME: "dummy-user",
         BROWSERSTACK_LOCAL_BINARY_HOME: binHome,
-      }
+      },
+      timeout: 10_000,
     });
     return { stdout, stderr, exitCode: 0 };
   } catch (error: any) {

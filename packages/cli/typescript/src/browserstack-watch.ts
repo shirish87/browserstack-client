@@ -323,8 +323,9 @@ export async function main(inputArgs: string[] = process.argv.slice(2)): Promise
   if (exportTimeout) watchEnv.BROWSERSTACK_WATCH_EXPORT_TIMEOUT = exportTimeout;
   if (attachmentThreshold) watchEnv.BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD = attachmentThreshold;
 
+  const reporterPathOverride = process.env.BROWSERSTACK_WATCH_REPORTER_PATH;
   const cacheDir = defaultCacheDir();
-  const reporterPath = ensureReporter(cacheDir);
+  const reporterPath = reporterPathOverride ?? ensureReporter(cacheDir);
 
   const exitCode = await runWithInstrumentation(cmdArgs, reporterPath, watchEnv, flushTimeoutMs);
   process.exit(exitCode);

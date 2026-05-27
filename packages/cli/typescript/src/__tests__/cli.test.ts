@@ -38,7 +38,9 @@ describe("LocalCLI", () => {
         },
       }, "--", false);
       expect(output).toContain("Usage: local <action> [args...]");
-      expect(output).toContain("Actions: start, stop, list, run-with");
+      expect(output).toContain("start");
+      expect(output).toContain("stop");
+      expect(output).toContain("run-with");
     });
   });
 

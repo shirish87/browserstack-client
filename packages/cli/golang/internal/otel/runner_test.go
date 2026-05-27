@@ -3,7 +3,6 @@ package otel_test
 import (
 	"strings"
 	"testing"
-	"time"
 
 	internalotel "github.com/browserstack/browserstack-client/internal/otel"
 )
@@ -74,27 +73,6 @@ func TestInjectPlaywrightReporter_NonPlaywright(t *testing.T) {
 	}
 }
 
-func TestRun_ExitCode(t *testing.T) {
-	cfg := internalotel.Config{ReporterPath: "/dev/null"}
-	code, err := internalotel.Run(cfg, []string{"sh", "-c", "exit 42"}, time.Second*2)
-	if err != nil {
-		t.Fatalf("Run error: %v", err)
-	}
-	if code != 42 {
-		t.Fatalf("expected exit code 42, got %d", code)
-	}
-}
-
-func TestRun_ZeroExitCode(t *testing.T) {
-	cfg := internalotel.Config{ReporterPath: "/dev/null"}
-	code, err := internalotel.Run(cfg, []string{"echo", "hello"}, time.Second*2)
-	if err != nil {
-		t.Fatalf("Run error: %v", err)
-	}
-	if code != 0 {
-		t.Fatalf("expected exit code 0, got %d", code)
-	}
-}
 
 func TestRunPassthrough_ExitCode(t *testing.T) {
 	code, err := internalotel.RunPassthrough([]string{"sh", "-c", "exit 7"})

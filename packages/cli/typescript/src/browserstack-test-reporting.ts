@@ -34,14 +34,15 @@ export async function main(
     const actionInput = args[0]?.toLowerCase();
     const rest = args.slice(1);
 
-    if (!actionInput || actionInput === "help") {
+    if (!actionInput || actionInput === "help" || actionInput === "--help" || actionInput === "-h") {
       logger.info(USAGE);
       return;
     }
 
     // watch: instrument test runs — no BrowserStack credentials required
     if (actionInput === "watch") {
-      await runWatch(rest);
+      const watchArgs = rest[0] === "--help" || rest[0] === "-h" ? ["help"] : rest;
+      await runWatch(watchArgs);
       return;
     }
 
