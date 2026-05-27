@@ -171,6 +171,7 @@ func buildRootCommand() *cobra.Command {
 	// local tunnel management (binary wrapper, separate from local-testing API)
 	localCmd := buildLocalCommand(apiClient, accessKey)
 	root.AddCommand(localCmd)
+	root.AddCommand(buildOtelCommand())
 
 	return root
 }
