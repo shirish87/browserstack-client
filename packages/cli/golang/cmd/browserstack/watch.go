@@ -12,8 +12,9 @@ import (
 
 func buildWatchCommand() *cobra.Command {
 	watch := &cobra.Command{
-		Use:   "watch",
-		Short: "Instrument test runs with OpenTelemetry",
+		Use:    "watch",
+		Short:  "Instrument test runs with OpenTelemetry",
+		Hidden: true,
 		Long: `Wrap your test command to collect OpenTelemetry spans and ship them to any
 OTLP-compatible backend (Grafana, Jaeger, Tempo, Honeycomb, etc.).
 

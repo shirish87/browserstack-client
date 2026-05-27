@@ -119,6 +119,40 @@ function runWithInstrumentation(
 
     let flushResult: FlushResult | null = null;
     let stdoutBuf = "";
+    let stdoutEnded = false;
+    let childExitCode: number | null = null;
+
+    const tryResolve = () => {
+      if (childExitCode === null || !stdoutEnded) return;
+      const exitCode = childExitCode;
+
+      if (flushResult) {
+        if (flushResult.status === "error") {
+          process.stderr.write(
+            `browserstack-watch: reporter flush error: ${flushResult.reason ?? ""}\n`
+          );
+        }
+        resolve(exitCode);
+        return;
+      }
+
+      const deadline = Date.now() + flushTimeoutMs;
+      const poll = setInterval(() => {
+        if (flushResult || Date.now() >= deadline) {
+          clearInterval(poll);
+          if (!flushResult) {
+            process.stderr.write(
+              `browserstack-watch: flush timeout after ${flushTimeoutMs}ms\n`
+            );
+          } else if (flushResult.status === "error") {
+            process.stderr.write(
+              `browserstack-watch: reporter flush error: ${flushResult.reason ?? ""}\n`
+            );
+          }
+          resolve(exitCode);
+        }
+      }, 100);
+    };
 
     child.stdout!.on("data", (chunk: Buffer) => {
       stdoutBuf += chunk.toString();
@@ -148,40 +182,16 @@ function runWithInstrumentation(
         } else {
           process.stdout.write(stdoutBuf);
         }
+        stdoutBuf = "";
       }
+      stdoutEnded = true;
+      tryResolve();
     });
 
     child.on("error", reject);
     child.on("close", (code, signal) => {
-      const exitCode = signal ? 128 + (signal === "SIGINT" ? 2 : 15) : (code ?? 0);
-
-      // Wait for flush sentinel up to flushTimeoutMs after child exits
-      if (flushResult) {
-        if (flushResult.status === "error") {
-          process.stderr.write(
-            `browserstack-watch: reporter flush error: ${flushResult.reason ?? ""}\n`
-          );
-        }
-        resolve(exitCode);
-        return;
-      }
-
-      const deadline = Date.now() + flushTimeoutMs;
-      const poll = setInterval(() => {
-        if (flushResult || Date.now() >= deadline) {
-          clearInterval(poll);
-          if (!flushResult) {
-            process.stderr.write(
-              `browserstack-watch: flush timeout after ${flushTimeoutMs}ms\n`
-            );
-          } else if (flushResult.status === "error") {
-            process.stderr.write(
-              `browserstack-watch: reporter flush error: ${flushResult.reason ?? ""}\n`
-            );
-          }
-          resolve(exitCode);
-        }
-      }, 100);
+      childExitCode = signal ? 128 + (signal === "SIGINT" ? 2 : 15) : (code ?? 0);
+      tryResolve();
     });
   });
 }
