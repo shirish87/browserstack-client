@@ -212,27 +212,40 @@ function parseFlag(args: string[], flag: string): string | undefined {
   return undefined;
 }
 
-const USAGE = `Usage: test-reporting watch <action> [options] -- <command> [args...]
+const USAGE = `Usage: browserstack-client test-reporting watch <action> [options] -- <command>
+
+Wrap your test command to collect OpenTelemetry spans and ship them to any
+OTLP-compatible backend. The embedded reporter is injected automatically — no
+changes to your project config are needed.
+
+When no endpoint is configured the command runs unchanged and its exit code is
+always propagated, so this wrapper is safe to leave in CI pipelines.
 
 Actions:
-  start           Wrap a test command with observability instrumentation
-  reporter    Print the path to the extracted reporter bundle
+  start      Wrap a test command with OpenTelemetry instrumentation
+  reporter   Print the path to the extracted reporter bundle
 
 Options for start:
-  --endpoint <url>              OTLP base URL (or BROWSERSTACK_WATCH_ENDPOINT / OTEL_EXPORTER_OTLP_ENDPOINT)
-  --headers <k=v,k=v>          Auth headers (or BROWSERSTACK_WATCH_HEADERS / OTEL_EXPORTER_OTLP_HEADERS)
-  --flush-timeout <duration>    Max wait for reporter flush after exit (default 30s)
-  --batch-size <n>              Max spans per export batch (default 512)
-  --batch-timeout <duration>    Max time before flushing partial batch (default 5s)
-  --export-timeout <duration>   Per-export-request timeout (default 10s)
-  --attachment-threshold <size> Max inline attachment size (default 5MB)
+  --endpoint <url>               OTLP base URL (or BROWSERSTACK_WATCH_ENDPOINT)
+  --headers <key=val,key=val>    Auth headers (or BROWSERSTACK_WATCH_HEADERS)
+  --flush-timeout <duration>     Max wait for reporter flush after exit (default 30s)
+  --batch-size <n>               Max spans per export batch (default 512)
+  --batch-timeout <duration>     Max time before flushing a partial batch (default 5s)
+  --export-timeout <duration>    Per-export-request timeout (default 10s)
+  --attachment-threshold <size>  Max inline attachment size (default 5MB)
 
-When no endpoint is configured, the command runs without instrumentation and
-its exit code is always propagated.
+Environment variables (all optional — flags take precedence):
+  BROWSERSTACK_WATCH_ENDPOINT, BROWSERSTACK_WATCH_HEADERS,
+  BROWSERSTACK_WATCH_FLUSH_TIMEOUT, BROWSERSTACK_WATCH_BATCH_SIZE,
+  BROWSERSTACK_WATCH_BATCH_TIMEOUT, BROWSERSTACK_WATCH_EXPORT_TIMEOUT,
+  BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD
 
-Example:
+Playwright examples:
   browserstack-client test-reporting watch start -- npx playwright test
-  browserstack-client test-reporting watch start --endpoint https://otlp.example.com -- npx playwright test`;
+  browserstack-client test-reporting watch start \\
+    --endpoint https://otlp.example.com \\
+    --headers "Authorization=Basic <base64>" \\
+    -- npx playwright test`;
 
 export async function main(inputArgs: string[] = process.argv.slice(2)): Promise<void> {
   const action = inputArgs[0]?.toLowerCase().trim();
