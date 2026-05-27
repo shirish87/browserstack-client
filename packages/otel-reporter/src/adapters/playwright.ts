@@ -1,7 +1,7 @@
 import type { Reporter, Suite, TestCase, TestResult, TestStep } from "@playwright/test/reporter";
 import { SpanStatusCode, type Span } from "@opentelemetry/api";
-import { getTracer } from "../sdk.js";
-import { incrementSpanCount, incrementLogCount } from "../flush.js";
+import { getTracer, initSDK } from "../sdk.js";
+import { incrementSpanCount, incrementLogCount, flush } from "../flush.js";
 import { readConfig } from "../config.js";
 
 export class PlaywrightAdapter implements Reporter {
@@ -11,6 +11,12 @@ export class PlaywrightAdapter implements Reporter {
   private failed = 0;
   private skipped = 0;
   private total = 0;
+
+  constructor() {
+    // Self-initialize the SDK when Playwright instantiates this reporter.
+    // initSDK is idempotent so this is safe if --require already ran it.
+    initSDK(readConfig());
+  }
 
   onBegin(_config: unknown, _suite: unknown): void {
     this.rootSpan = getTracer().startSpan("test.run");
@@ -84,7 +90,7 @@ export class PlaywrightAdapter implements Reporter {
     // Steps are not currently tracked as separate spans.
   }
 
-  onEnd(_result: unknown): void {
+  async onEnd(_result: unknown): Promise<void> {
     if (!this.rootSpan) return;
     this.rootSpan.setAttribute("test.total", this.total);
     this.rootSpan.setAttribute("test.passed", this.passed);
@@ -92,5 +98,7 @@ export class PlaywrightAdapter implements Reporter {
     this.rootSpan.setAttribute("test.skipped", this.skipped);
     this.rootSpan.end();
     incrementSpanCount();
+    // Flush and write sentinel from the Playwright main process.
+    await flush();
   }
 }

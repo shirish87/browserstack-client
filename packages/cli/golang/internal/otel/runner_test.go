@@ -42,6 +42,38 @@ func TestScanLines_NoSentinel(t *testing.T) {
 	}
 }
 
+func TestInjectPlaywrightReporter_NpxPlaywrightTest(t *testing.T) {
+	args := []string{"npx", "playwright", "test"}
+	result := internalotel.InjectPlaywrightReporter(args, "/tmp/reporter.cjs")
+	// expect: npx playwright test --reporter /tmp/reporter.cjs
+	if len(result) != 5 {
+		t.Fatalf("expected 5 args, got %d: %v", len(result), result)
+	}
+	if result[3] != "--reporter" || result[4] != "list,/tmp/reporter.cjs" {
+		t.Fatalf("unexpected args: %v", result)
+	}
+}
+
+func TestInjectPlaywrightReporter_WithExtraArgs(t *testing.T) {
+	args := []string{"npx", "playwright", "test", "--project", "chromium"}
+	result := internalotel.InjectPlaywrightReporter(args, "/tmp/reporter.cjs")
+	// expect: npx playwright test --reporter list,/tmp/reporter.cjs --project chromium
+	if result[3] != "--reporter" || result[4] != "list,/tmp/reporter.cjs" {
+		t.Fatalf("--reporter not injected after 'test': %v", result)
+	}
+	if result[5] != "--project" || result[6] != "chromium" {
+		t.Fatalf("extra args not preserved: %v", result)
+	}
+}
+
+func TestInjectPlaywrightReporter_NonPlaywright(t *testing.T) {
+	args := []string{"npx", "mocha", "test/**/*.spec.js"}
+	result := internalotel.InjectPlaywrightReporter(args, "/tmp/reporter.cjs")
+	if len(result) != len(args) {
+		t.Fatalf("non-playwright args should be unchanged, got: %v", result)
+	}
+}
+
 func TestRun_ExitCode(t *testing.T) {
 	cfg := internalotel.Config{ReporterPath: "/dev/null"}
 	code, err := internalotel.Run(cfg, []string{"sh", "-c", "exit 42"}, time.Second*2)

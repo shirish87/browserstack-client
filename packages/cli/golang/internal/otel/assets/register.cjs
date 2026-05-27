@@ -54517,6 +54517,9 @@ var PlaywrightAdapter = class {
   failed = 0;
   skipped = 0;
   total = 0;
+  constructor() {
+    initSDK(readConfig());
+  }
   onBegin(_config, _suite) {
     this.rootSpan = getTracer().startSpan("test.run");
     this.rootSpan.setAttribute("test.framework", "playwright");
@@ -54581,7 +54584,7 @@ var PlaywrightAdapter = class {
   }
   onStepBegin(_test, _result, _step) {
   }
-  onEnd(_result) {
+  async onEnd(_result) {
     if (!this.rootSpan) return;
     this.rootSpan.setAttribute("test.total", this.total);
     this.rootSpan.setAttribute("test.passed", this.passed);
@@ -54589,6 +54592,7 @@ var PlaywrightAdapter = class {
     this.rootSpan.setAttribute("test.skipped", this.skipped);
     this.rootSpan.end();
     incrementSpanCount();
+    await flush();
   }
 };
 

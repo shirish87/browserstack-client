@@ -23,11 +23,10 @@ func MergeEnv(base []string, cfg Config) []string {
 	env := make([]string, len(base))
 	copy(env, base)
 
-	// NODE_OPTIONS: append --require <path>
+	// NODE_OPTIONS: append --require <path> so the reporter is loaded in every
+	// Node.js process (workers, main). Playwright reporter injection is handled
+	// separately via --reporter flag injection in runner.go.
 	env = appendEnv(env, "NODE_OPTIONS", "--require "+cfg.ReporterPath, " ")
-
-	// PLAYWRIGHT_REPORTER: append path to comma-separated list
-	env = appendEnv(env, "PLAYWRIGHT_REPORTER", cfg.ReporterPath, ",")
 
 	// OTEL standard vars (translated from BROWSERSTACK_OTEL_* equivalents)
 	if cfg.Endpoint != "" {

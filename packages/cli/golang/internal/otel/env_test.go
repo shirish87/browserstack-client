@@ -38,14 +38,14 @@ func TestMergeEnv_SetsNodeOptionsWhenAbsent(t *testing.T) {
 	}
 }
 
-func TestMergeEnv_AppendsPlaywrightReporter(t *testing.T) {
-	base := []string{"PLAYWRIGHT_REPORTER=my-reporter.ts"}
+func TestMergeEnv_DoesNotSetPlaywrightReporter(t *testing.T) {
+	// PLAYWRIGHT_REPORTER env var is not read by Playwright — reporter injection
+	// is done via --reporter flag in runner.go instead.
+	base := []string{}
 	cfg := internalotel.Config{ReporterPath: "/tmp/register.cjs"}
 	env := internalotel.MergeEnv(base, cfg)
-	pr := findEnv(env, "PLAYWRIGHT_REPORTER")
-	expected := "my-reporter.ts,/tmp/register.cjs"
-	if pr != expected {
-		t.Fatalf("PLAYWRIGHT_REPORTER = %q, want %q", pr, expected)
+	if findEnv(env, "PLAYWRIGHT_REPORTER") != "" {
+		t.Fatal("MergeEnv must not set PLAYWRIGHT_REPORTER")
 	}
 }
 

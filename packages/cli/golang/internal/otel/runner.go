@@ -43,6 +43,23 @@ func ScanLines(lines []string) (*FlushResult, []string) {
 	return result, filtered
 }
 
+// InjectPlaywrightReporter inserts --reporter list,<path> into playwright test args
+// when the command looks like "npx playwright test ..." or "playwright test ...".
+// "list" is prepended so terminal output is preserved alongside the OTEL reporter.
+// The flag is inserted right after the "test" subcommand word.
+func InjectPlaywrightReporter(args []string, reporterPath string) []string {
+	for i, arg := range args {
+		if (arg == "playwright" || strings.HasSuffix(arg, "/playwright")) && i+1 < len(args) && args[i+1] == "test" {
+			result := make([]string, 0, len(args)+2)
+			result = append(result, args[:i+2]...)
+			result = append(result, "--reporter", "list,"+reporterPath)
+			result = append(result, args[i+2:]...)
+			return result
+		}
+	}
+	return args
+}
+
 // Run spawns cmd with the environment from MergeEnv(os.Environ(), cfg),
 // proxies stdout/stderr/stdin, scans stdout for the flush sentinel,
 // waits up to flushTimeout after child exit, and returns the child's exit code.
@@ -50,6 +67,9 @@ func Run(cfg Config, cmdArgs []string, flushTimeout time.Duration) (int, error) 
 	if len(cmdArgs) == 0 {
 		return 0, fmt.Errorf("no command provided")
 	}
+
+	// Inject Playwright reporter flag when running playwright test
+	cmdArgs = InjectPlaywrightReporter(cmdArgs, cfg.ReporterPath)
 
 	env := MergeEnv(os.Environ(), cfg)
 	cmd := exec.Command(cmdArgs[0], cmdArgs[1:]...)
