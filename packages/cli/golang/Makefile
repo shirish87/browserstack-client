@@ -1,8 +1,12 @@
-.PHONY: build build-all-platforms test lint integration-test
+.PHONY: build build-all-platforms test lint integration-test copy-reporter
 
 VERSION := $(shell node -e "process.stdout.write(require('../typescript/package.json').version)")
 
-build:
+copy-reporter:
+	mkdir -p internal/otel/assets
+	cp ../../otel-reporter/dist/register.cjs internal/otel/assets/register.cjs
+
+build: copy-reporter
 	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=$(VERSION)" -o dist/browserstack-client-linux-amd64 ./cmd/browserstack
 	GOOS=linux GOARCH=arm64 go build -ldflags "-X main.version=$(VERSION)" -o dist/browserstack-client-linux-arm64 ./cmd/browserstack
 	GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.version=$(VERSION)" -o dist/browserstack-client-darwin-amd64 ./cmd/browserstack

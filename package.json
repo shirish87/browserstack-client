@@ -13,6 +13,7 @@
     "build:ts": "pnpm -r --filter='@dot-slash/browserstack-*' run build",
     "build:transforms": "pnpm --filter @dot-slash/browserstack-openapi-transforms run build",
     "build:types": "pnpm build:transforms && pnpm --filter @dot-slash/browserstack-openapi run build",
+    "build:otel-reporter": "pnpm --filter @dot-slash/browserstack-otel-reporter run build",
     "build:go": "cd packages/cli/golang && make build",
     "build:cli:go": "pnpm build:go",
     "build:cli:ts": "pnpm --filter @dot-slash/browserstack-cli run build:binary 2>&1 | grep -v 'Warning' | grep -v 'Due to the' | grep -v 'executable is' | grep -v 'Otherwise,' | grep -v 'An ad-hoc' | grep -v 'To do that,' | grep -v 'and run' | grep -v 'install' || true",
