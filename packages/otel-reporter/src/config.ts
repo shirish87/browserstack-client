@@ -1,4 +1,5 @@
 export interface OtelConfig {
+  enabled: boolean;
   endpoint: string;
   batchSize: number;
   batchTimeoutMs: number;
@@ -27,19 +28,24 @@ function parseDurationMs(s: string): number {
 }
 
 export function readConfig(): OtelConfig {
+  const endpoint =
+    process.env.BROWSERSTACK_WATCH_ENDPOINT ??
+    process.env.OTEL_EXPORTER_OTLP_ENDPOINT ??
+    "";
   return {
-    endpoint: process.env.BROWSERSTACK_OTEL_ENDPOINT ?? "",
-    batchSize: process.env.BROWSERSTACK_OTEL_BATCH_SIZE
-      ? parseInt(process.env.BROWSERSTACK_OTEL_BATCH_SIZE, 10)
+    endpoint,
+    enabled: endpoint !== "",
+    batchSize: process.env.BROWSERSTACK_WATCH_BATCH_SIZE
+      ? parseInt(process.env.BROWSERSTACK_WATCH_BATCH_SIZE, 10)
       : 512,
-    batchTimeoutMs: process.env.BROWSERSTACK_OTEL_BATCH_TIMEOUT
-      ? parseDurationMs(process.env.BROWSERSTACK_OTEL_BATCH_TIMEOUT)
+    batchTimeoutMs: process.env.BROWSERSTACK_WATCH_BATCH_TIMEOUT
+      ? parseDurationMs(process.env.BROWSERSTACK_WATCH_BATCH_TIMEOUT)
       : 5000,
-    exportTimeoutMs: process.env.BROWSERSTACK_OTEL_EXPORT_TIMEOUT
-      ? parseDurationMs(process.env.BROWSERSTACK_OTEL_EXPORT_TIMEOUT)
+    exportTimeoutMs: process.env.BROWSERSTACK_WATCH_EXPORT_TIMEOUT
+      ? parseDurationMs(process.env.BROWSERSTACK_WATCH_EXPORT_TIMEOUT)
       : 10000,
-    attachmentThresholdBytes: process.env.BROWSERSTACK_OTEL_ATTACHMENT_THRESHOLD
-      ? parseBytes(process.env.BROWSERSTACK_OTEL_ATTACHMENT_THRESHOLD)
+    attachmentThresholdBytes: process.env.BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD
+      ? parseBytes(process.env.BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD)
       : 5 * 1024 * 1024,
   };
 }

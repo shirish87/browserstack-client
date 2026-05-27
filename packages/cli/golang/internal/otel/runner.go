@@ -14,9 +14,9 @@ import (
 	"time"
 )
 
-const flushSentinelPrefix = "BROWSERSTACK_OTEL_FLUSH:"
+const flushSentinelPrefix = "BROWSERSTACK_WATCH_FLUSH:"
 
-// FlushResult is parsed from the BROWSERSTACK_OTEL_FLUSH sentinel line.
+// FlushResult is parsed from the BROWSERSTACK_WATCH_FLUSH sentinel line.
 type FlushResult struct {
 	Spans  int    `json:"spans"`
 	Logs   int    `json:"logs"`
@@ -58,6 +58,37 @@ func InjectPlaywrightReporter(args []string, reporterPath string) []string {
 		}
 	}
 	return args
+}
+
+// RunPassthrough executes cmdArgs with inherited stdio and no instrumentation.
+// The child's exit code is returned; the error is non-nil only for spawn failures.
+func RunPassthrough(cmdArgs []string) (int, error) {
+	if len(cmdArgs) == 0 {
+		return 0, fmt.Errorf("no command provided")
+	}
+	cmd := exec.Command(cmdArgs[0], cmdArgs[1:]...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		for sig := range sigCh {
+			if cmd.Process != nil {
+				_ = cmd.Process.Signal(sig)
+			}
+		}
+	}()
+	defer signal.Stop(sigCh)
+
+	if err := cmd.Run(); err != nil {
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			return exitErr.ExitCode(), nil
+		}
+		return 0, err
+	}
+	return 0, nil
 }
 
 // Run spawns cmd with the environment from MergeEnv(os.Environ(), cfg),
@@ -151,10 +182,10 @@ func Run(cfg Config, cmdArgs []string, flushTimeout time.Duration) (int, error) 
 		select {
 		case result := <-flushCh:
 			if result.Status == "error" {
-				_, _ = fmt.Fprintf(os.Stderr, "browserstack-otel: reporter flush error: %s\n", result.Reason)
+				_, _ = fmt.Fprintf(os.Stderr, "browserstack-watch: reporter flush error: %s\n", result.Reason)
 			}
 		case <-time.After(flushTimeout):
-			_, _ = fmt.Fprintf(os.Stderr, "browserstack-otel: flush timeout after %s\n", flushTimeout)
+			_, _ = fmt.Fprintf(os.Stderr, "browserstack-watch: flush timeout after %s\n", flushTimeout)
 		}
 	}
 

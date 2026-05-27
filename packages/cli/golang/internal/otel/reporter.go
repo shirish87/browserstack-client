@@ -28,11 +28,11 @@ func EnsureReporter(cacheDir string) (string, error) {
 	return outPath, nil
 }
 
-// DefaultCacheDir returns ~/.browserstack/otel as the cache directory.
+// DefaultCacheDir returns ~/.browserstack/watch as the cache directory.
 func DefaultCacheDir() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", fmt.Errorf("home dir: %w", err)
 	}
-	return filepath.Join(home, ".browserstack", "otel"), nil
+	return filepath.Join(home, ".browserstack", "watch"), nil
 }

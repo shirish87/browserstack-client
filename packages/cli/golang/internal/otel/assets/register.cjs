@@ -54420,12 +54420,14 @@ function parseDurationMs(s) {
   throw new Error(`Cannot parse duration: "${s}"`);
 }
 function readConfig() {
+  const endpoint = process.env.BROWSERSTACK_WATCH_ENDPOINT ?? process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? "";
   return {
-    endpoint: process.env.BROWSERSTACK_OTEL_ENDPOINT ?? "",
-    batchSize: process.env.BROWSERSTACK_OTEL_BATCH_SIZE ? parseInt(process.env.BROWSERSTACK_OTEL_BATCH_SIZE, 10) : 512,
-    batchTimeoutMs: process.env.BROWSERSTACK_OTEL_BATCH_TIMEOUT ? parseDurationMs(process.env.BROWSERSTACK_OTEL_BATCH_TIMEOUT) : 5e3,
-    exportTimeoutMs: process.env.BROWSERSTACK_OTEL_EXPORT_TIMEOUT ? parseDurationMs(process.env.BROWSERSTACK_OTEL_EXPORT_TIMEOUT) : 1e4,
-    attachmentThresholdBytes: process.env.BROWSERSTACK_OTEL_ATTACHMENT_THRESHOLD ? parseBytes(process.env.BROWSERSTACK_OTEL_ATTACHMENT_THRESHOLD) : 5 * 1024 * 1024
+    endpoint,
+    enabled: endpoint !== "",
+    batchSize: process.env.BROWSERSTACK_WATCH_BATCH_SIZE ? parseInt(process.env.BROWSERSTACK_WATCH_BATCH_SIZE, 10) : 512,
+    batchTimeoutMs: process.env.BROWSERSTACK_WATCH_BATCH_TIMEOUT ? parseDurationMs(process.env.BROWSERSTACK_WATCH_BATCH_TIMEOUT) : 5e3,
+    exportTimeoutMs: process.env.BROWSERSTACK_WATCH_EXPORT_TIMEOUT ? parseDurationMs(process.env.BROWSERSTACK_WATCH_EXPORT_TIMEOUT) : 1e4,
+    attachmentThresholdBytes: process.env.BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD ? parseBytes(process.env.BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD) : 5 * 1024 * 1024
   };
 }
 
@@ -54440,13 +54442,14 @@ init_esm();
 var _sdk = null;
 function initSDK(cfg2) {
   if (_sdk) return;
-  const resource = new import_resources.Resource({ "service.name": "browserstack-otel-reporter" });
+  if (!cfg2.enabled) return;
+  const resource = new import_resources.Resource({ "service.name": "browserstack-watch-reporter" });
   const traceExporter = new import_exporter_trace_otlp_http.OTLPTraceExporter({
-    url: cfg2.endpoint ? `${cfg2.endpoint}/v1/traces` : void 0,
+    url: `${cfg2.endpoint}/v1/traces`,
     timeoutMillis: cfg2.exportTimeoutMs
   });
   const logExporter = new import_exporter_logs_otlp_http.OTLPLogExporter({
-    url: cfg2.endpoint ? `${cfg2.endpoint}/v1/logs` : void 0,
+    url: `${cfg2.endpoint}/v1/logs`,
     timeoutMillis: cfg2.exportTimeoutMs
   });
   _sdk = new import_sdk_node.NodeSDK({
@@ -54464,12 +54467,18 @@ function initSDK(cfg2) {
   });
   _sdk.start();
 }
+function isSDKActive() {
+  return _sdk !== null;
+}
 function getTracer() {
-  return trace.getTracer("browserstack-otel-reporter");
+  return trace.getTracer("browserstack-watch-reporter");
 }
 async function shutdownSDK() {
   if (_sdk) {
-    await _sdk.shutdown();
+    try {
+      await _sdk.shutdown();
+    } catch {
+    }
     _sdk = null;
   }
 }
@@ -54482,7 +54491,7 @@ function buildFlushSentinel(result) {
     status: result.status
   };
   if (result.reason !== void 0) payload.reason = result.reason;
-  return `BROWSERSTACK_OTEL_FLUSH:${JSON.stringify(payload)}`;
+  return `BROWSERSTACK_WATCH_FLUSH:${JSON.stringify(payload)}`;
 }
 var _spanCount = 0;
 var _logCount = 0;
@@ -54493,19 +54502,22 @@ function incrementLogCount() {
   _logCount++;
 }
 async function flush() {
-  let result;
+  if (!isSDKActive()) return;
   try {
     await shutdownSDK();
-    result = { spans: _spanCount, logs: _logCount, status: "ok" };
+    process.stdout.write(
+      buildFlushSentinel({ spans: _spanCount, logs: _logCount, status: "ok" }) + "\n"
+    );
   } catch (err) {
-    result = {
-      spans: _spanCount,
-      logs: _logCount,
-      status: "error",
-      reason: err instanceof Error ? err.message : String(err)
-    };
+    process.stdout.write(
+      buildFlushSentinel({
+        spans: _spanCount,
+        logs: _logCount,
+        status: "error",
+        reason: err instanceof Error ? err.message : String(err)
+      }) + "\n"
+    );
   }
-  process.stdout.write(buildFlushSentinel(result) + "\n");
 }
 
 // src/adapters/playwright.ts
@@ -54596,164 +54608,10 @@ var PlaywrightAdapter = class {
   }
 };
 
-// src/adapters/mocha.ts
-init_esm();
-function activateMocha() {
-  let MochaModule;
-  try {
-    MochaModule = require(require.resolve("mocha", { paths: [process.cwd()] }));
-  } catch {
-    return;
-  }
-  const runner = MochaModule.Runner?.prototype ?? MochaModule.default?.Runner?.prototype;
-  if (!runner) return;
-  const originalRun = runner.run;
-  let rootSpan = null;
-  const testSpans = /* @__PURE__ */ new Map();
-  runner.run = function(...args) {
-    rootSpan = getTracer().startSpan("test.run");
-    rootSpan.setAttribute("test.framework", "mocha");
-    this.on("test", (test) => {
-      const span = getTracer().startSpan("test.case");
-      span.setAttribute("test.name", test.fullTitle());
-      span.setAttribute("test.file", test.file ?? "");
-      testSpans.set(test.fullTitle(), span);
-    });
-    this.on("pass", (test) => {
-      const span = testSpans.get(test.fullTitle());
-      if (span) {
-        span.setAttribute("test.status", "passed");
-        span.end();
-        testSpans.delete(test.fullTitle());
-        incrementSpanCount();
-      }
-    });
-    this.on("fail", (test, err) => {
-      const span = testSpans.get(test.fullTitle());
-      if (span) {
-        span.setAttribute("test.status", "failed");
-        span.setAttribute("test.error.message", err.message);
-        span.setAttribute("test.error.stack", err.stack ?? "");
-        span.setStatus({ code: SpanStatusCode.ERROR });
-        span.end();
-        testSpans.delete(test.fullTitle());
-        incrementSpanCount();
-      }
-    });
-    this.on("pending", (test) => {
-      const span = testSpans.get(test.fullTitle());
-      if (span) {
-        span.setAttribute("test.status", "skipped");
-        span.end();
-        testSpans.delete(test.fullTitle());
-        incrementSpanCount();
-      }
-    });
-    this.on("end", () => {
-      if (rootSpan) {
-        rootSpan.end();
-        incrementSpanCount();
-      }
-    });
-    return originalRun.apply(this, args);
-  };
-}
-
-// src/adapters/jest.ts
-init_esm();
-function activateJest() {
-  try {
-    require.resolve("jest-circus/runner", { paths: [process.cwd()] });
-  } catch {
-    return;
-  }
-  const globalAny = globalThis;
-  const origDispatch = globalAny.__jestCircusDispatch;
-  if (typeof origDispatch !== "function") return;
-  const rootSpan = getTracer().startSpan("test.run");
-  rootSpan.setAttribute("test.framework", "jest");
-  globalAny.__jestCircusDispatch = async (event, state) => {
-    if (event.name === "test_started" && event.test) {
-      const span = getTracer().startSpan("test.case");
-      span.setAttribute("test.name", event.test.name);
-      span.setAttribute("test.suite", event.test.parent?.name ?? "");
-      event.test.__otelSpan = span;
-    }
-    if (event.name === "test_done" && event.test) {
-      const span = event.test.__otelSpan;
-      if (span) {
-        const status = event.error ? "failed" : "passed";
-        span.setAttribute("test.status", status);
-        if (event.error) {
-          span.setAttribute("test.error.message", event.error.message);
-          span.setStatus({ code: SpanStatusCode.ERROR });
-        }
-        span.end();
-        incrementSpanCount();
-      }
-    }
-    if (event.name === "run_finish") {
-      rootSpan.end();
-      incrementSpanCount();
-    }
-    return origDispatch(event, state);
-  };
-}
-
-// src/adapters/vitest.ts
-init_esm();
-function activateVitest() {
-  try {
-    require.resolve("vitest", { paths: [process.cwd()] });
-  } catch {
-    return;
-  }
-  const globalAny = globalThis;
-  const reporters = globalAny.__vitest_reporters__ ??= [];
-  let rootSpan = null;
-  const testSpans = /* @__PURE__ */ new Map();
-  reporters.push({
-    onInit() {
-      rootSpan = getTracer().startSpan("test.run");
-      rootSpan.setAttribute("test.framework", "vitest");
-    },
-    onTestBegin(test) {
-      const span = getTracer().startSpan("test.case");
-      span.setAttribute("test.name", test.name);
-      span.setAttribute("test.suite", test.suite?.name ?? "");
-      span.setAttribute("test.file", test.file?.name ?? "");
-      testSpans.set(test.name, span);
-    },
-    onTestEnd(test, result) {
-      const span = testSpans.get(test.name);
-      if (!span) return;
-      const status = result.state === "pass" ? "passed" : result.state === "skip" ? "skipped" : "failed";
-      span.setAttribute("test.status", status);
-      if (result.duration) span.setAttribute("test.duration_ms", result.duration);
-      if (result.error) {
-        span.setAttribute("test.error.message", result.error.message);
-        span.setStatus({ code: SpanStatusCode.ERROR });
-      }
-      span.end();
-      testSpans.delete(test.name);
-      incrementSpanCount();
-    },
-    onFinished() {
-      if (rootSpan) {
-        rootSpan.end();
-        incrementSpanCount();
-      }
-    }
-  });
-}
-
-// src/register.ts
+// src/register.cts
 var cfg = readConfig();
 initSDK(cfg);
 module.exports = PlaywrightAdapter;
-activateMocha();
-activateJest();
-activateVitest();
 process.on("beforeExit", () => {
   flush().catch(() => {
   });

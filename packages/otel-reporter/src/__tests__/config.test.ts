@@ -10,11 +10,11 @@ describe("parseBytes", () => {
 
 describe("readConfig", () => {
   beforeEach(() => {
-    delete process.env.BROWSERSTACK_OTEL_ENDPOINT;
-    delete process.env.BROWSERSTACK_OTEL_BATCH_SIZE;
-    delete process.env.BROWSERSTACK_OTEL_BATCH_TIMEOUT;
-    delete process.env.BROWSERSTACK_OTEL_EXPORT_TIMEOUT;
-    delete process.env.BROWSERSTACK_OTEL_ATTACHMENT_THRESHOLD;
+    delete process.env.BROWSERSTACK_WATCH_ENDPOINT;
+    delete process.env.BROWSERSTACK_WATCH_BATCH_SIZE;
+    delete process.env.BROWSERSTACK_WATCH_BATCH_TIMEOUT;
+    delete process.env.BROWSERSTACK_WATCH_EXPORT_TIMEOUT;
+    delete process.env.BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD;
   });
 
   it("returns defaults when env is empty", () => {
@@ -26,18 +26,18 @@ describe("readConfig", () => {
     expect(cfg.endpoint).toBe("");
   });
 
-  it("reads BROWSERSTACK_OTEL_ENDPOINT", () => {
-    process.env.BROWSERSTACK_OTEL_ENDPOINT = "https://otel.example.com";
+  it("reads BROWSERSTACK_WATCH_ENDPOINT", () => {
+    process.env.BROWSERSTACK_WATCH_ENDPOINT = "https://otel.example.com";
     expect(readConfig().endpoint).toBe("https://otel.example.com");
   });
 
-  it("reads BROWSERSTACK_OTEL_BATCH_SIZE", () => {
-    process.env.BROWSERSTACK_OTEL_BATCH_SIZE = "256";
+  it("reads BROWSERSTACK_WATCH_BATCH_SIZE", () => {
+    process.env.BROWSERSTACK_WATCH_BATCH_SIZE = "256";
     expect(readConfig().batchSize).toBe(256);
   });
 
-  it("reads BROWSERSTACK_OTEL_ATTACHMENT_THRESHOLD in MB", () => {
-    process.env.BROWSERSTACK_OTEL_ATTACHMENT_THRESHOLD = "10MB";
+  it("reads BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD in MB", () => {
+    process.env.BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD = "10MB";
     expect(readConfig().attachmentThresholdBytes).toBe(10 * 1024 * 1024);
   });
 });

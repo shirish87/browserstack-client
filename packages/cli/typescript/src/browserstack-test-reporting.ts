@@ -11,6 +11,7 @@ import { TestReporting } from "./constants.generated.ts";
 import { TestReportingSchemas } from "./schemas.generated.ts";
 import { parseArgs } from "./parser.ts";
 import { actionHelp } from "./action-help.ts";
+import { main as runWatch } from "./browserstack-watch.ts";
 
 interface Logger {
   info(message: string, ...params: unknown[]): void;
@@ -29,19 +30,26 @@ export async function main(
   logger: Logger = globalThis.console
 ) {
   try {
-    ensureAccessKeyExists();
-    ensureUsernameExists();
-
     const args = inputArgs.map((a) => a.trim());
     const actionInput = args[0]?.toLowerCase();
     const rest = args.slice(1);
-    const opts: TestReportingClientOptions = {};
-    const client = new TestReportingClient(opts);
 
     if (!actionInput || actionInput === "help") {
       logger.info(USAGE);
       return;
     }
+
+    // watch: instrument test runs — no BrowserStack credentials required
+    if (actionInput === "watch") {
+      await runWatch(rest);
+      return;
+    }
+
+    ensureAccessKeyExists();
+    ensureUsernameExists();
+
+    const opts: TestReportingClientOptions = {};
+    const client = new TestReportingClient(opts);
 
     // Map input string to enum value
     const action = Object.values(TestReporting.Action).find((a: string) => a.toLowerCase() === actionInput);

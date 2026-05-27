@@ -79,10 +79,10 @@ func TestMergeEnv_PassesBatchConfig(t *testing.T) {
 		AttachmentThreshold: "10MB",
 	}
 	env := internalotel.MergeEnv(base, cfg)
-	if findEnv(env, "BROWSERSTACK_OTEL_BATCH_SIZE") != "256" {
-		t.Fatal("BROWSERSTACK_OTEL_BATCH_SIZE not set")
+	if findEnv(env, "BROWSERSTACK_WATCH_BATCH_SIZE") != "256" {
+		t.Fatal("BROWSERSTACK_WATCH_BATCH_SIZE not set")
 	}
-	if findEnv(env, "BROWSERSTACK_OTEL_BATCH_TIMEOUT") != "3s" {
-		t.Fatal("BROWSERSTACK_OTEL_BATCH_TIMEOUT not set")
+	if findEnv(env, "BROWSERSTACK_WATCH_BATCH_TIMEOUT") != "3s" {
+		t.Fatal("BROWSERSTACK_WATCH_BATCH_TIMEOUT not set")
 	}
 }

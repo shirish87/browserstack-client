@@ -11,16 +11,17 @@ let _sdk: NodeSDK | null = null;
 
 export function initSDK(cfg: OtelConfig): void {
   if (_sdk) return; // idempotent
+  if (!cfg.enabled) return; // no endpoint — stay no-op
 
-  const resource = new Resource({ "service.name": "browserstack-otel-reporter" });
+  const resource = new Resource({ "service.name": "browserstack-watch-reporter" });
 
   const traceExporter = new OTLPTraceExporter({
-    url: cfg.endpoint ? `${cfg.endpoint}/v1/traces` : undefined,
+    url: `${cfg.endpoint}/v1/traces`,
     timeoutMillis: cfg.exportTimeoutMs,
   });
 
   const logExporter = new OTLPLogExporter({
-    url: cfg.endpoint ? `${cfg.endpoint}/v1/logs` : undefined,
+    url: `${cfg.endpoint}/v1/logs`,
     timeoutMillis: cfg.exportTimeoutMs,
   });
 
@@ -41,13 +42,21 @@ export function initSDK(cfg: OtelConfig): void {
   _sdk.start();
 }
 
+export function isSDKActive(): boolean {
+  return _sdk !== null;
+}
+
 export function getTracer(): Tracer {
-  return trace.getTracer("browserstack-otel-reporter");
+  return trace.getTracer("browserstack-watch-reporter");
 }
 
 export async function shutdownSDK(): Promise<void> {
   if (_sdk) {
-    await _sdk.shutdown();
+    try {
+      await _sdk.shutdown();
+    } catch {
+      // export errors (e.g. unreachable upstream) must not fail the test run
+    }
     _sdk = null;
   }
 }

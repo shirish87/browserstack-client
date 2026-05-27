@@ -28,7 +28,7 @@ func MergeEnv(base []string, cfg Config) []string {
 	// separately via --reporter flag injection in runner.go.
 	env = appendEnv(env, "NODE_OPTIONS", "--require "+cfg.ReporterPath, " ")
 
-	// OTEL standard vars (translated from BROWSERSTACK_OTEL_* equivalents)
+	// OTEL standard vars (translated from BROWSERSTACK_WATCH_* equivalents)
 	if cfg.Endpoint != "" {
 		env = setEnv(env, "OTEL_EXPORTER_OTLP_ENDPOINT", cfg.Endpoint)
 	}
@@ -36,21 +36,21 @@ func MergeEnv(base []string, cfg Config) []string {
 		env = appendEnv(env, "OTEL_EXPORTER_OTLP_HEADERS", cfg.Headers, ",")
 	}
 
-	// Pass batch config as BROWSERSTACK_OTEL_* so the reporter reads them
+	// Pass batch config as BROWSERSTACK_WATCH_* so the reporter reads them
 	if cfg.BatchSize != "" {
-		env = setEnv(env, "BROWSERSTACK_OTEL_BATCH_SIZE", cfg.BatchSize)
+		env = setEnv(env, "BROWSERSTACK_WATCH_BATCH_SIZE", cfg.BatchSize)
 	}
 	if cfg.BatchTimeout != "" {
-		env = setEnv(env, "BROWSERSTACK_OTEL_BATCH_TIMEOUT", cfg.BatchTimeout)
+		env = setEnv(env, "BROWSERSTACK_WATCH_BATCH_TIMEOUT", cfg.BatchTimeout)
 	}
 	if cfg.ExportTimeout != "" {
-		env = setEnv(env, "BROWSERSTACK_OTEL_EXPORT_TIMEOUT", cfg.ExportTimeout)
+		env = setEnv(env, "BROWSERSTACK_WATCH_EXPORT_TIMEOUT", cfg.ExportTimeout)
 	}
 	if cfg.AttachmentThreshold != "" {
-		env = setEnv(env, "BROWSERSTACK_OTEL_ATTACHMENT_THRESHOLD", cfg.AttachmentThreshold)
+		env = setEnv(env, "BROWSERSTACK_WATCH_ATTACHMENT_THRESHOLD", cfg.AttachmentThreshold)
 	}
 	if cfg.Endpoint != "" {
-		env = setEnv(env, "BROWSERSTACK_OTEL_ENDPOINT", cfg.Endpoint)
+		env = setEnv(env, "BROWSERSTACK_WATCH_ENDPOINT", cfg.Endpoint)
 	}
 
 	return env

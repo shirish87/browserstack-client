@@ -165,13 +165,18 @@ func buildRootCommand() *cobra.Command {
 	for _, pd := range products {
 		pd := pd // capture
 		productCmd := buildProductCommand(pd.id, pd.description, pd.run)
+		if pd.id == testreporting.ProductTestReporting {
+			// Attach watch sub-subcommands — no BrowserStack credentials required
+			for _, sub := range buildWatchCommand().Commands() {
+				productCmd.AddCommand(sub)
+			}
+		}
 		root.AddCommand(productCmd)
 	}
 
 	// local tunnel management (binary wrapper, separate from local-testing API)
 	localCmd := buildLocalCommand(apiClient, accessKey)
 	root.AddCommand(localCmd)
-	root.AddCommand(buildOtelCommand())
 
 	return root
 }

@@ -11,7 +11,7 @@ import (
 func TestScanLines_DetectsSentinel(t *testing.T) {
 	lines := []string{
 		"test output line 1",
-		`BROWSERSTACK_OTEL_FLUSH:{"spans":5,"logs":2,"status":"ok"}`,
+		`BROWSERSTACK_WATCH_FLUSH:{"spans":5,"logs":2,"status":"ok"}`,
 		"test output line 2",
 	}
 	result, filtered := internalotel.ScanLines(lines)
@@ -25,7 +25,7 @@ func TestScanLines_DetectsSentinel(t *testing.T) {
 		t.Fatalf("expected 2 filtered lines, got %d", len(filtered))
 	}
 	for _, l := range filtered {
-		if strings.Contains(l, "BROWSERSTACK_OTEL_FLUSH") {
+		if strings.Contains(l, "BROWSERSTACK_WATCH_FLUSH") {
 			t.Fatal("sentinel line leaked into filtered output")
 		}
 	}
@@ -90,6 +90,26 @@ func TestRun_ZeroExitCode(t *testing.T) {
 	code, err := internalotel.Run(cfg, []string{"echo", "hello"}, time.Second*2)
 	if err != nil {
 		t.Fatalf("Run error: %v", err)
+	}
+	if code != 0 {
+		t.Fatalf("expected exit code 0, got %d", code)
+	}
+}
+
+func TestRunPassthrough_ExitCode(t *testing.T) {
+	code, err := internalotel.RunPassthrough([]string{"sh", "-c", "exit 7"})
+	if err != nil {
+		t.Fatalf("RunPassthrough error: %v", err)
+	}
+	if code != 7 {
+		t.Fatalf("expected exit code 7, got %d", code)
+	}
+}
+
+func TestRunPassthrough_ZeroExitCode(t *testing.T) {
+	code, err := internalotel.RunPassthrough([]string{"true"})
+	if err != nil {
+		t.Fatalf("RunPassthrough error: %v", err)
 	}
 	if code != 0 {
 		t.Fatalf("expected exit code 0, got %d", code)

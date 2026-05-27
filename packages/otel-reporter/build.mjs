@@ -1,7 +1,7 @@
 import { build } from "esbuild";
 
 await build({
-  entryPoints: ["src/register.ts"],
+  entryPoints: ["src/register.cts"],
   bundle: true,
   platform: "node",
   target: "node18",

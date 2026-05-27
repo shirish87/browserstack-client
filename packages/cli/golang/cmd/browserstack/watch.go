@@ -10,27 +10,27 @@ import (
 	internalotel "github.com/browserstack/browserstack-client/internal/otel"
 )
 
-func buildOtelCommand() *cobra.Command {
-	otel := &cobra.Command{
-		Use:   "otel",
-		Short: "OpenTelemetry test instrumentation",
+func buildWatchCommand() *cobra.Command {
+	observe := &cobra.Command{
+		Use:   "watch",
+		Short: "Instrument test runs and upload results",
 	}
-	otel.AddCommand(buildUseReporterCommand())
-	otel.AddCommand(buildOtelStartCommand())
-	return otel
+	observe.AddCommand(buildUseReporterCommand())
+	observe.AddCommand(buildWatchStartCommand())
+	return observe
 }
 
 func buildUseReporterCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "use-reporter",
-		Short: "Extract the embedded OTEL reporter bundle and print its path",
+		Short: "Extract the embedded reporter bundle and print its path",
 		Long: `Extracts the embedded register.cjs reporter bundle to
-~/.browserstack/otel/<hash>/register.cjs (idempotent) and prints the
+~/.browserstack/watch/<hash>/register.cjs (idempotent) and prints the
 absolute path to stdout.
 
 Use this to wire the reporter manually:
 
-  NODE_OPTIONS="--require $(browserstack-client otel use-reporter)" npx playwright test`,
+  NODE_OPTIONS="--require $(browserstack-client test-reporting watch use-reporter)" npx playwright test`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cacheDir, err := internalotel.DefaultCacheDir()
 			if err != nil {
@@ -46,7 +46,7 @@ Use this to wire the reporter manually:
 	}
 }
 
-func buildOtelStartCommand() *cobra.Command {
+func buildWatchStartCommand() *cobra.Command {
 	var (
 		endpoint            string
 		headers             string
@@ -59,34 +59,45 @@ func buildOtelStartCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "start -- <command> [args...]",
-		Short: "Wrap a test command with OTEL instrumentation",
-		Long: `Transparent process wrapper. Sets NODE_OPTIONS and PLAYWRIGHT_REPORTER
-to inject the embedded reporter, then runs your command with all stdout,
-stderr, stdin, and exit codes passed through unchanged.
+		Short: "Wrap a test command to instrument and record results",
+		Long: `Transparent process wrapper that injects the embedded reporter and
+runs your command with stdout, stderr, stdin, and exit codes passed through.
+
+When no endpoint is configured (no --endpoint flag and no BROWSERSTACK_WATCH_ENDPOINT
+or OTEL_EXPORTER_OTLP_ENDPOINT env var), the command is run without instrumentation
+so tests always execute and their exit code is always propagated.
 
 Example:
-  browserstack-client otel start -- npx playwright test
-  browserstack-client otel start -- npx mocha test/**/*.spec.js`,
+  browserstack-client test-reporting watch start -- npx playwright test
+  browserstack-client test-reporting watch start -- npx mocha test/**/*.spec.js`,
 		Args: cobra.ArbitraryArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Resolve endpoint from flag or env (BROWSERSTACK_OTEL_ENDPOINT takes
-			// precedence; OTEL_EXPORTER_OTLP_ENDPOINT is also accepted so users can
-			// use standard OTEL env vars without the BROWSERSTACK_* prefix).
+			if len(args) == 0 {
+				return fmt.Errorf("no command provided after --")
+			}
+
+			// Resolve endpoint from flag or env.
+			// When absent, run the command without instrumentation so tests still execute.
 			ep := endpoint
 			if ep == "" {
-				ep = os.Getenv("BROWSERSTACK_OTEL_ENDPOINT")
+				ep = os.Getenv("BROWSERSTACK_WATCH_ENDPOINT")
 			}
 			if ep == "" {
 				ep = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
 			}
 			if ep == "" {
-				return fmt.Errorf("--endpoint, BROWSERSTACK_OTEL_ENDPOINT, or OTEL_EXPORTER_OTLP_ENDPOINT is required")
+				exitCode, err := internalotel.RunPassthrough(args)
+				if err != nil {
+					return err
+				}
+				os.Exit(exitCode)
+				return nil
 			}
 
 			// Resolve headers from flag or env
 			hdrs := headers
 			if hdrs == "" {
-				hdrs = os.Getenv("BROWSERSTACK_OTEL_HEADERS")
+				hdrs = os.Getenv("BROWSERSTACK_WATCH_HEADERS")
 			}
 			if hdrs == "" {
 				hdrs = os.Getenv("OTEL_EXPORTER_OTLP_HEADERS")
@@ -95,7 +106,7 @@ Example:
 			// Resolve flush timeout
 			ft := flushTimeout
 			if ft == "" {
-				ft = os.Getenv("BROWSERSTACK_OTEL_FLUSH_TIMEOUT")
+				ft = os.Getenv("BROWSERSTACK_WATCH_FLUSH_TIMEOUT")
 			}
 			if ft == "" {
 				ft = "30s"
@@ -126,10 +137,6 @@ Example:
 				AttachmentThreshold: attachmentThreshold,
 			}
 
-			if len(args) == 0 {
-				return fmt.Errorf("no command provided after --")
-			}
-
 			exitCode, err := internalotel.Run(cfg, args, flushDur)
 			if err != nil {
 				return err
@@ -139,8 +146,8 @@ Example:
 		},
 	}
 
-	cmd.Flags().StringVar(&endpoint, "endpoint", "", "OTLP base URL (or set BROWSERSTACK_OTEL_ENDPOINT)")
-	cmd.Flags().StringVar(&headers, "headers", "", "Auth headers: key=value,key=value (or set BROWSERSTACK_OTEL_HEADERS)")
+	cmd.Flags().StringVar(&endpoint, "endpoint", "", "OTLP base URL (or set BROWSERSTACK_WATCH_ENDPOINT)")
+	cmd.Flags().StringVar(&headers, "headers", "", "Auth headers: key=value,key=value (or set BROWSERSTACK_WATCH_HEADERS)")
 	cmd.Flags().StringVar(&flushTimeout, "flush-timeout", "", "Max wait for reporter flush after exit (default 30s)")
 	cmd.Flags().StringVar(&batchSize, "batch-size", "", "Max spans per export batch (default 512)")
 	cmd.Flags().StringVar(&batchTimeout, "batch-timeout", "", "Max time before flushing partial batch (default 5s)")

@@ -15,11 +15,13 @@ const mockTracer = {
 // Mock OTEL tracer before importing the adapter
 vi.mock("../../sdk.js", () => ({
   getTracer: vi.fn(() => mockTracer),
+  initSDK: vi.fn(),
 }));
 
 vi.mock("../../flush.js", () => ({
   incrementSpanCount: vi.fn(),
   incrementLogCount: vi.fn(),
+  flush: vi.fn(() => Promise.resolve()),
 }));
 
 vi.mock("../../config.js", () => ({
