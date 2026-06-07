@@ -1,0 +1,14 @@
+{
+  "name": "browserstack-sample-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sample server for BrowserStack Automate API requests",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@dot-slash/browserstack-router": "file:../../packages/router",
+    "express": "^5.2.1"
+  }
+}

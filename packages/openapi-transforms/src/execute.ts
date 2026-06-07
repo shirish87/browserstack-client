@@ -25,6 +25,7 @@ export interface ExecuteSpec {
   responseCodec: string;
   responseCodecConfig: unknown;
   signal?: AbortSignal;
+  baseUrl?: string;
 }
 
 export async function executeOperation(
@@ -52,7 +53,14 @@ export async function executeOperation(
 
   let response: Response;
   try {
-    response = await fetchFn(spec.url, { method: spec.method, headers, body, signal: spec.signal });
+    response = await fetchFn(spec.url, {
+      method: spec.method,
+      headers,
+      body,
+      signal: spec.signal,
+      operationId: spec.operationId,
+      baseUrl: spec.baseUrl,
+    } as RequestInit & { operationId?: string; baseUrl?: string });
   } catch (cause) {
     throw new NetworkError((cause as Error).message || "network error", ctx, cause as Error);
   }

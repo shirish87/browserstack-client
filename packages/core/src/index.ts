@@ -31,3 +31,12 @@ export type {
 export { buildBasicAuthHeader } from "./auth";
 export { env, versions, currentPlatform, currentArch } from "./env";
 export { makePkgInfo } from "./pkginfo";
+export { composeMiddleware } from "./middleware";
+export type {
+  MiddlewareContext,
+  MiddlewareRequest,
+  MiddlewareResponse,
+  MiddlewareNext,
+  MiddlewareFunction,
+} from "./middleware";
+

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BrowserStack Automate Sample Server</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, sans-serif;
+    }
+    body {
+      max-width: 880px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      line-height: 1.5;
+    }
+    form {
+      display: grid;
+      gap: 0.75rem;
+      max-width: 360px;
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: grid;
+      gap: 0.25rem;
+      font-weight: 600;
+    }
+    input {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      width: fit-content;
+    }
+    .status {
+      margin: 1rem 0;
+      font-style: italic;
+    }
+    .status.error {
+      color: #b3261e;
+      font-style: normal;
+      font-weight: 600;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .card h3 {
+      margin-top: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid #ddd;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      text-transform: capitalize;
+      background: #eee;
+    }
+    .badge-done { background: #d4edda; color: #155724; }
+    .badge-failed { background: #f8d7da; color: #721c24; }
+    .badge-running { background: #fff3cd; color: #856404; }
+    .badge-timeout { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <h1>BrowserStack Automate Sample Server</h1>
+
+  <form id="creds-form">
+    <label>
+      BrowserStack Username
+      <input id="username" name="username" type="text" autocomplete="username" required />
+    </label>
+    <label>
+      BrowserStack Access Key
+      <input id="access-key" name="accessKey" type="password" autocomplete="current-password" required />
+    </label>
+    <button type="submit">List Sessions</button>
+  </form>
+
+  <p id="status" class="status"></p>
+  <div id="results"></div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

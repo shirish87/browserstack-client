@@ -38,6 +38,24 @@ describe("executeOperation happy path", () => {
     const headers = captured?.headers as Record<string, string>;
     expect(headers["content-type"]).toBe("application/json");
   });
+  it("passes operationId and baseUrl to fetchFn options", async () => {
+    let capturedOptions: any;
+    const fetchFn = vi.fn<typeof fetch>(async (_url, init) => {
+      capturedOptions = init;
+      return new Response('{"ok":true}', { status: 200 });
+    });
+    await executeOperation({
+      operationId: "getAwesomeResource",
+      method: "GET",
+      url: "http://x/a",
+      registry: makeRegistry(),
+      responseCodec: "json",
+      responseCodecConfig: {},
+      baseUrl: "sdkCloud",
+    }, fetchFn);
+    expect(capturedOptions?.operationId).toBe("getAwesomeResource");
+    expect(capturedOptions?.baseUrl).toBe("sdkCloud");
+  });
 });
 
 describe("executeOperation error paths", () => {

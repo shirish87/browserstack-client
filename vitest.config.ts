@@ -33,6 +33,7 @@ const sharedAliases = {
   "@dot-slash/browserstack-test-reporting": path.resolve(__dirname, "packages/test-reporting/src/index.ts"),
   "@dot-slash/browserstack-cli": path.resolve(__dirname, "packages/cli/typescript/src/index.ts"),
   "@dot-slash/browserstack-openapi-transforms": path.resolve(__dirname, "packages/openapi-transforms/src/index.ts"),
+  "@dot-slash/browserstack-router": path.resolve(__dirname, "packages/router/src/index.ts"),
 };
 
 const readPkgVersion = (pkgPath: string) =>
@@ -76,6 +77,7 @@ export default defineConfig({
       project("accessibility", "./packages/accessibility", "packages/accessibility/package.json"),
       project("test-reporting", "./packages/test-reporting", "packages/test-reporting/package.json"),
       project("sdk", "./packages/sdk", "packages/sdk/package.json"),
+      project("router", "./packages/router", "packages/router/package.json"),
     ],
   },
 });

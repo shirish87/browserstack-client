@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "types": ["node"],
+    "paths": {
+      "@dot-slash/browserstack-core": ["../core/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*"]
+}

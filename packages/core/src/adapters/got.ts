@@ -7,7 +7,7 @@
  * import { createGotAdapter } from '@dot-slash/browserstack-core/adapters';
  *
  * const gotInstance = got.extend({
- *   // proxy config, hooks, etc.
+ *   // transport config, hooks, etc.
  * });
  *
  * const client = new AutomateClient({

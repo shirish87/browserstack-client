@@ -1,0 +1,9 @@
+packages:
+  - "."
+  - "../../packages/core"
+  - "../../packages/openapi"
+  - "../../packages/openapi-transforms"
+  - "../../packages/router"
+
+allowBuilds:
+  esbuild: true

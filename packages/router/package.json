@@ -1,11 +1,11 @@
 {
-  "name": "@dot-slash/browserstack-local-testing",
+  "name": "@dot-slash/browserstack-router",
   "publishConfig": {
     "access": "public"
   },
-  "version": "7.0.1",
+  "version": "7.0.0",
   "type": "module",
-  "description": "BrowserStack Local Testing binary management and spawning for Node.js",
+  "description": "Secure server-side router for BrowserStack client SDKs",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -25,15 +25,12 @@
     "typecheck": "tsc --noEmit || true"
   },
   "dependencies": {
-    "fflate": "^0.8.3",
-    "signal-exit": "^4.1.0"
+    "@dot-slash/browserstack-core": "workspace:*"
   },
   "devDependencies": {
-    "@dot-slash/browserstack-core": "workspace:*",
-    "@dot-slash/browserstack-local-testing-api": "workspace:*",
-    "@dot-slash/browserstack-openapi": "workspace:*",
     "@types/node": "20.0.0",
     "tsup": "^8.5.1",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.4"
   }
 }

@@ -1,6 +1,6 @@
 /**
  * Wrap any fetch-compatible function so it can be passed as `fetchFn`.
- * Identity adapter — useful for explicit proxy-wrapping patterns.
+ * Identity adapter for fetch-compatible implementations.
  *
  * Example:
  * ```ts
