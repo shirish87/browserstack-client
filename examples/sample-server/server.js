@@ -4,22 +4,9 @@ import { createGateway } from "@dot-slash/browserstack-router";
 
 const PORT = process.env.PORT ?? 40000;
 
-const automateBundlePath = path.resolve(
-  import.meta.dirname,
-  "../../packages/automate/dist/index.js"
-);
-
 const app = express();
 
 app.use(express.static(path.resolve(import.meta.dirname, "public"), { dotfiles: "allow" }));
-
-app.get("/sdk/automate.js", (req, res) => {
-  res.sendFile(automateBundlePath, { dotfiles: "allow" });
-});
-
-app.get("/sdk/automate.js.map", (req, res) => {
-  res.sendFile(`${automateBundlePath}.map`, { dotfiles: "allow" });
-});
 
 app.use("/gateway", (req, res, next) => {
   const username = req.headers["x-browserstack-username"];

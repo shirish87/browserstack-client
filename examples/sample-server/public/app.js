@@ -1,4 +1,4 @@
-import { AutomateClient } from "/sdk/automate.js";
+import { AutomateClient } from "@dot-slash/browserstack-automate";
 
 const form = document.getElementById("creds-form");
 const usernameInput = document.getElementById("username");
