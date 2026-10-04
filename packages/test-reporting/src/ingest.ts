@@ -1,4 +1,4 @@
-import { BrowserStackError, type BrowserStackOptions } from "@dot-slash/browserstack-core";
+import { BrowserStackError, buildBasicAuthHeader, resolveAccessKey, resolveUsername, type BrowserStackOptions } from "@dot-slash/browserstack-core";
 
 export interface IngestBuildRequest {
   projectName: string;
@@ -34,10 +34,10 @@ export class TestReportingIngestClient {
   private build: { buildHashedId: string; jwt: string } | undefined;
 
   constructor(options: TestReportingIngestOptions) {
-    const username = options.username ?? process.env.BROWSERSTACK_USERNAME;
-    const accessKey = options.accessKey ?? process.env.BROWSERSTACK_ACCESS_KEY ?? process.env.BROWSERSTACK_KEY;
+    const username = resolveUsername(options.username);
+    const accessKey = resolveAccessKey(options.accessKey);
     if (!username || !accessKey) throw new BrowserStackError("Missing username or accessKey");
-    this.basicAuth = `Basic ${Buffer.from(`${username}:${accessKey}`).toString("base64")}`;
+    this.basicAuth = buildBasicAuthHeader(username, accessKey);
     this.baseUrl = (options.baseUrl ?? "https://collector-observability.browserstack.com").replace(/\/$/, "");
     this.fetchFn = options.fetchFn ?? fetch;
   }
