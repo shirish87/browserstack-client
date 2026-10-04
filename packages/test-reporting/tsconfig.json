@@ -6,6 +6,8 @@
     "noEmit": true,
     "paths": {
       "@dot-slash/browserstack-core": ["../core/src/index.ts"],
+      "@dot-slash/browserstack-automate": ["../automate/src/index.ts"],
+      "@dot-slash/browserstack-app-automate": ["../app-automate/src/index.ts"],
       "@dot-slash/browserstack-openapi": ["../openapi/generated/index.ts"],
       "@dot-slash/browserstack-openapi/*": ["../openapi/generated/*.ts"],
       "@dot-slash/browserstack-openapi-transforms": ["../openapi-transforms/src/index.ts"]

@@ -3,7 +3,11 @@ import pkg from "./package.json" with { type: "json" };
 
 export default defineConfig({
   define: { __PKG_VERSION__: JSON.stringify(pkg.version) },
-  entry: ["src/index.ts"],
+  entry: {
+    index: "src/index.ts",
+    models: "src/models.ts",
+  },
+  external: ["zod"],
   noExternal: [
     "@dot-slash/browserstack-core",
     "@dot-slash/browserstack-openapi",

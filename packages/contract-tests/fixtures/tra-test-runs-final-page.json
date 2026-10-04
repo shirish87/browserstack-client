@@ -1,0 +1,28 @@
+{
+  "name": "tra-dashboard-verification",
+  "hierarchy": [],
+  "pagination": {
+    "has_next": false,
+    "next_page": "bnVsbA=="
+  },
+  "project_id": 2812405,
+  "group_id": 1,
+  "build_id": "066965bf1d6d5586050ef453fd174cb4cdf2c04d",
+  "build_name": "tra-dashboard-verification playwright",
+  "build_number": 1,
+  "original_name": "tra-dashboard-verification playwright",
+  "test_summary": {
+    "passed": 1,
+    "failed": 1,
+    "in progress": 0,
+    "skipped": 0,
+    "retest": 0,
+    "blocked": 0,
+    "untested": 0,
+    "pending": 0,
+    "unknown": 0
+  },
+  "is_manually_overridden": false,
+  "is_archived": null,
+  "app_details": null
+}

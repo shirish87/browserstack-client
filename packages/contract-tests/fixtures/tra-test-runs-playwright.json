@@ -1,0 +1,169 @@
+{
+  "name": "tra-dashboard-verification",
+  "hierarchy": [
+    {
+      "summary": {
+        "aggregate": 2,
+        "passed": 1,
+        "failed": 1,
+        "pending": 0,
+        "skipped": 0,
+        "unknown": 0
+      },
+      "is_after_all_hook": null,
+      "children": [
+        {
+          "summary": null,
+          "is_after_all_hook": null,
+          "children": [],
+          "rank": 2,
+          "details": {
+            "last_executed_by": "Test User",
+            "is_auto_analyzed": null,
+            "testCases": [
+              {
+                "id": 142319683,
+                "identifier": "TC-590",
+                "folderId": 58725320,
+                "thirdPartyIdentifier": null,
+                "name": "passes: example.com has the expected title",
+                "projectId": 4199269,
+                "isShared": false
+              }
+            ],
+            "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright/1",
+            "pm_tool_details": [],
+            "session_id": "dbaadb7db14639d1bebec282c9bcff27c8d997de",
+            "is_muted": false,
+            "tags": [],
+            "run_count": 0,
+            "duration": 9590,
+            "retries": [
+              {
+                "uuid": "1d385955-8e6b-54f3-af86-13daea21027f",
+                "status": "passed",
+                "duration": 9590,
+                "workflowStatus": "Passed",
+                "logs": {}
+              }
+            ],
+            "is_auto_analyzer_running": false,
+            "started_at": "2026-10-04T15:55:59.660+00:00",
+            "is_latest": true,
+            "last_executed_by_id": 1,
+            "status": "passed"
+          },
+          "type": "TEST",
+          "display_name": "passes: example.com has the expected title",
+          "is_before_all_hook": null
+        },
+        {
+          "summary": null,
+          "is_after_all_hook": null,
+          "children": [],
+          "rank": 2,
+          "details": {
+            "last_executed_by": "Test User",
+            "is_auto_analyzed": null,
+            "testCases": [
+              {
+                "id": 142319684,
+                "identifier": "TC-591",
+                "folderId": 58725320,
+                "thirdPartyIdentifier": null,
+                "name": "fails on purpose: asserts a heading that does not exist",
+                "projectId": 4199269,
+                "isShared": false
+              }
+            ],
+            "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright/1",
+            "pm_tool_details": [],
+            "session_id": "dbaadb7db14639d1bebec282c9bcff27c8d997de",
+            "is_muted": false,
+            "tags": [],
+            "run_count": 0,
+            "duration": 6530,
+            "retries": [
+              {
+                "uuid": "bb3df64f-f121-52c6-87b3-9ac605719c23",
+                "status": "failed",
+                "duration": 6530,
+                "workflowStatus": "Failed",
+                "logs": {
+                  "TEST_FAILURE": [
+                    "Error: expect(locator).toHaveText(expected) failed",
+                    "",
+                    "Locator: locator('h1')",
+                    "Expected: \"This heading does not exist\"",
+                    "Timeout: 5000ms",
+                    "Error: element(s) not found",
+                    "",
+                    "Call log:",
+                    "  - Expect \"toHaveText\" locator('h1') with timeout 5000ms",
+                    "  - waiting for locator('h1')",
+                    "",
+                    "    at /work/tests/example.spec.js:11:36"
+                  ]
+                }
+              }
+            ],
+            "is_auto_analyzer_running": false,
+            "started_at": "2026-10-04T15:56:09.246+00:00",
+            "is_latest": true,
+            "last_executed_by_id": 1,
+            "status": "failed"
+          },
+          "type": "TEST",
+          "display_name": "fails on purpose: asserts a heading that does not exist",
+          "is_before_all_hook": null
+        }
+      ],
+      "rank": 0,
+      "details": {
+        "file_path": "tests/example.spec.js",
+        "os": {
+          "name": "windows",
+          "version": "11",
+          "key": "Windows,11"
+        },
+        "finished_at": null,
+        "browser": {
+          "name": "chrome",
+          "version": "154.0",
+          "key": "Chrome,154.0"
+        },
+        "vc_file_url": "",
+        "isRealDevice": true,
+        "device": "",
+        "middle_scopes": null
+      },
+      "type": "ROOT",
+      "display_name": "example.spec.js",
+      "is_before_all_hook": null
+    }
+  ],
+  "pagination": {
+    "has_next": true,
+    "next_page": "eyJmaWxlTmFtZSI6InRlc3RzL2V4YW1wbGUuc3BlYy5qcyIsIm9zIjoiV2luZG93cywxMSIsImRldmljZSI6Ik5BIiwiYnJvd3NlciI6IkNocm9tZSwxNTQuMCJ9"
+  },
+  "project_id": 2812405,
+  "group_id": 1,
+  "build_id": "066965bf1d6d5586050ef453fd174cb4cdf2c04d",
+  "build_name": "tra-dashboard-verification playwright",
+  "build_number": 1,
+  "original_name": "tra-dashboard-verification playwright",
+  "test_summary": {
+    "passed": 1,
+    "failed": 1,
+    "in progress": 0,
+    "skipped": 0,
+    "retest": 0,
+    "blocked": 0,
+    "untested": 0,
+    "pending": 0,
+    "unknown": 0
+  },
+  "is_manually_overridden": false,
+  "is_archived": false,
+  "app_details": null
+}

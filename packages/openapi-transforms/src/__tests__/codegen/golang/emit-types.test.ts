@@ -116,4 +116,41 @@ describe("emitGoTypes", () => {
     expect(result).toContain('Os string `json:"os"`');
     expect(result).toContain('Device *string `json:"device"`');
   });
+
+  it("flattens allOf transitively, so a schema extending an allOf schema keeps every inherited field", () => {
+    const result = emitGoTypes("automate", {
+      Browser: { type: "object", properties: { browser: { type: "string" } } },
+      BrowserPlatform: {
+        allOf: [{ $ref: "#/components/schemas/Browser" }, { type: "object", properties: { os: { type: "string" } } }],
+      },
+      Session: {
+        allOf: [{ $ref: "#/components/schemas/BrowserPlatform" }, { type: "object", properties: { hashed_id: { type: "string" } } }],
+      },
+    });
+    const session = result.slice(result.indexOf("type Session struct"));
+    expect(session).toContain('Browser *string `json:"browser"`');
+    expect(session).toContain('Os *string `json:"os"`');
+    expect(session).toContain('HashedId *string `json:"hashed_id"`');
+  });
+
+  it("does not loop on self-referencing allOf schemas", () => {
+    expect(() =>
+      emitGoTypes("automate", { Loop: { allOf: [{ $ref: "#/components/schemas/Loop" }, { type: "object", properties: { a: { type: "string" } } }] } }),
+    ).not.toThrow();
+  });
+
+  it("makes a required but nullable field a pointer, so null is distinguishable from an empty value", () => {
+    const result = emitGoTypes("automate", {
+      Session: {
+        type: "object",
+        required: ["name", "browser"],
+        properties: {
+          name: { type: "string" },
+          browser: { type: "string", nullable: true },
+        },
+      },
+    });
+    expect(result).toContain('Name string `json:"name"`');
+    expect(result).toContain('Browser *string `json:"browser"`');
+  });
 });

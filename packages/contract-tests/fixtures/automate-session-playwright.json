@@ -1,0 +1,75 @@
+{
+  "automation_session": {
+    "name": "example.spec.js - fails on purpose: asserts a heading that does not exist",
+    "duration": 16,
+    "os": "Windows",
+    "os_version": "11",
+    "browser_version": "154.0",
+    "browser": "chrome",
+    "device": null,
+    "status": "failed",
+    "hashed_id": "dbaadb7db14639d1bebec282c9bcff27c8d997de",
+    "reason": "Error: expect(locator).toHaveText(expected) failed\n\nLocator: locator('h1')\nExpected: \"This heading does not exist\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toHaveText\" locator('h1') with timeout 5000ms\n  - waiting for locator('h1",
+    "build_name": "tra-dashboard-verification playwright  1",
+    "project_name": "tra-dashboard-verification",
+    "build_hashed_id": "3865ea44096bf4a585f9353be8c22e56e288c6fa",
+    "test_priority": null,
+    "logs": "https://automate.browserstack.com/builds/3865ea44096bf4a585f9353be8c22e56e288c6fa/sessions/dbaadb7db14639d1bebec282c9bcff27c8d997de/logs",
+    "browserstack_status": "failed",
+    "created_at": "2026-10-04T15:56:00.000Z",
+    "browser_url": "https://automate.browserstack.com/builds/3865ea44096bf4a585f9353be8c22e56e288c6fa/sessions/dbaadb7db14639d1bebec282c9bcff27c8d997de",
+    "public_url": "https://automate.browserstack.com/builds/3865ea44096bf4a585f9353be8c22e56e288c6fa/sessions/dbaadb7db14639d1bebec282c9bcff27c8d997de",
+    "video_url": "https://automate.browserstack.com/sessions/dbaadb7db14639d1bebec282c9bcff27c8d997de/video",
+    "browser_console_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/dbaadb7db14639d1bebec282c9bcff27c8d997de/dbaadb7db14639d1bebec282c9bcff27c8d997de-console-logs-v2.txt",
+    "har_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/dbaadb7db14639d1bebec282c9bcff27c8d997de/dbaadb7db14639d1bebec282c9bcff27c8d997de-har-logs.txt",
+    "playwright_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/dbaadb7db14639d1bebec282c9bcff27c8d997de/dbaadb7db14639d1bebec282c9bcff27c8d997de-playwright-logs.txt",
+    "session_terminal_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/data/3865ea44096bf4a585f9353be8c22e56e288c6fa/dbaadb7db14639d1bebec282c9bcff27c8d997de-terminal-logs.txt",
+    "build_terminal_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/data/3865ea44096bf4a585f9353be8c22e56e288c6fa/terminal-logs.txt",
+    "insights": {
+      "summary": {
+        "totals": {
+          "duration": 15,
+          "browserstack_time": 13,
+          "user_time": 2,
+          "browserstack_percentage": 87,
+          "user_percentage": 13
+        },
+        "time_breakdown": {
+          "browserstack_time": {
+            "optimize_url": "https://www.browserstack.com/docs/automate/playwright/time-performance-optimisation#optimize-browserstack-time",
+            "components": {
+              "setup": {
+                "duration": 7
+              },
+              "execution": {
+                "duration": 6,
+                "reason": "used for benchmarking by competitors"
+              }
+            }
+          },
+          "user_time": {
+            "optimize_url": "https://www.browserstack.com/docs/automate/playwright/time-performance-optimisation#optimize-user-time",
+            "duration": 2
+          },
+          "capabilities_impact": {
+            "optimize_url": "https://www.browserstack.com/docs/automate/playwright/time-performance-optimisation#optimize-capabilities-impacting-session",
+            "top_capabilities": [
+              {
+                "name": "networkLogs",
+                "impact": "high"
+              },
+              {
+                "name": "defaultVideo",
+                "impact": "high"
+              },
+              {
+                "name": "console",
+                "impact": "low"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

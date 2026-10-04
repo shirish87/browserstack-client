@@ -1,5 +1,5 @@
 import { expectTypeOf, test } from "vitest";
-import { HttpError, NetworkError, isHttpError, type CodecContext } from "../index";
+import { HttpError, NetworkError, isHttpError, type CodecContext, type DeepCamelCase } from "../index";
 
 test("HttpError status is non-optional number", () => {
   const ctx: CodecContext = { operationId: "x", method: "GET", url: "u" };
@@ -19,4 +19,16 @@ test("isHttpError narrows unknown to HttpError<T>", () => {
 test("NetworkError.cause is non-optional Error", () => {
   const e = new NetworkError("x", { operationId:"x", method:"GET", url:"u" }, new Error("y"));
   expectTypeOf(e.cause).toEqualTypeOf<Error>();
+});
+
+test("DeepCamelCase only rewrites keys the runtime rewrites (underscore + lowercase letter)", () => {
+  // TRA returns keys like TEST_FAILURE and "in progress"; toCamelCase leaves them untouched at runtime.
+  type Raw = { TEST_FAILURE: string[]; display_name: string; "in progress": number; session_id: string; is_x_1: boolean };
+  expectTypeOf<DeepCamelCase<Raw>>().toEqualTypeOf<{
+    TEST_FAILURE: string[];
+    displayName: string;
+    "in progress": number;
+    sessionId: string;
+    isX_1: boolean;
+  }>();
 });

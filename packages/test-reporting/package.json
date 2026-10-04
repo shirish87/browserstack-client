@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "7.0.1",
+  "version": "7.1.0",
   "type": "module",
   "description": "BrowserStack Test Reporting & Analytics API client",
   "engines": {
@@ -15,6 +15,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./models": {
+      "types": "./dist/models.d.ts",
+      "import": "./dist/models.js",
+      "require": "./dist/models.cjs"
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
@@ -25,7 +30,10 @@
     "typecheck": "tsc --noEmit || true",
     "test": "vitest run"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@dot-slash/browserstack-app-automate": "workspace:*",
+    "@dot-slash/browserstack-automate": "workspace:*"
+  },
   "devDependencies": {
     "@dot-slash/browserstack-core": "workspace:*",
     "@dot-slash/browserstack-openapi": "workspace:*",
@@ -33,6 +41,15 @@
     "@types/node": "20.0.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.4",
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    }
   }
 }

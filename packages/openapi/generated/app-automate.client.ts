@@ -37,6 +37,14 @@ export type GetAppAutomateMediaFilesByCustomIdError = HttpError<
   | (operations["getAppAutomateMediaFilesByCustomId"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
+export type GetAppAutomateSessionsError = HttpError<
+  | (operations["getAppAutomateSessions"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["getAppAutomateSessions"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["getAppAutomateSessions"]["responses"][404] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["getAppAutomateSessions"]["responses"][422] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["getAppAutomateSessions"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
+>;
+
 export type GetAppAutomateSessionLogsError = HttpError<
   | (operations["getAppAutomateSessionLogs"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
   | (operations["getAppAutomateSessionLogs"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -408,6 +416,9 @@ export type GetAppAutomateProjectBadgeKeyError = HttpError<
 /** @interface */
 export type GetAppAutomateBuildResult = DeepCamelCase<(operations["getAppAutomateBuild"]["responses"][200]["content"]["application/json"] & Record<"build", unknown>)["build"]>;
 /** @interface */
+export type GetAppAutomateSessionsResultItem = DeepCamelCase<(operations["getAppAutomateSessions"]["responses"][200]["content"]["application/json"][number] & Record<"automation_session", unknown>)["automation_session"]>;
+export type GetAppAutomateSessionsResult = Array<GetAppAutomateSessionsResultItem>;
+/** @interface */
 export type GetAppAutomateXCUITestAppResult = DeepCamelCase<(operations["getAppAutomateXCUITestApp"]["responses"][200]["content"]["application/json"] & Record<"app", unknown>)["app"]>;
 /** @interface */
 export type GetAppAutomateXCUITestAppsResult = DeepCamelCase<(operations["getAppAutomateXCUITestApps"]["responses"][200]["content"]["application/json"] & Record<"apps", unknown>)["apps"]>;
@@ -520,6 +531,31 @@ export class GeneratedAppAutomateClient extends APIClient {
       method: "GET" as const,
       signal: options?.signal,
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<DeepCamelCase<operations["getAppAutomateMediaFilesByCustomId"]["responses"][200]["content"]["application/json"]>>;
+  }
+
+/**
+ * Fetches the sessions of a build. Verified live on a 3-session build; the default page size and maximum `limit` are not verified.
+ *
+ * @param buildId - ID of your build
+ * @param limit - Number of sessions to return. Verified live (limit=1 and 2 on a 3-session build).
+ * @param offset - Skip this many sessions. Verified live; an offset past the end returns an empty list.
+ * @param status - Filter by session status. Verified live - passed and failed. `done` matches nothing, and an unknown value returns an empty list rather than an error.
+ * @param options - Optional abort signal and other request options
+ */
+  getSessions(buildId: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<GetAppAutomateSessionsResult> {
+    return (this.execute({
+      path: "/app-automate/builds/{buildId}/sessions.json",
+      params: { path: { buildId: buildId }, query: { "limit": limit, "offset": offset, "status": status } },
+
+      requestCodec: "json",
+      requestCodecConfig: {},
+      responseCodec: "json-unwrap",
+      responseCodecConfig: {"path":"$[*].automation_session"},
+      baseUrl: "sdk" as const,
+      operationId: "getAppAutomateSessions",
+      method: "GET" as const,
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<GetAppAutomateSessionsResult>;
   }
 
 /**

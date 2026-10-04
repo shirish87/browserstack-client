@@ -1,0 +1,74 @@
+{
+  "name": "tra-dashboard-verification playwright",
+  "description": "",
+  "status": "failed",
+  "duration": 22838,
+  "user": "Test User",
+  "user_id": 1,
+  "tags": [],
+  "build_id": "066965bf1d6d5586050ef453fd174cb4cdf2c04d",
+  "id": 161787535,
+  "created_at": null,
+  "project_id": null,
+  "project_name": null,
+  "build_number": 1,
+  "original_name": "tra-dashboard-verification playwright",
+  "finished_at": "2026-10-04T15:56:15.877+00:00",
+  "started_at": "2026-10-04T15:55:53.039+00:00",
+  "status_stats": {
+    "passed": 1,
+    "failed": 1,
+    "in progress": 0,
+    "skipped": 0,
+    "retest": 0,
+    "blocked": 0,
+    "untested": 0,
+    "pending": 0,
+    "unknown": 0
+  },
+  "is_manually_overridden": false,
+  "re_run": null,
+  "build_error": null,
+  "is_archived": false,
+  "observability_version": {
+    "framework_version": "1.63.0",
+    "framework_name": "Playwright",
+    "outdated_sdk_version": "false",
+    "sdk_version": "1.71.4",
+    "cli_version": "1.58.2",
+    "is_sdk": "null",
+    "outdated_cli_version": "null"
+  },
+  "vcs_info": {
+    "name": null,
+    "sha": null,
+    "branch": null,
+    "remotes": null,
+    "url": ""
+  },
+  "ci_info": {
+    "job_name": null,
+    "name": null,
+    "build_number": null,
+    "build_url": null,
+    "url": null
+  },
+  "host_info": {
+    "hostname": "vm",
+    "os": null
+  },
+  "run_information": [
+    {
+      "meta": null,
+      "buildSdkLogs": [],
+      "passed": 1,
+      "failed": 1,
+      "id": "161787535",
+      "skipped": 0,
+      "unknown": 0
+    }
+  ],
+  "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright/1",
+  "tcmTestRunIdentifier": "TR-694",
+  "app_details": null
+}

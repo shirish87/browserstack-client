@@ -237,6 +237,78 @@ paths:
           $ref: '#/components/schemas/422.UnprocessableEntity'
         '500':
           $ref: '#/components/schemas/5xx.InternalServerError'
+  /app-automate/builds/{buildId}/sessions.json:
+    get:
+      tags:
+      - AppAutomate
+      summary: Fetches list of sessions
+      description: "Fetches the sessions of a build. Verified live on a 3-session build; the default page size and maximum `limit` are not verified."
+      operationId: getAppAutomateSessions
+      x-cli-section: "Sessions"
+      x-cli-display: [hashed_id, name, status, os, os_version, device]
+      x-response-transform:
+        codec: json-unwrap
+        config:
+          path: "$[*].automation_session"
+      parameters:
+      - name: buildId
+        x-cli-picker:
+          source: app-automate.list-builds
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [projectId]
+        in: path
+        description: ID of your build
+        required: true
+        schema:
+          type: string
+          example: a4fb480a55efd6b3c558afb1ee051a7c337b8ef0
+      - name: limit
+        in: query
+        description: Number of sessions to return. Verified live (limit=1 and 2 on a 3-session build).
+        required: false
+        schema:
+          type: number
+          example: 10
+      - name: offset
+        in: query
+        description: Skip this many sessions. Verified live; an offset past the end returns an empty list.
+        required: false
+        schema:
+          type: number
+          example: 0
+      - name: status
+        in: query
+        description: "Filter by session status. Verified live - passed and failed. `done` matches nothing, and an unknown value returns an empty list rather than an error."
+        required: false
+        schema:
+          type: string
+          enum:
+          - running
+          - timeout
+          - failed
+          - done
+          - passed
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                title: GetAppAutomateSessionsResponse
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppAutomateSessionContainer'
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
   /app-automate/builds/{buildId}/sessions/{sessionId}/logs:
     get:
       tags:
@@ -2637,7 +2709,7 @@ components:
         sessions:
           type: array
           items:
-            $ref: '#/components/schemas/AppAutomateSessionContainer'
+            $ref: '#/components/schemas/AutomateBuildSessionContainer'
     AppAutomateSessionContainer:
       title: AppAutomateSessionContainer
       type: object
@@ -2645,7 +2717,7 @@ components:
       - automation_session
       properties:
         automation_session:
-          $ref: '#/components/schemas/AutomateSession'
+          $ref: '#/components/schemas/AppAutomateSession'
     400.BadRequest:
       description: Bad request.
     401.Unauthorized:
@@ -2812,17 +2884,23 @@ components:
           type: string
         uploaded_at:
           type: string
+        app_filename:
+          type: string
+          description: File name of the uploaded app (verified live, e.g. WikipediaSample.apk).
     AppAutomateSession:
       title: AppAutomateSession
       allOf:
       - type: object
-        $ref: '#/components/schemas/AutomateSession'
+        $ref: '#/components/schemas/AutomateSessionBase'
       - type: object
         required:
         - app_details
         properties:
           app_details:
             $ref: '#/components/schemas/AppAutomateSessionAppDetails'
+          device_logs_url:
+            type: string
+            description: URL of the device logs.
     AppAutomateTestPackage:
       title: AppAutomateTestPackage
       type: object
@@ -2867,6 +2945,8 @@ components:
       properties:
         browser:
           type: string
+          nullable: true
+          description: Null for App Automate sessions (verified live), which have no browser.
           example: Chrome
         browser_version:
           type: string
@@ -3077,7 +3157,6 @@ components:
       - duration
       - status
       - build_tag
-      - public_url
       properties:
         name:
           type: string
@@ -3116,7 +3195,8 @@ components:
           example: 4207442b2b0567368956dba064c22a3235a76214
         build_tag:
           type: string
-          description: Tag for the build
+          nullable: true
+          description: Tag for the build (null when none was set; verified live)
           example: pricing_project_build
         public_url:
           type: string

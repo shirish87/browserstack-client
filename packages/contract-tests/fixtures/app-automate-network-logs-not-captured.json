@@ -1,0 +1,4 @@
+{
+  "status": 400,
+  "message": "[BROWSERSTACK_NETWORK_LOGS_NOT_CAPTURED] Your app is not configured to view network logs on this device. Please follow our <a href='https://www.browserstack.com/docs/app-automate/appium/troubleshooting/networklogs-acceptinsecurecerts-issues'>troubleshooting guide</a> to configure your app. If error persists, reach out to support."
+}

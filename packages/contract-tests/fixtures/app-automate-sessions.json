@@ -1,0 +1,245 @@
+[
+  {
+    "automation_session": {
+      "name": "tra-dashboard verification  appium  third spec  - skipped: pending feature",
+      "duration": 19,
+      "os": "android",
+      "os_version": "13.0",
+      "browser_version": "app",
+      "browser": null,
+      "device": "Google Pixel 7",
+      "status": "passed",
+      "hashed_id": "09b7375e00b7884bbfe475dd7b15c25d1491a4ed",
+      "reason": "CLIENT_STOPPED_SESSION",
+      "build_name": "tra-dashboard-verification appium  3",
+      "project_name": "tra-dashboard-verification",
+      "build_hashed_id": "5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e",
+      "logs": "https://app-automate.browserstack.com/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/09b7375e00b7884bbfe475dd7b15c25d1491a4ed/logs",
+      "browserstack_status": "done",
+      "created_at": "2026-10-04T16:28:45.000Z",
+      "browser_url": "https://app-automate.browserstack.com/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/09b7375e00b7884bbfe475dd7b15c25d1491a4ed",
+      "public_url": "https://app-automate.browserstack.com/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/09b7375e00b7884bbfe475dd7b15c25d1491a4ed",
+      "video_url": "https://app-automate.browserstack.com/sessions/09b7375e00b7884bbfe475dd7b15c25d1491a4ed/video",
+      "appium_logs_url": "https://api.browserstack.com/app-automate/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/09b7375e00b7884bbfe475dd7b15c25d1491a4ed/appiumlogs",
+      "device_logs_url": "https://api.browserstack.com/app-automate/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/09b7375e00b7884bbfe475dd7b15c25d1491a4ed/devicelogs",
+      "app_details": {
+        "app_url": "bs://d6d873afd60cb0b62869ad21a40b3bda78df3e44",
+        "app_name": "org.wikipedia.alpha",
+        "app_version": "2.5.194-alpha-2017-05-30",
+        "app_custom_id": "browserstack-client-contract-wikipedia",
+        "uploaded_at": "2026-10-04T16:23:29.000Z",
+        "app_filename": "WikipediaSample.apk"
+      },
+      "session_terminal_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/data/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/09b7375e00b7884bbfe475dd7b15c25d1491a4ed-terminal-logs.txt",
+      "build_terminal_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/data/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/terminal-logs.txt",
+      "insights": {
+        "summary": {
+          "totals": {
+            "duration": 19,
+            "browserstack_time": 18,
+            "user_time": 1,
+            "browserstack_percentage": 95,
+            "user_percentage": 5
+          },
+          "time_breakdown": {
+            "browserstack_time": {
+              "optimize_url": "https://www.browserstack.com/docs/app-automate/appium/time-performance-optimisation#components-of-browserstack-time",
+              "components": {
+                "setup": {
+                  "duration": 16
+                },
+                "execution": {
+                  "duration": 2,
+                  "reason": "used for benchmarking by competitors"
+                }
+              }
+            },
+            "user_time": {
+              "optimize_url": "https://www.browserstack.com/docs/app-automate/appium/time-performance-optimisation#components-of-user-time",
+              "duration": 1
+            },
+            "capabilities_impact": {
+              "optimize_url": "https://www.browserstack.com/docs/app-automate/appium/time-performance-optimisation#capabilities-and-their-performance-impact",
+              "top_capabilities": [
+                {
+                  "name": "networkLogs",
+                  "impact": "high"
+                },
+                {
+                  "name": "defaultVideo",
+                  "impact": "high"
+                },
+                {
+                  "name": "deviceLogs",
+                  "impact": "medium"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "automation_session": {
+      "name": "tra-dashboard verification  appium  second spec  - passes: the sample app launches and shows the search box",
+      "duration": 18,
+      "os": "android",
+      "os_version": "13.0",
+      "browser_version": "app",
+      "browser": null,
+      "device": "Google Pixel 7",
+      "status": "passed",
+      "hashed_id": "424ed952f8bdd340a57bab609c23a8838dfb2bef",
+      "reason": "CLIENT_STOPPED_SESSION",
+      "build_name": "tra-dashboard-verification appium  3",
+      "project_name": "tra-dashboard-verification",
+      "build_hashed_id": "5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e",
+      "logs": "https://app-automate.browserstack.com/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/424ed952f8bdd340a57bab609c23a8838dfb2bef/logs",
+      "browserstack_status": "done",
+      "created_at": "2026-10-04T16:28:24.000Z",
+      "browser_url": "https://app-automate.browserstack.com/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/424ed952f8bdd340a57bab609c23a8838dfb2bef",
+      "public_url": "https://app-automate.browserstack.com/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/424ed952f8bdd340a57bab609c23a8838dfb2bef",
+      "video_url": "https://app-automate.browserstack.com/sessions/424ed952f8bdd340a57bab609c23a8838dfb2bef/video",
+      "appium_logs_url": "https://api.browserstack.com/app-automate/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/424ed952f8bdd340a57bab609c23a8838dfb2bef/appiumlogs",
+      "device_logs_url": "https://api.browserstack.com/app-automate/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/424ed952f8bdd340a57bab609c23a8838dfb2bef/devicelogs",
+      "app_details": {
+        "app_url": "bs://d6d873afd60cb0b62869ad21a40b3bda78df3e44",
+        "app_name": "org.wikipedia.alpha",
+        "app_version": "2.5.194-alpha-2017-05-30",
+        "app_custom_id": "browserstack-client-contract-wikipedia",
+        "uploaded_at": "2026-10-04T16:23:29.000Z",
+        "app_filename": "WikipediaSample.apk"
+      },
+      "session_terminal_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/data/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/424ed952f8bdd340a57bab609c23a8838dfb2bef-terminal-logs.txt",
+      "build_terminal_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/data/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/terminal-logs.txt",
+      "insights": {
+        "summary": {
+          "totals": {
+            "duration": 18,
+            "browserstack_time": 17,
+            "user_time": 1,
+            "browserstack_percentage": 94,
+            "user_percentage": 6
+          },
+          "time_breakdown": {
+            "browserstack_time": {
+              "optimize_url": "https://www.browserstack.com/docs/app-automate/appium/time-performance-optimisation#components-of-browserstack-time",
+              "components": {
+                "setup": {
+                  "duration": 16
+                },
+                "execution": {
+                  "duration": 1,
+                  "reason": "used for benchmarking by competitors"
+                }
+              }
+            },
+            "user_time": {
+              "optimize_url": "https://www.browserstack.com/docs/app-automate/appium/time-performance-optimisation#components-of-user-time",
+              "duration": 1
+            },
+            "capabilities_impact": {
+              "optimize_url": "https://www.browserstack.com/docs/app-automate/appium/time-performance-optimisation#capabilities-and-their-performance-impact",
+              "top_capabilities": [
+                {
+                  "name": "networkLogs",
+                  "impact": "high"
+                },
+                {
+                  "name": "defaultVideo",
+                  "impact": "high"
+                },
+                {
+                  "name": "deviceLogs",
+                  "impact": "medium"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "automation_session": {
+      "name": "tra-dashboard verification  appium  - fails on purpose: looks for an element that does not exist",
+      "duration": 29,
+      "os": "android",
+      "os_version": "13.0",
+      "browser_version": "app",
+      "browser": null,
+      "device": "Google Pixel 7",
+      "status": "failed",
+      "hashed_id": "332602d7630802850b7ec1702e0497199992aec7",
+      "reason": "element (\"~This element does not exist\") still not displayed after 4000ms",
+      "build_name": "tra-dashboard-verification appium  3",
+      "project_name": "tra-dashboard-verification",
+      "build_hashed_id": "5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e",
+      "logs": "https://app-automate.browserstack.com/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/332602d7630802850b7ec1702e0497199992aec7/logs",
+      "browserstack_status": "done",
+      "created_at": "2026-10-04T16:27:52.000Z",
+      "browser_url": "https://app-automate.browserstack.com/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/332602d7630802850b7ec1702e0497199992aec7",
+      "public_url": "https://app-automate.browserstack.com/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/332602d7630802850b7ec1702e0497199992aec7",
+      "video_url": "https://app-automate.browserstack.com/sessions/332602d7630802850b7ec1702e0497199992aec7/video",
+      "appium_logs_url": "https://api.browserstack.com/app-automate/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/332602d7630802850b7ec1702e0497199992aec7/appiumlogs",
+      "device_logs_url": "https://api.browserstack.com/app-automate/builds/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/sessions/332602d7630802850b7ec1702e0497199992aec7/devicelogs",
+      "app_details": {
+        "app_url": "bs://d6d873afd60cb0b62869ad21a40b3bda78df3e44",
+        "app_name": "org.wikipedia.alpha",
+        "app_version": "2.5.194-alpha-2017-05-30",
+        "app_custom_id": "browserstack-client-contract-wikipedia",
+        "uploaded_at": "2026-10-04T16:23:29.000Z",
+        "app_filename": "WikipediaSample.apk"
+      },
+      "session_terminal_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/data/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/332602d7630802850b7ec1702e0497199992aec7-terminal-logs.txt",
+      "build_terminal_logs_url": "https://bs-selenium-logs-use.s3.us-east-1.amazonaws.com/data/5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e/terminal-logs.txt",
+      "insights": {
+        "summary": {
+          "totals": {
+            "duration": 29,
+            "browserstack_time": 21,
+            "user_time": 8,
+            "browserstack_percentage": 72,
+            "user_percentage": 28
+          },
+          "time_breakdown": {
+            "browserstack_time": {
+              "optimize_url": "https://www.browserstack.com/docs/app-automate/appium/time-performance-optimisation#components-of-browserstack-time",
+              "components": {
+                "setup": {
+                  "duration": 16
+                },
+                "execution": {
+                  "duration": 5,
+                  "reason": "used for benchmarking by competitors"
+                }
+              }
+            },
+            "user_time": {
+              "optimize_url": "https://www.browserstack.com/docs/app-automate/appium/time-performance-optimisation#components-of-user-time",
+              "duration": 8
+            },
+            "capabilities_impact": {
+              "optimize_url": "https://www.browserstack.com/docs/app-automate/appium/time-performance-optimisation#capabilities-and-their-performance-impact",
+              "top_capabilities": [
+                {
+                  "name": "networkLogs",
+                  "impact": "high"
+                },
+                {
+                  "name": "defaultVideo",
+                  "impact": "high"
+                },
+                {
+                  "name": "deviceLogs",
+                  "impact": "medium"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+]

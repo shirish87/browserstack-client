@@ -1,0 +1,64 @@
+{
+  "build": {
+    "automation_build": {
+      "name": "tra-dashboard-verification appium  3",
+      "duration": 72,
+      "status": "failed",
+      "hashed_id": "5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e",
+      "build_tag": null
+    },
+    "sessions": [
+      {
+        "automation_session": {
+          "name": "tra-dashboard verification  appium  third spec  - skipped: pending feature",
+          "duration": 19,
+          "os": "android",
+          "os_version": "13.0",
+          "browser_version": "app",
+          "browser": null,
+          "device": "Google Pixel 7",
+          "status": "passed",
+          "hashed_id": "09b7375e00b7884bbfe475dd7b15c25d1491a4ed",
+          "reason": "CLIENT_STOPPED_SESSION",
+          "build_name": "tra-dashboard-verification appium  3",
+          "project_name": "tra-dashboard-verification",
+          "build_hashed_id": "5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e"
+        }
+      },
+      {
+        "automation_session": {
+          "name": "tra-dashboard verification  appium  second spec  - passes: the sample app launches and shows the search box",
+          "duration": 18,
+          "os": "android",
+          "os_version": "13.0",
+          "browser_version": "app",
+          "browser": null,
+          "device": "Google Pixel 7",
+          "status": "passed",
+          "hashed_id": "424ed952f8bdd340a57bab609c23a8838dfb2bef",
+          "reason": "CLIENT_STOPPED_SESSION",
+          "build_name": "tra-dashboard-verification appium  3",
+          "project_name": "tra-dashboard-verification",
+          "build_hashed_id": "5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e"
+        }
+      },
+      {
+        "automation_session": {
+          "name": "tra-dashboard verification  appium  - fails on purpose: looks for an element that does not exist",
+          "duration": 29,
+          "os": "android",
+          "os_version": "13.0",
+          "browser_version": "app",
+          "browser": null,
+          "device": "Google Pixel 7",
+          "status": "failed",
+          "hashed_id": "332602d7630802850b7ec1702e0497199992aec7",
+          "reason": "element (\"~This element does not exist\") still not displayed after 4000ms",
+          "build_name": "tra-dashboard-verification appium  3",
+          "project_name": "tra-dashboard-verification",
+          "build_hashed_id": "5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e"
+        }
+      }
+    ]
+  }
+}

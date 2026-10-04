@@ -590,7 +590,7 @@ paths:
                       sessions:
                         type: array
                         items:
-                          $ref: '#/components/schemas/AutomateSessionContainer'
+                          $ref: '#/components/schemas/AutomateBuildSessionContainer'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -905,7 +905,7 @@ paths:
           example: 0
       - name: status
         in: query
-        description: Status of the session
+        description: "Filter by session status. Verified live - passed and failed. `done` matches nothing, and an unknown value returns an empty list rather than an error."
         required: false
         schema:
           type: string
@@ -914,6 +914,7 @@ paths:
           - timeout
           - failed
           - done
+          - passed
       responses:
         '200':
           description: Successful operation
@@ -1115,6 +1116,49 @@ paths:
                 description: Selenium logs capture the raw logs of Selenium JAR for
                   your test execution. With Selenium logs you can debug the test in
                   case of any exceptions.
+        '400':
+          $ref: '#/components/schemas/400.BadRequest'
+        '401':
+          $ref: '#/components/schemas/401.Unauthorized'
+        '404':
+          $ref: '#/components/schemas/404.NotFound'
+        '422':
+          $ref: '#/components/schemas/422.UnprocessableEntity'
+        '500':
+          $ref: '#/components/schemas/5xx.InternalServerError'
+  /automate/sessions/{sessionId}/playwrightlogs:
+    get:
+      tags:
+      - Automate
+      summary: Fetches Playwright logs for a session
+      description: Fetches the Playwright protocol logs for a Playwright session, as text. Responds with
+        200 and no Content-Type header, and with an XML 404 body when the session has no Playwright logs
+        (for example a Selenium session).
+      operationId: getAutomateSessionPlaywrightLogs
+      x-cli-section: "Session Logs"
+      x-response-transform:
+        codec: text
+      parameters:
+      - name: sessionId
+        x-cli-picker:
+          source: automate.list-sessions
+          valueField: hashed_id
+          labelFields: [hashed_id, name, status]
+          filterBy: [buildId]
+        in: path
+        description: ID of your session
+        required: true
+        schema:
+          type: string
+          example: 4207442b2b0567368956dba064c22a3235a76214
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Playwright protocol logs (SEND and RECV frames with timestamps).
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -1442,8 +1486,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                description: HAR (HTTP Archive) format
+                $ref: '#/components/schemas/HarArchive'
         '400':
           $ref: '#/components/schemas/400.BadRequest'
         '401':
@@ -1499,7 +1542,19 @@ components:
         sessions:
           type: array
           items:
-            $ref: '#/components/schemas/AutomateSessionContainer'
+            $ref: '#/components/schemas/AutomateBuildSessionContainer'
+    AutomateSession:
+      title: AutomateSession
+      allOf:
+      - $ref: '#/components/schemas/AutomateSessionBase'
+      - type: object
+        properties:
+          playwright_logs_url:
+            type: string
+            description: Presigned URL of the Playwright protocol logs (Playwright sessions only).
+          browser_profiling_url:
+            type: string
+            description: URL of the browser profiling data, when profiling was enabled for the session.
     AutomateSessionContainer:
       title: AutomateSessionContainer
       type: object
@@ -1517,7 +1572,6 @@ components:
       - duration
       - status
       - build_tag
-      - public_url
       properties:
         name:
           type: string
@@ -1556,8 +1610,12 @@ components:
           example: 4207442b2b0567368956dba064c22a3235a76214
         build_tag:
           type: string
-          description: Tag for the build
+          nullable: true
+          description: Tag for the build (null when none was set)
           example: pricing_project_build
+        public_url:
+          type: string
+          description: Shareable URL of the build
         delta:
           type: boolean
           description: Indicates whether the build is a delta build
@@ -1578,6 +1636,117 @@ components:
           type: string
           description: Time at which the project was updated on BrowserStack servers
           example: '2020-09-18T09:45:57.000Z'
+    HarArchive:
+      type: object
+      description: HAR (HTTP Archive) 1.2 document of the session's network traffic.
+      properties:
+        log:
+          $ref: '#/components/schemas/HarLog'
+    HarLog:
+      type: object
+      properties:
+        version: { type: string }
+        creator:
+          $ref: '#/components/schemas/HarNameVersion'
+        browser:
+          $ref: '#/components/schemas/HarNameVersion'
+        pages:
+          type: array
+          items: { type: object, additionalProperties: true }
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/HarEntry'
+    HarNameVersion:
+      type: object
+      properties:
+        name: { type: string }
+        version: { type: string }
+        comment: { type: string }
+    HarEntry:
+      type: object
+      properties:
+        pageref: { type: string }
+        startedDateTime: { type: string }
+        time: { type: number, description: Total elapsed time in milliseconds. }
+        request:
+          $ref: '#/components/schemas/HarRequest'
+        response:
+          $ref: '#/components/schemas/HarResponse'
+        cache: { type: object, additionalProperties: true }
+        timings: { type: object, additionalProperties: true }
+        serverIPAddress: { type: string }
+        connection: { type: string }
+        FromDiskCache:
+          type: boolean
+          description: BrowserStack extension (PascalCase, not part of HAR 1.2).
+        Initiator:
+          type: object
+          additionalProperties: true
+          description: BrowserStack extension (PascalCase, not part of HAR 1.2). What triggered the request.
+        Priority:
+          type: string
+          description: BrowserStack extension (PascalCase, not part of HAR 1.2). Chrome resource priority.
+    HarHeader:
+      type: object
+      properties:
+        name: { type: string }
+        value: { type: string }
+    HarCookie:
+      type: object
+      properties:
+        name: { type: string }
+        value: { type: string }
+        path: { type: string }
+        domain: { type: string }
+        expires: { type: string }
+        httpOnly: { type: boolean }
+        secure: { type: boolean }
+    HarRequest:
+      type: object
+      properties:
+        method: { type: string }
+        url: { type: string }
+        httpVersion: { type: string }
+        cookies:
+          type: array
+          items:
+            $ref: '#/components/schemas/HarCookie'
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/HarHeader'
+        queryString:
+          type: array
+          items:
+            $ref: '#/components/schemas/HarHeader'
+        postData: { type: object, additionalProperties: true }
+        headersSize: { type: integer }
+        bodySize: { type: integer }
+    HarResponse:
+      type: object
+      properties:
+        status: { type: integer }
+        statusText: { type: string }
+        httpVersion: { type: string }
+        cookies:
+          type: array
+          items:
+            $ref: '#/components/schemas/HarCookie'
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/HarHeader'
+        content: { type: object, additionalProperties: true }
+        redirectURL: { type: string }
+        TransferSize:
+          type: integer
+          description: BrowserStack extension (PascalCase, not part of HAR 1.2).
+        ErrorMessage:
+          type: string
+          description: BrowserStack extension (PascalCase, not part of HAR 1.2). Set when the request failed.
+        headersSize: { type: integer }
+        bodySize: { type: integer }
     AutomateMediaFile:
       title: AutomateMediaFile
       type: object

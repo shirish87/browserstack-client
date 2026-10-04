@@ -16,6 +16,7 @@ export function defaultErrorMessage(body: unknown): string | undefined {
     ) {
       return undefined;
     }
+    if (s.startsWith("<?xml") || s.startsWith("<error")) return xmlErrorMessage(body);
     return firstString(body);
   }
   if (typeof body !== "object") return undefined;
@@ -27,4 +28,13 @@ export function defaultErrorMessage(body: unknown): string | undefined {
     firstString(o.detail) ??
     firstString(o.description)
   );
+}
+
+/** `<Error><Code>…</Code><Message>…</Message></Error>` as returned by S3-backed endpoints. */
+function xmlErrorMessage(xml: string): string | undefined {
+  const tag = (name: string): string | undefined => firstString(new RegExp(`<${name}>([^<]*)</${name}>`, "i").exec(xml)?.[1]);
+  const code = tag("Code");
+  const message = tag("Message");
+  if (code && message) return `${code}: ${message}`;
+  return code ?? message;
 }

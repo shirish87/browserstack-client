@@ -224,6 +224,21 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
+  packages/contract-tests:
+    devDependencies:
+      '@dot-slash/browserstack-automate':
+        specifier: workspace:*
+        version: link:../automate
+      '@dot-slash/browserstack-test-reporting':
+        specifier: workspace:*
+        version: link:../test-reporting
+      vitest:
+        specifier: ^4.1.4
+        version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.8.3))
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+
   packages/core:
     dependencies:
       '@dot-slash/browserstack-openapi-transforms':
@@ -438,6 +453,13 @@ importers:
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.8.3))
 
   packages/test-reporting:
+    dependencies:
+      '@dot-slash/browserstack-app-automate':
+        specifier: workspace:*
+        version: link:../app-automate
+      '@dot-slash/browserstack-automate':
+        specifier: workspace:*
+        version: link:../automate
     devDependencies:
       '@dot-slash/browserstack-core':
         specifier: workspace:*
@@ -460,6 +482,9 @@ importers:
       vitest:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.8.3))
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
 
   packages/website-scanner:
     devDependencies:

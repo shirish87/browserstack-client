@@ -1,0 +1,18 @@
+{
+  "name": "@dot-slash/browserstack-contract-tests",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Live API contract checks: generate real BrowserStack data, then verify the clients' generated models still match what the APIs return.",
+  "scripts": {
+    "test": "vitest run",
+    "test:contract": "BROWSERSTACK_CONTRACT=1 vitest run --project contract-live",
+    "capture": "node scripts/capture.mjs"
+  },
+  "devDependencies": {
+    "@dot-slash/browserstack-automate": "workspace:*",
+    "@dot-slash/browserstack-test-reporting": "workspace:*",
+    "vitest": "^4.1.4",
+    "zod": "^4.4.3"
+  }
+}

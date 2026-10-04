@@ -29,6 +29,11 @@ describe("toSnakeCase", () => {
 });
 
 describe("toCamelCase", () => {
+  it("leaves keys alone when no lowercase letter follows the underscore (e.g. TRA's TEST_FAILURE)", () => {
+    expect(toCamelCase({ logs: { TEST_FAILURE: ["e"], TEST_LOG: ["u"] }, session_id: "s", is_x_1: true }))
+      .toEqual({ logs: { TEST_FAILURE: ["e"], TEST_LOG: ["u"] }, sessionId: "s", isX_1: true });
+  });
+
   it("converts snake_case keys to camelCase", () => {
     expect(toCamelCase({ file_name: "foo.txt", custom_id: "abc" }))
       .toEqual({ fileName: "foo.txt", customId: "abc" });
