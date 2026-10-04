@@ -2,7 +2,7 @@ import type { HttpMethod } from "./api-client";
 
 export interface MiddlewareContext {
   operationId: string;
-  baseUrl?: "sdk" | "sdkCloud";
+  baseUrl?: "sdk" | "sdkCloud" | "sdkIngest";
 }
 
 export interface MiddlewareRequest {
@@ -85,7 +85,7 @@ export function composeMiddleware(
       };
     }
 
-    const customInit = init as (RequestInit & { operationId?: string; baseUrl?: "sdk" | "sdkCloud" }) | undefined;
+    const customInit = init as (RequestInit & { operationId?: string; baseUrl?: "sdk" | "sdkCloud" | "sdkIngest" }) | undefined;
     const { operationId, baseUrl, ...rest } = customInit ?? {};
 
     if (customInit) {

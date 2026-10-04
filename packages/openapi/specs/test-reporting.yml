@@ -81,6 +81,7 @@ paths:
       tags: [TestReporting]
       summary: Start Build (ingestion)
       operationId: startTestReportingBuild
+      x-base-url: sdkIngest
       x-cli-section: "Builds"
       requestBody:
         required: true
@@ -198,6 +199,7 @@ paths:
       tags: [TestReporting]
       summary: Finish Build (ingestion)
       operationId: finishTestReportingBuild
+      x-base-url: sdkIngest
       x-cli-section: "Builds"
       parameters:
         - name: buildHashedId
@@ -233,6 +235,7 @@ paths:
       tags: [TestReporting]
       summary: Start Test Run (ingestion)
       operationId: startTestReportingTestRun
+      x-base-url: sdkIngest
       x-cli-section: "Test Runs"
       parameters:
         - name: buildHashedId
@@ -265,6 +268,7 @@ paths:
       tags: [TestReporting]
       summary: Finish Test Run (ingestion)
       operationId: finishTestReportingTestRun
+      x-base-url: sdkIngest
       x-cli-section: "Test Runs"
       parameters:
         - name: buildHashedId
@@ -301,6 +305,7 @@ paths:
       tags: [TestReporting]
       summary: Start Hook Run (ingestion)
       operationId: startTestReportingHookRun
+      x-base-url: sdkIngest
       x-cli-section: "Hook Runs"
       parameters:
         - name: buildHashedId
@@ -333,6 +338,7 @@ paths:
       tags: [TestReporting]
       summary: Finish Hook Run (ingestion)
       operationId: finishTestReportingHookRun
+      x-base-url: sdkIngest
       x-cli-section: "Hook Runs"
       parameters:
         - name: buildHashedId
@@ -369,6 +375,7 @@ paths:
       tags: [TestReporting]
       summary: Add Build Logs (ingestion)
       operationId: addTestReportingBuildLogs
+      x-base-url: sdkIngest
       x-cli-section: "Builds"
       parameters:
         - name: buildHashedId

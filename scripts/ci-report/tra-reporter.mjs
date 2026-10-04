@@ -19,6 +19,7 @@ export class TraReporter {
     this.enabled = Boolean(client);
     this.build = undefined; // Promise<string | undefined> (buildHashedId)
     this.tests = new Map(); // test id -> Promise<{ buildId, uuid } | undefined>
+    this.logs = []; // pending build log entries, flushed at the end of the run
   }
 
   static async fromEnv(env = process.env) {
@@ -106,6 +107,19 @@ export class TraReporter {
     await started;
   }
 
+  async onUserConsoleLog(log) {
+    if (!this.enabled || !log.taskId) return;
+    const run = await this.tests.get(log.taskId);
+    if (!run) return;
+    this.logs.push({
+      kind: "TEST_LOG",
+      testRunUuid: run.uuid,
+      level: log.type === "stderr" ? "ERROR" : "INFO",
+      message: String(log.content).replace(/\n$/, "").slice(0, 10000),
+      timestamp: new Date(log.time ?? Date.now()).toISOString(),
+    });
+  }
+
   async onTestCaseResult(testCase) {
     if (!this.enabled) return;
     const run = await this.tests.get(testCase.id);
@@ -114,6 +128,11 @@ export class TraReporter {
       const result = testCase.result();
       const state = result.state === "pending" ? "skipped" : result.state;
       const parts = testCase.fullName.split(" > ");
+      if (state === "failed") {
+        for (const x of result.errors ?? []) {
+          this.logs.push({ kind: "TEST_LOG", testRunUuid: run.uuid, level: "ERROR", message: String(x.stack ?? x.message).slice(0, 10000), timestamp: iso(), failure: true });
+        }
+      }
       await this.client.finishTestRun(run.buildId, run.uuid, {
         result: state,
         finishedAt: iso(),
@@ -127,11 +146,22 @@ export class TraReporter {
     }
   }
 
-  async onTestRunEnd() {
+  async onTestRunEnd(_modules, errors = []) {
     if (!this.enabled) return;
     await Promise.all(this.tests.values());
     const buildId = await this.build;
     if (!buildId) return;
+    // Unhandled errors (outside any test) belong to the build itself.
+    for (const x of errors) {
+      this.logs.push({ kind: "TEST_LOG", level: "ERROR", message: String(x.stack ?? x.message).slice(0, 10000), timestamp: iso(), failure: true });
+    }
+    for (let i = 0; i < this.logs.length; i += 500) {
+      try {
+        await this.client.addBuildLogs(buildId, { logs: this.logs.slice(i, i + 500) });
+      } catch (e) {
+        warn("addBuildLogs", e);
+      }
+    }
     try {
       await this.client.finishBuild(buildId, { finishedAt: iso() });
     } catch (e) {

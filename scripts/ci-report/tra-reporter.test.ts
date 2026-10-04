@@ -18,6 +18,7 @@ function fakeClient() {
     startTestRun: vi.fn(async () => ({ success: true, uuid: "run1" })),
     finishTestRun: vi.fn(async () => ({ success: true })),
     finishBuild: vi.fn(async () => ({ success: true })),
+    addBuildLogs: vi.fn(async () => ({ success: true })),
   };
 }
 
@@ -112,6 +113,30 @@ describe("TraReporter", () => {
     await r.onTestCaseReady(tc());
     await r.onTestCaseResult(tc({ result: () => ({ state: "failed", errors: [{ message: "boom", stack: "at x" }] }) }));
     expect(client.finishTestRun).toHaveBeenCalledWith("bld1", "run1", expect.objectContaining({ result: "failed", failure: [{ error: "boom", backtrace: "at x" }] }));
+  });
+
+  it("sends test console output as TEST_LOG entries linked to the test run", async () => {
+    const client = fakeClient();
+    const r = new TraReporter({ client, env, cwd: "/repo" });
+    await r.onTestRunStart();
+    await r.onTestCaseReady(tc());
+    await r.onUserConsoleLog({ content: "hello\n", type: "stderr", taskId: "t1", time: 1759600000000 });
+    await r.onTestRunEnd([], []);
+    expect(client.addBuildLogs).toHaveBeenCalledWith("bld1", {
+      logs: [expect.objectContaining({ kind: "TEST_LOG", testRunUuid: "run1", level: "ERROR", message: "hello", timestamp: new Date(1759600000000).toISOString() })],
+    });
+  });
+
+  it("sends failure messages and unhandled errors as ERROR logs with stack traces", async () => {
+    const client = fakeClient();
+    const r = new TraReporter({ client, env, cwd: "/repo" });
+    await r.onTestRunStart();
+    await r.onTestCaseReady(tc());
+    await r.onTestCaseResult(tc({ result: () => ({ state: "failed", errors: [{ message: "boom", stack: "Error: boom\n  at x" }] }) }));
+    await r.onTestRunEnd([], [{ name: "Error", message: "unhandled", stack: "Error: unhandled\n  at y" }]);
+    const logs = client.addBuildLogs.mock.calls.flatMap((c) => (c[1] as { logs: unknown[] }).logs);
+    expect(logs).toContainEqual(expect.objectContaining({ kind: "TEST_LOG", testRunUuid: "run1", level: "ERROR", message: "Error: boom\n  at x", failure: true }));
+    expect(logs).toContainEqual(expect.objectContaining({ kind: "TEST_LOG", level: "ERROR", message: "Error: unhandled\n  at y", failure: true }));
   });
 
   it("never throws and stops calling once the build cannot be started", async () => {

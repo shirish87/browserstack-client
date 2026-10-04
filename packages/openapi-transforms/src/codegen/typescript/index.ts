@@ -14,7 +14,7 @@ export interface GenerateClientOptions {
   className: string;
   typesImportPath: string;
   registry: CodecRegistry;
-  baseUrl: "sdk" | "sdkCloud";
+  baseUrl: "sdk" | "sdkCloud" | "sdkIngest";
   fieldOverridesPath?: string;
 }
 
@@ -101,7 +101,7 @@ export async function generateClientModule(opts: GenerateClientOptions): Promise
         method: method.toUpperCase() as EmitMethodInput["method"], path,
         pathParams, queryParams, hasRequestBody: Boolean(op.requestBody),
         operationsKey: operationId, returnType, returnTypeAliases: derived.aliases,
-        annotations, baseUrl: (op["x-base-url"] ?? opts.baseUrl) as "sdk" | "sdkCloud",
+        annotations, baseUrl: (op["x-base-url"] ?? opts.baseUrl) as "sdk" | "sdkCloud" | "sdkIngest",
         summary: op.summary, description: op.description,
       });
       const errorStatuses = Object.keys(op.responses ?? {}).map(Number)

@@ -224,6 +224,47 @@ describe("TestReportingClient", () => {
     });
   });
 
+  describe("ingestion base URL", () => {
+    function capture() {
+      const urls: string[] = [];
+      const fetchFn = async (url: string | URL | Request) => {
+        urls.push(url.toString());
+        return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "content-type": "application/json" } });
+      };
+      return { urls, client: new TestReportingClient({ username: "u", accessKey: "k", fetchFn }) };
+    }
+    const body = { name: "n", projectName: "p", startedAt: "2026-01-01T00:00:00Z", framework: { name: "vitest", version: "4" } };
+
+    it("sends every ingestion call to collector-observability, not api-automation", async () => {
+      const { urls, client } = capture();
+      await client.startBuild(body);
+      await client.startTestRun("bld", { name: "t", fileName: "a.test.ts", scopes: ["s"], startedAt: "2026-01-01T00:00:00Z" });
+      await client.finishTestRun("bld", "run", { result: "passed", finishedAt: "2026-01-01T00:00:01Z", fileName: "a.test.ts", scopes: ["s"] });
+      await client.addBuildLogs("bld", { logs: [{ kind: "TEST_LOG", message: "hi", timestamp: "2026-01-01T00:00:00Z" }] });
+      await client.finishBuild("bld", { finishedAt: "2026-01-01T00:00:02Z" });
+      expect(urls).toEqual([
+        "https://collector-observability.browserstack.com/ext/v1/builds/start",
+        "https://collector-observability.browserstack.com/ext/v1/builds/bld/tests/start",
+        "https://collector-observability.browserstack.com/ext/v1/builds/bld/tests/run/finish",
+        "https://collector-observability.browserstack.com/ext/v1/builds/bld/logs",
+        "https://collector-observability.browserstack.com/ext/v1/builds/bld/finish",
+      ]);
+    });
+
+    it("keeps read APIs on api-automation", async () => {
+      const { urls, client } = capture();
+      await client.getProjects();
+      expect(urls[0]).toMatch(/^https:\/\/api-automation\.browserstack\.com\/ext\/v1\/projects/);
+    });
+
+    it("honours ingestBaseUrl", async () => {
+      const urls: string[] = [];
+      const fetchFn = async (url: string | URL | Request) => (urls.push(url.toString()), new Response("{}", { status: 200, headers: { "content-type": "application/json" } }));
+      await new TestReportingClient({ username: "u", accessKey: "k", fetchFn, ingestBaseUrl: "https://example.test/ext/v1" }).startBuild(body);
+      expect(urls[0]).toBe("https://example.test/ext/v1/builds/start");
+    });
+  });
+
   describe("uploadReport", () => {
     function makeCapturingClient() {
       let capturedUrl = "";
