@@ -68,7 +68,7 @@ export function TestDrawer({ item, onClose }: { item: DrawerTest | null; onClose
               rows={[
                 ["Build", buildLabel],
                 ["Duration", formatDuration(test.durationMs)],
-                ["Recorded runs", test.runCount == null ? null : String(test.runCount)],
+                ["Recorded runs", test.runCount ? String(test.runCount) : null],
                 ["Muted", test.muted ? "Yes" : null],
                 ["Auto-analysed", test.autoAnalyzed ? "Yes" : null],
                 ["Tags", test.tags.length > 0 ? test.tags.join(", ") : null],
@@ -129,7 +129,7 @@ export function TestDrawer({ item, onClose }: { item: DrawerTest | null; onClose
 
           <section aria-label="Logs">
             <h3 className="mb-2 text-[13px] font-medium text-muted">Logs, steps &amp; screenshots</h3>
-            <p className="mb-3 text-muted">The Test Reporting API doesn’t return raw logs, so they open in BrowserStack.</p>
+            <p className="mb-3 text-muted">Screenshots, steps and video for this test are in BrowserStack; commands, network and console are in the session view above.</p>
             {buildUrl ? (
               <Button asChild variant="outline">
                 <a href={buildUrl} target="_blank" rel="noreferrer noopener">

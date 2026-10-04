@@ -8,7 +8,7 @@ import { formatDuration, outcomes } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
 import { LIVE_POLL_MS, projectsQuery, windowQuery } from "@/lib/queries";
 import { traApi } from "@/lib/api";
-import { hasBuildId, type IdentifiedBuild, type NamedProject } from "@/lib/schemas";
+import { hasBuildId, mostRecentFirst, type IdentifiedBuild, type NamedProject } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select } from "@/components/ui/input";
@@ -115,7 +115,7 @@ function LiveRunCard({ build, project }: { build: IdentifiedBuild; project: Name
 function AllRuns({ projects }: { projects: NamedProject[] }) {
   const { client, username } = useTraClient();
   const navigate = useNavigate();
-  const withBuilds = projects;
+  const withBuilds = mostRecentFirst(projects);
   const [projectId, setProjectId] = useState<number | undefined>(withBuilds[0]?.id);
   const [days, setDays] = useState<(typeof DAY_OPTIONS)[number]>(30);
   const [status, setStatus] = useState<string>("all");

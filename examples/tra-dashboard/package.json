@@ -16,6 +16,7 @@
   "dependencies": {
     "@dot-slash/browserstack-automate": "link:../../packages/automate",
     "@dot-slash/browserstack-router": "link:../../packages/router",
+    "@dot-slash/browserstack-test-management": "link:../../packages/test-management",
     "@dot-slash/browserstack-test-reporting": "link:../../packages/test-reporting",
     "@fontsource-variable/inter": "^5.3.0",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",

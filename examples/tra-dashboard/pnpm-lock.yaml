@@ -14,6 +14,9 @@ importers:
       '@dot-slash/browserstack-router':
         specifier: link:../../packages/router
         version: link:../../packages/router
+      '@dot-slash/browserstack-test-management':
+        specifier: link:../../packages/test-management
+        version: link:../../packages/test-management
       '@dot-slash/browserstack-test-reporting':
         specifier: link:../../packages/test-reporting
         version: link:../../packages/test-reporting

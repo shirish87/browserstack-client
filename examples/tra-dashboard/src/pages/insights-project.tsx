@@ -2,23 +2,24 @@ import { useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import { useTraClient } from "@/lib/auth";
+import { useTmClient, useTraClient } from "@/lib/auth";
+import { coverageOf, tallyBy } from "@/lib/tm";
 import { aggregateTestHealth, buildLabels, heatmapOf, summarize, toSeries, type FlatTest } from "@/lib/analytics";
-import { formatDuration, formatPercent } from "@/lib/format";
-import { buildQuery, testsQuery, windowQuery } from "@/lib/queries";
+import { formatDate, formatDuration, formatPercent } from "@/lib/format";
+import { buildQuery, testsQuery, tmCasesQuery, tmProjectQuery, tmRunsQuery, windowQuery } from "@/lib/queries";
 import { traApi } from "@/lib/api";
 import { displayValue, errorMessage } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabBar } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CategoryChart, DurationChart, OutcomesChart, PassRateChart, TestHeatmap } from "@/components/tra-charts";
+import { CategoryChart, TallyChart, DurationChart, OutcomesChart, PassRateChart, TestHeatmap } from "@/components/tra-charts";
 import { BuildsTable, buildHref } from "@/components/builds";
 import { TestDrawer, type DrawerTest } from "@/components/test-drawer";
 import { Breadcrumbs, EmptyState, ErrorState, KeyValue, PageTitle, Stat } from "@/components/common";
 
 const RangeSchema = z.coerce.number().pipe(z.union([z.literal(7), z.literal(30), z.literal(90)]));
-const SectionSchema = z.enum(["overview", "quality-gate"]);
+const SectionSchema = z.enum(["overview", "test-management", "quality-gate"]);
 const RANGES = [
   { value: "7", label: "7 days" },
   { value: "30", label: "30 days" },
@@ -26,6 +27,7 @@ const RANGES = [
 ] as const;
 const SECTIONS = [
   { value: "overview", label: "Overview" },
+  { value: "test-management", label: "Test management" },
   { value: "quality-gate", label: "Quality gate" },
 ] as const;
 
@@ -63,7 +65,7 @@ export function InsightsProjectPage() {
       <div className="mb-6">
         <TabBar label="Project sections" tabs={SECTIONS} value={section} onChange={(v) => set("section", v)} />
       </div>
-      {section === "overview" ? <Overview projectId={id.data} projectName={name} days={days} /> : <QualityGate projectName={name} />}
+      {section === "overview" ? <Overview projectId={id.data} projectName={name} days={days} /> : section === "test-management" ? <TestManagement projectName={name} /> : <QualityGate projectName={name} />}
     </>
   );
 }
@@ -258,6 +260,81 @@ function QualityGate({ projectName }: { projectName: string | undefined }) {
             ))}
           </ul>
         )}
+      </Card>
+    </div>
+  );
+}
+
+/** The project's Test Management side: the case library (how much is automated, by type and priority) and its runs. */
+function TestManagement({ projectName }: { projectName: string | undefined }) {
+  const { client, username } = useTmClient();
+  const project = useQuery({ ...tmProjectQuery(client, username, projectName ?? ""), enabled: !!projectName });
+  const tmId = project.data;
+  const cases = useQuery({ ...tmCasesQuery(client, username, tmId ?? ""), enabled: !!tmId });
+  const runs = useQuery({ ...tmRunsQuery(client, username, tmId ?? ""), enabled: !!tmId });
+
+  if (!projectName) return <EmptyState title="Project name unavailable" hint="Open this project from Insights to view Test Management." />;
+  if (project.isPending) return <Skeleton className="h-40" />;
+  if (project.isError) return <EmptyState title="Test Management isn’t available" hint={errorMessage(project.error)} />;
+  if (!tmId) return <EmptyState title="No matching Test Management project" hint={`No Test Management project is named “${projectName}”.`} />;
+  if (cases.isPending || runs.isPending) return <Skeleton className="h-64" />;
+  if (cases.isError) return <ErrorState error={cases.error} onRetry={() => void cases.refetch()} />;
+
+  const list = cases.data;
+  const cov = coverageOf(list);
+  const runList = runs.data ?? [];
+  return (
+    <div className="space-y-8">
+      <section aria-label="Test management metrics" className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <Stat label="Test cases" value={cov.total} hint={`project ${tmId}`} />
+        <Stat label="Automated" value={formatPercent(cov.automatedRatio)} hint={`${cov.automated} of ${cov.total} cases`} />
+        <Stat label="Test runs" value={runList.length} hint={`${runList.filter((r) => r.runState === "done").length} done`} />
+        <Stat label="Owners" value={new Set(list.map((c) => c.owner).filter(Boolean)).size} />
+      </section>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card><CardHeader><CardTitle>Automation status</CardTitle></CardHeader><CardContent><TallyChart tally={tallyBy(list, (c) => c.automationStatus)} label="Cases by automation status" /></CardContent></Card>
+        <Card><CardHeader><CardTitle>Case type</CardTitle></CardHeader><CardContent><TallyChart tally={tallyBy(list, (c) => c.caseType)} label="Cases by type" /></CardContent></Card>
+        <Card><CardHeader><CardTitle>Priority</CardTitle></CardHeader><CardContent><TallyChart tally={tallyBy(list, (c) => c.priority)} label="Cases by priority" /></CardContent></Card>
+      </div>
+
+      <Card>
+        <CardHeader><CardTitle>Test runs</CardTitle><span className="text-[12px] text-muted">{runList.length}</span></CardHeader>
+        <div className="scroll-thin max-h-72 overflow-auto">
+          <table className="w-full text-[13px]">
+            <thead><tr className="text-left text-[11px] uppercase tracking-wide text-muted"><th className="sticky top-0 bg-surface-1 px-5 py-2">Run</th><th className="sticky top-0 bg-surface-1 px-3 py-2">State</th><th className="sticky top-0 bg-surface-1 px-3 py-2">Assignee</th><th className="sticky top-0 bg-surface-1 px-3 py-2">Created</th></tr></thead>
+            <tbody>
+              {runList.map((r) => (
+                <tr key={r.identifier} className="border-t border-border">
+                  <td className="px-5 py-2"><span className="font-mono text-[12px] text-muted">{r.identifier}</span> {r.urls?.self ? <a className="hover:underline" href={r.urls.self} target="_blank" rel="noreferrer noopener">{r.name}</a> : r.name}</td>
+                  <td className="px-3 py-2"><Badge tone={r.runState === "done" ? "success" : "neutral"}>{r.runState ?? "—"}</Badge></td>
+                  <td className="px-3 py-2 text-muted">{r.assignee ?? "—"}</td>
+                  <td className="px-3 py-2 text-muted">{formatDate(r.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>Test cases</CardTitle><span className="text-[12px] text-muted">{list.length}</span></CardHeader>
+        <div className="scroll-thin max-h-96 overflow-auto">
+          <table className="w-full text-[13px]">
+            <thead><tr className="text-left text-[11px] uppercase tracking-wide text-muted"><th className="sticky top-0 bg-surface-1 px-5 py-2">Case</th><th className="sticky top-0 bg-surface-1 px-3 py-2">Type</th><th className="sticky top-0 bg-surface-1 px-3 py-2">Automation</th><th className="sticky top-0 bg-surface-1 px-3 py-2">Priority</th><th className="sticky top-0 bg-surface-1 px-3 py-2">Owner</th></tr></thead>
+            <tbody>
+              {list.map((c) => (
+                <tr key={c.identifier} className="border-t border-border">
+                  <td className="px-5 py-2"><span className="font-mono text-[12px] text-muted">{c.identifier}</span> {c.url ? <a className="hover:underline" href={c.url} target="_blank" rel="noreferrer noopener">{c.title}</a> : c.title}</td>
+                  <td className="px-3 py-2 text-muted">{c.caseType ?? "—"}</td>
+                  <td className="px-3 py-2"><Badge tone={c.automationStatus === "automated" ? "success" : "neutral"}>{c.automationStatus ?? "—"}</Badge></td>
+                  <td className="px-3 py-2 text-muted">{c.priority ?? "—"}</td>
+                  <td className="px-3 py-2 text-muted">{c.owner ?? "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Card>
     </div>
   );

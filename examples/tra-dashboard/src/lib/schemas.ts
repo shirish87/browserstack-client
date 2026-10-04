@@ -51,3 +51,9 @@ export type SelfHealingReport = z.infer<typeof SelfHealingReportSchema>;
 /** Response of `GET/POST /api/session`. The access key never leaves the server. */
 export const SessionResponseSchema = z.object({ username: z.string() });
 export type SessionResponse = z.infer<typeof SessionResponseSchema>;
+
+/** Newest-updated project first (stable for ties and projects without a date); returns a new array. */
+export function mostRecentFirst<T extends { updatedAt?: string | null | undefined }>(projects: readonly T[]): T[] {
+  const at = (p: T): number => Date.parse(p.updatedAt ?? "") || 0;
+  return [...projects].sort((a, b) => at(b) - at(a));
+}

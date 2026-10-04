@@ -10,7 +10,7 @@ import { SessionStore } from "./sessions";
  * session behind a test lives. The gateway is read-only (see below), so reaching Automate's host cannot
  * start, stop or delete anything.
  */
-export const TRA_ALLOWED_HOSTS = ["api-automation.browserstack.com", "upload-automation.browserstack.com", "api.browserstack.com"];
+export const TRA_ALLOWED_HOSTS = ["api-automation.browserstack.com", "upload-automation.browserstack.com", "api.browserstack.com", "test-management.browserstack.com"];
 const TRA_PROBE_URL = "https://api-automation.browserstack.com/ext/v1/projects";
 const COOKIE_NAME = "tra_sid";
 

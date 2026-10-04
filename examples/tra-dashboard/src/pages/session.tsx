@@ -233,11 +233,9 @@ function Evidence({ tab, evidence, live }: { tab: Tab; evidence: SessionEvidence
                 <td className="w-[28%] min-w-[160px] px-3 py-1.5">
                   {bar && (
                     <div className="relative h-2 rounded-[1px] bg-hairline/40" role="img" aria-label={`connect ${Math.round(r.phases.connect)} ms, wait ${Math.round(r.phases.wait)} ms, transfer ${Math.round(r.phases.transfer)} ms`}>
-                      <div className="absolute flex h-full" style={{ left: `${bar.left}%`, minWidth: 2 }}>
-                        <i className="h-full bg-border" style={{ width: `${bar.connect}%` }} />
-                        <i className={cn("h-full", r.failed ? "bg-danger" : "bg-primary")} style={{ width: `${bar.wait}%` }} />
-                        <i className="h-full bg-success" style={{ width: `${bar.transfer}%` }} />
-                      </div>
+                      <i className="absolute h-full bg-border" style={{ left: `${bar.left}%`, width: `max(1px, ${bar.connect}%)` }} />
+                      <i className={cn("absolute h-full", r.failed ? "bg-danger" : "bg-primary")} style={{ left: `${bar.left + bar.connect}%`, width: `max(2px, ${bar.wait}%)` }} />
+                      <i className="absolute h-full bg-success" style={{ left: `${bar.left + bar.connect + bar.wait}%`, width: `max(1px, ${bar.transfer}%)` }} />
                     </div>
                   )}
                 </td>

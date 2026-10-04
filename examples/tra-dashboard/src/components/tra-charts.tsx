@@ -153,3 +153,20 @@ export function TestHeatmap({ cells, tests, builds }: { cells: HeatCell[]; tests
   );
   return <Chart definition={definition} height={Math.max(160, tests.length * 28 + 90)} ariaLabel={`Result of ${tests.length} tests across ${builds.length} builds`} />;
 }
+
+/** A ranked tally (cases by status, type, priority) as horizontal bars. */
+export function TallyChart({ tally, label }: { tally: { label: string; count: number }[]; label: string }) {
+  const definition = useMemo(
+    () =>
+      defineChart({
+        marks: [barX(tally, { x: "count", y: "label", fill: "var(--primary)" })],
+        scales: {
+          x: { scale: scaleLinear, grid: true, axis: { label: "Cases" } },
+          y: { scale: () => scaleBand<string>().domain(tally.map((t) => t.label)).padding(0.3) },
+        },
+        tooltip,
+      }),
+    [tally],
+  );
+  return <Chart definition={definition} height={Math.max(120, tally.length * 34 + 48)} ariaLabel={label} />;
+}

@@ -1,4 +1,6 @@
 import { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
+import { TestManagementClient } from "@dot-slash/browserstack-test-management";
+import { TmCasesSchema, TmProjectsSchema, TmRunsSchema } from "./tm";
 import { buildDateRange, flattenTests, type FlatTest } from "./analytics";
 import { normalizeHierarchy } from "./hierarchy";
 import {
@@ -23,6 +25,35 @@ export function createTraClient(): TestReportingClient {
     middleware: [(req, next) => next({ ...req, url: `/gateway?url=${encodeURIComponent(req.url)}` })],
   });
 }
+
+/** Same gateway rewrite as the TRA client; Test Management is a separate host behind the same session. */
+export function createTmClient(): TestManagementClient {
+  return new TestManagementClient({
+    middleware: [(req, next) => next({ ...req, url: `/gateway?url=${encodeURIComponent(req.url)}` })],
+  });
+}
+
+/** Test Management responses, validated at the boundary like TRA's. */
+export const tmApi = {
+  /** The TM project that shares a TRA project's name (TM identifies projects like `PR-137`), if there is one. */
+  async projectIdFor(client: TestManagementClient, name: string): Promise<string | undefined> {
+    const projects = TmProjectsSchema.parse(await client.getProjects());
+    return projects.find((p) => p.name === name)?.identifier;
+  },
+  /** Up to `max` cases, paged. */
+  async cases(client: TestManagementClient, projectId: string, max = 300) {
+    const out: ReturnType<typeof TmCasesSchema.parse> = [];
+    for (let page = 1; page <= 10 && out.length < max; page++) {
+      const batch = TmCasesSchema.parse(await client.getTestCases(projectId, page));
+      out.push(...batch);
+      if (batch.length === 0) break;
+    }
+    return out.slice(0, max);
+  },
+  async runs(client: TestManagementClient, projectId: string) {
+    return TmRunsSchema.parse(await client.getTestRuns(projectId));
+  },
+};
 
 /** Every response is validated at the boundary: the rest of the app only sees parsed types. */
 export const traApi = {

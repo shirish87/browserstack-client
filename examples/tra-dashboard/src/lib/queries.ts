@@ -1,7 +1,8 @@
 import { isLiveSession, LIVE_LOG_POLL_MS } from "./session";
 import { queryOptions } from "@tanstack/react-query";
 import type { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
-import { traApi } from "./api";
+import type { TestManagementClient } from "@dot-slash/browserstack-test-management";
+import { tmApi, traApi } from "./api";
 import { isNamedProject, type NamedProject } from "./schemas";
 
 /** Poll interval while a build is running (TRA has no push events). */
@@ -67,3 +68,17 @@ export const sessionLogsQuery = (client: TestReportingClient, username: string, 
     staleTime: live ? 0 : Infinity,
     ...(live ? { refetchInterval: LIVE_LOG_POLL_MS } : {}),
   });
+
+export const tmProjectQuery = (client: TestManagementClient, username: string, projectName: string) =>
+  queryOptions({
+    queryKey: ["tm-project", username, projectName],
+    queryFn: () => tmApi.projectIdFor(client, projectName),
+    retry: false,
+    staleTime: Infinity,
+  });
+
+export const tmCasesQuery = (client: TestManagementClient, username: string, projectId: string) =>
+  queryOptions({ queryKey: ["tm-cases", username, projectId], queryFn: () => tmApi.cases(client, projectId), retry: false });
+
+export const tmRunsQuery = (client: TestManagementClient, username: string, projectId: string) =>
+  queryOptions({ queryKey: ["tm-runs", username, projectId], queryFn: () => tmApi.runs(client, projectId), retry: false });

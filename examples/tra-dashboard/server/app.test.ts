@@ -104,6 +104,13 @@ describe("gateway", () => {
     expect(await res.json()).toEqual({ projects: [{ id: 1, name: "p" }] });
   });
 
+  it("also reaches Test Management, where a test's linked cases and runs live", async () => {
+    const base = await start();
+    const { cookie } = await login(base);
+    const url = "https://test-management.browserstack.com/api/v2/projects?p=1";
+    expect((await fetch(`${base}/gateway?url=${encodeURIComponent(url)}`, { headers: { cookie } })).status).toBe(200);
+  });
+
   it("also reaches the Automate and App Automate APIs, where a test's session lives", async () => {
     const base = await start();
     const { cookie } = await login(base);

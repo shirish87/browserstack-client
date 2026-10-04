@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
 import { filterTree, normalizeHierarchy, normalizeStatus } from "./hierarchy";
 import { formatDuration, formatPercent, outcomes, passRate, totalTests } from "./format";
-import { CredentialsSchema, TestRunsResponseSchema, hasBuildId, isNamedProject } from "./schemas";
+import { CredentialsSchema, TestRunsResponseSchema, hasBuildId, isNamedProject, mostRecentFirst } from "./schemas";
 
 /** Real, sanitised API captures shared with the contract tests. */
 const fixture = (name: string): string => readFileSync(new URL(`../../../../packages/contract-tests/fixtures/${name}`, import.meta.url), "utf8");
@@ -114,5 +114,18 @@ describe("schemas", () => {
     expect(hasBuildId({ name: "x" })).toBe(false);
     expect(isNamedProject({ id: 1, name: "p" })).toBe(true);
     expect(isNamedProject({ id: 1 })).toBe(false);
+  });
+});
+
+describe("mostRecentFirst", () => {
+  const p = (id: number, name: string, updatedAt?: string) => ({ id, name, ...(updatedAt ? { updatedAt } : {}) });
+  it("puts the most recently updated project first, so a list opens on live work, not the first alphabetical project", () => {
+    const sorted = mostRecentFirst([p(1, "a", "2026-04-27T00:00:00Z"), p(2, "b", "2026-10-04T00:00:00Z"), p(3, "c")]);
+    expect(sorted.map((x) => x.id)).toEqual([2, 1, 3]);
+  });
+  it("keeps the original order for ties and does not mutate its input", () => {
+    const input = [p(1, "a"), p(2, "b")];
+    expect(mostRecentFirst(input).map((x) => x.id)).toEqual([1, 2]);
+    expect(input.map((x) => x.id)).toEqual([1, 2]);
   });
 });

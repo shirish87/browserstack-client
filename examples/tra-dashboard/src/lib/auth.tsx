@@ -1,7 +1,8 @@
 import { createContext, use, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
-import { createTraClient } from "./api";
+import type { TestManagementClient } from "@dot-slash/browserstack-test-management";
+import { createTmClient, createTraClient } from "./api";
 import { SessionResponseSchema, type Credentials } from "./schemas";
 import { z } from "zod";
 
@@ -77,10 +78,17 @@ export function useAuth(): AuthValue {
 }
 
 const client = createTraClient();
+const tmClient = createTmClient();
 
 /** For routes behind the sign-in guard. */
 export function useTraClient(): { client: TestReportingClient; username: string } {
   const { state } = useAuth();
   if (state.status !== "authenticated") throw new Error("useTraClient used while signed out");
   return { client, username: state.username };
+}
+
+export function useTmClient(): { client: TestManagementClient; username: string } {
+  const { state } = useAuth();
+  if (state.status !== "authenticated") throw new Error("useTmClient used while signed out");
+  return { client: tmClient, username: state.username };
 }
