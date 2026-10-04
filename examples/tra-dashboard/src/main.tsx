@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./index.css";
 import { AuthProvider } from "@/lib/auth";
+import { ThemeProvider } from "@/lib/theme";
 import { AppShell } from "@/components/shell";
 import { LoginPage } from "@/pages/login";
 import { ProjectsPage } from "@/pages/projects";
@@ -20,6 +21,7 @@ if (!rootEl) throw new Error("Missing #root element");
 createRoot(rootEl).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
       <BrowserRouter>
         <AuthProvider>
           <Routes>
@@ -34,6 +36,7 @@ createRoot(rootEl).render(
           </Routes>
         </AuthProvider>
       </BrowserRouter>
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>,
 );

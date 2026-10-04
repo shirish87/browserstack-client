@@ -47,22 +47,22 @@ export function ProjectsPage() {
         <>
           <Card className="overflow-hidden">
             <table className="w-full text-left">
-              <thead className="border-b border-border bg-background text-muted">
+              <thead className="border-b border-border bg-surface-2 text-[13px] text-muted">
                 <tr>
-                  <th scope="col" className="px-5 py-2.5 font-semibold">Project</th>
-                  <th scope="col" className="px-5 py-2.5 font-semibold">ID</th>
-                  <th scope="col" className="px-5 py-2.5 font-semibold">Last activity</th>
-                  <th scope="col" className="px-5 py-2.5 font-semibold">Created</th>
+                  <th scope="col" className="px-5 py-2.5 font-medium">Project</th>
+                  <th scope="col" className="px-5 py-2.5 font-medium">ID</th>
+                  <th scope="col" className="px-5 py-2.5 font-medium">Last activity</th>
+                  <th scope="col" className="px-5 py-2.5 font-medium">Created</th>
                   <th scope="col" className="px-5 py-2.5"><span className="sr-only">Open in BrowserStack</span></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {projects.map((p) => (
-                  <tr key={p.id} className="t-fast transition-colors hover:bg-background">
+                  <tr key={p.id} className="t-fast transition-colors hover:bg-surface-2">
                     <td className="px-5 py-3">
                       <Link
                         to={`/projects/${p.id}?name=${encodeURIComponent(p.name)}`}
-                        className="font-bold underline-offset-2 hover:underline"
+                        className="font-semibold underline-offset-2 hover:underline"
                       >
                         {p.name}
                       </Link>

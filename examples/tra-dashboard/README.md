@@ -4,7 +4,7 @@ Read-only UI for BrowserStack **Test Reporting & Analytics**: projects → build
 (summary, failure categories, smart tags, VCS/CI/host, quality gate, self-healing report) → test hierarchy.
 
 - **Backend:** Node 22 + Express 5 (`server/`), TypeScript strict.
-- **Frontend:** React 19, Vite, react-router, TanStack Query, Tailwind v4 + shadcn-style components (`src/`),
+- **Frontend:** React 19, Vite, react-router, TanStack Query, Tailwind v4 + shadcn-style components, Linear design system (dark default, light toggle) (`src/`),
   built to static assets in `public/` and served by Express with SPA fallback routing.
 - **Types:** no type assertions; every API response, request body and env var is validated with zod
   (`src/lib/schemas.ts`, `server/index.ts`).

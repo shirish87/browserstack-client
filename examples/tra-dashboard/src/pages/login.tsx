@@ -6,6 +6,7 @@ import { CredentialsSchema } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { errorMessage } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function LoginPage() {
   const { state, signIn } = useAuth();
@@ -36,24 +37,25 @@ export function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center px-4">
+    <main className="relative grid min-h-screen place-items-center px-4">
+      <div className="absolute right-4 top-4"><ThemeToggle /></div>
       <div className="w-full max-w-sm">
         <div className="mb-6 text-center">
-          <span className="mx-auto mb-4 grid size-10 place-items-center rounded-xl bg-primary text-[16px] font-bold text-on-primary" aria-hidden>
+          <span className="mx-auto mb-5 grid size-11 place-items-center rounded-lg bg-primary text-[18px] font-semibold text-on-primary" aria-hidden>
             T
           </span>
-          <h1 className="text-[22px] font-bold tracking-[-0.22px]">Test Reporting</h1>
+          <h1 className="text-[28px] font-semibold leading-[1.2] tracking-[-0.6px]">Test Reporting</h1>
           <p className="mt-1 text-muted">Sign in with your BrowserStack credentials to browse builds and tests.</p>
         </div>
-        <form onSubmit={onSubmit} className="space-y-4 rounded-xl border border-border bg-surface p-6 shadow-elevated" noValidate>
+        <form onSubmit={onSubmit} className="space-y-4 panel rounded-xl p-6" noValidate>
           <div className="space-y-1.5">
-            <label htmlFor="username" className="font-semibold">
+            <label htmlFor="username" className="text-[13px] font-medium text-ink-muted">
               Username
             </label>
             <Input id="username" name="username" autoComplete="username" autoFocus required />
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="accessKey" className="font-semibold">
+            <label htmlFor="accessKey" className="text-[13px] font-medium text-ink-muted">
               Access key
             </label>
             <Input id="accessKey" name="accessKey" type="password" autoComplete="current-password" required />

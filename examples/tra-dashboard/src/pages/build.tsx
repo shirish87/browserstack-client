@@ -197,7 +197,7 @@ function SmartTags({ tags }: { tags: BuildDetails["smartTags"] }) {
           {rows.map(([label, n, hint]) => (
             <li key={label} className="flex items-center justify-between gap-4 px-5 py-3">
               <div>
-                <p className="font-semibold">{label}</p>
+                <p className="font-medium">{label}</p>
                 <p className="text-[12px] text-muted">{hint}</p>
               </div>
               <span className="font-mono text-[15px] font-medium">{n ?? 0}</span>
@@ -219,8 +219,8 @@ function RulesTable({ rules }: { rules: z.infer<typeof RuleSchema>[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left">
-        <thead className="border-y border-border bg-background text-muted">
-          <tr>{columns.map((c) => <th key={c} scope="col" className="px-5 py-2 font-semibold">{humanize(c)}</th>)}</tr>
+        <thead className="border-y border-border bg-surface-2 text-[13px] text-muted">
+          <tr>{columns.map((c) => <th key={c} scope="col" className="px-5 py-2 font-medium">{humanize(c)}</th>)}</tr>
         </thead>
         <tbody className="divide-y divide-border">
           {rules.map((r, i) => (
@@ -266,7 +266,7 @@ function QualityGateBody({ status }: { status: QualityGateStatus }) {
       {status.qualityProfiles.map((p, i) => (
         <div key={p.id ?? i} className="pb-1 pt-3">
           <div className="flex items-center justify-between px-5 pb-2">
-            <p className="font-bold">{p.name ?? "Profile"}{p.type && <span className="ml-2 font-normal text-muted">{p.type}</span>}</p>
+            <p className="font-semibold">{p.name ?? "Profile"}{p.type && <span className="ml-2 font-normal text-muted">{p.type}</span>}</p>
             {p.result && <StatusBadge status={p.result} />}
           </div>
           <RulesTable rules={p.rules} />
@@ -350,7 +350,7 @@ function TestsSection({ buildId }: { buildId: string }) {
   return (
     <section aria-labelledby="tests-heading" className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 id="tests-heading" className="text-[18px] font-bold tracking-[-0.18px]">Tests</h2>
+        <h2 id="tests-heading" className="text-[22px] font-medium tracking-[-0.4px]">Tests</h2>
         {summary && <StatusLegend stats={summary} />}
       </div>
       <div className="flex flex-wrap items-center gap-3">
@@ -406,7 +406,7 @@ function TreeNode({ node, depth, forceOpen }: { node: TestNode; depth: number; f
     <>
       {expandable ? (open ? <ChevronDown className="size-4 shrink-0 text-muted" aria-hidden /> : <ChevronRight className="size-4 shrink-0 text-muted" aria-hidden />) : <span className="size-4 shrink-0" />}
       {isLeaf ? <StatusIcon status={node.status} /> : failedHere > 0 ? <StatusIcon status="failed" /> : <StatusIcon status="passed" />}
-      <span className={isLeaf ? "min-w-0 flex-1 truncate" : "min-w-0 flex-1 truncate font-bold"}>{node.name}</span>
+      <span className={isLeaf ? "min-w-0 flex-1 truncate" : "min-w-0 flex-1 truncate font-semibold"}>{node.name}</span>
       {isLeaf ? (
         <span className="flex shrink-0 items-center gap-2">
           {node.isFlaky && <Badge tone="warning">Flaky</Badge>}
@@ -430,7 +430,7 @@ function TreeNode({ node, depth, forceOpen }: { node: TestNode; depth: number; f
           type="button"
           onClick={() => setOpen(!openState)}
           style={{ paddingLeft: 12 + depth * 20 }}
-          className="flex w-full cursor-pointer items-center gap-2 py-2.5 pr-5 text-left t-fast transition-colors hover:bg-background"
+          className="flex w-full cursor-pointer items-center gap-2 py-2.5 pr-5 text-left t-fast transition-colors hover:bg-surface-2"
         >
           {header}
         </button>
@@ -453,10 +453,10 @@ function TestDetail({ extra, depth }: { extra: Record<string, unknown>; depth: n
   const failures = FailureSchema.safeParse(extra["failure"]);
   const rest = Object.entries(extra).filter(([k]) => !(k === "failure" && failures.success));
   return (
-    <div style={{ marginLeft: 12 + depth * 20 + 24 }} className="mb-3 mr-5 space-y-3 rounded-lg bg-background p-4">
+    <div style={{ marginLeft: 12 + depth * 20 + 24 }} className="mb-3 mr-5 space-y-3 rounded-lg bg-surface-2 p-4">
       {failures.success && failures.data.map((f, i) => (
         <div key={i} className="rounded-md border border-danger/30 bg-danger-bg p-3">
-          {f.error && <p className="font-semibold text-danger">{f.error}</p>}
+          {f.error && <p className="font-medium text-danger">{f.error}</p>}
           {f.backtrace && <pre className="mt-2 overflow-x-auto whitespace-pre-wrap font-mono text-[12px] font-medium leading-[1.33] text-muted">{f.backtrace}</pre>}
         </div>
       ))}

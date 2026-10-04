@@ -29,9 +29,9 @@ export function Breadcrumbs({ items }: { items: { label: string; to?: string }[]
 
 export function PageTitle({ title, subtitle, actions }: { title: ReactNode; subtitle?: ReactNode; actions?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+    <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
       <div className="min-w-0">
-        <h1 className="text-[22px] font-bold leading-tight tracking-[-0.22px]">{title}</h1>
+        <h1 className="text-[28px] font-semibold leading-[1.2] tracking-[-0.6px]">{title}</h1>
         {subtitle && <div className="mt-1 text-muted">{subtitle}</div>}
       </div>
       {actions}
@@ -41,10 +41,10 @@ export function PageTitle({ title, subtitle, actions }: { title: ReactNode; subt
 
 export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () => void }) {
   return (
-    <Card role="alert" className="flex items-start gap-3 border-danger/30 bg-danger-bg p-5">
+    <Card role="alert" className="flex items-start gap-3 border-danger/30 p-5">
       <AlertTriangle className="mt-0.5 size-4 shrink-0 text-danger" aria-hidden />
       <div className="min-w-0 flex-1">
-        <p className="font-bold text-danger">Couldn’t load this data</p>
+        <p className="font-semibold text-danger">Couldn’t load this data</p>
         <p className="mt-0.5 break-words text-muted">{errorMessage(error)}</p>
       </div>
       {onRetry && (
@@ -59,7 +59,7 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
 export function EmptyState({ title, hint }: { title: string; hint?: string }) {
   return (
     <Card className="px-6 py-12 text-center">
-      <p className="font-bold">{title}</p>
+      <p className="font-semibold">{title}</p>
       {hint && <p className="mt-1 text-muted">{hint}</p>}
     </Card>
   );
@@ -104,7 +104,7 @@ export function LoadMore({
 
 export function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <a href={href} target="_blank" rel="noreferrer noopener" className="font-semibold underline-offset-2 hover:underline">
+    <a href={href} target="_blank" rel="noreferrer noopener" className="font-medium text-link underline-offset-2 hover:underline">
       {children}
     </a>
   );
@@ -113,8 +113,8 @@ export function ExternalLink({ href, children }: { href: string; children: React
 export function Stat({ label, value, hint }: { label: string; value: ReactNode; hint?: ReactNode }) {
   return (
     <Card className="px-5 py-4">
-      <p className="text-muted">{label}</p>
-      <p className="mt-1 text-[22px] font-bold leading-tight tracking-[-0.22px]">{value}</p>
+      <p className="text-[13px] text-muted">{label}</p>
+      <p className="mt-1.5 text-[22px] font-medium leading-[1.25] tracking-[-0.4px]">{value}</p>
       {hint && <p className="mt-0.5 text-[12px] text-muted">{hint}</p>}
     </Card>
   );

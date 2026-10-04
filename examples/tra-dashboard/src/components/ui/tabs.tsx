@@ -17,7 +17,7 @@ export function TabBar<T extends string>({
   label: string;
 }) {
   return (
-    <div role="tablist" aria-label={label} className="flex gap-1 border-b border-border">
+    <div role="tablist" aria-label={label} className="inline-flex gap-1 rounded-full border border-border bg-surface p-1">
       {tabs.map((t) => {
         const active = t.value === value;
         return (
@@ -27,8 +27,8 @@ export function TabBar<T extends string>({
             aria-selected={active}
             onClick={() => onChange(t.value)}
             className={cn(
-              "-mb-px cursor-pointer border-b-2 px-3 py-2 font-semibold t-fast transition-colors",
-              active ? "border-primary text-text" : "border-transparent text-muted hover:text-text",
+              "cursor-pointer rounded-full px-3.5 py-1.5 font-medium t-fast transition-colors",
+              active ? "bg-surface-3 text-text" : "text-muted hover:text-text",
             )}
           >
             {t.label}

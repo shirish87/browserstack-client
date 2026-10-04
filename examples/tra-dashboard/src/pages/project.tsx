@@ -107,13 +107,13 @@ function BuildsTab({ projectId, projectName }: { projectId: number; projectName:
         <>
           <Card className="overflow-x-auto">
             <table className="w-full min-w-[820px] text-left">
-              <thead className="border-b border-border bg-background text-muted">
+              <thead className="border-b border-border bg-surface-2 text-[13px] text-muted">
                 <tr>
-                  <th scope="col" className="px-5 py-2.5 font-semibold">Build</th>
-                  <th scope="col" className="px-5 py-2.5 font-semibold">Status</th>
-                  <th scope="col" className="w-64 px-5 py-2.5 font-semibold">Tests</th>
-                  <th scope="col" className="px-5 py-2.5 font-semibold">Duration</th>
-                  <th scope="col" className="px-5 py-2.5 font-semibold">Started</th>
+                  <th scope="col" className="px-5 py-2.5 font-medium">Build</th>
+                  <th scope="col" className="px-5 py-2.5 font-medium">Status</th>
+                  <th scope="col" className="w-64 px-5 py-2.5 font-medium">Tests</th>
+                  <th scope="col" className="px-5 py-2.5 font-medium">Duration</th>
+                  <th scope="col" className="px-5 py-2.5 font-medium">Started</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -134,9 +134,9 @@ function BuildRow({ build: b, projectId, projectName }: { build: BuildSummary; p
   const total = totalTests(b.statusStats);
   const link = `/builds/${encodeURIComponent(b.buildId)}?project=${projectId}${projectName ? `&name=${encodeURIComponent(projectName)}` : ""}`;
   return (
-    <tr className="align-top t-fast transition-colors hover:bg-background">
+    <tr className="align-top t-fast transition-colors hover:bg-surface-2">
       <td className="px-5 py-3">
-        <Link to={link} className="font-bold underline-offset-2 hover:underline">
+        <Link to={link} className="font-semibold underline-offset-2 hover:underline">
           {b.name ?? "Untitled build"}
           {b.buildNumber != null && <span className="ml-1.5 font-mono text-[12px] font-medium text-muted">#{b.buildNumber}</span>}
         </Link>
@@ -174,7 +174,7 @@ function Overview({ builds }: { builds: BuildSummary[] }) {
         <Stat label="Latest" value={<StatusBadge status={builds[0]?.status} />} hint={formatRelative(builds[0]?.startedAt)} />
       </div>
       <Card className="px-5 py-4">
-        <p className="mb-2 font-semibold">Recent builds <span className="font-normal text-muted">(oldest → newest)</span></p>
+        <p className="mb-2 font-medium">Recent builds <span className="font-normal text-muted">(oldest → newest)</span></p>
         <ul className="flex items-end gap-1" aria-label="Recent build outcomes">
           {timeline.map((b) => {
             const s = normalizeStatus(b.status);
@@ -230,7 +230,7 @@ function QualityGateTab({ projectName }: { projectName: string | undefined }) {
             {s.qualityProfiles.map((p, i) => (
               <li key={p.id ?? i} className="flex items-center justify-between gap-4 px-5 py-3">
                 <div>
-                  <p className="font-bold">{p.name ?? "Untitled profile"}</p>
+                  <p className="font-semibold">{p.name ?? "Untitled profile"}</p>
                   <p className="text-muted">{p.rulesCount ?? 0} rules{p.isGlobalProfile ? " · Global" : ""}</p>
                 </div>
                 <Badge tone={p.enabled ? "success" : "neutral"}>{p.enabled ? "Enabled" : "Disabled"}</Badge>
