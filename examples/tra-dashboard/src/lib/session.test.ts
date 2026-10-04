@@ -6,6 +6,8 @@ import {
   commandsFromLog,
   eventsBefore,
   formatBytes,
+  isLiveSession,
+  LIVE_LOG_POLL_MS,
   waterfallOf,
   parseAppiumLog,
   parseDeviceLog,
@@ -293,5 +295,19 @@ describe("waterfallOf", () => {
   it("copes with no rows and zero-length rows", () => {
     expect(waterfallOf([])).toEqual([]);
     expect(waterfallOf([row(1000, 0, 0, 0)])).toHaveLength(1);
+  });
+});
+
+describe("isLiveSession", () => {
+  it("is true only while Automate / App Automate report the session as running or queued", () => {
+    expect(isLiveSession("running")).toBe(true);
+    expect(isLiveSession("queued")).toBe(true);
+    expect(isLiveSession("done")).toBe(false);
+    expect(isLiveSession("failed")).toBe(false);
+    expect(isLiveSession(undefined)).toBe(false);
+  });
+  it("polls often enough to feel live but not hammer the API", () => {
+    expect(LIVE_LOG_POLL_MS).toBeGreaterThanOrEqual(2000);
+    expect(LIVE_LOG_POLL_MS).toBeLessThanOrEqual(10000);
   });
 });

@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { useTraClient } from "@/lib/auth";
-import { aggregateTestHealth, summarize, toSeries, type FlatTest } from "@/lib/analytics";
+import { aggregateTestHealth, buildLabels, heatmapOf, summarize, toSeries, type FlatTest } from "@/lib/analytics";
 import { formatDuration, formatPercent } from "@/lib/format";
 import { buildQuery, testsQuery, windowQuery } from "@/lib/queries";
 import { traApi } from "@/lib/api";
@@ -12,8 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabBar } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChartCard } from "@/components/charts";
-import { BuildsTable, buildHref, toChartPoints } from "@/components/builds";
+import { CategoryChart, DurationChart, OutcomesChart, PassRateChart, TestHeatmap } from "@/components/tra-charts";
+import { BuildsTable, buildHref } from "@/components/builds";
 import { TestDrawer, type DrawerTest } from "@/components/test-drawer";
 import { Breadcrumbs, EmptyState, ErrorState, KeyValue, PageTitle, Stat } from "@/components/common";
 
@@ -84,12 +84,10 @@ function Overview({ projectId, projectName, days }: { projectId: number; project
     return <EmptyState title={`No builds in the last ${days} days`} hint="Try a longer range, or report a build to this project." />;
   }
 
-  const points = toChartPoints(series).map((p, i) => ({ ...p, value: series[i]?.passRate ?? null }));
-  const durationPoints = toChartPoints(series).map((p, i) => ({ ...p, value: series[i]?.durationMs ?? null }));
-  const minRate = Math.min(...points.map((p) => p.value ?? 1));
-  const lo = Math.max(0, Math.min(0.9, Math.floor((minRate - 0.02) * 20) / 20));
+  const unique = buildLabels(series);
+  const heatLabels = new Map(series.map((p, i) => [p.buildId, unique[i] ?? p.buildId]));
   const delta = summary.passRateDelta;
-  const open = (p: { id: string }) => void navigate(buildHref(p.id, project));
+  const open = (buildId: string) => void navigate(buildHref(buildId, project));
 
   return (
     <div className="space-y-8">
@@ -101,32 +99,12 @@ function Overview({ projectId, projectName, days }: { projectId: number; project
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <ChartCard
-          title="Pass rate"
-          subtitle="Per build · click a point to open that build"
-          points={points}
-          kind="line"
-          format={(v) => formatPercent(v)}
-          axisFormat={(v) => `${Math.round(v * 100)}%`}
-          domain={[lo, 1]}
-          valueHeader="Pass rate"
-          onSelect={open}
-          empty="No executed tests in this range."
-        />
-        <ChartCard
-          title="Duration"
-          subtitle="Per build · slower builds stand out"
-          points={durationPoints}
-          kind="bars"
-          format={(v) => formatDuration(v * 1000)}
-          axisFormat={(v) => formatDuration(v * 1000)}
-          valueHeader="Duration"
-          onSelect={open}
-          empty="No duration data in this range."
-        />
+        <VizCard title="Pass rate" subtitle="Per build · click a point to open that build"><PassRateChart series={series} onOpen={open} /></VizCard>
+        <VizCard title="Test outcomes" subtitle="Passed, failed and skipped per build"><OutcomesChart series={series} onOpen={open} /></VizCard>
       </div>
+      <VizCard title="Duration" subtitle="Per build · dashed line is the average"><DurationChart series={series} onOpen={open} /></VizCard>
 
-      <Hotspots builds={series.filter((p) => p.status !== "pending").slice(-ANALYSIS_BUILDS).reverse().map((p) => p.buildId)} observability={new Map((builds ?? []).map((b) => [b.buildId, b.observabilityUrl]))} labels={new Map(series.map((p) => [p.buildId, `${p.name ?? "Build"} #${p.buildNumber ?? ""}`]))} />
+      <Hotspots builds={series.filter((p) => p.status !== "pending").slice(-ANALYSIS_BUILDS).reverse().map((p) => p.buildId)} observability={new Map((builds ?? []).map((b) => [b.buildId, b.observabilityUrl]))} labels={new Map(series.map((p) => [p.buildId, `${p.name ?? "Build"} #${p.buildNumber ?? ""}`]))} heatLabels={heatLabels} />
 
       <section aria-labelledby="recent-heading">
         <h2 id="recent-heading" className="mb-3 text-[22px] font-medium tracking-[-0.4px]">Recent builds</h2>
@@ -141,10 +119,12 @@ function Hotspots({
   builds,
   observability,
   labels,
+  heatLabels,
 }: {
   builds: string[];
   observability: Map<string, string | null | undefined>;
   labels: Map<string, string>;
+  heatLabels: Map<string, string>;
 }) {
   const { client, username } = useTraClient();
   const tests = useQueries({ queries: builds.map((b) => testsQuery(client, username, b)) });
@@ -156,11 +136,11 @@ function Hotspots({
 
   const runs: FlatTest[][] = tests.map((t) => t.data ?? []);
   const health = aggregateTestHealth(runs);
+  const heat = heatmapOf(runs, builds.map((b) => heatLabels.get(b) ?? b.slice(0, 6)), 12);
 
   const categories = new Map<string, number>();
   for (const d of details) for (const [k, v] of Object.entries(d.data?.failureCategories ?? {})) categories.set(k, (categories.get(k) ?? 0) + v);
   const cats = [...categories.entries()].sort((a, b) => b[1] - a[1]);
-  const maxCat = Math.max(1, ...cats.map(([, n]) => n));
 
   const openTest = (key: string) => {
     for (let i = 0; i < runs.length; i++) {
@@ -175,7 +155,7 @@ function Hotspots({
 
   return (
     <div className="grid gap-6 lg:grid-cols-5">
-      <Card className="lg:col-span-3">
+      <Card className={cats.length > 0 || loading ? "lg:col-span-3" : "lg:col-span-5"}>
         <CardHeader>
           <CardTitle>Failing &amp; flaky tests</CardTitle>
           <span className="text-[12px] text-muted">last {builds.length} finished builds</span>
@@ -206,27 +186,29 @@ function Hotspots({
         {failedLoads > 0 && <p className="border-t border-border px-5 py-2 text-[12px] text-muted">{failedLoads} build(s) couldn’t be analysed.</p>}
       </Card>
 
-      <Card className="lg:col-span-2">
+      {(loading || cats.length > 0) && <Card className="lg:col-span-2">
         <CardHeader><CardTitle>Failure categories</CardTitle><span className="text-[12px] text-muted">same builds</span></CardHeader>
         <CardContent>
-          {loading ? <Skeleton className="h-32" /> : cats.length === 0 ? (
-            <p className="text-muted">No categorised failures.</p>
-          ) : (
-            <ul className="space-y-3">
-              {cats.map(([name, n]) => (
-                <li key={name}>
-                  <div className="mb-1 flex justify-between"><span>{name}</span><span className="font-mono text-[12px]">{n}</span></div>
-                  <div className="h-1.5 rounded-full bg-surface-3" role="img" aria-label={`${name}: ${n}`}>
-                    <div className="h-full rounded-full bg-danger" style={{ width: `${(n / maxCat) * 100}%` }} />
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+          {loading ? <Skeleton className="h-32" /> : cats.length === 0 ? <p className="text-muted">No categorised failures.</p> : <CategoryChart categories={cats} />}
+        </CardContent>
+      </Card>}
+      <Card className="lg:col-span-5">
+        <CardHeader><CardTitle>Test history</CardTitle><span className="text-[12px] text-muted">failing or flaky tests across the same builds</span></CardHeader>
+        <CardContent>
+          {loading ? <Skeleton className="h-40" /> : heat.tests.length === 0 ? <p className="text-muted">Nothing failed or flaked in the analysed builds.</p> : <TestHeatmap {...heat} />}
         </CardContent>
       </Card>
       <TestDrawer item={drawer} onClose={() => setDrawer(null)} />
     </div>
+  );
+}
+
+function VizCard({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+  return (
+    <Card>
+      <CardHeader><CardTitle>{title}</CardTitle><span className="text-[12px] text-muted">{subtitle}</span></CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
   );
 }
 

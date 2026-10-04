@@ -4,6 +4,8 @@ import {
   buildDateRange,
   diffRuns,
   healthOf,
+  heatmapOf,
+  buildLabels,
   estimateRemainingSec,
   flattenTests,
   runProgress,
@@ -122,6 +124,53 @@ describe("aggregateTestHealth", () => {
     const h = aggregateTestHealth(runs);
     expect(h[0]).toMatchObject({ key: "x", failedRuns: 2, runs: 3, lastError: "e1" });
     expect(h.find((t) => t.key === "y")).toMatchObject({ flakyRuns: 2, failedRuns: 0 });
+  });
+});
+
+describe("buildLabels", () => {
+  const point = (buildId: string, buildNumber: number | null, name: string | null) => ({ buildId, buildNumber, name });
+  it("uses #number when numbers are unique", () => {
+    expect(buildLabels([point("a", 1, "x"), point("b", 2, "x")])).toEqual(["#1", "#2"]);
+  });
+  it("adds the build name when numbers repeat across builds, and never repeats a label", () => {
+    const l = buildLabels([point("a", 1, "selenium"), point("b", 1, "playwright"), point("c", 1, "playwright")]);
+    expect(l[0]).toBe("selenium #1");
+    expect(new Set(l).size).toBe(3);
+  });
+  it("drops the words every build name shares", () => {
+    expect(buildLabels([point("a", 1, "proj selenium"), point("b", 1, "proj appium")])).toEqual(["selenium #1", "appium #1"]);
+  });
+  it("falls back to a short id without a number", () => {
+    expect(buildLabels([point("abcdef123", null, null)])).toEqual(["abcdef"]);
+  });
+});
+
+describe("heatmapOf", () => {
+  const runs = [
+    [ft("x", "failed"), ft("y", "passed", { isFlaky: true }), ft("z", "passed")],
+    [ft("x", "passed"), ft("y", "passed")],
+  ];
+  const labels = ["#2", "#1"];
+
+  it("lays out columns oldest to newest and one row per test that ever failed or flaked", () => {
+    const h = heatmapOf(runs, labels, 10);
+    expect(h.builds).toEqual(["#1", "#2"]);
+    expect(h.tests).toEqual(["x", "y"]);
+  });
+
+  it("marks flaky before passed, and a test absent from a build as Not run", () => {
+    const h = heatmapOf(runs, labels, 10);
+    const at = (test: string, build: string) => h.cells.find((c) => c.test === test && c.build === build)?.state;
+    expect(at("x", "#2")).toBe("Failed");
+    expect(at("y", "#2")).toBe("Flaky");
+    expect(at("y", "#1")).toBe("Passed");
+    expect(at("x", "#1")).toBe("Passed");
+    expect(heatmapOf([[ft("x", "failed")], []], ["#2", "#1"], 10).cells.find((c) => c.build === "#1")?.state).toBe("Not run");
+  });
+
+  it("keeps only the worst tests when there are more than the limit", () => {
+    const many = [[ft("a", "failed"), ft("b", "failed"), ft("c", "passed", { isFlaky: true })]];
+    expect(heatmapOf(many, ["#1"], 2).tests).toHaveLength(2);
   });
 });
 

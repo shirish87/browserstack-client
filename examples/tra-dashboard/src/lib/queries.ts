@@ -1,3 +1,4 @@
+import { isLiveSession, LIVE_LOG_POLL_MS } from "./session";
 import { queryOptions } from "@tanstack/react-query";
 import type { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
 import { traApi } from "./api";
@@ -53,12 +54,16 @@ export const linkedSessionQuery = (client: TestReportingClient, username: string
     queryKey: ["linked-session", username, sessionId],
     queryFn: () => client.getTestSession(sessionId, { device }),
     retry: false,
+    // A running session is re-read until it ends, so its status badge flips to done by itself.
+    refetchInterval: (query) => (isLiveSession(query.state.data?.session.status) ? LIVE_LOG_POLL_MS : false),
   });
 
-export const sessionLogsQuery = (client: TestReportingClient, username: string, sessionId: string, device?: string) =>
+/** `live` re-reads the logs every few seconds (a running session keeps writing them); a finished session's logs never change. */
+export const sessionLogsQuery = (client: TestReportingClient, username: string, sessionId: string, device?: string, live = false) =>
   queryOptions({
     queryKey: ["session-logs", username, sessionId],
     queryFn: () => client.getTestSessionLogs(sessionId, undefined, { device }),
     retry: false,
-    staleTime: Infinity,
+    staleTime: live ? 0 : Infinity,
+    ...(live ? { refetchInterval: LIVE_LOG_POLL_MS } : {}),
   });

@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTraClient } from "@/lib/auth";
 import { linkedSessionQuery, sessionLogsQuery, testsQuery } from "@/lib/queries";
-import { buildTimeline, eventsBefore, formatBytes, sessionEvidence, signalsIn, waterfallOf, windowOf, type SessionEvidence } from "@/lib/session";
+import { buildTimeline, eventsBefore, formatBytes, isLiveSession, LIVE_LOG_POLL_MS, sessionEvidence, signalsIn, waterfallOf, windowOf, type SessionEvidence } from "@/lib/session";
 import { formatDuration } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,7 +36,8 @@ export function SessionPage() {
   const device = sessionTests.find((t) => t.platform.device)?.platform.device;
 
   const linked = useQuery(linkedSessionQuery(client, username, sessionId, device));
-  const logs = useQuery({ ...sessionLogsQuery(client, username, sessionId, device), enabled: !!linked.data });
+  const live = isLiveSession(linked.data?.session.status);
+  const logs = useQuery({ ...sessionLogsQuery(client, username, sessionId, device, live), enabled: !!linked.data });
   const evidence = useMemo(() => (logs.data ? sessionEvidence(logs.data) : undefined), [logs.data]);
 
   const crumbs = [{ label: "Insights", to: "/insights" }, { label: "Build", to: `/builds/${encodeURIComponent(buildId)}` }, { label: "Session" }];
@@ -62,6 +63,7 @@ export function SessionPage() {
         subtitle={
           <span className="inline-flex flex-wrap items-center gap-2">
             <StatusBadge status={s.status} />
+            {live && <Badge tone="warning"><span className="mr-1 inline-block size-1.5 animate-pulse rounded-full bg-current motion-reduce:animate-none" aria-hidden />Live · refreshing every {LIVE_LOG_POLL_MS / 1000}s</Badge>}
             <Badge tone="outline">{linked.data.product === "automate" ? "Automate" : "App Automate"}</Badge>
             {s.duration ? <span>{formatDuration(s.duration * 1000)}</span> : null}
             {s.publicUrl && <ExternalLink href={s.publicUrl}>Open in BrowserStack</ExternalLink>}
@@ -88,7 +90,7 @@ export function SessionPage() {
         <TabBar tabs={TABS} value={tab} onChange={setTab} label="Session evidence" />
         {logs.isPending && <Skeleton className="h-48" />}
         {logs.isError && <ErrorState error={logs.error} onRetry={() => void logs.refetch()} />}
-        {evidence && <Evidence tab={tab} evidence={evidence} />}
+        {evidence && <Evidence tab={tab} evidence={evidence} live={live} />}
       </div>
     </div>
   );
@@ -162,18 +164,38 @@ function TimelineCard({ tests, evidence }: { tests: Parameters<typeof buildTimel
   );
 }
 
-/** A bounded, thin-scrollbar pane: long logs scroll inside the card instead of stretching the page. */
-function ScrollPane({ children, label }: { children: React.ReactNode; label: string }) {
-  return <div className="scroll-thin max-h-[560px] overflow-auto" role="region" aria-label={label} tabIndex={0}>{children}</div>;
+/**
+ * A bounded, thin-scrollbar pane. While `follow` is on (a running session) it sticks to the newest line, stops
+ * following as soon as the reader scrolls up, and offers a button to jump back to the tail.
+ */
+function ScrollPane({ children, label, follow = false, version }: { children: React.ReactNode; label: string; follow?: boolean; version?: number | string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [pinned, setPinned] = useState(true);
+  useEffect(() => {
+    const el = ref.current;
+    if (follow && pinned && el) el.scrollTop = el.scrollHeight;
+  }, [follow, pinned, version]);
+  const onScroll = () => {
+    const el = ref.current;
+    if (el) setPinned(el.scrollHeight - el.scrollTop - el.clientHeight < 24);
+  };
+  return (
+    <div className="relative">
+      <div ref={ref} onScroll={onScroll} className="scroll-thin max-h-[560px] overflow-auto" role="region" aria-label={label} tabIndex={0}>{children}</div>
+      {follow && !pinned && (
+        <button type="button" onClick={() => setPinned(true)} className="absolute bottom-3 right-4 cursor-pointer rounded-full bg-primary px-3 py-1 text-[12px] font-medium text-white shadow-lg">Jump to latest ↓</button>
+      )}
+    </div>
+  );
 }
 
 const TH = "sticky top-0 bg-surface-1 px-3 py-1.5 text-left text-[11px] font-medium uppercase tracking-wide text-muted";
 
-function Evidence({ tab, evidence }: { tab: Tab; evidence: SessionEvidence }) {
+function Evidence({ tab, evidence, live }: { tab: Tab; evidence: SessionEvidence; live: boolean }) {
   const note = evidence.notes.find((n) => (tab === "commands" || tab === "log" ? n.kind === "text" : n.kind === tab));
   if (tab === "commands") {
     return evidence.commands.length === 0 ? <EmptyState title="No commands" {...(note ? { hint: note.message } : {})} /> : (
-      <Card><ScrollPane label="Commands"><table className="w-full text-[12px]">
+      <Card><ScrollPane label="Commands" follow={live} version={evidence.commands.length}><table className="w-full text-[12px]">
         <thead><tr><th className={TH}>Time</th><th className={TH}>Command</th><th className={cn(TH, "text-right")}>Took</th><th className={TH}>Error</th></tr></thead>
         <tbody>
         {evidence.commands.map((c, i) => (
@@ -196,7 +218,7 @@ function Evidence({ tab, evidence }: { tab: Tab; evidence: SessionEvidence }) {
           <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2 w-3 rounded-[1px] bg-primary" />Server wait</span>
           <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2 w-3 rounded-[1px] bg-success" />Transfer</span>
         </div>
-        <ScrollPane label="Network requests"><table className="w-full text-[12px]">
+        <ScrollPane label="Network requests" follow={live} version={evidence.rows.length}><table className="w-full text-[12px]">
           <thead><tr><th className={TH}>Time</th><th className={TH}>Method</th><th className={TH}>Request</th><th className={TH}>Status</th><th className={cn(TH, "text-right")}>Size</th><th className={TH}>Waterfall</th><th className={cn(TH, "text-right")}>Took</th></tr></thead>
           <tbody>
           {evidence.rows.map((r, i) => {
@@ -228,11 +250,17 @@ function Evidence({ tab, evidence }: { tab: Tab; evidence: SessionEvidence }) {
     );
   }
   if (tab === "console") {
-    return evidence.consoleText === undefined ? <EmptyState title="No console log" {...(note ? { hint: note.message } : {})} /> : <LogBlock text={evidence.consoleText} label="Console log" />;
+    return evidence.consoleText === undefined ? <EmptyState title="No console log" {...(note ? { hint: note.message } : {})} /> : <LogBlock text={evidence.consoleText} label="Console log" live={live} />;
   }
-  return evidence.lines.length === 0 ? <EmptyState title="No session log" {...(note ? { hint: note.message } : {})} /> : <LogBlock label="Raw session log" text={evidence.lines.map((l) => `${l.ms === undefined ? "" : clock(l.ms) + " "}${l.tag} ${l.text}`.trim()).join("\n")} />;
+  return evidence.lines.length === 0 ? <EmptyState title="No session log" {...(note ? { hint: note.message } : {})} /> : <LogBlock label="Raw session log" live={live} text={evidence.lines.map((l) => `${l.ms === undefined ? "" : clock(l.ms) + " "}${l.tag} ${l.text}`.trim()).join("\n")} />;
 }
 
-function LogBlock({ text, label }: { text: string; label: string }) {
-  return <pre className="panel scroll-thin max-h-[560px] overflow-auto whitespace-pre-wrap break-all rounded-lg p-4 font-mono text-[12px] leading-[1.5]" role="region" aria-label={label} tabIndex={0}>{text}</pre>;
+function LogBlock({ text, label, live }: { text: string; label: string; live: boolean }) {
+  return (
+    <div className="panel rounded-lg">
+      <ScrollPane label={label} follow={live} version={text.length}>
+        <pre className="whitespace-pre-wrap break-all p-4 font-mono text-[12px] leading-[1.5]">{text}</pre>
+      </ScrollPane>
+    </div>
+  );
 }

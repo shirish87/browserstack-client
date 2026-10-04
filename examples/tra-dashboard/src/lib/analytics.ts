@@ -227,6 +227,66 @@ export function aggregateTestHealth(runs: FlatTest[][]): TestHealth[] {
     .sort((a, b) => b.failedRuns - a.failedRuns || b.flakyRuns - a.flakyRuns || a.key.localeCompare(b.key));
 }
 
+/** The longest shared prefix of the names, cut back to a word boundary; empty for fewer than two names. */
+function commonPrefix(names: string[]): string {
+  if (names.length < 2) return "";
+  let p = names[0] ?? "";
+  for (const n of names) while (p && !n.startsWith(p)) p = p.slice(0, -1);
+  const cut = p.lastIndexOf(" ");
+  return cut > 0 ? p.slice(0, cut + 1) : "";
+}
+
+/** One unique, human label per build (chart categories must be unique): `#n`, else `name #n`, else `name #n (id)`. */
+export function buildLabels(builds: Pick<BuildPoint, "buildId" | "buildNumber" | "name">[]): string[] {
+  const prefix = commonPrefix(builds.map((b) => b.name ?? ""));
+  const nameOf = (b: (typeof builds)[number]): string => (b.name ?? "").slice(prefix.length).trim();
+  const short = (b: (typeof builds)[number]): string => (b.buildNumber != null ? `#${b.buildNumber}` : b.buildId.slice(0, 6));
+  const count = (labels: string[]): Map<string, number> => labels.reduce((m, l) => m.set(l, (m.get(l) ?? 0) + 1), new Map<string, number>());
+  const first = builds.map(short);
+  const dup1 = count(first);
+  const second = builds.map((b, i) => ((dup1.get(first[i] ?? "") ?? 0) > 1 && nameOf(b) ? `${nameOf(b)} ${short(b)}` : short(b)));
+  const dup2 = count(second);
+  return builds.map((b, i) => ((dup2.get(second[i] ?? "") ?? 0) > 1 ? `${second[i]} (${b.buildId.slice(0, 4)})` : (second[i] ?? short(b))));
+}
+
+export type HeatState = "Passed" | "Failed" | "Flaky" | "Skipped" | "Not run";
+
+export interface Heatmap {
+  /** Columns, oldest first. */
+  builds: string[];
+  /** Rows, worst first, capped at `limit`. */
+  tests: string[];
+  cells: { test: string; build: string; state: HeatState }[];
+}
+
+/**
+ * Tests (rows) by builds (columns). `runs` and `labels` are newest first, like `aggregateTestHealth`; only tests
+ * that failed or were flaky somewhere appear, ranked by that history, so a clean suite is not a wall of green.
+ */
+export function heatmapOf(runs: FlatTest[][], labels: string[], limit: number): Heatmap {
+  const health = aggregateTestHealth(runs).slice(0, limit);
+  const names = new Map<string, number>();
+  for (const h of health) names.set(h.name, (names.get(h.name) ?? 0) + 1);
+  /** Rows are named by the test; the full path only when two tests share a name. */
+  const rowOf = new Map(health.map((h) => [h.key, (names.get(h.name) ?? 0) > 1 ? h.key : h.name]));
+  const tests = health.map((h) => rowOf.get(h.key) ?? h.key);
+  const wanted = new Set(health.map((h) => h.key));
+  const builds = [...labels].reverse();
+  const cells: Heatmap["cells"] = [];
+  runs.forEach((run, i) => {
+    const build = labels[i];
+    if (build === undefined) return;
+    const byKey = new Map(run.map((t) => [t.key, t]));
+    for (const key of wanted) {
+      const test = rowOf.get(key) ?? key;
+      const t = byKey.get(key);
+      const state: HeatState = !t ? "Not run" : t.status === "failed" ? "Failed" : t.isFlaky ? "Flaky" : t.status === "passed" ? "Passed" : "Skipped";
+      cells.push({ test, build, state });
+    }
+  });
+  return { builds, tests, cells };
+}
+
 // --- live runs -----------------------------------------------------------------------------
 
 export function runProgress(raw: StatusStats | null | undefined): { done: number; total: number; fraction: number } {

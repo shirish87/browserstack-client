@@ -235,6 +235,14 @@ export function waterfallOf(rows: NetworkRow[]): WaterfallBar[] {
   return rows.map((r) => ({ left: pct(r.startMs - start), connect: pct(r.phases.connect), wait: pct(r.phases.wait), transfer: pct(r.phases.transfer) }));
 }
 
+/** How often a running session's logs are re-read. */
+export const LIVE_LOG_POLL_MS = 3000;
+
+/** Automate and App Automate report `running` (and `queued` before a device is ready) until a session ends. */
+export function isLiveSession(status: string | null | undefined): boolean {
+  return status === "running" || status === "queued";
+}
+
 // --- a test's window ---------------------------------------------------------------------------
 
 export function windowOf(test: Pick<FlatTest, "startedAt" | "durationMs">): Window | undefined {

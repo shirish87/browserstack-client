@@ -196,7 +196,7 @@ export function SeriesChart({
   );
 }
 
-function statusWord(s: NormStatus): string {
+export function statusWord(s: NormStatus): string {
   return s === "pending" ? "Running" : s.charAt(0).toUpperCase() + s.slice(1);
 }
 
