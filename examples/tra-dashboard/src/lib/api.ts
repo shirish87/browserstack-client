@@ -11,6 +11,7 @@ import {
   hasBuildId,
   type IdentifiedBuild,
   ProjectListResponseSchema,
+  QualityGateProfileSchema,
   QualityGateSettingsSchema,
   QualityGateStatusSchema,
   SelfHealingReportSchema,
@@ -154,6 +155,10 @@ export const traApi = {
 
   async qualityGateSettings(client: TestReportingClient, projectName: string) {
     return QualityGateSettingsSchema.parse(await client.getQualityGateSettings(projectName));
+  },
+
+  async qualityGateProfile(client: TestReportingClient, projectName: string, profileId: string) {
+    return QualityGateProfileSchema.parse(await client.getQualityGateProfile(projectName, profileId));
   },
 
   async selfHealingReport(client: TestReportingClient, buildUuid: string) {
