@@ -3,14 +3,15 @@ import { Link, useNavigate } from "react-router";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { GitCompare, Radio } from "lucide-react";
 import { useTraClient } from "@/lib/auth";
-import { estimateRemainingSec, runProgress } from "@/lib/analytics";
+import { estimateRemainingSec, runProgress, toSeries } from "@/lib/analytics";
 import { formatDuration, outcomes } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
 import { LIVE_POLL_MS, projectsQuery, windowQuery } from "@/lib/queries";
 import { traApi } from "@/lib/api";
 import { hasBuildId, mostRecentFirst, type IdentifiedBuild, type NamedProject } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DurationChart, PassRateChart } from "@/components/tra-charts";
 import { Select } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BuildsTable, buildHref, compareHref } from "@/components/builds";
@@ -134,6 +135,7 @@ function AllRuns({ projects }: { projects: NamedProject[] }) {
   const users = useMemo(() => [...new Set(builds.map((b) => b.user).filter((u): u is string => !!u))].sort(), [builds]);
   const visible = builds.filter((b) => (status === "all" || b.status === status) && (user === "all" || b.user === user));
 
+  const trend = useMemo(() => toSeries(visible.filter(hasBuildId)), [visible]);
   const toggle = (id: string) => setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : s.length >= 2 ? s : [...s, id]));
   const compareSelected = () => {
     const [a, b] = selected.map((id) => builds.find((x) => x.buildId === id));
@@ -190,6 +192,12 @@ function AllRuns({ projects }: { projects: NamedProject[] }) {
         <EmptyState title="No runs match" hint={builds.length === 0 ? `No builds in ${project.name} in the last ${days} days.` : "Adjust the filters."} />
       ) : (
         <>
+          {visible.length > 1 && (
+            <div className="mb-6 grid gap-4 lg:grid-cols-2">
+              <Card><CardHeader><CardTitle>Pass rate</CardTitle></CardHeader><CardContent><PassRateChart series={trend} onOpen={(id) => void navigate(buildHref(id, project))} /></CardContent></Card>
+              <Card><CardHeader><CardTitle>Duration</CardTitle></CardHeader><CardContent><DurationChart series={trend} onOpen={(id) => void navigate(buildHref(id, project))} /></CardContent></Card>
+            </div>
+          )}
           <BuildsTable builds={visible.slice(0, shown)} project={{ id: project.id, name: project.name }} allBuilds={builds} selection={{ selected, onToggle: toggle }} />
           <div className="mt-4 flex items-center justify-between text-muted">
             <span>Showing {Math.min(shown, visible.length)} of {visible.length}</span>

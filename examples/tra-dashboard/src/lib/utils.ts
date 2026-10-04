@@ -24,3 +24,10 @@ export function humanize(key: string): string {
   const spaced = key.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/[_-]+/g, " ").trim();
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
+
+/** Free-form TRA objects (re-run, build error, app details) as labelled rows; empty values are dropped. */
+export function detailRows(obj: Record<string, unknown> | null | undefined): [string, string][] {
+  return Object.entries(obj ?? {})
+    .filter(([, v]) => v !== null && v !== undefined && v !== "")
+    .map(([k, v]) => [humanize(k), displayValue(v)]);
+}

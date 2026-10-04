@@ -4,6 +4,7 @@ import { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
 import { filterTree, normalizeHierarchy, normalizeStatus } from "./hierarchy";
 import { formatDuration, formatPercent, outcomes, passRate, totalTests } from "./format";
 import { CredentialsSchema, TestRunsResponseSchema, hasBuildId, isNamedProject, mostRecentFirst } from "./schemas";
+import { detailRows } from "./utils";
 
 /** Real, sanitised API captures shared with the contract tests. */
 const fixture = (name: string): string => readFileSync(new URL(`../../../../packages/contract-tests/fixtures/${name}`, import.meta.url), "utf8");
@@ -127,5 +128,19 @@ describe("mostRecentFirst", () => {
     const input = [p(1, "a"), p(2, "b")];
     expect(mostRecentFirst(input).map((x) => x.id)).toEqual([1, 2]);
     expect(input.map((x) => x.id)).toEqual([1, 2]);
+  });
+});
+
+describe("detailRows", () => {
+  it("turns a free-form TRA object into labelled rows, skipping empty values", () => {
+    expect(detailRows({ appName: "demo", build_number: 4, empty: null, blank: "", nested: { a: 1 } })).toEqual([
+      ["App Name", "demo"],
+      ["Build number", "4"],
+      ["Nested", '{"a":1}'],
+    ]);
+  });
+  it("is empty for nothing", () => {
+    expect(detailRows(null)).toEqual([]);
+    expect(detailRows(undefined)).toEqual([]);
   });
 });

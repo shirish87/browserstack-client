@@ -8,7 +8,7 @@ import { projectsQuery, windowQuery } from "@/lib/queries";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkline } from "@/components/charts";
+import { PassSparkline } from "@/components/tra-charts";
 import { StatusBadge } from "@/components/status";
 import { EmptyState, ErrorState, PageTitle, Stat } from "@/components/common";
 
@@ -87,7 +87,7 @@ export function InsightsPage() {
                           <p className="text-[28px] font-semibold leading-none tracking-[-0.6px]">{formatPercent(r.summary.passRate)}</p>
                           <p className="mt-1.5 text-[12px] text-muted">pass rate · {r.summary.count} builds</p>
                         </div>
-                        <Sparkline
+                        <PassSparkline
                           label={`${r.project.name} pass rate per build`}
                           points={r.series.slice(-30).map((p) => ({ value: p.passRate, failed: p.status === "failed" }))}
                         />

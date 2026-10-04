@@ -22,7 +22,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TabBar } from "@/components/ui/tabs";
 import { StatusBadge, StatusBar, StatusIcon, StatusLegend } from "@/components/status";
 import { Breadcrumbs, ErrorState, ExternalLink, KeyValue, LoadMore, PageTitle, Stat } from "@/components/common";
-import { displayValue, errorMessage, humanize } from "@/lib/utils";
+import { detailRows, displayValue, errorMessage, humanize } from "@/lib/utils";
+import { TallyChart } from "@/components/tra-charts";
 
 const FIRST_PAGE: string | undefined = undefined;
 
@@ -169,6 +170,7 @@ function BuildContent({ buildId, build, project }: { buildId: string; build: Bui
         </Card>
       </div>
 
+      <BuildExtras build={build} />
       <QualityGate buildId={buildId} />
       <SelfHealing buildId={buildId} />
       <TestsSection buildId={buildId} buildLabel={`${build.name ?? "Build"} #${build.buildNumber ?? ""}`} buildUrl={build.observabilityUrl} live={live} initialFailures={failed > 0} />
@@ -177,31 +179,62 @@ function BuildContent({ buildId, build, project }: { buildId: string; build: Bui
 }
 
 function FailureCategories({ categories }: { categories: Record<string, number> }) {
-  const entries = Object.entries(categories).sort((a, b) => b[1] - a[1]);
-  const max = Math.max(1, ...entries.map(([, n]) => n));
+  const tally = Object.entries(categories).map(([label, count]) => ({ label, count })).sort((x, y) => y.count - x.count);
   return (
     <Card>
       <CardHeader><CardTitle>Failure categories</CardTitle></CardHeader>
       <CardContent>
-        {entries.length === 0 ? (
-          <p className="text-muted">No failure categories reported.</p>
-        ) : (
-          <ul className="space-y-3">
-            {entries.map(([name, n]) => (
-              <li key={name}>
-                <div className="mb-1 flex justify-between">
-                  <span>{name}</span>
-                  <span className="font-mono text-[12px] font-medium">{n}</span>
-                </div>
-                <div className="h-2 rounded-full bg-neutral-bg" role="img" aria-label={`${name}: ${n}`}>
-                  <div className="h-full rounded-full bg-danger" style={{ width: `${(n / max) * 100}%` }} />
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        {tally.length === 0 ? <p className="text-muted">No failure categories reported.</p> : <TallyChart tally={tally} label="Failures by category" />}
       </CardContent>
     </Card>
+  );
+}
+
+/** Free-form TRA objects the API reports for a build: why it errored, re-run info, the app under test, SDK runs. */
+function BuildExtras({ build }: { build: BuildDetails }) {
+  const error = detailRows(build.buildError);
+  const rerun = detailRows(build.reRun);
+  const app = detailRows(build.appDetails);
+  const runs = build.runInformation ?? [];
+  if (error.length + rerun.length + app.length + runs.length === 0) return null;
+  return (
+    <div className="grid gap-6 lg:grid-cols-2">
+      {error.length > 0 && (
+        <Card className="border-danger/40 lg:col-span-2">
+          <CardHeader><CardTitle>Build error</CardTitle></CardHeader>
+          <CardContent><KeyValue rows={error} /></CardContent>
+        </Card>
+      )}
+      {rerun.length > 0 && (
+        <Card><CardHeader><CardTitle>Re-run</CardTitle></CardHeader><CardContent><KeyValue rows={rerun} /></CardContent></Card>
+      )}
+      {app.length > 0 && (
+        <Card><CardHeader><CardTitle>App under test</CardTitle></CardHeader><CardContent><KeyValue rows={app} /></CardContent></Card>
+      )}
+      {runs.length > 0 && (
+        <Card className="lg:col-span-2">
+          <CardHeader><CardTitle>Run information</CardTitle></CardHeader>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="border-y border-border bg-surface-2 text-[13px] text-muted">
+                <tr>{["Run", "Passed", "Failed", "Skipped", "Unknown"].map((c) => <th key={c} scope="col" className="px-5 py-2 font-medium">{c}</th>)}</tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {runs.map((r, i) => (
+                  <tr key={r.id ?? i}>
+                    <td className="px-5 py-2 font-mono text-[12px]">{r.id ?? `#${i + 1}`}</td>
+                    <td className="px-5 py-2">{r.passed ?? 0}</td>
+                    <td className="px-5 py-2">{r.failed ?? 0}</td>
+                    <td className="px-5 py-2">{r.skipped ?? 0}</td>
+                    <td className="px-5 py-2">{r.unknown ?? 0}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+    </div>
   );
 }
 

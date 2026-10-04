@@ -1,7 +1,6 @@
 import { Link } from "react-router";
 import { GitCompare } from "lucide-react";
-import type { BuildPoint } from "@/lib/analytics";
-import { formatDate, formatDuration, formatPercent, formatRelative, passRate, totalTests } from "@/lib/format";
+import { formatDuration, formatPercent, formatRelative, passRate, totalTests } from "@/lib/format";
 import type { IdentifiedBuild } from "@/lib/schemas";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -122,13 +121,4 @@ export function BuildsTable({ builds, project, selection, allBuilds, projectLabe
       </table>
     </Card>
   );
-}
-
-export function toChartPoints(series: BuildPoint[]) {
-  return series.map((p) => ({
-    id: p.buildId,
-    label: p.buildNumber != null ? `#${p.buildNumber}` : p.buildId.slice(0, 6),
-    sublabel: formatDate(p.startedAt),
-    status: p.status,
-  }));
 }

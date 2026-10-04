@@ -9,7 +9,8 @@ import { buildQuery, testsQuery } from "@/lib/queries";
 import type { BuildDetails } from "@/lib/schemas";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TallyChart } from "@/components/tra-charts";
 import { TabBar } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge, StatusIcon } from "@/components/status";
@@ -99,6 +100,10 @@ export function ComparePage() {
         <Skeleton className="mt-6 h-64" />
       ) : (
         <section className="mt-8" aria-label="Changes">
+          <Card className="mb-6">
+            <CardHeader><CardTitle>What changed</CardTitle></CardHeader>
+            <CardContent><TallyChart label="Changes between the two runs" tally={ORDER.map((c) => ({ label: LABELS[c], count: counts[c] }))} /></CardContent>
+          </Card>
           <div className="mb-4 overflow-x-auto">
             <TabBar
               label="Change type"

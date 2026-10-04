@@ -7,12 +7,16 @@ import { tooltip } from "@tanstack/charts/tooltip";
 import { Chart } from "@tanstack/charts/react";
 import { buildLabels, type BuildPoint } from "@/lib/analytics";
 import { formatDuration, formatPercent } from "@/lib/format";
-import { statusWord } from "@/components/charts";
+import type { NormStatus } from "@/lib/hierarchy";
 
 /** Outcome colours used everywhere a chart encodes pass/fail; the legend and tooltip always say it in words too. */
 export const OUTCOME_COLORS = { Passed: "var(--success)", Failed: "var(--danger)", Skipped: "var(--ink-subtle, #8a8f98)", Running: "var(--warning)" } as const;
 const OUTCOMES = Object.keys(OUTCOME_COLORS);
 const OUTCOME_RANGE = Object.values(OUTCOME_COLORS);
+
+export function statusWord(s: NormStatus): string {
+  return s === "pending" ? "Running" : s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 interface BuildRow {
   id: string;
@@ -161,7 +165,7 @@ export function TallyChart({ tally, label }: { tally: { label: string; count: nu
       defineChart({
         marks: [barX(tally, { x: "count", y: "label", fill: "var(--primary)" })],
         scales: {
-          x: { scale: scaleLinear, grid: true, axis: { label: "Cases" } },
+          x: { scale: scaleLinear, grid: true, axis: { label: "Count", ticks: { format: (v: number) => (Number.isInteger(v) ? String(v) : "") } } },
           y: { scale: () => scaleBand<string>().domain(tally.map((t) => t.label)).padding(0.3) },
         },
         tooltip,
@@ -169,4 +173,30 @@ export function TallyChart({ tally, label }: { tally: { label: string; count: nu
     [tally],
   );
   return <Chart definition={definition} height={Math.max(120, tally.length * 34 + 48)} ariaLabel={label} />;
+}
+
+/** Compact pass-rate trend for a project card: no axes, failed builds marked in red. */
+export function PassSparkline({ points, label }: { points: { value: number | null; failed: boolean }[]; label: string }) {
+  const rows = useMemo(
+    () => points.flatMap((p, i) => (p.value === null ? [] : [{ n: i + 1, passRate: p.value, status: p.failed ? "Failed" : "Passed" }])),
+    [points],
+  );
+  const definition = useMemo(
+    () =>
+      defineChart({
+        marks: [lineY(rows, { x: "n", y: "passRate", strokeWidth: 1.5 }), dot(rows, { x: "n", y: "passRate", color: "status", r: 2.5 })],
+        scales: {
+          x: { scale: () => scalePoint<number>().padding(0.2), axis: false },
+          y: { scale: scaleLinear, domain: [0, 1], axis: false },
+        },
+        color: { domain: OUTCOMES, range: OUTCOME_RANGE },
+        tooltip,
+      }),
+    [rows],
+  );
+  return (
+    <div className="w-32">
+      <Chart definition={definition} height={44} ariaLabel={label} />
+    </div>
+  );
 }
