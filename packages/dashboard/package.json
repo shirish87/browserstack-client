@@ -1,0 +1,30 @@
+{
+  "name": "@dot-slash/browserstack-dashboard",
+  "private": true,
+  "version": "7.1.0",
+  "type": "module",
+  "description": "Test Reporting & Analytics dashboard: builds, tests, and their linked Automate sessions and logs",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "browserstack-dashboard": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "start": "node dist/cli.js",
+    "typecheck": "tsc --noEmit || true",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@dot-slash/browserstack-test-reporting": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "20.0.0",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.4"
+  }
+}

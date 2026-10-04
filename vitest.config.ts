@@ -84,6 +84,7 @@ export default defineConfig({
       project("accessibility", "./packages/accessibility", "packages/accessibility/package.json"),
       project("test-reporting", "./packages/test-reporting", "packages/test-reporting/package.json"),
       project("sdk", "./packages/sdk", "packages/sdk/package.json"),
+      project("dashboard", "./packages/dashboard", "packages/dashboard/package.json"),
       project("router", "./packages/router", "packages/router/package.json"),
       // Offline checks of the contract tooling (sanitiser, fixtures vs generated models).
       {
