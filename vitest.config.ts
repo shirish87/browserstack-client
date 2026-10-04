@@ -85,6 +85,8 @@ export default defineConfig({
       project("test-reporting", "./packages/test-reporting", "packages/test-reporting/package.json"),
       project("sdk", "./packages/sdk", "packages/sdk/package.json"),
       project("router", "./packages/router", "packages/router/package.json"),
+      // CI reporting script (uploads vitest JUnit results to Test Reporting & Analytics).
+      { test: { name: "ci-report", root: "./scripts/ci-report", globals: true, environment: "node" } },
       // Offline checks of the contract tooling (sanitiser, fixtures vs generated models).
       {
         ...project("contract-tests", "./packages/contract-tests", "packages/contract-tests/package.json"),
