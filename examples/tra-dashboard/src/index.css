@@ -122,6 +122,15 @@ h1, h2, h3 { letter-spacing: -0.02em; }
   box-shadow: inset 0 1px 0 var(--edge);
 }
 
+/* Thin, quiet scrollbar for panes that scroll on their own (logs, tables). */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline) transparent;
+}
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: var(--hairline); border-radius: 4px; }
+.scroll-thin::-webkit-scrollbar-track { background: transparent; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }

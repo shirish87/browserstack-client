@@ -5,6 +5,8 @@ import {
   buildTimeline,
   commandsFromLog,
   eventsBefore,
+  formatBytes,
+  waterfallOf,
   parseAppiumLog,
   parseDeviceLog,
   parseTextLog,
@@ -259,5 +261,37 @@ describe("CRLF logs", () => {
   it("parses a device log", () => {
     const lines = parseDeviceLog(crlf(["10-04 16:28:08.959 I/libc    (12766): message"]), 2026);
     expect(lines[0]).toMatchObject({ tag: "I/libc", text: "message" });
+  });
+});
+
+describe("formatBytes", () => {
+  it("scales to B, kB and MB", () => {
+    expect(formatBytes(0)).toBe("0 B");
+    expect(formatBytes(512)).toBe("512 B");
+    expect(formatBytes(2048)).toBe("2.0 kB");
+    expect(formatBytes(5 * 1024 * 1024)).toBe("5.0 MB");
+  });
+  it("shows nothing for an unknown size", () => {
+    expect(formatBytes(-1)).toBe("—");
+  });
+});
+
+describe("waterfallOf", () => {
+  const row = (startMs: number, connect: number, wait: number, transfer: number): NetworkRow => ({
+    id: 0, startMs, durationMs: connect + wait + transfer, method: "GET", host: "h", path: "/", status: 200, statusText: "", mime: "", sizeBytes: 0, failed: false, error: undefined,
+    phases: { connect, wait, transfer },
+  });
+
+  it("places each bar by start offset and splits it into its phases, as percentages of the whole span", () => {
+    const rows = [row(1000, 10, 80, 10), row(1100, 0, 50, 50)];
+    const [a, b] = waterfallOf(rows);
+    expect(a).toMatchObject({ left: 0, connect: 5, wait: 40, transfer: 5 });
+    expect(b?.left).toBeCloseTo(50, 5);
+    expect(b?.wait).toBeCloseTo(25, 5);
+  });
+
+  it("copes with no rows and zero-length rows", () => {
+    expect(waterfallOf([])).toEqual([]);
+    expect(waterfallOf([row(1000, 0, 0, 0)])).toHaveLength(1);
   });
 });

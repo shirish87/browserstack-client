@@ -210,6 +210,31 @@ export function toNetworkRows(har: HarArchive): NetworkRow[] {
   return rows.sort((a, b) => a.startMs - b.startMs);
 }
 
+/** "12.3 kB"; HAR reports -1 when the size is unknown. */
+export function formatBytes(n: number): string {
+  if (n < 0 || !Number.isFinite(n)) return "—";
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} kB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+export interface WaterfallBar {
+  /** All in percent of the whole capture's span. */
+  left: number;
+  connect: number;
+  wait: number;
+  transfer: number;
+}
+
+/** One bar per row, positioned on a shared time axis and split into connect / server wait / transfer. */
+export function waterfallOf(rows: NetworkRow[]): WaterfallBar[] {
+  if (rows.length === 0) return [];
+  const start = Math.min(...rows.map((r) => r.startMs));
+  const span = Math.max(1, Math.max(...rows.map((r) => r.startMs + r.durationMs)) - start);
+  const pct = (ms: number): number => (ms / span) * 100;
+  return rows.map((r) => ({ left: pct(r.startMs - start), connect: pct(r.phases.connect), wait: pct(r.phases.wait), transfer: pct(r.phases.transfer) }));
+}
+
 // --- a test's window ---------------------------------------------------------------------------
 
 export function windowOf(test: Pick<FlatTest, "startedAt" | "durationMs">): Window | undefined {

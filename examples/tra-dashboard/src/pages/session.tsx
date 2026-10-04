@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTraClient } from "@/lib/auth";
 import { linkedSessionQuery, sessionLogsQuery, testsQuery } from "@/lib/queries";
-import { buildTimeline, eventsBefore, sessionEvidence, signalsIn, windowOf, type SessionEvidence } from "@/lib/session";
+import { buildTimeline, eventsBefore, formatBytes, sessionEvidence, signalsIn, waterfallOf, windowOf, type SessionEvidence } from "@/lib/session";
 import { formatDuration } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -162,43 +162,77 @@ function TimelineCard({ tests, evidence }: { tests: Parameters<typeof buildTimel
   );
 }
 
+/** A bounded, thin-scrollbar pane: long logs scroll inside the card instead of stretching the page. */
+function ScrollPane({ children, label }: { children: React.ReactNode; label: string }) {
+  return <div className="scroll-thin max-h-[560px] overflow-auto" role="region" aria-label={label} tabIndex={0}>{children}</div>;
+}
+
+const TH = "sticky top-0 bg-surface-1 px-3 py-1.5 text-left text-[11px] font-medium uppercase tracking-wide text-muted";
+
 function Evidence({ tab, evidence }: { tab: Tab; evidence: SessionEvidence }) {
   const note = evidence.notes.find((n) => (tab === "commands" || tab === "log" ? n.kind === "text" : n.kind === tab));
   if (tab === "commands") {
     return evidence.commands.length === 0 ? <EmptyState title="No commands" {...(note ? { hint: note.message } : {})} /> : (
-      <Card><table className="w-full text-[12px]"><tbody>
+      <Card><ScrollPane label="Commands"><table className="w-full text-[12px]">
+        <thead><tr><th className={TH}>Time</th><th className={TH}>Command</th><th className={cn(TH, "text-right")}>Took</th><th className={TH}>Error</th></tr></thead>
+        <tbody>
         {evidence.commands.map((c, i) => (
           <tr key={i} className={cn("border-b border-border last:border-0", c.failed && "bg-danger-bg")}>
-            <td className="px-3 py-1.5 font-mono text-muted">{clock(c.startMs)}</td>
-            <td className="px-3 py-1.5 font-mono">{c.method} {c.path}</td>
-            <td className="px-3 py-1.5 text-right text-muted">{c.durationMs === undefined ? "" : `${c.durationMs} ms`}</td>
+            <td className="whitespace-nowrap px-3 py-1.5 font-mono text-muted">{clock(c.startMs)}</td>
+            <td className="break-all px-3 py-1.5 font-mono">{c.method} {c.path}</td>
+            <td className="whitespace-nowrap px-3 py-1.5 text-right text-muted">{c.durationMs === undefined ? "" : `${c.durationMs} ms`}</td>
             <td className="px-3 py-1.5 text-danger">{c.error}</td>
           </tr>
         ))}
-      </tbody></table></Card>
+        </tbody></table></ScrollPane></Card>
     );
   }
   if (tab === "network") {
+    const bars = waterfallOf(evidence.rows);
     return evidence.rows.length === 0 ? <EmptyState title="No network log" {...(note ? { hint: note.message } : {})} /> : (
-      <Card><table className="w-full text-[12px]"><tbody>
-        {evidence.rows.map((r) => (
-          <tr key={r.id} className={cn("border-b border-border last:border-0", r.failed && "bg-danger-bg")}>
-            <td className="px-3 py-1.5 font-mono text-muted">{clock(r.startMs)}</td>
-            <td className="px-3 py-1.5 font-mono">{r.method}</td>
-            <td className="max-w-[420px] truncate px-3 py-1.5 font-mono" title={`${r.host}${r.path}`}>{r.host}{r.path}</td>
-            <td className={cn("px-3 py-1.5", r.failed && "text-danger")}>{r.status || r.error || "—"}</td>
-            <td className="px-3 py-1.5 text-right text-muted">{Math.round(r.durationMs)} ms</td>
-          </tr>
-        ))}
-      </tbody></table></Card>
+      <Card>
+        <div className="flex gap-4 border-b border-border px-3 py-2 text-[11px] text-muted" aria-hidden>
+          <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2 w-3 rounded-[1px] bg-border" />Connect</span>
+          <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2 w-3 rounded-[1px] bg-primary" />Server wait</span>
+          <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2 w-3 rounded-[1px] bg-success" />Transfer</span>
+        </div>
+        <ScrollPane label="Network requests"><table className="w-full text-[12px]">
+          <thead><tr><th className={TH}>Time</th><th className={TH}>Method</th><th className={TH}>Request</th><th className={TH}>Status</th><th className={cn(TH, "text-right")}>Size</th><th className={TH}>Waterfall</th><th className={cn(TH, "text-right")}>Took</th></tr></thead>
+          <tbody>
+          {evidence.rows.map((r, i) => {
+            const bar = bars[i];
+            return (
+              <tr key={r.id} className={cn("border-b border-border last:border-0", r.failed && "bg-danger-bg")}>
+                <td className="whitespace-nowrap px-3 py-1.5 font-mono text-muted">{clock(r.startMs)}</td>
+                <td className="px-3 py-1.5 font-mono">{r.method}</td>
+                <td className="max-w-[360px] truncate px-3 py-1.5 font-mono" title={`${r.host}${r.path}`}><span className="text-muted">{r.host}</span>{r.path}</td>
+                <td className={cn("whitespace-nowrap px-3 py-1.5", r.failed && "text-danger")}>{r.status || r.error || "—"}</td>
+                <td className="whitespace-nowrap px-3 py-1.5 text-right text-muted">{formatBytes(r.sizeBytes)}</td>
+                <td className="w-[28%] min-w-[160px] px-3 py-1.5">
+                  {bar && (
+                    <div className="relative h-2 rounded-[1px] bg-hairline/40" role="img" aria-label={`connect ${Math.round(r.phases.connect)} ms, wait ${Math.round(r.phases.wait)} ms, transfer ${Math.round(r.phases.transfer)} ms`}>
+                      <div className="absolute flex h-full" style={{ left: `${bar.left}%`, minWidth: 2 }}>
+                        <i className="h-full bg-border" style={{ width: `${bar.connect}%` }} />
+                        <i className={cn("h-full", r.failed ? "bg-danger" : "bg-primary")} style={{ width: `${bar.wait}%` }} />
+                        <i className="h-full bg-success" style={{ width: `${bar.transfer}%` }} />
+                      </div>
+                    </div>
+                  )}
+                </td>
+                <td className="whitespace-nowrap px-3 py-1.5 text-right text-muted">{Math.round(r.durationMs)} ms</td>
+              </tr>
+            );
+          })}
+          </tbody></table></ScrollPane>
+      </Card>
     );
   }
   if (tab === "console") {
-    return evidence.consoleText === undefined ? <EmptyState title="No console log" {...(note ? { hint: note.message } : {})} /> : <LogBlock text={evidence.consoleText} />;
+    return evidence.consoleText === undefined ? <EmptyState title="No console log" {...(note ? { hint: note.message } : {})} /> : <LogBlock text={evidence.consoleText} label="Console log" />;
   }
-  return evidence.lines.length === 0 ? <EmptyState title="No session log" {...(note ? { hint: note.message } : {})} /> : <LogBlock text={evidence.lines.map((l) => `${l.ms === undefined ? "" : clock(l.ms) + " "}${l.tag} ${l.text}`.trim()).join("\n")} />;
+  return evidence.lines.length === 0 ? <EmptyState title="No session log" {...(note ? { hint: note.message } : {})} /> : <LogBlock label="Raw session log" text={evidence.lines.map((l) => `${l.ms === undefined ? "" : clock(l.ms) + " "}${l.tag} ${l.text}`.trim()).join("\n")} />;
 }
 
-function LogBlock({ text }: { text: string }) {
-  return <pre className="panel max-h-[560px] overflow-auto whitespace-pre-wrap rounded-lg p-4 font-mono text-[12px] leading-[1.5]">{text}</pre>;
+function LogBlock({ text, label }: { text: string; label: string }) {
+  return <pre className="panel scroll-thin max-h-[560px] overflow-auto whitespace-pre-wrap break-all rounded-lg p-4 font-mono text-[12px] leading-[1.5]" role="region" aria-label={label} tabIndex={0}>{text}</pre>;
 }
