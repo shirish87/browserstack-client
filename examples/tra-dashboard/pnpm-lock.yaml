@@ -198,7 +198,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       yaml:
-        specifier: ^2.8.3
+        specifier: ^2.9.1
         version: 2.9.1
 
   ../../packages/openapi-transforms:
@@ -207,8 +207,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       '@streamparser/json':
-        specifier: ^0.0.22
-        version: 0.0.22
+        specifier: ^0.0.26
+        version: 0.0.26
     devDependencies:
       '@types/node':
         specifier: 20.0.0
@@ -226,7 +226,7 @@ importers:
         specifier: ^4.1.4
         version: 4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
       yaml:
-        specifier: ^2.8.3
+        specifier: ^2.9.1
         version: 2.9.1
 
   ../../packages/router:
@@ -943,8 +943,8 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@streamparser/json@0.0.22':
-    resolution: {integrity: sha512-b6gTSBjJ8G8SuO3Gbbj+zXbVx8NSs1EbpbMKpzGLWMdkR+98McH9bEjSz3+0mPJf68c5nxa3CrJHp5EQNXM6zQ==}
+  '@streamparser/json@0.0.26':
+    resolution: {integrity: sha512-46597LNFI+MFdUnzX2QJWwmdTRdq0XVD+vVNJTtGVzIrnCuhG9pFo1OAzbNBqci8UJgk/X5KJZ6LcV+y7PTuDQ==}
 
   '@tailwindcss/node@4.3.3':
     resolution: {integrity: sha512-/T8IKEsf9VTU6tLjgC7+sv2mOPtQxzE2jMw7u4Tt40Tx+QSZxpzh95/H6cMKoja9XuW7iMdLJYBB0o9G1CaAgg==}
@@ -2892,7 +2892,7 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@streamparser/json@0.0.22': {}
+  '@streamparser/json@0.0.26': {}
 
   '@tailwindcss/node@4.3.3':
     dependencies:

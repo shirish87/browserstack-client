@@ -53,11 +53,11 @@ function stepsFor(t: ModelTest, sid: string): Step[] {
   const s = `/session/${sid}`;
   const found = '{"value":{"element-6066-11e4-a52e-4f735466cecf":"e1"}}';
   const gone = '{"value":{"error":"no such element","message":"no such element: Unable to locate element: {\\"method\\":\\"css selector\\",\\"selector\\":\\"[name=pay]\\"}"}}';
-  const out: Step[] = [{ at: 40, method: "POST", path: `${s}/url`, body: `{"url":"${HOST}/"}`, response: '{"value":null}', tookMs: Math.min(900, dur * 0.3) }];
+  const navigate: Step = { at: 40, method: "POST", path: `${s}/url`, body: `{"url":"${HOST}/"}`, response: '{"value":null}', tookMs: Math.min(900, dur * 0.3) };
   if (t.error?.cause === "connection-reset") {
-    out[0] = { ...out[0]!, response: '{"value":{"error":"unknown error","message":"unknown error: net::ERR_CONNECTION_RESET"}}', failed: true };
-    return out;
+    return [{ ...navigate, response: '{"value":{"error":"unknown error","message":"unknown error: net::ERR_CONNECTION_RESET"}}', failed: true }];
   }
+  const out: Step[] = [navigate];
   out.push({ at: dur * 0.35, method: "POST", path: `${s}/element`, body: '{"using":"css selector","value":"[data-testid=cta]"}', response: found, tookMs: 60 });
   out.push({ at: dur * 0.4, method: "POST", path: `${s}/element/e1/click`, body: "{}", response: '{"value":null}', tookMs: 80 });
   if (t.error?.cause === "missing-element") {

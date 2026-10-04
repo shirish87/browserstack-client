@@ -25,10 +25,19 @@ export interface LogLine {
   text: string;
 }
 
-const utc = (y: string, mo: string, d: string, h: string, mi: string, s: string, ms: string): number => Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(s), Number(ms));
+/** The numeric parts of a log timestamp, captured as strings by the line patterns below. */
+const StampSchema = z.object({ y: z.string(), mo: z.string(), d: z.string(), h: z.string(), mi: z.string(), s: z.string(), ms: z.string() });
+const utc = (g: z.infer<typeof StampSchema>): number => Date.UTC(Number(g.y), Number(g.mo) - 1, Number(g.d), Number(g.h), Number(g.mi), Number(g.s), Number(g.ms));
+
+/** Matches a line and returns its named groups, validated, or undefined when it doesn't match. */
+function groupsOf<T extends z.ZodType>(re: RegExp, schema: T, line: string): z.infer<T> | undefined {
+  const parsed = schema.safeParse(re.exec(line)?.groups);
+  return parsed.success ? parsed.data : undefined;
+}
 
 /** Automate / App Automate text log: `2026-10-4 16:28:3:343 REQUEST POST /session {...}`, unpadded, UTC. */
-const TEXT_LINE = /^(\d{4})-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2}):(\d{1,3}) (\S+)(?: (.*))?$/;
+const TEXT_LINE = /^(?<y>\d{4})-(?<mo>\d{1,2})-(?<d>\d{1,2}) (?<h>\d{1,2}):(?<mi>\d{1,2}):(?<s>\d{1,2}):(?<ms>\d{1,3}) (?<tag>\S+)(?: (?<text>.*))?$/;
+const TextLineSchema = StampSchema.extend({ tag: z.string(), text: z.string().optional() });
 /** App Automate repeats the stamp in brackets after REQUEST. */
 const BRACKET_STAMP = /^\[\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}:\d{1,3}\] /;
 
@@ -36,9 +45,9 @@ export function parseTextLog(text: string): LogLine[] {
   const out: LogLine[] = [];
   for (const raw of text.split("\n")) {
     if (raw.trim() === "") continue;
-    const m = TEXT_LINE.exec(raw);
-    if (m) {
-      out.push({ ms: utc(m[1]!, m[2]!, m[3]!, m[4]!, m[5]!, m[6]!, m[7]!), tag: m[8]!, text: (m[9] ?? "").replace(BRACKET_STAMP, "") });
+    const g = groupsOf(TEXT_LINE, TextLineSchema, raw);
+    if (g) {
+      out.push({ ms: utc(g), tag: g.tag, text: (g.text ?? "").replace(BRACKET_STAMP, "") });
     } else {
       out.push({ ms: out.at(-1)?.ms, tag: "", text: raw });
     }
@@ -47,28 +56,30 @@ export function parseTextLog(text: string): LogLine[] {
 }
 
 /** Appium log: `2026-10-04 16:28:03:360 - [HTTP] --> POST /wd/hub/session`, padded, UTC. */
-const APPIUM_LINE = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}):(\d{3}) - (?:\[([^\]]+)\] )?(.*)$/;
+const APPIUM_LINE = /^(?<y>\d{4})-(?<mo>\d{2})-(?<d>\d{2}) (?<h>\d{2}):(?<mi>\d{2}):(?<s>\d{2}):(?<ms>\d{3}) - (?:\[(?<tag>[^\]]+)\] )?(?<text>.*)$/;
+const AppiumLineSchema = StampSchema.extend({ tag: z.string().optional(), text: z.string() });
 
 export function parseAppiumLog(text: string): LogLine[] {
   const out: LogLine[] = [];
   for (const raw of text.split("\n")) {
     if (raw.trim() === "") continue;
-    const m = APPIUM_LINE.exec(raw);
-    if (m) out.push({ ms: utc(m[1]!, m[2]!, m[3]!, m[4]!, m[5]!, m[6]!, m[7]!), tag: m[8] ?? "", text: m[9]! });
+    const g = groupsOf(APPIUM_LINE, AppiumLineSchema, raw);
+    if (g) out.push({ ms: utc(g), tag: g.tag ?? "", text: g.text });
     else out.push({ ms: out.at(-1)?.ms, tag: "", text: raw });
   }
   return out;
 }
 
 /** Android logcat: `10-04 16:28:08.959 I/libc    (12766): message`. It has no year; take it from the session. */
-const DEVICE_LINE = /^(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})\.(\d{3}) (\S+)\s+\(\s*\d+\): ?(.*)$/;
+const DEVICE_LINE = /^(?<mo>\d{2})-(?<d>\d{2}) (?<h>\d{2}):(?<mi>\d{2}):(?<s>\d{2})\.(?<ms>\d{3}) (?<tag>\S+)\s+\(\s*\d+\): ?(?<text>.*)$/;
+const DeviceLineSchema = StampSchema.omit({ y: true }).extend({ tag: z.string(), text: z.string() });
 
 export function parseDeviceLog(text: string, year: number): LogLine[] {
   const out: LogLine[] = [];
   for (const raw of text.split("\n")) {
     if (raw.trim() === "") continue;
-    const m = DEVICE_LINE.exec(raw);
-    if (m) out.push({ ms: utc(String(year), m[1]!, m[2]!, m[3]!, m[4]!, m[5]!, m[6]!), tag: m[7]!, text: m[8]! });
+    const g = groupsOf(DEVICE_LINE, DeviceLineSchema, raw);
+    if (g) out.push({ ms: utc({ ...g, y: String(year) }), tag: g.tag, text: g.text });
     else out.push({ ms: out.at(-1)?.ms, tag: "", text: raw });
   }
   return out;
@@ -87,6 +98,9 @@ export interface Command {
   error: string | undefined;
 }
 
+const REQUEST_TEXT = /^(?<method>\S+) (?<path>\S+)(?: (?<body>.*))?$/;
+const RequestTextSchema = z.object({ method: z.string(), path: z.string(), body: z.string().optional() });
+
 const WebDriverErrorSchema = z.object({ value: z.object({ error: z.string(), message: z.string().optional() }) });
 
 function errorOf(response: string): string | undefined {
@@ -104,9 +118,9 @@ export function commandsFromLog(lines: LogLine[]): Command[] {
   let open: Command | undefined;
   for (const line of lines) {
     if (line.tag === "REQUEST" && line.ms !== undefined) {
-      const m = /^(\S+) (\S+)(?: (.*))?$/.exec(line.text);
-      if (!m) continue;
-      open = { startMs: line.ms, endMs: undefined, durationMs: undefined, method: m[1]!, path: m[2]!, body: m[3], failed: false, error: undefined };
+      const g = groupsOf(REQUEST_TEXT, RequestTextSchema, line.text);
+      if (!g) continue;
+      open = { startMs: line.ms, endMs: undefined, durationMs: undefined, method: g.method, path: g.path, body: g.body, failed: false, error: undefined };
       out.push(open);
     } else if (line.tag === "RESPONSE" && open && line.ms !== undefined) {
       const error = errorOf(line.text);
@@ -280,8 +294,8 @@ function bucketize(items: { ms: number; bad: boolean }[], startMs: number, endMs
   const width = (endMs - startMs) / n;
   const buckets: Bucket[] = Array.from({ length: n }, (_, i) => ({ startMs: startMs + i * width, endMs: startMs + (i + 1) * width, total: 0, bad: 0 }));
   for (const it of items) {
-    const i = Math.min(n - 1, Math.max(0, Math.floor((it.ms - startMs) / width)));
-    const b = buckets[i]!;
+    const b = buckets[Math.min(n - 1, Math.max(0, Math.floor((it.ms - startMs) / width)))];
+    if (!b) continue;
     b.total += 1;
     if (it.bad) b.bad += 1;
   }
