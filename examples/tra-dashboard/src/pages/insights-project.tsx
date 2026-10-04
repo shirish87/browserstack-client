@@ -85,7 +85,7 @@ function Overview({ projectId, projectName, days }: { projectId: number; project
   }
 
   const points = toChartPoints(series).map((p, i) => ({ ...p, value: series[i]?.passRate ?? null }));
-  const durationPoints = toChartPoints(series).map((p, i) => ({ ...p, value: series[i]?.durationSec ?? null }));
+  const durationPoints = toChartPoints(series).map((p, i) => ({ ...p, value: series[i]?.durationMs ?? null }));
   const minRate = Math.min(...points.map((p) => p.value ?? 1));
   const lo = Math.max(0, Math.min(0.9, Math.floor((minRate - 0.02) * 20) / 20));
   const delta = summary.passRateDelta;
@@ -97,7 +97,7 @@ function Overview({ projectId, projectName, days }: { projectId: number; project
         <Stat label="Pass rate" value={formatPercent(summary.passRate)} hint={delta === null ? "not enough builds for a trend" : `${delta >= 0 ? "▲" : "▼"} ${Math.abs(Math.round(delta * 1000) / 10)} pts vs earlier half`} />
         <Stat label="Builds" value={summary.count} hint={`${summary.failedBuilds} failed`} />
         <Stat label="Build failure rate" value={formatPercent(summary.buildFailRate)} />
-        <Stat label="Avg duration" value={formatDuration(summary.avgDurationSec != null ? summary.avgDurationSec * 1000 : null)} />
+        <Stat label="Avg duration" value={formatDuration(summary.avgDurationMs)} />
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -167,7 +167,7 @@ function Hotspots({
       const t = runs[i]?.find((x) => x.key === key && (x.status === "failed" || x.isFlaky)) ?? runs[i]?.find((x) => x.key === key);
       const buildId = builds[i];
       if (t && buildId && (t.status === "failed" || t.isFlaky)) {
-        setDrawer({ test: t, extra: {}, buildUrl: observability.get(buildId), buildLabel: labels.get(buildId) ?? buildId });
+        setDrawer({ test: t, buildId, buildUrl: observability.get(buildId), buildLabel: labels.get(buildId) ?? buildId });
         return;
       }
     }
@@ -253,6 +253,7 @@ function QualityGate({ projectName }: { projectName: string | undefined }) {
     return <EmptyState title="Quality gates aren’t available" hint={errorMessage(q.error)} />;
   }
   const s = q.data;
+  const profiles = s.qualityProfiles ?? [];
   return (
     <div className="space-y-6">
       <Card>
@@ -262,12 +263,12 @@ function QualityGate({ projectName }: { projectName: string | undefined }) {
         </CardContent>
       </Card>
       <Card>
-        <CardHeader><CardTitle>Profiles</CardTitle><span className="text-muted">{s.qualityProfiles.length}</span></CardHeader>
-        {s.qualityProfiles.length === 0 ? (
+        <CardHeader><CardTitle>Profiles</CardTitle><span className="text-muted">{profiles.length}</span></CardHeader>
+        {profiles.length === 0 ? (
           <CardContent className="text-muted">No quality gate profiles configured.</CardContent>
         ) : (
           <ul className="divide-y divide-border">
-            {s.qualityProfiles.map((p, i) => (
+            {profiles.map((p, i) => (
               <li key={p.id ?? i} className="flex items-center justify-between gap-4 px-5 py-3">
                 <div><p className="font-medium">{p.name ?? "Untitled profile"}</p><p className="text-muted">{p.rulesCount ?? 0} rules{p.isGlobalProfile ? " · Global" : ""}</p></div>
                 <Badge tone={p.enabled ? "success" : "neutral"}>{p.enabled ? "Enabled" : "Disabled"}</Badge>

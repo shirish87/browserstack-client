@@ -71,8 +71,8 @@ export function ComparePage() {
   const counts = diff ? countsOf(diff) : undefined;
   const active: Category = picked ?? ORDER.find((c) => (counts?.[c] ?? 0) > 0) ?? "newFailures";
 
-  const open = (item: FlatTest, build: BuildDetails | undefined) =>
-    setDrawer({ test: item, extra: {}, buildUrl: build?.observabilityUrl, buildLabel: `${build?.name ?? "Build"} #${build?.buildNumber ?? ""}` });
+  const open = (item: FlatTest, build: BuildDetails | undefined, buildId: string) =>
+    setDrawer({ test: item, buildId, buildUrl: build?.observabilityUrl, buildLabel: `${build?.name ?? "Build"} #${build?.buildNumber ?? ""}` });
 
   return (
     <>
@@ -88,9 +88,9 @@ export function ComparePage() {
       />
 
       <div className="mb-6 grid items-stretch gap-4 md:grid-cols-[1fr_auto_1fr]">
-        <RunCard role="Baseline" build={baseBuild.data} project={project} />
+        <RunCard role="Baseline" buildId={baseId} build={baseBuild.data} project={project} />
         <ArrowRight className="hidden self-center text-muted md:block" aria-hidden />
-        <RunCard role="Compared" build={headBuild.data} project={project} />
+        <RunCard role="Compared" buildId={headId} build={headBuild.data} project={project} />
       </div>
 
       {baseBuild.data && headBuild.data && <Deltas base={baseBuild.data} head={headBuild.data} />}
@@ -110,7 +110,7 @@ export function ComparePage() {
           <ChangeList
             category={active}
             diff={diff}
-            onOpen={(t, side) => open(t, side === "base" ? baseBuild.data : headBuild.data)}
+            onOpen={(t, side) => open(t, side === "base" ? baseBuild.data : headBuild.data, side === "base" ? baseId : headId)}
           />
         </section>
       )}
@@ -131,12 +131,12 @@ function countsOf(d: RunDiff): Record<Category, number> {
   };
 }
 
-function RunCard({ role, build, project }: { role: string; build: BuildDetails | undefined; project: { id: number; name: string | undefined } | undefined }) {
+function RunCard({ role, buildId, build, project }: { role: string; buildId: string; build: BuildDetails | undefined; project: { id: number; name: string | undefined } | undefined }) {
   if (!build) return <Skeleton className="h-32" />;
   return (
     <Card className="p-5">
       <p className="text-[12px] text-muted">{role}</p>
-      <Link to={buildHref(build.buildId, project)} className="mt-1 block truncate text-[16px] font-medium tracking-[-0.02em] hover:underline">
+      <Link to={buildHref(buildId, project)} className="mt-1 block truncate text-[16px] font-medium tracking-[-0.02em] hover:underline">
         {build.name ?? "Build"} <span className="font-mono text-[12px] text-muted">#{build.buildNumber ?? ""}</span>
       </Link>
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted">

@@ -5,8 +5,12 @@ import { createGateway } from "@dot-slash/browserstack-router";
 import { CredentialsSchema, type Credentials, type SessionResponse } from "../src/lib/schemas";
 import { SessionStore } from "./sessions";
 
-/** Test Reporting & Analytics lives on these hosts only. */
-export const TRA_ALLOWED_HOSTS = ["api-automation.browserstack.com", "upload-automation.browserstack.com"];
+/**
+ * Test Reporting & Analytics, plus the Automate / App Automate REST API (api.browserstack.com), where the
+ * session behind a test lives. The gateway is read-only (see below), so reaching Automate's host cannot
+ * start, stop or delete anything.
+ */
+export const TRA_ALLOWED_HOSTS = ["api-automation.browserstack.com", "upload-automation.browserstack.com", "api.browserstack.com"];
 const TRA_PROBE_URL = "https://api-automation.browserstack.com/ext/v1/projects";
 const COOKIE_NAME = "tra_sid";
 
@@ -116,6 +120,12 @@ export function createApp(options: AppOptions): Express {
   // --- gateway: the browser's only path to BrowserStack ------------------------------------
   app.use(
     "/gateway",
+    // The dashboard only reads. Anything else is refused before credentials are used.
+    (req, res, next) => {
+      if (req.method === "GET" || req.method === "HEAD") return next();
+      res.setHeader("allow", "GET, HEAD");
+      res.status(405).json({ message: "The dashboard is read-only" });
+    },
     requireSession((req, res, next, creds) => {
       // Never forward the browser's cookies or auth upstream; the router adds Basic auth itself.
       delete req.headers["cookie"];

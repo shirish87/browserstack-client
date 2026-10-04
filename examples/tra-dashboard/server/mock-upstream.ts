@@ -1,131 +1,123 @@
 /**
- * Offline stand-in for api-automation.browserstack.com, used with `TRA_MOCK=1`.
- * Deterministic, relative to "now": ~40 builds per project over ~30 days, a live build that
- * progresses in real time, recurring tests with a few chronic failures, one regression and one
- * fix in the latest completed build (so Compare has something to show). Raw snake_case API shape.
+ * Offline stand-in for BrowserStack, used with `TRA_MOCK=1`. Serves the real response shapes (snake_case,
+ * TRA durations in milliseconds, `display_name`/`type` tree nodes, per-attempt `retries`) for Test Reporting
+ * and, for the session deep-dive, Automate and App Automate sessions and their logs.
+ *
+ * Deterministic, relative to "now": ~40 builds per project over ~30 days, a live build that progresses in
+ * real time, recurring tests with a few chronic failures, one regression and one fix in the latest completed
+ * build (so Compare has something to show). One project has no sessions and one has no smart tags, as on
+ * real plans.
  */
+import { HOUR, LATEST_N, MIN, PROJECTS, buildEndMs, buildStartMs, liveProgress, modelFor, numberFor, type ModelFile, type Project } from "./mock-model";
+import { sessionRoutes } from "./mock-sessions";
 
 const json = (body: unknown, status = 200): Response =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 
-const MIN = 60_000;
-const HOUR = 60 * MIN;
 const PAGE_SIZE = 20;
-const BUILD_COUNT = 40;
-const LIVE_RUN_MS = 9 * MIN;
 
-/** Stable pseudo-random in [0,1) from a string. */
-function rand(seed: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i++) {
-    h ^= seed.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return ((h >>> 0) % 100000) / 100000;
-}
-
-interface Project {
-  id: number;
-  name: string;
-  builds: number;
-  liveBuild: boolean;
-}
-const PROJECTS: Project[] = [
-  { id: 101, name: "checkout-web", builds: BUILD_COUNT, liveBuild: true },
-  { id: 102, name: "mobile-app-e2e", builds: BUILD_COUNT, liveBuild: true },
-  { id: 103, name: "payments-api", builds: BUILD_COUNT, liveBuild: false },
-  { id: 104, name: "Default Project", builds: 0, liveBuild: false },
-];
-
-type Spec = { name: string; failRate?: number; slowFrom?: number };
-const SUITES: { file: string; suite: string; tests: Spec[] }[] = [
-  { file: "auth/login.spec.ts", suite: "Login", tests: [{ name: "accepts valid credentials" }, { name: "rejects a wrong password" }, { name: "locks the account after 5 attempts", failRate: 0.03 }, { name: "remembers the session" }, { name: "supports SSO redirect" }] },
-  { file: "cart/cart.spec.ts", suite: "Cart", tests: [{ name: "adds an item" }, { name: "applies a discount code" }, { name: "persists across sessions", failRate: 0.02 }, { name: "removes an item" }, { name: "updates quantity" }, { name: "shows stock warnings" }] },
-  { file: "checkout/pay.spec.ts", suite: "Checkout", tests: [{ name: "pays with a card" }, { name: "pays with a wallet" }, { name: "shows tax for EU addresses", failRate: 0.1 }, { name: "handles declined cards", slowFrom: 239 }, { name: "sends a receipt email" }, { name: "retries a timed-out payment", failRate: 0.04 }] },
-  { file: "search/search.spec.ts", suite: "Search", tests: [{ name: "finds by name" }, { name: "filters by category" }, { name: "pages results" }, { name: "suggests while typing" }, { name: "handles empty results" }] },
-  { file: "api/orders.spec.ts", suite: "Orders API", tests: [{ name: "creates an order" }, { name: "lists orders" }, { name: "rejects invalid payloads", failRate: 0.02 }, { name: "paginates" }, { name: "is idempotent" }] },
-];
-
-const ERRORS: [string, string][] = [
-  ["Expected 200 but received 500", "Assertion Error"],
-  ["Timed out 30000ms waiting for selector `[data-testid=submit]`", "Timeout"],
-  ["Element not found: button[name=pay]", "Element Not Found"],
-  ["net::ERR_CONNECTION_RESET at https://staging.example.com/api/orders", "Network Error"],
-];
-
-const LATEST_N = 240;
-const numberFor = (i: number): number => LATEST_N - i;
-
-interface TestOut {
-  name: string;
-  details: Record<string, unknown>;
-}
-
-function testStatus(pid: number, n: number, suiteName: string, spec: Spec): "passed" | "failed" | "skipped" {
-  if (spec.name === "pays with a wallet") return n >= LATEST_N - 1 ? "failed" : "passed"; // regression
-  if (spec.name === "applies a discount code") return n <= LATEST_N - 2 && n >= LATEST_N - 12 ? "failed" : "passed"; // fixed in latest
-  const r = rand(`${pid}|${suiteName}|${spec.name}|${n}`);
-  if (spec.failRate && r < spec.failRate) return "failed";
-  return r > 0.985 ? "skipped" : "passed";
-}
-
-function testsFor(pid: number, n: number, progress: number | null): { tree: unknown[]; counts: Counts } {
-  const all = SUITES.flatMap((s) => s.tests.map((t) => ({ s, t })));
-  const doneCount = progress === null ? all.length : Math.floor(progress * all.length);
-  const counts: Counts = { passed: 0, failed: 0, pending: 0, skipped: 0, unknown: 0, flaky: 0, newFailures: 0, categories: {} };
-  let idx = 0;
-  const tree = SUITES.map((s) => ({
-    name: s.file,
-    details: {},
-    children: [
-      {
-        name: s.suite,
-        details: {},
-        children: s.tests.map<TestOut>((t) => {
-          const i = idx++;
-          const seed = `${pid}|${s.suite}|${t.name}|${n}`;
-          const common = { browser: i % 2 ? "firefox 131" : "chrome 129", os: i % 3 ? "macOS 14" : "Windows 11" };
-          if (i > doneCount) {
-            counts.pending += 1;
-            return { name: t.name, details: { status: "pending", ...common } };
-          }
-          if (progress !== null && i === doneCount) {
-            counts.pending += 1;
-            return { name: t.name, details: { status: "running", ...common } };
-          }
-          const status = testStatus(pid, n, s.suite, t);
-          counts[status] += 1;
-          const flaky = status === "passed" && rand(`${seed}|flaky`) < 0.07;
-          if (flaky) counts.flaky += 1;
-          const base = 900 + Math.floor(rand(`${t.name}|dur`) * 7000);
-          const slow = t.slowFrom !== undefined && n >= t.slowFrom ? 3.4 : 1;
-          const duration = Math.round(base * slow * (0.9 + rand(`${seed}|d`) * 0.25));
-          const details: Record<string, unknown> = { status, duration, is_flaky: flaky, retries: flaky ? [{ status: "failed" }, { status: "passed" }] : [], ...common };
-          if (status === "failed") {
-            const [msg, cat] = ERRORS[Math.floor(rand(`${seed}|e`) * ERRORS.length)] ?? ERRORS[0] ?? ["error", "Error"];
-            counts.categories[cat] = (counts.categories[cat] ?? 0) + 1;
-            const newFail = t.name === "pays with a wallet" && n === LATEST_N - 1;
-            if (newFail) counts.newFailures += 1;
-            details["is_new_failure"] = newFail;
-            details["failure"] = [{ error: msg, backtrace: `at ${s.file}:${20 + Math.floor(rand(`${seed}|l`) * 80)}:11\n    at async Page.click (playwright-core/lib/client/page.js:312:14)` }];
-          }
-          return { name: t.name, details };
-        }),
-      },
-    ],
-  }));
-  return { tree, counts };
-}
+const keyOf = (p: { name: string; version: string }): string => (p.name ? `${p.name},${p.version}` : "");
+const platformKey = (name: string, version: string): { name: string; version: string; key: string } => ({ name, version, key: keyOf({ name, version }) });
 
 interface Counts {
   passed: number;
   failed: number;
   pending: number;
   skipped: number;
-  unknown: number;
+  inProgress: number;
   flaky: number;
   newFailures: number;
   categories: Record<string, number>;
+}
+
+function countsOf(files: ModelFile[]): Counts {
+  const c: Counts = { passed: 0, failed: 0, pending: 0, skipped: 0, inProgress: 0, flaky: 0, newFailures: 0, categories: {} };
+  for (const f of files) {
+    for (const t of f.tests) {
+      if (t.status === "passed") c.passed += 1;
+      else if (t.status === "failed") c.failed += 1;
+      else if (t.status === "skipped") c.skipped += 1;
+      else if (t.status === "in progress") c.inProgress += 1;
+      else c.pending += 1;
+      if (t.flaky) c.flaky += 1;
+      if (t.newFailure) c.newFailures += 1;
+      if (t.error) c.categories[t.error.category] = (c.categories[t.error.category] ?? 0) + 1;
+    }
+  }
+  return c;
+}
+
+const statusStats = (c: Counts) => ({ passed: c.passed, failed: c.failed, "in progress": c.inProgress, skipped: c.skipped, retest: 0, blocked: 0, untested: 0, pending: c.pending, unknown: 0 });
+
+function treeFor(project: Project, files: ModelFile[], buildKey: string): unknown[] {
+  let rank = 0;
+  return files.map((f) => {
+    const c = countsOf([f]);
+    const total = f.tests.length;
+    const root = {
+      summary: { aggregate: total, passed: c.passed, failed: c.failed, pending: c.pending + c.inProgress, skipped: c.skipped, unknown: 0 },
+      is_after_all_hook: null,
+      rank: rank++,
+      details: {
+        file_path: f.file,
+        os: platformKey(f.platform.os.name, f.platform.os.version),
+        finished_at: null,
+        browser: platformKey(f.platform.browser.name, f.platform.browser.version),
+        vc_file_url: "",
+        isRealDevice: project.product === "app-automate",
+        device: f.platform.device,
+        middle_scopes: null,
+      },
+      type: "ROOT",
+      display_name: f.file,
+      is_before_all_hook: null,
+      children: [
+        {
+          summary: null,
+          is_after_all_hook: null,
+          rank: rank++,
+          details: {},
+          type: "DESCRIBE",
+          display_name: f.suite,
+          is_before_all_hook: null,
+          children: f.tests.map((t) => {
+            const details: Record<string, unknown> = {
+              last_executed_by: "ci-bot",
+              is_auto_analyzed: null,
+              testCases: [],
+              observability_url: `https://observability.browserstack.com/projects/${encodeURIComponent(project.name)}/builds/${encodeURIComponent(buildKey)}`,
+              pm_tool_details: [],
+              session_id: f.sessionId ?? "",
+              is_muted: false,
+              tags: [],
+              run_count: 0,
+              duration: t.durationMs,
+              retries: t.attempts.map((a) => ({
+                uuid: a.uuid,
+                status: a.status,
+                duration: a.durationMs,
+                workflowStatus: a.status === "failed" ? "Failed" : "Passed",
+                logs: a.failure ? { TEST_FAILURE: a.failure } : {},
+              })),
+              is_auto_analyzer_running: false,
+              started_at: t.startMs === undefined ? null : new Date(t.startMs).toISOString(),
+              is_latest: true,
+              last_executed_by_id: 1,
+              status: t.status,
+            };
+            if (project.smartTags) {
+              details["is_flaky"] = t.flaky;
+              details["is_new_failure"] = t.newFailure;
+              details["is_always_failing"] = false;
+              details["is_performance_anomaly"] = t.slow;
+            }
+            return { summary: null, is_after_all_hook: null, children: [], rank: rank++, details, type: "TEST", display_name: t.name, is_before_all_hook: null };
+          }),
+        },
+      ],
+    };
+    return root;
+  });
 }
 
 const USERS = ["asha", "mateo", "li", "ci-bot"];
@@ -134,29 +126,32 @@ const TAG_SETS = [["chrome", "smoke"], ["firefox"], ["chrome", "regression"]];
 function buildFor(project: Project, i: number, now: number) {
   const n = numberFor(i);
   const live = project.liveBuild && i === 0;
-  const startedMs = live ? now - 4 * MIN : now - 6 * MIN - i * 17 * HOUR - Math.floor(rand(`${project.id}|${n}|s`) * 3 * HOUR);
-  const progress = live ? Math.min(0.97, (now - startedMs) / LIVE_RUN_MS) : null;
-  const { tree, counts } = testsFor(project.id, n, progress);
+  const startedMs = buildStartMs(project, i, now);
+  const progress = liveProgress(project, i, startedMs, now);
+  const files = modelFor(project, n, startedMs, progress);
+  const counts = countsOf(files);
   const status = live ? "running" : counts.failed > 0 ? "failed" : "passed";
-  const durationSec = live ? Math.round((now - startedMs) / 1000) : 380 + Math.floor(rand(`${project.id}|${n}|du`) * 260) + (n >= LATEST_N - 1 ? 90 : 0);
+  const endMs = live ? now : buildEndMs(files, startedMs);
+  const buildId = `bld${project.id}-${n}`;
   return {
     n,
-    tree,
+    files,
     counts,
     summary: {
       name: i % 3 === 0 ? "nightly-regression" : "pr-validation",
       original_name: "regression",
       status,
-      duration: durationSec,
+      duration: endMs - startedMs,
       user: USERS[i % USERS.length],
       tags: TAG_SETS[i % TAG_SETS.length],
-      build_id: `bld${project.id}-${n}`,
+      build_id: buildId,
       build_number: n,
       started_at: new Date(startedMs).toISOString(),
-      finished_at: live ? null : new Date(startedMs + durationSec * 1000).toISOString(),
-      status_stats: { passed: counts.passed, failed: counts.failed, pending: counts.pending, skipped: counts.skipped, unknown: 0 },
+      finished_at: live ? null : new Date(endMs).toISOString(),
+      status_stats: statusStats(counts),
+      is_manually_overridden: false,
       is_archived: false,
-      observability_url: `https://observability.browserstack.com/projects/${encodeURIComponent(project.name)}/builds/bld${project.id}-${n}`,
+      observability_url: `https://observability.browserstack.com/projects/${encodeURIComponent(project.name)}/builds/${buildId}`,
     },
   };
 }
@@ -206,8 +201,9 @@ export function createMockUpstream(): typeof fetch {
       if (!ref) return json({ message: "Build not found" }, 404);
       const b = buildFor(ref.project, ref.i, now);
       const statuses = url.searchParams.get("test_statuses")?.split(",").filter(Boolean);
-      const hierarchy = statuses?.length ? filterTree(b.tree, statuses) : b.tree;
-      return json({ name: b.summary.original_name, project_id: ref.project.id, build_id: runs[1], build_name: b.summary.name, build_number: b.n, test_summary: b.summary.status_stats, hierarchy, pagination: { has_next: false } });
+      const tree = treeFor(ref.project, b.files, runs[1]);
+      const hierarchy = statuses?.length ? filterTree(tree, statuses) : tree;
+      return json({ name: b.summary.original_name, project_id: ref.project.id, group_id: 7, build_id: runs[1], build_name: b.summary.name, build_number: b.n, original_name: b.summary.original_name, test_summary: b.summary.status_stats, is_manually_overridden: false, is_archived: false, hierarchy, pagination: { has_next: false } });
     }
 
     if (path.match(/^\/builds\/([^/]+)\/selfHealingReport$/)) return json({ message: "No self-healing report for this build" }, 404);
@@ -220,8 +216,12 @@ export function createMockUpstream(): typeof fetch {
       return json({
         ...b.summary,
         description: "Full cross-browser regression, triggered on every merge to main.",
-        failure_categories: b.counts.categories,
-        smart_tags: { is_flaky: b.counts.flaky, is_always_failing: b.counts.failed > 0 ? 1 : 0, is_performance_anomaly: b.n >= LATEST_N - 1 ? 1 : 0, is_new_failure: b.counts.newFailures },
+        ...(ref.project.smartTags
+          ? {
+              failure_categories: b.counts.categories,
+              smart_tags: { is_flaky: b.counts.flaky, is_always_failing: b.counts.failed > 0 ? 1 : 0, is_performance_anomaly: b.n >= LATEST_N - 1 ? 1 : 0, is_new_failure: b.counts.newFailures },
+            }
+          : {}),
         vcs_info: { name: "git", sha: `9eb4c05d1a7f3b2c8e6d4a0b9f1e2c3d4a5b${b.n}`.slice(0, 40), branch: b.n % 5 === 0 ? "release/2.4" : "main" },
         ci_info: { name: "GitHub Actions", job_name: "e2e", build_number: String(5000 + b.n), build_url: `https://github.com/acme/web/actions/runs/${5000 + b.n}` },
         host_info: { hostname: "runner-12", os: "linux" },
@@ -241,19 +241,23 @@ export function createMockUpstream(): typeof fetch {
       return json({ status: "completed", build_uuid: qg[1], quality_gate_result: failed > 1 ? "failed" : "passed", quality_profiles: [{ id: "p1", name: "Release gate", type: "global", result: failed > 1 ? "failed" : "passed", rules: [{ name: "Failed tests", operator: "<=", threshold: "1", actual: String(failed), result: failed > 1 ? "failed" : "passed" }] }] });
     }
 
+    const sessions = sessionRoutes(path, now);
+    if (sessions) return sessions;
+
     return json({ message: `mock: no route for ${path}` }, 404);
   };
 }
 
-type Node = { name: string; details: Record<string, unknown>; children?: Node[] };
+type Node = { display_name: string; type: string; details: Record<string, unknown>; children?: Node[] };
 function isNode(v: unknown): v is Node {
-  return typeof v === "object" && v !== null && "name" in v && "details" in v;
+  return typeof v === "object" && v !== null && "display_name" in v && "details" in v && "type" in v;
 }
+/** Keeps the ROOT → DESCRIBE → TEST path of every test whose status is wanted. */
 function filterTree(nodes: unknown[], statuses: string[]): unknown[] {
   const out: unknown[] = [];
   for (const n of nodes) {
     if (!isNode(n)) continue;
-    if (n.children) {
+    if (n.children && n.children.length > 0) {
       const kids = filterTree(n.children, statuses);
       if (kids.length) out.push({ ...n, children: kids });
     } else if (statuses.includes(String(n.details["status"]))) out.push(n);

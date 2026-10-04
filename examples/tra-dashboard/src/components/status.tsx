@@ -2,7 +2,7 @@ import { CheckCircle2, CircleHelp, Loader2, MinusCircle, XCircle, type LucideIco
 import type { StatusStats } from "@/lib/schemas";
 import { normalizeStatus, type NormStatus } from "@/lib/hierarchy";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
-import { totalTests } from "@/lib/format";
+import { outcomes, totalTests } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const META: Record<NormStatus, { label: string; tone: BadgeTone; Icon: LucideIcon; bar: string }> = {
@@ -37,9 +37,10 @@ export function StatusIcon({ status, className }: { status: NormStatus; classNam
 
 const ORDER: NormStatus[] = ["passed", "failed", "pending", "skipped", "unknown"];
 
-export function StatusBar({ stats, className }: { stats: StatusStats | undefined; className?: string }) {
-  const total = totalTests(stats);
-  if (!stats || total === 0) {
+export function StatusBar({ stats: raw, className }: { stats: StatusStats | null | undefined; className?: string }) {
+  const stats = outcomes(raw);
+  const total = totalTests(raw);
+  if (total === 0) {
     return <div className={cn("h-2 rounded-full bg-neutral-bg", className)} role="img" aria-label="No test results" />;
   }
   const summary = ORDER.filter((k) => stats[k] > 0)
@@ -54,8 +55,9 @@ export function StatusBar({ stats, className }: { stats: StatusStats | undefined
   );
 }
 
-export function StatusLegend({ stats }: { stats: StatusStats | undefined }) {
-  if (!stats) return null;
+export function StatusLegend({ stats: raw }: { stats: StatusStats | null | undefined }) {
+  if (!raw) return null;
+  const stats = outcomes(raw);
   return (
     <ul className="flex flex-wrap gap-x-5 gap-y-1">
       {ORDER.map((k) => (

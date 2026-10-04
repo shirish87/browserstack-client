@@ -1,6 +1,7 @@
-import type { Failure, NormStatus, TestNode } from "./hierarchy";
+import type { Failure, NormStatus, Platform, TestNode } from "./hierarchy";
 import { normalizeStatus } from "./hierarchy";
-import type { BuildSummary, StatusStats } from "./schemas";
+import { outcomes, type Outcomes } from "./format";
+import type { IdentifiedBuild, StatusStats } from "./schemas";
 
 const SEP = " › ";
 
@@ -15,6 +16,31 @@ export interface FlatTest {
   isNewFailure: boolean;
   retries: number | null;
   failures: Failure[];
+  /** TRA node type: TEST or HOOK. */
+  type: string;
+  startedAt: string | undefined;
+  /** Automate / App Automate session this test ran in (shared by the tests of one file). */
+  sessionId: string | undefined;
+  platform: Platform;
+}
+
+/** A leaf of the normalized tree as a flat row. */
+export function toFlatTest(node: TestNode, path: string[]): FlatTest {
+  return {
+    key: path.join(SEP),
+    name: node.name,
+    path,
+    status: node.status,
+    durationMs: node.durationMs,
+    isFlaky: node.isFlaky,
+    isNewFailure: node.isNewFailure,
+    retries: node.retries,
+    failures: node.failures,
+    type: node.type,
+    startedAt: node.startedAt,
+    sessionId: node.sessionId,
+    platform: node.platform,
+  };
 }
 
 export function flattenTests(nodes: TestNode[], parents: string[] = []): FlatTest[] {
@@ -22,17 +48,7 @@ export function flattenTests(nodes: TestNode[], parents: string[] = []): FlatTes
   for (const node of nodes) {
     const path = [...parents, node.name];
     if (node.children.length === 0) {
-      out.push({
-        key: path.join(SEP),
-        name: node.name,
-        path,
-        status: node.status,
-        durationMs: node.durationMs,
-        isFlaky: node.isFlaky,
-        isNewFailure: node.isNewFailure,
-        retries: node.retries,
-        failures: node.failures,
-      });
+      out.push(toFlatTest(node, path));
     } else {
       out.push(...flattenTests(node.children, path));
     }
@@ -108,21 +124,22 @@ export interface BuildPoint {
   name: string | null;
   startedAt: string | null;
   status: NormStatus;
-  stats: StatusStats | undefined;
+  stats: Outcomes;
   total: number;
   failed: number;
   /** passed ÷ (passed + failed); null when nothing executed. */
   passRate: number | null;
-  durationSec: number | null;
+  /** Milliseconds. */
+  durationMs: number | null;
 }
 
-const sum = (s: StatusStats): number => s.passed + s.failed + s.pending + s.skipped + s.unknown;
+const sum = (s: Outcomes): number => s.passed + s.failed + s.pending + s.skipped + s.unknown;
 
-export function toSeries(builds: BuildSummary[]): BuildPoint[] {
+export function toSeries(builds: IdentifiedBuild[]): BuildPoint[] {
   return builds
     .map<BuildPoint>((b) => {
-      const s = b.statusStats;
-      const executed = s ? s.passed + s.failed : 0;
+      const s = outcomes(b.statusStats);
+      const executed = s.passed + s.failed;
       return {
         buildId: b.buildId,
         buildNumber: b.buildNumber ?? null,
@@ -130,10 +147,10 @@ export function toSeries(builds: BuildSummary[]): BuildPoint[] {
         startedAt: b.startedAt ?? null,
         status: normalizeStatus(b.status),
         stats: s,
-        total: s ? sum(s) : 0,
-        failed: s?.failed ?? 0,
-        passRate: s && executed > 0 ? s.passed / executed : null,
-        durationSec: b.duration ?? null,
+        total: sum(s),
+        failed: s.failed,
+        passRate: executed > 0 ? s.passed / executed : null,
+        durationMs: b.duration ?? null,
       };
     })
     .sort((a, b) => Date.parse(a.startedAt ?? "") - Date.parse(b.startedAt ?? ""));
@@ -144,7 +161,8 @@ export interface Summary {
   passRate: number | null;
   /** Mean pass rate of the newer half minus the older half (positive = improving). */
   passRateDelta: number | null;
-  avgDurationSec: number | null;
+  /** Milliseconds. */
+  avgDurationMs: number | null;
   failedBuilds: number;
   buildFailRate: number | null;
 }
@@ -153,7 +171,6 @@ function pooledPassRate(points: BuildPoint[]): number | null {
   let passed = 0;
   let executed = 0;
   for (const p of points) {
-    if (!p.stats) continue;
     passed += p.stats.passed;
     executed += p.stats.passed + p.stats.failed;
   }
@@ -162,7 +179,7 @@ function pooledPassRate(points: BuildPoint[]): number | null {
 
 export function summarize(points: BuildPoint[]): Summary {
   const finished = points.filter((p) => p.status !== "pending");
-  const durations = finished.map((p) => p.durationSec).filter((d): d is number => d != null);
+  const durations = finished.map((p) => p.durationMs).filter((d): d is number => d != null);
   const failedBuilds = finished.filter((p) => p.status === "failed").length;
   const mid = Math.floor(points.length / 2);
   const older = pooledPassRate(points.slice(0, mid));
@@ -171,7 +188,7 @@ export function summarize(points: BuildPoint[]): Summary {
     count: points.length,
     passRate: pooledPassRate(points),
     passRateDelta: mid > 0 && older != null && newer != null ? newer - older : null,
-    avgDurationSec: durations.length ? durations.reduce((a, b) => a + b, 0) / durations.length : null,
+    avgDurationMs: durations.length ? durations.reduce((a, b) => a + b, 0) / durations.length : null,
     failedBuilds,
     buildFailRate: finished.length ? failedBuilds / finished.length : null,
   };
@@ -212,8 +229,8 @@ export function aggregateTestHealth(runs: FlatTest[][]): TestHealth[] {
 
 // --- live runs -----------------------------------------------------------------------------
 
-export function runProgress(stats: StatusStats | undefined): { done: number; total: number; fraction: number } {
-  if (!stats) return { done: 0, total: 0, fraction: 0 };
+export function runProgress(raw: StatusStats | null | undefined): { done: number; total: number; fraction: number } {
+  const stats = outcomes(raw);
   const total = sum(stats);
   const done = total - stats.pending;
   return { done, total, fraction: total > 0 ? done / total : 0 };

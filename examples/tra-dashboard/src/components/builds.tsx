@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { GitCompare } from "lucide-react";
 import type { BuildPoint } from "@/lib/analytics";
 import { formatDuration, formatPercent, formatRelative, passRate, totalTests } from "@/lib/format";
-import type { BuildSummary } from "@/lib/schemas";
+import type { IdentifiedBuild } from "@/lib/schemas";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { StatusBadge, StatusBar } from "@/components/status";
@@ -40,13 +40,13 @@ export function previousBuild<T extends { buildId: string; startedAt?: string | 
 }
 
 export interface BuildsTableProps {
-  builds: BuildSummary[];
+  builds: IdentifiedBuild[];
   project?: { id: number; name?: string | undefined };
   /** When set, rows get a checkbox (max two selectable) and a "vs previous" action. */
   selection?: { selected: string[]; onToggle: (buildId: string) => void };
   /** All builds of the project, used to resolve "previous run". Defaults to `builds`. */
-  allBuilds?: BuildSummary[];
-  projectLabel?: (b: BuildSummary) => string;
+  allBuilds?: IdentifiedBuild[];
+  projectLabel?: (b: IdentifiedBuild) => string;
 }
 
 export function BuildsTable({ builds, project, selection, allBuilds, projectLabel }: BuildsTableProps) {
@@ -92,7 +92,7 @@ export function BuildsTable({ builds, project, selection, allBuilds, projectLabe
                   <div className="mt-1 flex flex-wrap items-center gap-1.5 text-muted">
                     {projectLabel && <span className="text-ink-muted">{projectLabel(b)}</span>}
                     {b.user && <span>{b.user}</span>}
-                    {b.tags.map((t) => <Badge key={t} tone="outline">{t}</Badge>)}
+                    {(b.tags ?? []).map((t) => <Badge key={t} tone="outline">{t}</Badge>)}
                   </div>
                 </td>
                 <td className="px-4 py-3"><StatusBadge status={b.status} /></td>
@@ -102,7 +102,7 @@ export function BuildsTable({ builds, project, selection, allBuilds, projectLabe
                     {totalTests(b.statusStats)} tests · {formatPercent(passRate(b.statusStats))} pass
                   </p>
                 </td>
-                <td className="px-4 py-3 font-mono text-[12px]">{formatDuration(b.duration != null ? b.duration * 1000 : null)}</td>
+                <td className="px-4 py-3 font-mono text-[12px]">{formatDuration(b.duration)}</td>
                 <td className="px-4 py-3 text-muted">{formatRelative(b.startedAt)}</td>
                 <td className="px-4 py-3 text-right">
                   {prev && b.status !== "running" && (

@@ -5,15 +5,15 @@ import { ChevronDown, ChevronRight, ExternalLink as ExtIcon, GitCompare, Radio, 
 import { z } from "zod";
 import { useTraClient } from "@/lib/auth";
 import { traApi } from "@/lib/api";
-import { estimateRemainingSec, runProgress, type FlatTest } from "@/lib/analytics";
-import { formatDate, formatDuration, formatPercent, passRate, totalTests } from "@/lib/format";
+import { estimateRemainingSec, runProgress, toFlatTest } from "@/lib/analytics";
+import { formatDate, formatDuration, formatPercent, outcomes, passRate, totalTests } from "@/lib/format";
 import { LIVE_POLL_MS, windowQuery } from "@/lib/queries";
 import { useNow } from "@/lib/hooks";
 import { TestDrawer, type DrawerTest } from "@/components/test-drawer";
 import { compareHref, previousBuild } from "@/components/builds";
 import { normalizeStatus } from "@/lib/hierarchy";
 import { filterTree, normalizeHierarchy, type TestNode } from "@/lib/hierarchy";
-import type { BuildDetails, HierarchyNode, QualityGateStatus } from "@/lib/schemas";
+import type { BuildDetails, QualityGateStatus, TestRunNode } from "@/lib/schemas";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -56,7 +56,7 @@ export function BuildPage() {
       ) : q.isError ? (
         <ErrorState error={q.error} onRetry={() => void q.refetch()} />
       ) : (
-        <BuildContent build={q.data} project={projectId ? { id: Number(projectId), name: projectName ?? undefined } : undefined} />
+        <BuildContent buildId={buildId} build={q.data} project={projectId ? { id: Number(projectId), name: projectName ?? undefined } : undefined} />
       )}
     </>
   );
@@ -74,13 +74,14 @@ function BuildSkeleton() {
   );
 }
 
-function BuildContent({ build, project }: { build: BuildDetails; project: { id: number; name: string | undefined } | undefined }) {
+function BuildContent({ buildId, build, project }: { buildId: string; build: BuildDetails; project: { id: number; name: string | undefined } | undefined }) {
   const { client, username } = useTraClient();
   const live = normalizeStatus(build.status) === "pending";
   const recent = useQuery({ ...windowQuery(client, username, project?.id ?? 0, 90), enabled: !!project && Number.isInteger(project.id) });
-  const previous = recent.data ? previousBuild(recent.data, build.buildId) : undefined;
+  const previous = recent.data ? previousBuild(recent.data, buildId) : undefined;
   const stats = build.statusStats;
   const total = totalTests(stats);
+  const failed = outcomes(stats).failed;
   const smart = build.smartTags;
   return (
     <div className="space-y-6">
@@ -89,7 +90,7 @@ function BuildContent({ build, project }: { build: BuildDetails; project: { id: 
         actions={
           previous && !live ? (
             <Button asChild variant="outline">
-              <Link to={compareHref(previous.buildId, build.buildId, project)}>
+              <Link to={compareHref(previous.buildId, buildId, project)}>
                 <GitCompare className="size-4" aria-hidden /> Compare with #{previous.buildNumber ?? "previous"}
               </Link>
             </Button>
@@ -117,9 +118,9 @@ function BuildContent({ build, project }: { build: BuildDetails; project: { id: 
         }
       />
       {build.description && <p className="max-w-3xl text-muted">{build.description}</p>}
-      {build.tags.length > 0 && (
+      {(build.tags ?? []).length > 0 && (
         <ul className="flex flex-wrap gap-1.5" aria-label="Tags">
-          {build.tags.map((t) => <li key={t}><Badge tone="outline">{t}</Badge></li>)}
+          {(build.tags ?? []).map((t) => <li key={t}><Badge tone="outline">{t}</Badge></li>)}
         </ul>
       )}
 
@@ -127,9 +128,9 @@ function BuildContent({ build, project }: { build: BuildDetails; project: { id: 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
           <Stat label="Tests" value={total} />
           <Stat label="Pass rate" value={formatPercent(passRate(stats))} hint="passed ÷ (passed + failed)" />
-          <Stat label="Failed" value={<span className={stats && stats.failed > 0 ? "text-danger" : undefined}>{stats?.failed ?? 0}</span>} />
+          <Stat label="Failed" value={<span className={failed > 0 ? "text-danger" : undefined}>{failed}</span>} />
           <Stat label="Flaky" value={smart?.isFlaky ?? 0} hint={smart ? `${smart.isNewFailure} new failures` : undefined} />
-          <Stat label="Duration" value={formatDuration(build.duration != null ? build.duration * 1000 : null)} />
+          <Stat label="Duration" value={formatDuration(build.duration)} />
         </div>
         <Card className="space-y-3 px-5 py-4">
           <StatusBar stats={stats} className="h-3" />
@@ -138,7 +139,7 @@ function BuildContent({ build, project }: { build: BuildDetails; project: { id: 
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <FailureCategories categories={build.failureCategories} />
+        <FailureCategories categories={build.failureCategories ?? {}} />
         <SmartTags tags={smart} />
         <Card>
           <CardHeader><CardTitle>Source control</CardTitle></CardHeader>
@@ -168,9 +169,9 @@ function BuildContent({ build, project }: { build: BuildDetails; project: { id: 
         </Card>
       </div>
 
-      <QualityGate buildId={build.buildId} />
-      <SelfHealing buildId={build.buildId} />
-      <TestsSection buildId={build.buildId} buildLabel={`${build.name ?? "Build"} #${build.buildNumber ?? ""}`} buildUrl={build.observabilityUrl} live={live} initialFailures={(stats?.failed ?? 0) > 0} />
+      <QualityGate buildId={buildId} />
+      <SelfHealing buildId={buildId} />
+      <TestsSection buildId={buildId} buildLabel={`${build.name ?? "Build"} #${build.buildNumber ?? ""}`} buildUrl={build.observabilityUrl} live={live} initialFailures={failed > 0} />
     </div>
   );
 }
@@ -205,7 +206,7 @@ function FailureCategories({ categories }: { categories: Record<string, number> 
 }
 
 function SmartTags({ tags }: { tags: BuildDetails["smartTags"] }) {
-  const rows: [string, number | undefined, string][] = [
+  const rows: [string, number | null | undefined, string][] = [
     ["Flaky", tags?.isFlaky, "Pass and fail intermittently"],
     ["New failures", tags?.isNewFailure, "Started failing in this build"],
     ["Always failing", tags?.isAlwaysFailing, "Failed in every recent run"],
@@ -282,16 +283,17 @@ function QualityGate({ buildId }: { buildId: string }) {
 }
 
 function QualityGateBody({ status }: { status: QualityGateStatus }) {
-  if (status.qualityProfiles.length === 0) return <CardContent className="text-muted">No profiles evaluated.</CardContent>;
+  const profiles = status.qualityProfiles ?? [];
+  if (profiles.length === 0) return <CardContent className="text-muted">No profiles evaluated.</CardContent>;
   return (
     <div className="divide-y divide-border">
-      {status.qualityProfiles.map((p, i) => (
+      {profiles.map((p, i) => (
         <div key={p.id ?? i} className="pb-1 pt-3">
           <div className="flex items-center justify-between px-5 pb-2">
             <p className="font-semibold">{p.name ?? "Profile"}{p.type && <span className="ml-2 font-normal text-muted">{p.type}</span>}</p>
             {p.result && <StatusBadge status={p.result} />}
           </div>
-          <RulesTable rules={p.rules} />
+          <RulesTable rules={p.rules ?? []} />
         </div>
       ))}
     </div>
@@ -367,7 +369,7 @@ function TestsSection({ buildId, buildLabel, buildUrl, live, initialFailures }: 
   });
 
   const tree = useMemo(() => {
-    const nodes: HierarchyNode[] = q.data?.pages.flatMap((p) => p.hierarchy) ?? [];
+    const nodes: TestRunNode[] = q.data?.pages.flatMap((p) => p.hierarchy ?? []) ?? [];
     return filterTree(normalizeHierarchy(nodes), search);
   }, [q.data, search]);
   const summary = q.data?.pages[0]?.testSummary;
@@ -422,31 +424,17 @@ function TestsSection({ buildId, buildLabel, buildUrl, live, initialFailures }: 
                   depth={0}
                   forceOpen={search.trim().length > 0}
                   parents={[]}
-                  onSelect={(leaf, path) => setDrawer({ test: toFlat(leaf, path), extra: leaf.extra, buildUrl, buildLabel })}
+                  onSelect={(leaf, path) => setDrawer({ test: toFlatTest(leaf, path), buildId, buildUrl, buildLabel })}
                 />
               ))}
             </ul>
           </Card>
           <TestDrawer item={drawer} onClose={() => setDrawer(null)} />
-          <LoadMore hasNext={q.hasNextPage} loading={q.isFetchingNextPage} onClick={() => void q.fetchNextPage()} loaded={q.data.pages.reduce((n, p) => n + p.hierarchy.length, 0)} />
+          <LoadMore hasNext={q.hasNextPage} loading={q.isFetchingNextPage} onClick={() => void q.fetchNextPage()} loaded={q.data.pages.reduce((n, p) => n + (p.hierarchy ?? []).length, 0)} />
         </>
       )}
     </section>
   );
-}
-
-function toFlat(node: TestNode, path: string[]): FlatTest {
-  return {
-    key: path.join(" › "),
-    name: node.name,
-    path,
-    status: node.status,
-    durationMs: node.durationMs,
-    isFlaky: node.isFlaky,
-    isNewFailure: node.isNewFailure,
-    retries: node.retries,
-    failures: node.failures,
-  };
 }
 
 function TreeNode({ node, depth, forceOpen, parents, onSelect }: { node: TestNode; depth: number; forceOpen: boolean; parents: string[]; onSelect: (node: TestNode, path: string[]) => void }) {

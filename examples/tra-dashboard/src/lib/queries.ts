@@ -1,6 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import type { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
 import { traApi } from "./api";
+import { isNamedProject, type NamedProject } from "./schemas";
 
 /** Poll interval while a build is running (TRA has no push events). */
 export const LIVE_POLL_MS = 5000;
@@ -9,11 +10,11 @@ export const projectsQuery = (client: TestReportingClient, username: string) =>
   queryOptions({
     queryKey: ["projects-all", username],
     queryFn: async () => {
-      const out = [];
+      const out: NamedProject[] = [];
       let next: string | undefined;
       for (let page = 0; page < 10; page++) {
         const res = await traApi.projects(client, next);
-        out.push(...res.projects);
+        out.push(...(res.projects ?? []).filter(isNamedProject));
         if (!res.pagination?.hasNext || !res.pagination.nextPage) break;
         next = res.pagination.nextPage;
       }

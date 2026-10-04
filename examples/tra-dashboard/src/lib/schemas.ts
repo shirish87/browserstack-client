@@ -7,163 +7,40 @@ export const CredentialsSchema = z.object({
 });
 export type Credentials = z.infer<typeof CredentialsSchema>;
 
-export const PaginationSchema = z.object({
-  hasNext: z.boolean().optional(),
-  nextPage: z.string().nullish(),
-});
-export type Pagination = z.infer<typeof PaginationSchema>;
+// --- Test Reporting & Analytics -------------------------------------------------------------
+// The dashboard uses the client's own zod schemas and inferred types directly (generated from the
+// verified OpenAPI spec), so the API contract has one source of truth. Fields are optional/nullable
+// exactly as the client declares them; the UI handles absence rather than papering over it.
+import type { BuildSummary, Project } from "@dot-slash/browserstack-test-reporting/models";
 
-export const StatusStatsSchema = z.object({
-  passed: z.number().default(0),
-  failed: z.number().default(0),
-  pending: z.number().default(0),
-  skipped: z.number().default(0),
-  unknown: z.number().default(0),
-});
-export type StatusStats = z.infer<typeof StatusStatsSchema>;
+export {
+  BuildDetailsSchema,
+  BuildListResponseSchema,
+  PaginationSchema,
+  ProjectListResponseSchema,
+  QualityGateSettingsSchema,
+  QualityGateStatusSchema,
+  TestRunsResponseSchema,
+  type BuildDetails,
+  type BuildListResponse,
+  type BuildSummary,
+  type Pagination,
+  type Project,
+  type ProjectListResponse,
+  type QualityGateSettings,
+  type QualityGateStatus,
+  type StatusStats,
+  type TestRunNode,
+  type TestRunsResponse,
+} from "@dot-slash/browserstack-test-reporting/models";
 
-export const ProjectSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  groupId: z.number().nullish(),
-  createdBy: z.number().nullish(),
-  createdAt: z.string().nullish(),
-  updatedAt: z.string().nullish(),
-  observabilityUrl: z.string().nullish(),
-});
-export type Project = z.infer<typeof ProjectSchema>;
+/** A listed build that carries its id: the only kind the UI can open. A narrowing of the client's type, not a copy. */
+export type IdentifiedBuild = BuildSummary & { buildId: string };
+export const hasBuildId = (b: BuildSummary): b is IdentifiedBuild => typeof b.buildId === "string" && b.buildId.length > 0;
 
-export const ProjectsResponseSchema = z.object({
-  projects: z.array(ProjectSchema).default([]),
-  pagination: PaginationSchema.optional(),
-});
-export type ProjectsResponse = z.infer<typeof ProjectsResponseSchema>;
-
-export const BuildSummarySchema = z.object({
-  name: z.string().nullish(),
-  status: z.string().nullish(),
-  duration: z.number().nullish(),
-  user: z.string().nullish(),
-  tags: z.array(z.string()).default([]),
-  buildId: z.string(),
-  originalName: z.string().nullish(),
-  finishedAt: z.string().nullish(),
-  startedAt: z.string().nullish(),
-  statusStats: StatusStatsSchema.optional(),
-  buildNumber: z.number().nullish(),
-  isArchived: z.boolean().nullish(),
-  observabilityUrl: z.string().nullish(),
-  tcmTestRunIdentifier: z.string().nullish(),
-});
-export type BuildSummary = z.infer<typeof BuildSummarySchema>;
-
-export const BuildsResponseSchema = z.object({
-  builds: z.array(BuildSummarySchema).default([]),
-  pagination: PaginationSchema.optional(),
-});
-export type BuildsResponse = z.infer<typeof BuildsResponseSchema>;
-
-export const BuildDetailsSchema = z.object({
-  name: z.string().nullish(),
-  description: z.string().nullish(),
-  status: z.string().nullish(),
-  duration: z.number().nullish(),
-  user: z.string().nullish(),
-  tags: z.array(z.string()).default([]),
-  buildId: z.string(),
-  buildNumber: z.number().nullish(),
-  originalName: z.string().nullish(),
-  finishedAt: z.string().nullish(),
-  startedAt: z.string().nullish(),
-  statusStats: StatusStatsSchema.optional(),
-  failureCategories: z.record(z.string(), z.number()).default({}),
-  smartTags: z
-    .object({
-      isFlaky: z.number().default(0),
-      isAlwaysFailing: z.number().default(0),
-      isPerformanceAnomaly: z.number().default(0),
-      isNewFailure: z.number().default(0),
-    })
-    .optional(),
-  isArchived: z.boolean().nullish(),
-  observabilityUrl: z.string().nullish(),
-  vcsInfo: z.object({ name: z.string().nullish(), sha: z.string().nullish(), branch: z.string().nullish() }).optional(),
-  ciInfo: z
-    .object({
-      jobName: z.string().nullish(),
-      name: z.string().nullish(),
-      buildNumber: z.string().nullish(),
-      buildUrl: z.string().nullish(),
-    })
-    .optional(),
-  hostInfo: z.object({ hostname: z.string().nullish(), os: z.string().nullish() }).optional(),
-});
-export type BuildDetails = z.infer<typeof BuildDetailsSchema>;
-
-/** A node in the (free-form) test hierarchy. */
-export interface HierarchyNode {
-  name?: string | null;
-  details?: Record<string, unknown> | null;
-  children?: HierarchyNode[] | null;
-  [key: string]: unknown;
-}
-
-export const HierarchyNodeSchema: z.ZodType<HierarchyNode> = z.lazy(() =>
-  z.looseObject({
-    name: z.string().nullish(),
-    details: z.record(z.string(), z.unknown()).nullish(),
-    children: z.array(HierarchyNodeSchema).nullish(),
-  }),
-);
-
-export const TestRunsResponseSchema = z.object({
-  name: z.string().nullish(),
-  projectId: z.number().nullish(),
-  buildId: z.string().nullish(),
-  buildName: z.string().nullish(),
-  buildNumber: z.number().nullish(),
-  testSummary: StatusStatsSchema.optional(),
-  isArchived: z.boolean().nullish(),
-  hierarchy: z.array(HierarchyNodeSchema).default([]),
-  pagination: PaginationSchema.optional(),
-});
-export type TestRunsResponse = z.infer<typeof TestRunsResponseSchema>;
-
-export const QualityGateStatusSchema = z.object({
-  status: z.string().nullish(),
-  buildUuid: z.string().nullish(),
-  buildUrl: z.string().nullish(),
-  qualityGateResult: z.string().nullish(),
-  qualityProfiles: z
-    .array(
-      z.object({
-        id: z.string().nullish(),
-        name: z.string().nullish(),
-        type: z.string().nullish(),
-        result: z.string().nullish(),
-        rules: z.array(z.record(z.string(), z.unknown())).default([]),
-      }),
-    )
-    .default([]),
-});
-export type QualityGateStatus = z.infer<typeof QualityGateStatusSchema>;
-
-export const QualityGateSettingsSchema = z.object({
-  enabled: z.boolean().nullish(),
-  shouldOverrideBuildStatus: z.boolean().nullish(),
-  qualityProfiles: z
-    .array(
-      z.object({
-        id: z.string().nullish(),
-        name: z.string().nullish(),
-        rulesCount: z.number().nullish(),
-        enabled: z.boolean().nullish(),
-        isGlobalProfile: z.boolean().nullish(),
-      }),
-    )
-    .default([]),
-});
-export type QualityGateSettings = z.infer<typeof QualityGateSettingsSchema>;
+/** A project with the id and name the UI needs to open it. */
+export type NamedProject = Project & { id: number; name: string };
+export const isNamedProject = (p: Project): p is NamedProject => typeof p.id === "number" && typeof p.name === "string";
 
 export const SelfHealingReportSchema = z.object({
   presignedUrl: z.string().nullish(),

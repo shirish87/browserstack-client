@@ -4,11 +4,11 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { GitCompare, Radio } from "lucide-react";
 import { useTraClient } from "@/lib/auth";
 import { estimateRemainingSec, runProgress } from "@/lib/analytics";
-import { formatDuration } from "@/lib/format";
+import { formatDuration, outcomes } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
 import { LIVE_POLL_MS, projectsQuery, windowQuery } from "@/lib/queries";
 import { traApi } from "@/lib/api";
-import type { BuildSummary, Project } from "@/lib/schemas";
+import { hasBuildId, type IdentifiedBuild, type NamedProject } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select } from "@/components/ui/input";
@@ -35,7 +35,7 @@ export function RunsPage() {
   );
 }
 
-function LiveNow({ projects }: { projects: Project[] }) {
+function LiveNow({ projects }: { projects: NamedProject[] }) {
   const { client, username } = useTraClient();
   const results = useQueries({
     queries: projects.map((p) => ({
@@ -46,7 +46,7 @@ function LiveNow({ projects }: { projects: Project[] }) {
   });
   const live = results.flatMap((r, i) => {
     const project = projects[i];
-    return project ? (r.data?.builds ?? []).map((b) => ({ build: b, project })) : [];
+    return project ? (r.data?.builds ?? []).filter(hasBuildId).map((b) => ({ build: b, project })) : [];
   });
   const loading = results.some((r) => r.isPending);
 
@@ -73,13 +73,13 @@ function LiveNow({ projects }: { projects: Project[] }) {
   );
 }
 
-function LiveRunCard({ build, project }: { build: BuildSummary; project: Project }) {
+function LiveRunCard({ build, project }: { build: IdentifiedBuild; project: NamedProject }) {
   const now = useNow();
   const { done, total, fraction } = runProgress(build.statusStats);
   const started = Date.parse(build.startedAt ?? "");
   const elapsed = Number.isNaN(started) ? null : Math.max(0, Math.round((now - started) / 1000));
   const remaining = elapsed === null ? null : estimateRemainingSec(fraction, elapsed);
-  const failed = build.statusStats?.failed ?? 0;
+  const failed = outcomes(build.statusStats).failed;
   return (
     <Link
       to={buildHref(build.buildId, { id: project.id, name: project.name })}
@@ -112,7 +112,7 @@ function LiveRunCard({ build, project }: { build: BuildSummary; project: Project
   );
 }
 
-function AllRuns({ projects }: { projects: Project[] }) {
+function AllRuns({ projects }: { projects: NamedProject[] }) {
   const { client, username } = useTraClient();
   const navigate = useNavigate();
   const withBuilds = projects;

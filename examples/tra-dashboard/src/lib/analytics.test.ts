@@ -12,19 +12,21 @@ import {
   type FlatTest,
 } from "./analytics";
 import { normalizeHierarchy } from "./hierarchy";
-import { BuildSummarySchema, HierarchyNodeSchema } from "./schemas";
-import { z } from "zod";
+import { BuildSummarySchema, TestRunNodeSchema } from "@dot-slash/browserstack-test-reporting/models";
+import { hasBuildId } from "./schemas";
 
-const leaf = (name: string, status: string, extra: Record<string, unknown> = {}) => ({
-  name,
-  details: { status, duration: 1000, ...extra },
-});
-const tree = (nodes: unknown) => normalizeHierarchy(z.array(HierarchyNodeSchema).parse(nodes));
+/** TRA nodes as the client returns them (camelCase): ROOT → DESCRIBE → TEST. */
+const node = (type: string, displayName: string, children: unknown[] = [], details: Record<string, unknown> = {}) => ({ type, displayName, children, details });
+const leaf = (name: string, status: string, extra: Record<string, unknown> = {}) => node("TEST", name, [], { status, duration: 1000, ...extra });
+// Parsed one node at a time: the dashboard and the client may resolve different zod patch versions, which can
+// parse the same data but cannot be composed in one schema.
+const tree = (nodes: unknown[]) => normalizeHierarchy(nodes.map((n) => TestRunNodeSchema.parse(n)));
+const failedAttempt = (...lines: string[]) => ({ retries: [{ status: "failed", duration: 1000, logs: { TEST_FAILURE: lines } }] });
 
 describe("flattenTests", () => {
   it("yields leaves keyed by their path and parses failures", () => {
     const flat = flattenTests(
-      tree([{ name: "a.spec", children: [{ name: "Suite", children: [leaf("t1", "failed", { failure: [{ error: "boom", backtrace: "at x" }] })] }] }]),
+      tree([node("ROOT", "a.spec", [node("DESCRIBE", "Suite", [leaf("t1", "failed", failedAttempt("boom", "at x"))])])]),
     );
     expect(flat).toHaveLength(1);
     expect(flat[0]?.key).toBe("a.spec › Suite › t1");
@@ -43,6 +45,10 @@ const ft = (key: string, status: FlatTest["status"], over: Partial<FlatTest> = {
   isNewFailure: false,
   retries: null,
   failures: [],
+  type: "TEST",
+  startedAt: undefined,
+  sessionId: undefined,
+  platform: {},
   ...over,
 });
 
@@ -75,7 +81,8 @@ describe("diffRuns", () => {
 });
 
 describe("series and summary", () => {
-  const mk = (n: number, passed: number, failed: number, started: string, duration = 600) =>
+  /** Build durations are milliseconds. */
+  const mk = (n: number, passed: number, failed: number, started: string, duration = 600_000) =>
     BuildSummarySchema.parse({
       buildId: `b${n}`,
       buildNumber: n,
@@ -84,8 +91,9 @@ describe("series and summary", () => {
       startedAt: started,
       statusStats: { passed, failed, pending: 0, skipped: 0, unknown: 0 },
     });
+  const identified = (list: ReturnType<typeof mk>[]) => list.filter(hasBuildId);
   const builds = [mk(3, 90, 10, "2026-10-03T00:00:00Z"), mk(1, 100, 0, "2026-10-01T00:00:00Z"), mk(2, 100, 0, "2026-10-02T00:00:00Z")];
-  const series = toSeries(builds);
+  const series = toSeries(identified(builds));
 
   it("orders oldest to newest and computes pass rate", () => {
     expect(series.map((p) => p.buildNumber)).toEqual([1, 2, 3]);
@@ -95,12 +103,12 @@ describe("series and summary", () => {
     const s = summarize(series);
     expect(s.count).toBe(3);
     expect(s.failedBuilds).toBe(1);
-    expect(s.avgDurationSec).toBe(600);
+    expect(s.avgDurationMs).toBe(600_000);
     expect(s.passRate).toBeCloseTo(290 / 300);
     expect(s.passRateDelta).toBeLessThan(0);
   });
   it("handles an empty window", () => {
-    expect(summarize([])).toMatchObject({ count: 0, passRate: null, avgDurationSec: null, passRateDelta: null });
+    expect(summarize([])).toMatchObject({ count: 0, passRate: null, avgDurationMs: null, passRateDelta: null });
   });
 });
 
@@ -119,7 +127,7 @@ describe("aggregateTestHealth", () => {
 
 describe("live run helpers", () => {
   it("computes progress from stats", () => {
-    expect(runProgress({ passed: 40, failed: 10, pending: 50, skipped: 0, unknown: 0 })).toEqual({ done: 50, total: 100, fraction: 0.5 });
+    expect(runProgress({ passed: 40, failed: 10, pending: 20, "in progress": 30 })).toEqual({ done: 50, total: 100, fraction: 0.5 });
     expect(runProgress(undefined).fraction).toBe(0);
   });
   it("estimates remaining time only with enough progress", () => {

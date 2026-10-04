@@ -1,72 +1,90 @@
 import { z } from "zod";
-import type { HierarchyNode, StatusStats } from "./schemas";
+import type { Outcomes } from "./format";
+import type { TestRunNode } from "./schemas";
 
 export const FailureSchema = z.object({ error: z.string().nullish(), backtrace: z.string().nullish() });
 export type Failure = z.infer<typeof FailureSchema>;
 
 export type NormStatus = "passed" | "failed" | "skipped" | "pending" | "unknown";
 
+/** Where a test ran: set on the ROOT (one per spec file and platform) and shared by everything under it. */
+export interface Platform {
+  browser?: string;
+  os?: string;
+  device?: string;
+  file?: string;
+}
+
 export interface TestNode {
   id: string;
   name: string;
+  /** TRA node type: ROOT, DESCRIBE, TEST or HOOK. */
+  type: string;
   status: NormStatus;
   durationMs: number | null;
+  startedAt: string | undefined;
+  /** Automate / App Automate session this test ran in. Shared by every test in the same file. */
+  sessionId: string | undefined;
   isFlaky: boolean;
   isNewFailure: boolean;
+  /** Attempts beyond the first. */
   retries: number | null;
+  attempts: number;
   failures: Failure[];
-  /** Remaining detail fields, shown verbatim in the drawer. */
-  extra: Record<string, unknown>;
+  platform: Platform;
+  observabilityUrl: string | undefined;
   children: TestNode[];
   /** Roll-up of leaf statuses under this node (a leaf counts itself). */
-  counts: StatusStats;
+  counts: Outcomes;
   leafCount: number;
 }
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v);
-
-const asString = (v: unknown): string | undefined => (typeof v === "string" && v.length > 0 ? v : undefined);
-const asNumber = (v: unknown): number | undefined => (typeof v === "number" && Number.isFinite(v) ? v : undefined);
-const asBool = (v: unknown): boolean => v === true || v === 1 || v === "true";
-
+/** The statuses TRA reports, folded into the five the UI draws. */
 export function normalizeStatus(raw: unknown): NormStatus {
   const s = typeof raw === "string" ? raw.toLowerCase() : "";
   if (s === "passed" || s === "pass" || s === "success") return "passed";
   if (s === "failed" || s === "fail" || s === "error" || s === "timeout") return "failed";
-  if (s === "skipped" || s === "skip") return "skipped";
-  if (s === "pending" || s === "running" || s === "queued") return "pending";
+  if (s === "skipped" || s === "skip" || s === "blocked") return "skipped";
+  if (s === "pending" || s === "running" || s === "queued" || s === "in progress" || s === "untested" || s === "retest") return "pending";
   return "unknown";
 }
 
-const KNOWN_DETAIL_KEYS = new Set([
-  "status",
-  "result",
-  "duration",
-  "durationInMs",
-  "isFlaky",
-  "isNewFailure",
-  "retries",
-  "failure",
-  "name",
-]);
+const KEYS: readonly (keyof Outcomes)[] = ["passed", "failed", "pending", "skipped", "unknown"];
+const emptyCounts = (): Outcomes => ({ passed: 0, failed: 0, pending: 0, skipped: 0, unknown: 0 });
 
-function pick(node: HierarchyNode, key: string): unknown {
-  const details = isRecord(node.details) ? node.details : undefined;
-  return details && key in details ? details[key] : node[key];
+const label = (e: { name?: string | null | undefined; version?: string | null | undefined } | null | undefined): string | undefined =>
+  e?.name ? [e.name, e.version].filter(Boolean).join(" ") : undefined;
+
+function platformOf(node: TestRunNode): Platform {
+  const d = node.details;
+  const p: Platform = {};
+  const browser = label(d?.browser);
+  const os = label(d?.os);
+  if (browser) p.browser = browser;
+  if (os) p.os = os;
+  if (d?.device) p.device = d.device;
+  if (d?.filePath) p.file = d.filePath;
+  return p;
 }
 
-const STATUS_KEYS: readonly (keyof StatusStats)[] = ["passed", "failed", "pending", "skipped", "unknown"];
+/** The error of the last attempt that recorded one: first line is the message, the rest the stack. */
+function failuresOf(node: TestRunNode): Failure[] {
+  const retries = node.details?.retries ?? [];
+  for (let i = retries.length - 1; i >= 0; i--) {
+    const lines = retries[i]?.logs?.TEST_FAILURE ?? [];
+    if (lines.length > 0) return [{ error: lines[0], backtrace: lines.slice(1).join("\n") }];
+  }
+  return [];
+}
 
-const emptyCounts = (): StatusStats => ({ passed: 0, failed: 0, pending: 0, skipped: 0, unknown: 0 });
-
-export function normalizeHierarchy(nodes: HierarchyNode[], parentId = ""): TestNode[] {
+export function normalizeHierarchy(nodes: TestRunNode[], parentId = "", inherited: Platform = {}): TestNode[] {
   return nodes.map((node, index) => {
     const id = `${parentId}/${index}`;
-    const children = normalizeHierarchy(node.children ?? [], id);
-    const status = normalizeStatus(pick(node, "status") ?? pick(node, "result"));
-    const retriesRaw = pick(node, "retries");
-    const retries = Array.isArray(retriesRaw) ? retriesRaw.length : (asNumber(retriesRaw) ?? null);
+    const platform = node.type === "ROOT" ? { ...inherited, ...platformOf(node) } : inherited;
+    const children = normalizeHierarchy(node.children ?? [], id, platform);
+    const d = node.details;
+    const status = normalizeStatus(d?.status);
+    const attempts = d?.retries?.length ?? 0;
 
     const counts = emptyCounts();
     let leafCount = 0;
@@ -76,28 +94,26 @@ export function normalizeHierarchy(nodes: HierarchyNode[], parentId = ""): TestN
     } else {
       for (const child of children) {
         leafCount += child.leafCount;
-        for (const key of STATUS_KEYS) counts[key] += child.counts[key];
+        for (const key of KEYS) counts[key] += child.counts[key];
       }
-    }
-
-    const failureParse = z.array(FailureSchema).safeParse(pick(node, "failure"));
-    const failures = failureParse.success ? failureParse.data : [];
-
-    const extra: Record<string, unknown> = {};
-    if (isRecord(node.details)) {
-      for (const [k, v] of Object.entries(node.details)) if (!KNOWN_DETAIL_KEYS.has(k)) extra[k] = v;
     }
 
     return {
       id,
-      name: asString(node.name) ?? asString(pick(node, "name")) ?? "(unnamed)",
+      name: node.displayName ?? "(unnamed)",
+      type: node.type ?? "TEST",
       status,
-      durationMs: asNumber(pick(node, "duration")) ?? asNumber(pick(node, "durationInMs")) ?? null,
-      isFlaky: asBool(pick(node, "isFlaky")),
-      isNewFailure: asBool(pick(node, "isNewFailure")),
-      retries,
-      failures,
-      extra,
+      durationMs: d?.duration ?? null,
+      startedAt: d?.startedAt ?? undefined,
+      sessionId: d?.sessionId ? d.sessionId : undefined,
+      // `isFlaky` is a smart tag (plan-gated, so often null); otherwise a pass after a failed attempt is flaky.
+      isFlaky: d?.isFlaky ?? (status === "passed" && attempts > 1),
+      isNewFailure: d?.isNewFailure === true,
+      retries: attempts > 1 ? attempts - 1 : null,
+      attempts,
+      failures: failuresOf(node),
+      platform,
+      observabilityUrl: d?.observabilityUrl ?? undefined,
       children,
       counts,
       leafCount,

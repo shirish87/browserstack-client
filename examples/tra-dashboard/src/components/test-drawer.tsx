@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
-import { ExternalLink, X } from "lucide-react";
+import { Link } from "react-router";
+import { ArrowRight, ExternalLink, X } from "lucide-react";
+import { sessionHref } from "@/lib/session-links";
 import type { FlatTest } from "@/lib/analytics";
 import { formatDuration } from "@/lib/format";
-import { displayValue, humanize } from "@/lib/utils";
 import { StatusBadge } from "@/components/status";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,8 +11,8 @@ import { KeyValue } from "@/components/common";
 
 export interface DrawerTest {
   test: FlatTest;
-  /** Extra metadata fields (browser, os, …) reported with the test. */
-  extra: Record<string, unknown>;
+  /** The build the test belongs to; the session deep-dive lives under it. */
+  buildId: string;
   /** BrowserStack page for the owning build, where raw logs, steps and screenshots live. */
   buildUrl: string | null | undefined;
   buildLabel: string;
@@ -36,7 +37,8 @@ export function TestDrawer({ item, onClose }: { item: DrawerTest | null; onClose
   }, [item, onClose]);
 
   if (!item) return null;
-  const { test, extra, buildUrl, buildLabel } = item;
+  const { test, buildId, buildUrl, buildLabel } = item;
+  const platform = Object.entries({ Browser: test.platform.browser, OS: test.platform.os, Device: test.platform.device, File: test.platform.file }).filter(([, v]) => v);
   return (
     <div className="fixed inset-0 z-30" role="dialog" aria-modal="true" aria-labelledby="test-drawer-title">
       <button type="button" aria-label="Close details" className="absolute inset-0 cursor-default bg-black/50" onClick={onClose} />
@@ -83,10 +85,22 @@ export function TestDrawer({ item, onClose }: { item: DrawerTest | null; onClose
             )}
           </section>
 
-          {Object.keys(extra).length > 0 && (
-            <section aria-label="Metadata">
-              <h3 className="mb-2 text-[13px] font-medium text-muted">Metadata</h3>
-              <KeyValue rows={Object.entries(extra).map(([k, v]) => [humanize(k), <span key={k} className="font-mono text-[12px]">{displayValue(v)}</span>])} />
+          {platform.length > 0 && (
+            <section aria-label="Platform">
+              <h3 className="mb-2 text-[13px] font-medium text-muted">Where it ran</h3>
+              <KeyValue rows={platform.map(([k, v]) => [k, <span key={k} className="font-mono text-[12px]">{v}</span>])} />
+            </section>
+          )}
+
+          {test.sessionId && (
+            <section aria-label="Session">
+              <h3 className="mb-2 text-[13px] font-medium text-muted">Session</h3>
+              <p className="mb-3 text-muted">Commands, network and console around this test, on one timeline.</p>
+              <Button asChild>
+                <Link to={sessionHref(buildId, test.sessionId, test.key)} onClick={onClose}>
+                  Open session deep-dive <ArrowRight className="size-3.5" aria-hidden />
+                </Link>
+              </Button>
             </section>
           )}
 

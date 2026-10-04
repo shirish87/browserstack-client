@@ -1,6 +1,6 @@
 import type { StatusStats } from "./schemas";
 
-/** Build durations from TRA are in seconds; test durations in milliseconds. */
+/** TRA durations (builds and tests) are milliseconds. */
 export function formatDuration(ms: number | null | undefined): string {
   if (ms == null || !Number.isFinite(ms)) return "—";
   if (ms < 1000) return `${Math.round(ms)}ms`;
@@ -42,15 +42,39 @@ export function formatRelative(iso: string | null | undefined, now: Date = new D
   return rtf.format(-Math.round(diff / 31536000), "year");
 }
 
-export function totalTests(stats: StatusStats | undefined): number {
-  if (!stats) return 0;
-  return stats.passed + stats.failed + stats.pending + stats.skipped + stats.unknown;
+/** Test counts folded into the five outcomes the UI shows. */
+export interface Outcomes {
+  passed: number;
+  failed: number;
+  pending: number;
+  skipped: number;
+  unknown: number;
 }
 
-export function passRate(stats: StatusStats | undefined): number | null {
-  const executed = stats ? stats.passed + stats.failed : 0;
-  if (!stats || executed === 0) return null;
-  return stats.passed / executed;
+/**
+ * TRA reports a wider vocabulary than the UI draws: unfinished work (`in progress`, `untested`, `retest`)
+ * counts as pending, `timeout` as a failure and `blocked` as skipped.
+ */
+export function outcomes(s: StatusStats | null | undefined): Outcomes {
+  const n = (v: number | null | undefined): number => v ?? 0;
+  return {
+    passed: n(s?.passed),
+    failed: n(s?.failed) + n(s?.timeout),
+    pending: n(s?.pending) + n(s?.["in progress"]) + n(s?.untested) + n(s?.retest),
+    skipped: n(s?.skipped) + n(s?.blocked),
+    unknown: n(s?.unknown),
+  };
+}
+
+export function totalTests(stats: StatusStats | null | undefined): number {
+  const o = outcomes(stats);
+  return o.passed + o.failed + o.pending + o.skipped + o.unknown;
+}
+
+export function passRate(stats: StatusStats | null | undefined): number | null {
+  const o = outcomes(stats);
+  const executed = o.passed + o.failed;
+  return executed === 0 ? null : o.passed / executed;
 }
 
 export function formatPercent(ratio: number | null): string {

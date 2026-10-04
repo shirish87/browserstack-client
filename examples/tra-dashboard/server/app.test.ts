@@ -104,6 +104,27 @@ describe("gateway", () => {
     expect(await res.json()).toEqual({ projects: [{ id: 1, name: "p" }] });
   });
 
+  it("also reaches the Automate and App Automate APIs, where a test's session lives", async () => {
+    const base = await start();
+    const { cookie } = await login(base);
+    for (const url of ["https://api.browserstack.com/automate/sessions/abc.json", "https://api.browserstack.com/app-automate/sessions/abc.json"]) {
+      expect((await fetch(`${base}/gateway?url=${encodeURIComponent(url)}`, { headers: { cookie } })).status).toBe(200);
+    }
+  });
+
+  it("is read-only: refuses every method that can change anything, on every host", async () => {
+    const base = await start();
+    const { cookie } = await login(base);
+    const urls = [TRA, "https://api.browserstack.com/automate/sessions/abc.json", "https://api.browserstack.com/automate/builds/abc.json"];
+    for (const url of urls) {
+      for (const method of ["POST", "PUT", "PATCH", "DELETE"]) {
+        const res = await fetch(`${base}/gateway?url=${encodeURIComponent(url)}`, { method, headers: { cookie, origin: base }, ...(method === "DELETE" ? {} : { body: "{}" }) });
+        expect(res.status, `${method} ${url}`).toBe(405);
+        expect(res.headers.get("allow")).toBe("GET, HEAD");
+      }
+    }
+  });
+
   it("blocks hosts outside the TRA allowlist", async () => {
     const base = await start();
     const { cookie } = await login(base);

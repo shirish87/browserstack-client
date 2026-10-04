@@ -3,9 +3,10 @@ import { buildDateRange, flattenTests, type FlatTest } from "./analytics";
 import { normalizeHierarchy } from "./hierarchy";
 import {
   BuildDetailsSchema,
-  type BuildSummary,
-  BuildsResponseSchema,
-  ProjectsResponseSchema,
+  BuildListResponseSchema,
+  hasBuildId,
+  type IdentifiedBuild,
+  ProjectListResponseSchema,
   QualityGateSettingsSchema,
   QualityGateStatusSchema,
   SelfHealingReportSchema,
@@ -26,7 +27,7 @@ export function createTraClient(): TestReportingClient {
 /** Every response is validated at the boundary: the rest of the app only sees parsed types. */
 export const traApi = {
   async projects(client: TestReportingClient, nextPage?: string) {
-    return ProjectsResponseSchema.parse(await client.getProjects(nextPage));
+    return ProjectListResponseSchema.parse(await client.getProjects(nextPage));
   },
 
   async builds(
@@ -34,7 +35,7 @@ export const traApi = {
     projectId: number,
     opts: { status?: string; users?: string; days?: number; nextPage?: string } = {},
   ) {
-    return BuildsResponseSchema.parse(
+    return BuildListResponseSchema.parse(
       await client.getProjectBuilds(
         projectId,
         undefined,
@@ -50,13 +51,13 @@ export const traApi = {
   },
 
   /** Pages through builds in a time window (newest first), up to `max`, for trend analytics. */
-  async buildsWindow(client: TestReportingClient, projectId: number, opts: { days: number; status?: string; max?: number }): Promise<BuildSummary[]> {
+  async buildsWindow(client: TestReportingClient, projectId: number, opts: { days: number; status?: string; max?: number }): Promise<IdentifiedBuild[]> {
     const max = opts.max ?? 120;
-    const out: BuildSummary[] = [];
+    const out: IdentifiedBuild[] = [];
     let next: string | undefined;
     for (let page = 0; page < 10 && out.length < max; page++) {
       const res = await traApi.builds(client, projectId, { days: opts.days, ...(opts.status ? { status: opts.status } : {}), ...(next ? { nextPage: next } : {}) });
-      out.push(...res.builds);
+      out.push(...(res.builds ?? []).filter(hasBuildId));
       if (!res.pagination?.hasNext || !res.pagination.nextPage) break;
       next = res.pagination.nextPage;
     }
@@ -69,7 +70,7 @@ export const traApi = {
     let next: string | undefined;
     for (let page = 0; page < 8; page++) {
       const res = await traApi.testRuns(client, buildId, next ? { nextPage: next } : {});
-      out.push(...flattenTests(normalizeHierarchy(res.hierarchy)));
+      out.push(...flattenTests(normalizeHierarchy(res.hierarchy ?? [])));
       if (!res.pagination?.hasNext || !res.pagination.nextPage) break;
       next = res.pagination.nextPage;
     }

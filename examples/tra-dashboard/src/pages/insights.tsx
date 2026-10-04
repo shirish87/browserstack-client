@@ -94,7 +94,7 @@ export function InsightsPage() {
                       </div>
                       <dl className="mt-5 grid grid-cols-3 gap-2 border-t border-border pt-4 text-[13px]">
                         <div><dt className="text-muted">Failed builds</dt><dd className="font-mono text-[12px]">{r.summary.failedBuilds}</dd></div>
-                        <div><dt className="text-muted">Avg duration</dt><dd className="font-mono text-[12px]">{formatDuration(r.summary.avgDurationSec != null ? r.summary.avgDurationSec * 1000 : null)}</dd></div>
+                        <div><dt className="text-muted">Avg duration</dt><dd className="font-mono text-[12px]">{formatDuration(r.summary.avgDurationMs)}</dd></div>
                         <div>
                           <dt className="text-muted">Latest</dt>
                           <dd>{r.latest ? <StatusBadge status={r.latest.status === "pending" ? "running" : r.latest.status} /> : "—"}</dd>
