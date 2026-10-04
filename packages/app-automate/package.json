@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "7.1.0",
+  "version": "7.1.1",
   "type": "module",
   "description": "BrowserStack App Automate API client for mobile app automation testing",
   "engines": {
@@ -56,10 +56,14 @@
     "zod": "^4.4.3"
   },
   "peerDependencies": {
-    "zod": "^4.0.0"
+    "zod": "^4.0.0",
+    "vitest": "^4.0.0"
   },
   "peerDependenciesMeta": {
     "zod": {
+      "optional": true
+    },
+    "vitest": {
       "optional": true
     }
   }

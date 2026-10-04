@@ -15,7 +15,12 @@ export default defineConfig({
   ],
   format: ["esm", "cjs"],
   platform: "browser",
-  dts: true,
+  dts: {
+    resolve: true,
+    // Inline the build-time-only packages (core, the generated OpenAPI types): they are not published, so a
+    // declaration that imported them by name could not be resolved by consumers.
+    compilerOptions: { baseUrl: ".", paths: {"@dot-slash/browserstack-core": ["../core/src/index.ts"], "@dot-slash/browserstack-openapi-transforms": ["../openapi-transforms/src/index.ts"], "@dot-slash/browserstack-openapi/test-reporting/client": ["../openapi/generated/test-reporting.client.ts"], "@dot-slash/browserstack-openapi/test-reporting/models": ["../openapi/generated/test-reporting.models.ts"], "@dot-slash/browserstack-openapi/test-reporting": ["../openapi/generated/test-reporting.ts"]} },
+  },
   splitting: false,
   sourcemap: true,
   clean: true,
