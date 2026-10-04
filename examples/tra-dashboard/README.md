@@ -9,6 +9,18 @@ Read-only UI for BrowserStack **Test Reporting & Analytics**: projects → build
 - **Types:** no type assertions; every API response, request body and env var is validated with zod
   (`src/lib/schemas.ts`, `server/index.ts`).
 
+## Two lenses
+
+| Section | For | What it answers |
+| --- | --- | --- |
+| **Insights** (`/insights`) | QA managers | Portfolio health per project, then a project's pass-rate and duration trends (7/30/90 days), failing and flaky tests, failure categories. Every number drills down: chart point → build → failing test → outcome, error and BrowserStack link. |
+| **Runs** (`/runs`) | SDETs | Live runs with progress, failures so far and ETA (polled every 5s), a filterable run list, and **Compare**: pick any two runs, or use "vs previous", to see new failures, fixes, still-failing, slower and newly flaky tests, and added/removed tests. |
+
+Notes on what TRA exposes: there is no analytics endpoint, so trends are computed here from the build list
+(up to 120 builds per window, via `date_range=<startMs>,<endMs>`); the API has no log-read endpoint, so raw logs,
+steps and screenshots open in BrowserStack; there is no push, so live views poll. Quality gates return
+"Cannot access this feature with existing plan" on some plans and the UI says so.
+
 ## Run
 
 ```bash

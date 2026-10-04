@@ -1,4 +1,4 @@
-import { Link, Navigate, Outlet } from "react-router";
+import { Link, NavLink, Navigate, Outlet } from "react-router";
 import { LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -19,12 +19,30 @@ export function AppShell() {
     <div className="min-h-screen">
       <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
         <nav aria-label="Primary" className="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-6">
-          <Link to="/projects" className="flex items-center gap-2.5 font-medium">
+          <div className="flex items-center gap-6">
+          <Link to="/insights" className="flex items-center gap-2.5 font-medium">
             <span className="grid size-6 place-items-center rounded-md bg-primary text-[12px] font-semibold text-on-primary" aria-hidden>
               T
             </span>
             Test Reporting
           </Link>
+          <div className="flex items-center gap-1">
+            {[
+              { to: "/insights", label: "Insights" },
+              { to: "/runs", label: "Runs" },
+            ].map((l) => (
+              <NavLink
+                key={l.to}
+                to={l.to}
+                className={({ isActive }) =>
+                  `rounded-md px-3 py-1.5 font-medium t-fast transition-colors ${isActive ? "bg-surface-2 text-text" : "text-muted hover:text-text"}`
+                }
+              >
+                {l.label}
+              </NavLink>
+            ))}
+          </div>
+          </div>
           <div className="flex items-center gap-2">
             <span className="mr-1 hidden text-muted sm:inline">
               Signed in as <span className="font-mono text-[12px] font-medium text-text">{state.username}</span>

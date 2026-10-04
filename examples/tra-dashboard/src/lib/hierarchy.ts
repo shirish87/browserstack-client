@@ -1,4 +1,8 @@
+import { z } from "zod";
 import type { HierarchyNode, StatusStats } from "./schemas";
+
+export const FailureSchema = z.object({ error: z.string().nullish(), backtrace: z.string().nullish() });
+export type Failure = z.infer<typeof FailureSchema>;
 
 export type NormStatus = "passed" | "failed" | "skipped" | "pending" | "unknown";
 
@@ -10,6 +14,7 @@ export interface TestNode {
   isFlaky: boolean;
   isNewFailure: boolean;
   retries: number | null;
+  failures: Failure[];
   /** Remaining detail fields, shown verbatim in the drawer. */
   extra: Record<string, unknown>;
   children: TestNode[];
@@ -42,6 +47,7 @@ const KNOWN_DETAIL_KEYS = new Set([
   "isFlaky",
   "isNewFailure",
   "retries",
+  "failure",
   "name",
 ]);
 
@@ -74,6 +80,9 @@ export function normalizeHierarchy(nodes: HierarchyNode[], parentId = ""): TestN
       }
     }
 
+    const failureParse = z.array(FailureSchema).safeParse(pick(node, "failure"));
+    const failures = failureParse.success ? failureParse.data : [];
+
     const extra: Record<string, unknown> = {};
     if (isRecord(node.details)) {
       for (const [k, v] of Object.entries(node.details)) if (!KNOWN_DETAIL_KEYS.has(k)) extra[k] = v;
@@ -87,6 +96,7 @@ export function normalizeHierarchy(nodes: HierarchyNode[], parentId = ""): TestN
       isFlaky: asBool(pick(node, "isFlaky")),
       isNewFailure: asBool(pick(node, "isNewFailure")),
       retries,
+      failures,
       extra,
       children,
       counts,

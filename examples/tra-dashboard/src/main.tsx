@@ -7,8 +7,10 @@ import { AuthProvider } from "@/lib/auth";
 import { ThemeProvider } from "@/lib/theme";
 import { AppShell } from "@/components/shell";
 import { LoginPage } from "@/pages/login";
-import { ProjectsPage } from "@/pages/projects";
-import { ProjectPage } from "@/pages/project";
+import { InsightsPage } from "@/pages/insights";
+import { InsightsProjectPage } from "@/pages/insights-project";
+import { RunsPage } from "@/pages/runs";
+import { ComparePage } from "@/pages/compare";
 import { BuildPage } from "@/pages/build";
 
 const queryClient = new QueryClient({
@@ -27,12 +29,14 @@ createRoot(rootEl).render(
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route element={<AppShell />}>
-              <Route index element={<Navigate to="/projects" replace />} />
-              <Route path="/projects" element={<ProjectsPage />} />
-              <Route path="/projects/:projectId" element={<ProjectPage />} />
+              <Route index element={<Navigate to="/insights" replace />} />
+              <Route path="/insights" element={<InsightsPage />} />
+              <Route path="/insights/projects/:projectId" element={<InsightsProjectPage />} />
+              <Route path="/runs" element={<RunsPage />} />
+              <Route path="/runs/compare" element={<ComparePage />} />
               <Route path="/builds/:buildId" element={<BuildPage />} />
             </Route>
-            <Route path="*" element={<Navigate to="/projects" replace />} />
+            <Route path="*" element={<Navigate to="/insights" replace />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

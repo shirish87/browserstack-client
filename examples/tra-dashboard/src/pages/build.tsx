@@ -1,11 +1,17 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { useParams, useSearchParams } from "react-router";
+import { Link, useParams, useSearchParams } from "react-router";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { ChevronDown, ChevronRight, ExternalLink as ExtIcon, Search } from "lucide-react";
+import { ChevronDown, ChevronRight, ExternalLink as ExtIcon, GitCompare, Radio, Search } from "lucide-react";
 import { z } from "zod";
 import { useTraClient } from "@/lib/auth";
 import { traApi } from "@/lib/api";
+import { estimateRemainingSec, runProgress, type FlatTest } from "@/lib/analytics";
 import { formatDate, formatDuration, formatPercent, passRate, totalTests } from "@/lib/format";
+import { LIVE_POLL_MS, windowQuery } from "@/lib/queries";
+import { useNow } from "@/lib/hooks";
+import { TestDrawer, type DrawerTest } from "@/components/test-drawer";
+import { compareHref, previousBuild } from "@/components/builds";
+import { normalizeStatus } from "@/lib/hierarchy";
 import { filterTree, normalizeHierarchy, type TestNode } from "@/lib/hierarchy";
 import type { BuildDetails, HierarchyNode, QualityGateStatus } from "@/lib/schemas";
 import { Badge } from "@/components/ui/badge";
@@ -13,9 +19,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Select } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TabBar } from "@/components/ui/tabs";
 import { StatusBadge, StatusBar, StatusIcon, StatusLegend } from "@/components/status";
 import { Breadcrumbs, ErrorState, ExternalLink, KeyValue, LoadMore, PageTitle, Stat } from "@/components/common";
-import { displayValue, humanize } from "@/lib/utils";
+import { displayValue, errorMessage, humanize } from "@/lib/utils";
 
 const FIRST_PAGE: string | undefined = undefined;
 
@@ -30,11 +37,12 @@ export function BuildPage() {
     queryKey: ["build", username, buildId],
     queryFn: () => traApi.build(client, buildId ?? ""),
     enabled: !!buildId,
+    refetchInterval: (query) => (normalizeStatus(query.state.data?.status) === "pending" ? LIVE_POLL_MS : false),
   });
 
   const crumbs = [
-    { label: "Projects", to: "/projects" },
-    ...(projectId ? [{ label: projectName ?? `Project ${projectId}`, to: `/projects/${projectId}${projectName ? `?name=${encodeURIComponent(projectName)}` : ""}` }] : []),
+    { label: "Insights", to: "/insights" },
+    ...(projectId ? [{ label: projectName ?? `Project ${projectId}`, to: `/insights/projects/${projectId}${projectName ? `?name=${encodeURIComponent(projectName)}` : ""}` }] : []),
     { label: q.data?.name ?? "Build" },
   ];
 
@@ -48,7 +56,7 @@ export function BuildPage() {
       ) : q.isError ? (
         <ErrorState error={q.error} onRetry={() => void q.refetch()} />
       ) : (
-        <BuildContent build={q.data} />
+        <BuildContent build={q.data} project={projectId ? { id: Number(projectId), name: projectName ?? undefined } : undefined} />
       )}
     </>
   );
@@ -66,13 +74,27 @@ function BuildSkeleton() {
   );
 }
 
-function BuildContent({ build }: { build: BuildDetails }) {
+function BuildContent({ build, project }: { build: BuildDetails; project: { id: number; name: string | undefined } | undefined }) {
+  const { client, username } = useTraClient();
+  const live = normalizeStatus(build.status) === "pending";
+  const recent = useQuery({ ...windowQuery(client, username, project?.id ?? 0, 90), enabled: !!project && Number.isInteger(project.id) });
+  const previous = recent.data ? previousBuild(recent.data, build.buildId) : undefined;
   const stats = build.statusStats;
   const total = totalTests(stats);
   const smart = build.smartTags;
   return (
     <div className="space-y-6">
+      {live && <LiveBanner build={build} />}
       <PageTitle
+        actions={
+          previous && !live ? (
+            <Button asChild variant="outline">
+              <Link to={compareHref(previous.buildId, build.buildId, project)}>
+                <GitCompare className="size-4" aria-hidden /> Compare with #{previous.buildNumber ?? "previous"}
+              </Link>
+            </Button>
+          ) : undefined
+        }
         title={
           <span className="flex flex-wrap items-center gap-3">
             {build.name ?? "Untitled build"}
@@ -148,7 +170,7 @@ function BuildContent({ build }: { build: BuildDetails }) {
 
       <QualityGate buildId={build.buildId} />
       <SelfHealing buildId={build.buildId} />
-      <TestsSection buildId={build.buildId} />
+      <TestsSection buildId={build.buildId} buildLabel={`${build.name ?? "Build"} #${build.buildNumber ?? ""}`} buildUrl={build.observabilityUrl} live={live} initialFailures={(stats?.failed ?? 0) > 0} />
     </div>
   );
 }
@@ -251,7 +273,7 @@ function QualityGate({ buildId }: { buildId: string }) {
       {q.isPending ? (
         <CardContent><Skeleton className="h-10" /></CardContent>
       ) : q.isError ? (
-        <CardContent className="text-muted">No quality gate result for this build.</CardContent>
+        <CardContent className="text-muted">{errorMessage(q.error)}</CardContent>
       ) : (
         <QualityGateBody status={q.data} />
       )}
@@ -319,9 +341,11 @@ const SortSchema = z.enum(["EXECUTION_ORDER", "TOP_LEVEL_NAME", "DURATION", "FAI
 const STATUS_OPTIONS = ["all", "passed", "failed", "skipped", "pending"] as const;
 const StatusOptionSchema = z.enum(STATUS_OPTIONS);
 
-function TestsSection({ buildId }: { buildId: string }) {
+function TestsSection({ buildId, buildLabel, buildUrl, live, initialFailures }: { buildId: string; buildLabel: string; buildUrl: string | null | undefined; live: boolean; initialFailures: boolean }) {
   const { client, username } = useTraClient();
-  const [status, setStatus] = useState<(typeof STATUS_OPTIONS)[number]>("all");
+  const [drawer, setDrawer] = useState<DrawerTest | null>(null);
+  // Failures first: that's what a reader of a failing build wants to see.
+  const [status, setStatus] = useState<(typeof STATUS_OPTIONS)[number]>(initialFailures ? "failed" : "all");
   const [sort, setSort] = useState<(typeof SORTS)[number]["value"]>("EXECUTION_ORDER");
   const [flaky, setFlaky] = useState(false);
   const [newFailure, setNewFailure] = useState(false);
@@ -339,6 +363,7 @@ function TestsSection({ buildId }: { buildId: string }) {
       }),
     initialPageParam: FIRST_PAGE,
     getNextPageParam: (last) => (last.pagination?.hasNext ? (last.pagination.nextPage ?? undefined) : undefined),
+    ...(live ? { refetchInterval: LIVE_POLL_MS } : {}),
   });
 
   const tree = useMemo(() => {
@@ -353,6 +378,12 @@ function TestsSection({ buildId }: { buildId: string }) {
         <h2 id="tests-heading" className="text-[22px] font-medium tracking-[-0.4px]">Tests</h2>
         {summary && <StatusLegend stats={summary} />}
       </div>
+      <TabBar
+        label="Which tests"
+        tabs={[{ value: "failed", label: "Failures" }, { value: "all", label: "All tests" }]}
+        value={status === "failed" ? "failed" : "all"}
+        onChange={(v) => setStatus(v)}
+      />
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative w-full max-w-xs">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-accent" aria-hidden />
@@ -384,9 +415,19 @@ function TestsSection({ buildId }: { buildId: string }) {
         <>
           <Card>
             <ul role="tree" aria-label="Tests">
-              {tree.map((n) => <TreeNode key={n.id} node={n} depth={0} forceOpen={search.trim().length > 0} />)}
+              {tree.map((n) => (
+                <TreeNode
+                  key={n.id}
+                  node={n}
+                  depth={0}
+                  forceOpen={search.trim().length > 0}
+                  parents={[]}
+                  onSelect={(leaf, path) => setDrawer({ test: toFlat(leaf, path), extra: leaf.extra, buildUrl, buildLabel })}
+                />
+              ))}
             </ul>
           </Card>
+          <TestDrawer item={drawer} onClose={() => setDrawer(null)} />
           <LoadMore hasNext={q.hasNextPage} loading={q.isFetchingNextPage} onClick={() => void q.fetchNextPage()} loaded={q.data.pages.reduce((n, p) => n + p.hierarchy.length, 0)} />
         </>
       )}
@@ -394,73 +435,90 @@ function TestsSection({ buildId }: { buildId: string }) {
   );
 }
 
-function TreeNode({ node, depth, forceOpen }: { node: TestNode; depth: number; forceOpen: boolean }) {
+function toFlat(node: TestNode, path: string[]): FlatTest {
+  return {
+    key: path.join(" › "),
+    name: node.name,
+    path,
+    status: node.status,
+    durationMs: node.durationMs,
+    isFlaky: node.isFlaky,
+    isNewFailure: node.isNewFailure,
+    retries: node.retries,
+    failures: node.failures,
+  };
+}
+
+function TreeNode({ node, depth, forceOpen, parents, onSelect }: { node: TestNode; depth: number; forceOpen: boolean; parents: string[]; onSelect: (node: TestNode, path: string[]) => void }) {
   const isLeaf = node.children.length === 0;
   const [openState, setOpen] = useState(depth < 2 && !isLeaf);
   const open = forceOpen || openState;
-  const hasDetail = isLeaf && Object.keys(node.extra).length > 0;
-  const expandable = !isLeaf || hasDetail;
   const failedHere = node.counts.failed;
+  const path = [...parents, node.name];
 
   const header: ReactNode = (
     <>
-      {expandable ? (open ? <ChevronDown className="size-4 shrink-0 text-muted" aria-hidden /> : <ChevronRight className="size-4 shrink-0 text-muted" aria-hidden />) : <span className="size-4 shrink-0" />}
+      {isLeaf ? <span className="size-4 shrink-0" /> : open ? <ChevronDown className="size-4 shrink-0 text-muted" aria-hidden /> : <ChevronRight className="size-4 shrink-0 text-muted" aria-hidden />}
       {isLeaf ? <StatusIcon status={node.status} /> : failedHere > 0 ? <StatusIcon status="failed" /> : <StatusIcon status="passed" />}
-      <span className={isLeaf ? "min-w-0 flex-1 truncate" : "min-w-0 flex-1 truncate font-semibold"}>{node.name}</span>
+      <span className={isLeaf ? "min-w-0 flex-1 truncate" : "min-w-0 flex-1 truncate font-medium"}>{node.name}</span>
       {isLeaf ? (
         <span className="flex shrink-0 items-center gap-2">
           {node.isFlaky && <Badge tone="warning">Flaky</Badge>}
           {node.isNewFailure && <Badge tone="danger">New failure</Badge>}
           {node.retries ? <Badge tone="outline">{node.retries} retries</Badge> : null}
-          <span className="w-16 text-right font-mono text-[12px] font-medium text-muted">{formatDuration(node.durationMs)}</span>
+          <span className="w-16 text-right font-mono text-[12px] text-muted">{formatDuration(node.durationMs)}</span>
         </span>
       ) : (
         <span className="flex shrink-0 items-center gap-3">
           {failedHere > 0 && <span className="font-mono text-[12px] font-medium text-danger">{failedHere} failed</span>}
-          <span className="font-mono text-[12px] font-medium text-muted">{node.leafCount} tests</span>
+          <span className="font-mono text-[12px] text-muted">{node.leafCount} tests</span>
         </span>
       )}
     </>
   );
 
   return (
-    <li role="treeitem" aria-expanded={expandable ? open : undefined} aria-selected={false} className="border-b border-border last:border-b-0">
-      {expandable ? (
-        <button
-          type="button"
-          onClick={() => setOpen(!openState)}
-          style={{ paddingLeft: 12 + depth * 20 }}
-          className="flex w-full cursor-pointer items-center gap-2 py-2.5 pr-5 text-left t-fast transition-colors hover:bg-surface-2"
-        >
-          {header}
-        </button>
-      ) : (
-        <div style={{ paddingLeft: 12 + depth * 20 }} className="flex items-center gap-2 py-2.5 pr-5">{header}</div>
-      )}
+    <li role="treeitem" aria-expanded={isLeaf ? undefined : open} aria-selected={false} className="border-b border-border last:border-b-0">
+      <button
+        type="button"
+        onClick={() => (isLeaf ? onSelect(node, path) : setOpen(!openState))}
+        style={{ paddingLeft: 12 + depth * 20 }}
+        className="flex w-full cursor-pointer items-center gap-2 py-2.5 pr-5 text-left t-fast transition-colors hover:bg-surface-2"
+        {...(isLeaf ? { "aria-haspopup": "dialog" as const } : {})}
+      >
+        {header}
+      </button>
       {open && !isLeaf && (
         <ul role="group">
-          {node.children.map((c) => <TreeNode key={c.id} node={c} depth={depth + 1} forceOpen={forceOpen} />)}
+          {node.children.map((c) => <TreeNode key={c.id} node={c} depth={depth + 1} forceOpen={forceOpen} parents={path} onSelect={onSelect} />)}
         </ul>
       )}
-      {open && hasDetail && <TestDetail extra={node.extra} depth={depth} />}
     </li>
   );
 }
 
-const FailureSchema = z.array(z.object({ error: z.string().nullish(), backtrace: z.string().nullish() }));
-
-function TestDetail({ extra, depth }: { extra: Record<string, unknown>; depth: number }) {
-  const failures = FailureSchema.safeParse(extra["failure"]);
-  const rest = Object.entries(extra).filter(([k]) => !(k === "failure" && failures.success));
+/** Banner for a build that's still executing: progress, failures so far, ETA. Data refreshes on its own. */
+function LiveBanner({ build }: { build: BuildDetails }) {
+  const now = useNow();
+  const { done, total, fraction } = runProgress(build.statusStats);
+  const started = Date.parse(build.startedAt ?? "");
+  const elapsed = Number.isNaN(started) ? null : Math.max(0, Math.round((now - started) / 1000));
+  const remaining = elapsed === null ? null : estimateRemainingSec(fraction, elapsed);
+  const failed = build.statusStats?.failed ?? 0;
   return (
-    <div style={{ marginLeft: 12 + depth * 20 + 24 }} className="mb-3 mr-5 space-y-3 rounded-lg bg-surface-2 p-4">
-      {failures.success && failures.data.map((f, i) => (
-        <div key={i} className="rounded-md border border-danger/30 bg-danger-bg p-3">
-          {f.error && <p className="font-medium text-danger">{f.error}</p>}
-          {f.backtrace && <pre className="mt-2 overflow-x-auto whitespace-pre-wrap font-mono text-[12px] font-medium leading-[1.33] text-muted">{f.backtrace}</pre>}
-        </div>
-      ))}
-      {rest.length > 0 && <KeyValue rows={rest.map(([k, v]) => [humanize(k), <span key={k} className="font-mono text-[12px]">{displayValue(v)}</span>])} />}
+    <div role="status" className="panel rounded-lg p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="inline-flex items-center gap-2 font-medium"><Radio className="size-4 animate-pulse text-warning" aria-hidden /> Running — updating every {LIVE_POLL_MS / 1000}s</span>
+        <span className="text-[13px] text-muted">
+          {elapsed !== null && <>Elapsed {formatDuration(elapsed * 1000)}</>}
+          {remaining !== null && <> · about {formatDuration(remaining * 1000)} left</>}
+        </span>
+      </div>
+      <div className="mt-3"><StatusBar stats={build.statusStats} className="h-2" /></div>
+      <p className="mt-2 flex justify-between text-[12px]">
+        <span className="font-mono text-ink-muted">{done}/{total} tests · {Math.round(fraction * 100)}%</span>
+        <span className={failed > 0 ? "font-medium text-danger" : "text-muted"}>{failed} failed so far</span>
+      </p>
     </div>
   );
 }

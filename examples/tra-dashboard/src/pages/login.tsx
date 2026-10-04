@@ -14,7 +14,7 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  if (state.status === "authenticated") return <Navigate to="/projects" replace />;
+  if (state.status === "authenticated") return <Navigate to="/insights" replace />;
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,7 +28,7 @@ export function LoginPage() {
     setError(null);
     try {
       await signIn(parsed.data);
-      void navigate("/projects", { replace: true });
+      void navigate("/insights", { replace: true });
     } catch (err) {
       setError(`Couldn’t sign in: ${errorMessage(err)}`);
     } finally {

@@ -1,6 +1,9 @@
 import { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
+import { buildDateRange, flattenTests, type FlatTest } from "./analytics";
+import { normalizeHierarchy } from "./hierarchy";
 import {
   BuildDetailsSchema,
+  type BuildSummary,
   BuildsResponseSchema,
   ProjectsResponseSchema,
   QualityGateSettingsSchema,
@@ -26,10 +29,51 @@ export const traApi = {
     return ProjectsResponseSchema.parse(await client.getProjects(nextPage));
   },
 
-  async builds(client: TestReportingClient, projectId: number, opts: { status?: string; nextPage?: string } = {}) {
+  async builds(
+    client: TestReportingClient,
+    projectId: number,
+    opts: { status?: string; users?: string; days?: number; nextPage?: string } = {},
+  ) {
     return BuildsResponseSchema.parse(
-      await client.getProjectBuilds(projectId, undefined, undefined, opts.status, undefined, undefined, undefined, undefined, opts.nextPage),
+      await client.getProjectBuilds(
+        projectId,
+        undefined,
+        undefined,
+        opts.status,
+        opts.users,
+        undefined,
+        undefined,
+        opts.days ? buildDateRange(opts.days) : undefined,
+        opts.nextPage,
+      ),
     );
+  },
+
+  /** Pages through builds in a time window (newest first), up to `max`, for trend analytics. */
+  async buildsWindow(client: TestReportingClient, projectId: number, opts: { days: number; status?: string; max?: number }): Promise<BuildSummary[]> {
+    const max = opts.max ?? 120;
+    const out: BuildSummary[] = [];
+    let next: string | undefined;
+    for (let page = 0; page < 10 && out.length < max; page++) {
+      const res = await traApi.builds(client, projectId, { days: opts.days, ...(opts.status ? { status: opts.status } : {}), ...(next ? { nextPage: next } : {}) });
+      out.push(...res.builds);
+      if (!res.pagination?.hasNext || !res.pagination.nextPage) break;
+      next = res.pagination.nextPage;
+    }
+    return out.slice(0, max);
+  },
+
+  /** Every test of a build as flat rows, following pagination (capped). */
+  async allTests(client: TestReportingClient, buildId: string): Promise<FlatTest[]> {
+    const out: FlatTest[] = [];
+    let next: string | undefined;
+    for (let page = 0; page < 8; page++) {
+      const res = await traApi.testRuns(client, buildId, next ? { nextPage: next } : {});
+      out.push(...flattenTests(normalizeHierarchy(res.hierarchy)));
+      if (!res.pagination?.hasNext || !res.pagination.nextPage) break;
+      next = res.pagination.nextPage;
+    }
+    return out;
   },
 
   async build(client: TestReportingClient, buildId: string) {
