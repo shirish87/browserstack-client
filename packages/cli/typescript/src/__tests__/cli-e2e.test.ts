@@ -461,12 +461,6 @@ describe("CLI E2E Orchestrator", () => {
         expect(result.stdout.trim()).toBe("");
       });
 
-      it.skip("local start with unknown flag should fail with error", async () => {
-        const result = await run(["local", "start", "--unknown-flag", "val"]);
-        expect(result.exitCode).toBe(1);
-        expect(result.stderr.toLowerCase()).toMatch(/unknown|invalid/);
-      });
-
       it("local run-with with no separator should fail with error", async () => {
         const result = await run(["local", "run-with"]);
         expect(result.exitCode).toBe(1);
@@ -543,6 +537,18 @@ describe("CLI E2E Orchestrator", () => {
         const listAfterStop = await runReal(["local", "list"]);
         expect(listAfterStop.exitCode, diag(listAfterStop)).toBe(0);
         expect(listAfterStop.stdout.trim()).toBe("");
+      }, TEST_TIMEOUT_TUNNEL);
+
+      // Unrecognised flags are passed through to the BrowserStackLocal binary
+      // as-is rather than rejected by the CLI, and the binary ignores them. Needs
+      // real credentials: with dummy ones the start fails on auth regardless.
+      it("local start passes an unknown flag through to the binary and still connects", async () => {
+        if (!hasRealCreds) return;
+
+        const startResult = await runReal(["local", "start", "--unknown-flag", "val"]);
+        expect(startResult.exitCode, diag(startResult)).toBe(0);
+        expect(startResult.stdout).toMatch(/^[a-z0-9]+: connected$/im);
+        startedLocalIdentifier = startResult.stdout.trim().split(":")[0].trim();
       }, TEST_TIMEOUT_TUNNEL);
 
       it("local stop with specific --local-identifier stops only that tunnel", async () => {
