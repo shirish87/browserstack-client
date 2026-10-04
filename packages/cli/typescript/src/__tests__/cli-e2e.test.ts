@@ -520,23 +520,23 @@ describe("CLI E2E Orchestrator", () => {
         const startResult = await runReal(["local", "start"]);
         expect(startResult.exitCode, diag(startResult)).toBe(0);
         // stdout: "<localIdentifier>: Connected"
-        expect(startResult.stdout).toMatch(/^[a-z0-9]+: connected$/im);
+        expect(startResult.stdout, diag(startResult)).toMatch(/^[a-z0-9]+: connected$/im);
         startedLocalIdentifier = startResult.stdout.trim().split(":")[0].trim();
 
         // list — should include the started identifier
         const listResult = await runReal(["local", "list"]);
         expect(listResult.exitCode, diag(listResult)).toBe(0);
-        expect(listResult.stdout).toContain(startedLocalIdentifier);
+        expect(listResult.stdout, diag(listResult)).toContain(startedLocalIdentifier);
 
         // stop
         const stopResult = await runReal(["local", "stop"]);
         expect(stopResult.exitCode, diag(stopResult)).toBe(0);
-        expect(stopResult.stdout).toMatch(/stopped successfully/i);
+        expect(stopResult.stdout, diag(stopResult)).toMatch(/stopped successfully/i);
 
         // list — should be empty now
         const listAfterStop = await runReal(["local", "list"]);
         expect(listAfterStop.exitCode, diag(listAfterStop)).toBe(0);
-        expect(listAfterStop.stdout.trim()).toBe("");
+        expect(listAfterStop.stdout.trim(), diag(listAfterStop)).toBe("");
       }, TEST_TIMEOUT_TUNNEL);
 
       // Unrecognised flags are passed through to the BrowserStackLocal binary
@@ -547,7 +547,7 @@ describe("CLI E2E Orchestrator", () => {
 
         const startResult = await runReal(["local", "start", "--unknown-flag", "val"]);
         expect(startResult.exitCode, diag(startResult)).toBe(0);
-        expect(startResult.stdout).toMatch(/^[a-z0-9]+: connected$/im);
+        expect(startResult.stdout, diag(startResult)).toMatch(/^[a-z0-9]+: connected$/im);
         startedLocalIdentifier = startResult.stdout.trim().split(":")[0].trim();
       }, TEST_TIMEOUT_TUNNEL);
 
@@ -562,8 +562,8 @@ describe("CLI E2E Orchestrator", () => {
           "local", "stop", "--local-identifier", startedLocalIdentifier!,
         ]);
         expect(stopResult.exitCode, diag(stopResult)).toBe(0);
-        expect(stopResult.stdout).toContain(startedLocalIdentifier);
-        expect(stopResult.stdout).toMatch(/stopped successfully/i);
+        expect(stopResult.stdout, diag(stopResult)).toContain(startedLocalIdentifier);
+        expect(stopResult.stdout, diag(stopResult)).toMatch(/stopped successfully/i);
       }, TEST_TIMEOUT_TUNNEL);
 
       it("local stop with specific local-identifier argument stops only that tunnel", async () => {
@@ -577,8 +577,8 @@ describe("CLI E2E Orchestrator", () => {
           "local", "stop", startedLocalIdentifier!,
         ]);
         expect(stopResult.exitCode, diag(stopResult)).toBe(0);
-        expect(stopResult.stdout).toContain(startedLocalIdentifier);
-        expect(stopResult.stdout).toMatch(/stopped successfully/i);
+        expect(stopResult.stdout, diag(stopResult)).toContain(startedLocalIdentifier);
+        expect(stopResult.stdout, diag(stopResult)).toMatch(/stopped successfully/i);
       }, TEST_TIMEOUT_TUNNEL);
 
       it("local stop on an already-stopped tunnel does not error", async () => {
@@ -610,7 +610,7 @@ describe("CLI E2E Orchestrator", () => {
         const connectedLine = lines.find((l: string) => /connected/i.test(l));
         expect(connectedLine).toBeTruthy();
         const tunnelId = connectedLine!.split(":")[0].trim();
-        expect(result.stdout).toContain(tunnelId);
+        expect(result.stdout, diag(result)).toContain(tunnelId);
         expect(lines.some((l: string) => /stopped successfully/i.test(l))).toBe(true);
       }, TEST_TIMEOUT_TUNNEL);
 
@@ -623,7 +623,7 @@ describe("CLI E2E Orchestrator", () => {
         ]);
         expect(result.exitCode, diag(result)).not.toBe(0);
         const listResult = await runReal(["local", "list"]);
-        expect(listResult.stdout.trim()).toBe("");
+        expect(listResult.stdout.trim(), diag(listResult)).toBe("");
       }, TEST_TIMEOUT_TUNNEL);
     });
 
