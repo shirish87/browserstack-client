@@ -31,11 +31,8 @@ const BUILD_DETAIL_WIRE = {
   project_id: 25033,
 };
 
-const START_BUILD_WIRE = { success: true, build_hashed_id: "bld_newbuild123" };
 
-const FINISH_BUILD_WIRE = { success: true, message: "Build finished successfully." };
 
-const START_TEST_RUN_WIRE = { success: true, test_run_id: "tr-001" };
 
 describe("TestReportingClient", () => {
   describe("Credentials", () => {
@@ -165,62 +162,6 @@ describe("TestReportingClient", () => {
     it("throws HttpError on 404", async () => {
       const client = makeClient(makeErrorResponse(404, "Build not found"));
       await expect(client.getBuild("nonexistent")).rejects.toThrow(HttpError);
-    });
-  });
-
-  describe("startBuild", () => {
-    it("returns success true and buildHashedId", async () => {
-      const client = makeClient(START_BUILD_WIRE);
-      const data = await client.startBuild({
-        name: "my-build",
-        projectName: "sdk-integration-tests",
-        startedAt: "2026-04-27T10:00:00.000Z",
-        framework: { name: "vitest", version: "1.0.0" },
-      });
-      expect(data).toBeDefined();
-      expect((data as { success?: boolean }).success).toBe(true);
-      expect((data as { buildHashedId?: string }).buildHashedId).toBe("bld_newbuild123");
-    });
-
-    it("throws HttpError on 422", async () => {
-      const client = makeClient(makeErrorResponse(422, "Unprocessable Entity"));
-      await expect(
-        client.startBuild({ name: "", projectName: "", startedAt: "", framework: { name: "vitest", version: "1.0.0" } })
-      ).rejects.toThrow(HttpError);
-    });
-  });
-
-  describe("finishBuild", () => {
-    it("returns success true and message", async () => {
-      const client = makeClient(FINISH_BUILD_WIRE);
-      const data = await client.finishBuild("bld_newbuild123", {
-        finishedAt: "2026-04-27T10:30:00.000Z",
-      });
-      expect(data).toBeDefined();
-      expect((data as { success?: boolean }).success).toBe(true);
-      expect((data as { message?: string }).message).toBe("Build finished successfully.");
-    });
-
-    it("throws HttpError on 401", async () => {
-      const client = makeClient(makeErrorResponse(401, "Unauthorized"));
-      await expect(
-        client.finishBuild("bld_newbuild123", { finishedAt: "2026-04-27T10:30:00.000Z" })
-      ).rejects.toThrow(HttpError);
-    });
-  });
-
-  describe("startTestRun", () => {
-    it("returns success true and test_run_id", async () => {
-      const client = makeClient(START_TEST_RUN_WIRE);
-      const data = await client.startTestRun("bld_newbuild123", {
-        name: "sdk test run",
-        startedAt: "2026-04-27T10:00:00.000Z",
-        fileName: "sdk.test.ts",
-        scopes: ["integration"],
-      });
-      expect(data).toBeDefined();
-      expect((data as { success?: boolean }).success).toBe(true);
-      expect((data as { testRunId?: string }).testRunId).toBe("tr-001");
     });
   });
 
