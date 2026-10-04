@@ -115,3 +115,10 @@ export function sessionInsights(raw: unknown) {
     capabilities,
   };
 }
+
+// --- telemetry ---------------------------------------------------------------------------------
+
+/** Automate's telemetry log is a gzip archive (Selenium 4 with the telemetryLogs capability); the gateway streams it for download. */
+export function telemetryDownloadUrl(sessionId: string): string {
+  return `/gateway?url=${encodeURIComponent(`https://api.browserstack.com/automate/sessions/${encodeURIComponent(sessionId)}/telemetrylogs`)}`;
+}

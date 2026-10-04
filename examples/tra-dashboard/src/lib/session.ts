@@ -236,7 +236,7 @@ export function waterfallOf(rows: NetworkRow[]): WaterfallBar[] {
 }
 
 /** How often a running session's logs are re-read. */
-export const LIVE_LOG_POLL_MS = 3000;
+export const LIVE_LOG_POLL_MS = 10_000;
 
 /** Automate and App Automate report `running` (and `queued` before a device is ready) until a session ends. */
 export function isLiveSession(status: string | null | undefined): boolean {

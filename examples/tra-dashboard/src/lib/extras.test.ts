@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parallelUsage, profilingSeries, profilingV2Rows, sessionInsights, videoOffsetSec } from "./extras";
+import { parallelUsage, profilingSeries, telemetryDownloadUrl, profilingV2Rows, sessionInsights, videoOffsetSec } from "./extras";
 import { sessionEvidence } from "./session";
 
 const sample = (ts: number, over: Record<string, unknown> = {}) => ({ ts, cpu: 10, mem: 7000, mema: 4000, batt: 84, temp: 22.6, ...over });
@@ -79,5 +79,13 @@ describe("sessionEvidence extra logs", () => {
     const e = sessionEvidence({ device: { status: "ok", data: "d" }, selenium: { status: "ok", data: "s" }, playwright: { status: "missing", reason: "none" } });
     expect(e.extra).toEqual({ device: "d", selenium: "s" });
     expect(e.notes).toContainEqual({ kind: "playwright", message: "none" });
+  });
+});
+
+describe("telemetryDownloadUrl", () => {
+  it("points at the read-only gateway for the session's telemetry archive", () => {
+    const url = telemetryDownloadUrl("abc123");
+    expect(url.startsWith("/gateway?url=")).toBe(true);
+    expect(decodeURIComponent(url.slice("/gateway?url=".length))).toBe("https://api.browserstack.com/automate/sessions/abc123/telemetrylogs");
   });
 });

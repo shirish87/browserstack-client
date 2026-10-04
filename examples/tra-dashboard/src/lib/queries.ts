@@ -3,6 +3,7 @@ import { queryOptions } from "@tanstack/react-query";
 import type { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
 import type { TestManagementClient } from "@dot-slash/browserstack-test-management";
 import { extrasApi, tmApi, traApi } from "./api";
+import { telemetryDownloadUrl } from "./extras";
 import { isNamedProject, type NamedProject } from "./schemas";
 
 /** Poll interval while a build is running (TRA has no push events). */
@@ -96,3 +97,12 @@ export const profilingQuery = (username: string, buildId: string, sessionId: str
 export const PLAN_POLL_MS = 15000;
 export const planQuery = (username: string, product: "automate" | "app-automate") =>
   queryOptions({ queryKey: ["plan", username, product], queryFn: () => extrasApi.plan(product), retry: false, refetchInterval: PLAN_POLL_MS });
+
+/** Whether the session has a telemetry archive: only Selenium 4 sessions run with `telemetryLogs` do, and the rest answer 404. */
+export const telemetryAvailableQuery = (username: string, sessionId: string) =>
+  queryOptions({
+    queryKey: ["telemetry", username, sessionId],
+    queryFn: async () => (await fetch(telemetryDownloadUrl(sessionId), { method: "HEAD" })).ok,
+    retry: false,
+    staleTime: Infinity,
+  });

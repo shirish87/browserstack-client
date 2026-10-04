@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTraClient } from "@/lib/auth";
-import { linkedSessionQuery, profilingQuery, sessionLogsQuery, testsQuery } from "@/lib/queries";
-import { type ProfilingRow, profilingSeries, profilingV2Rows, sessionInsights, videoOffsetSec } from "@/lib/extras";
+import { linkedSessionQuery, profilingQuery, sessionLogsQuery, telemetryAvailableQuery, testsQuery } from "@/lib/queries";
+import { type ProfilingRow, profilingSeries, telemetryDownloadUrl, profilingV2Rows, sessionInsights, videoOffsetSec } from "@/lib/extras";
 import { MetricChart } from "@/components/tra-charts";
 import { buildTimeline, eventsBefore, formatBytes, isLiveSession, LIVE_LOG_POLL_MS, sessionEvidence, signalsIn, waterfallOf, windowOf, type SessionEvidence } from "@/lib/session";
 import { formatDuration } from "@/lib/format";
@@ -52,6 +52,7 @@ export function SessionPage() {
   const logs = useQuery({ ...sessionLogsQuery(client, username, sessionId, device, live), enabled: !!linked.data });
   const evidence = useMemo(() => (logs.data ? sessionEvidence(logs.data) : undefined), [logs.data]);
 
+  const telemetry = useQuery({ ...telemetryAvailableQuery(username, sessionId), enabled: linked.data?.product === "automate" });
   const videoRef = useRef<HTMLVideoElement>(null);
   const seekVideo = (ms: number) => {
     const at = videoOffsetSec(ms, linked.data?.session.createdAt);
@@ -91,6 +92,7 @@ export function SessionPage() {
             <Badge tone="outline">{linked.data.product === "automate" ? "Automate" : "App Automate"}</Badge>
             {s.duration ? <span>{formatDuration(s.duration * 1000)}</span> : null}
             {s.publicUrl && <ExternalLink href={s.publicUrl}>Open in BrowserStack</ExternalLink>}
+            {telemetry.data && <a href={telemetryDownloadUrl(sessionId)} download={`telemetrylogs-${sessionId}.gz`} className="text-primary underline-offset-2 hover:underline">Download telemetry logs (.gz)</a>}
           </span>
         }
       />
