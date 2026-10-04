@@ -238,3 +238,26 @@ describe("sessionEvidence: what the deep-dive page reads from fetched logs", () 
     expect(sessionEvidence({ appium: { status: "ok", data: appium } }).lines.length).toBeGreaterThan(0);
   });
 });
+
+// Live Automate / App Automate logs come back with CRLF line endings.
+describe("CRLF logs", () => {
+  const crlf = (lines: string[]): string => `${lines.join("\r\n")}\r\n`;
+
+  it("parses a text log into commands", () => {
+    const lines = parseTextLog(crlf(["2026-10-4 15:55:3:315 REQUEST [2026-10-4 15:55:3:315] POST /session/s/url {\"url\":\"x\"}", "2026-10-4 15:55:4:1 RESPONSE {\"value\":null}"]));
+    expect(lines).toHaveLength(2);
+    expect(lines[0]).toMatchObject({ tag: "REQUEST", text: 'POST /session/s/url {"url":"x"}' });
+    expect(commandsFromLog(lines)).toHaveLength(1);
+  });
+
+  it("parses an Appium log", () => {
+    const lines = parseAppiumLog(crlf(["2026-10-04 16:28:03:360 - [HTTP] --> POST /wd/hub/session", "2026-10-04 16:28:03:361 - [HTTP] {}"]));
+    expect(lines.map((l) => l.tag)).toEqual(["HTTP", "HTTP"]);
+    expect(lines[0]?.text).toBe("--> POST /wd/hub/session");
+  });
+
+  it("parses a device log", () => {
+    const lines = parseDeviceLog(crlf(["10-04 16:28:08.959 I/libc    (12766): message"]), 2026);
+    expect(lines[0]).toMatchObject({ tag: "I/libc", text: "message" });
+  });
+});

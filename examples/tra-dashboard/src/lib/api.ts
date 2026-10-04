@@ -94,7 +94,8 @@ export const traApi = {
         opts.flaky ? "true" : undefined,
         opts.newFailure ? "true" : undefined,
         opts.sort,
-        opts.order,
+        // TRA answers 500 to `sort` without `order`.
+        opts.sort ? (opts.order ?? "Asc") : opts.order,
         opts.nextPage,
       ),
     );

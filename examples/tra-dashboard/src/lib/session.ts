@@ -29,6 +29,9 @@ export interface LogLine {
 const StampSchema = z.object({ y: z.string(), mo: z.string(), d: z.string(), h: z.string(), mi: z.string(), s: z.string(), ms: z.string() });
 const utc = (g: z.infer<typeof StampSchema>): number => Date.UTC(Number(g.y), Number(g.mo) - 1, Number(g.d), Number(g.h), Number(g.mi), Number(g.s), Number(g.ms));
 
+/** Live logs use CRLF; fixtures use LF. */
+const LINE_BREAK = /\r?\n/;
+
 /** Matches a line and returns its named groups, validated, or undefined when it doesn't match. */
 function groupsOf<T extends z.ZodType>(re: RegExp, schema: T, line: string): z.infer<T> | undefined {
   const parsed = schema.safeParse(re.exec(line)?.groups);
@@ -43,7 +46,7 @@ const BRACKET_STAMP = /^\[\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}:\d{1,3}\
 
 export function parseTextLog(text: string): LogLine[] {
   const out: LogLine[] = [];
-  for (const raw of text.split("\n")) {
+  for (const raw of text.split(LINE_BREAK)) {
     if (raw.trim() === "") continue;
     const g = groupsOf(TEXT_LINE, TextLineSchema, raw);
     if (g) {
@@ -61,7 +64,7 @@ const AppiumLineSchema = StampSchema.extend({ tag: z.string().optional(), text: 
 
 export function parseAppiumLog(text: string): LogLine[] {
   const out: LogLine[] = [];
-  for (const raw of text.split("\n")) {
+  for (const raw of text.split(LINE_BREAK)) {
     if (raw.trim() === "") continue;
     const g = groupsOf(APPIUM_LINE, AppiumLineSchema, raw);
     if (g) out.push({ ms: utc(g), tag: g.tag ?? "", text: g.text });
@@ -76,7 +79,7 @@ const DeviceLineSchema = StampSchema.omit({ y: true }).extend({ tag: z.string(),
 
 export function parseDeviceLog(text: string, year: number): LogLine[] {
   const out: LogLine[] = [];
-  for (const raw of text.split("\n")) {
+  for (const raw of text.split(LINE_BREAK)) {
     if (raw.trim() === "") continue;
     const g = groupsOf(DEVICE_LINE, DeviceLineSchema, raw);
     if (g) out.push({ ms: utc({ ...g, y: String(year) }), tag: g.tag, text: g.text });
