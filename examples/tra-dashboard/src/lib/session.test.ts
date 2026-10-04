@@ -8,6 +8,7 @@ import {
   parseAppiumLog,
   parseDeviceLog,
   parseTextLog,
+  sessionEvidence,
   signalsIn,
   toNetworkRows,
   windowOf,
@@ -201,5 +202,39 @@ describe("buildTimeline", () => {
     const empty = buildTimeline({ tests: [], rows: [], commands: [], buckets: 4 });
     expect(empty.tests).toEqual([]);
     expect(empty.endMs).toBeGreaterThan(empty.startMs);
+  });
+});
+
+describe("sessionEvidence: what the deep-dive page reads from fetched logs", () => {
+  const text = ["2026-10-4 16:28:8:271 REQUEST POST /session {}", "2026-10-4 16:28:9:8 RESPONSE {\"value\":null}"].join("\n");
+  const har = HarArchiveSchema.parse(JSON.parse(fixture("automate-network-logs.har.json")));
+
+  it("builds commands and network rows from ok logs", () => {
+    const e = sessionEvidence({ text: { status: "ok", data: text }, network: { status: "ok", data: har } });
+    expect(e.commands).toHaveLength(1);
+    expect(e.rows.length).toBeGreaterThan(0);
+    expect(e.notes).toEqual([]);
+  });
+
+  it("keeps the console log text", () => {
+    expect(sessionEvidence({ console: { status: "ok", data: "// nothing logged" } }).consoleText).toBe("// nothing logged");
+  });
+
+  it("explains missing and failed logs instead of hiding them", () => {
+    const e = sessionEvidence({
+      text: { status: "ok", data: text },
+      network: { status: "missing", reason: "[BROWSERSTACK_NETWORK_LOGS_NOT_CAPTURED] not captured" },
+      console: { status: "error", error: new Error("boom") },
+    });
+    expect(e.rows).toEqual([]);
+    expect(e.notes).toEqual([
+      { kind: "network", message: "[BROWSERSTACK_NETWORK_LOGS_NOT_CAPTURED] not captured" },
+      { kind: "console", message: "boom" },
+    ]);
+  });
+
+  it("falls back to the Appium log when there is no text log", () => {
+    const appium = "[2026-10-04 16:28:08:271] POST /session {}\n";
+    expect(sessionEvidence({ appium: { status: "ok", data: appium } }).lines.length).toBeGreaterThan(0);
   });
 });

@@ -324,3 +324,45 @@ export function buildTimeline(input: { tests: FlatTest[]; rows: NetworkRow[]; co
     commands: bucketize(input.commands.map((c) => ({ ms: c.startMs, bad: c.failed })), startMs, endMs, input.buckets),
   };
 }
+
+// --- assembling fetched logs -------------------------------------------------------------------
+
+type LogOutcome<T> = { status: "ok"; data: T } | { status: "missing"; reason: string } | { status: "error"; error: Error };
+
+/** The logs `TestReportingClient.getTestSessionLogs` returns, as far as the deep-dive reads them. */
+export interface FetchedLogs {
+  text?: LogOutcome<string>;
+  appium?: LogOutcome<string>;
+  console?: LogOutcome<string>;
+  network?: LogOutcome<HarArchive>;
+}
+
+export interface LogNote {
+  kind: string;
+  message: string;
+}
+
+export interface SessionEvidence {
+  lines: LogLine[];
+  commands: Command[];
+  rows: NetworkRow[];
+  consoleText: string | undefined;
+  /** Why a log is absent. A missing log is normal (e.g. network logs not captured); it is shown, not hidden. */
+  notes: LogNote[];
+}
+
+export function sessionEvidence(logs: FetchedLogs): SessionEvidence {
+  const notes: LogNote[] = [];
+  const read = <T>(kind: string, result: LogOutcome<T> | undefined): T | undefined => {
+    if (!result) return undefined;
+    if (result.status === "ok") return result.data;
+    notes.push({ kind, message: result.status === "missing" ? result.reason : result.error.message });
+    return undefined;
+  };
+  const text = read("text", logs.text);
+  const appium = read("appium", logs.appium);
+  const har = read("network", logs.network);
+  const consoleText = read("console", logs.console);
+  const lines = text !== undefined ? parseTextLog(text) : appium !== undefined ? parseAppiumLog(appium) : [];
+  return { lines, commands: commandsFromLog(lines), rows: har ? toNetworkRows(har) : [], consoleText, notes };
+}

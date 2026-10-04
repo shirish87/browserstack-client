@@ -47,3 +47,18 @@ export const testsQuery = (client: TestReportingClient, username: string, buildI
     queryFn: () => traApi.allTests(client, buildId),
     ...(live ? { refetchInterval: LIVE_POLL_MS } : {}),
   });
+
+export const linkedSessionQuery = (client: TestReportingClient, username: string, sessionId: string, device?: string) =>
+  queryOptions({
+    queryKey: ["linked-session", username, sessionId],
+    queryFn: () => client.getTestSession(sessionId, { device }),
+    retry: false,
+  });
+
+export const sessionLogsQuery = (client: TestReportingClient, username: string, sessionId: string, device?: string) =>
+  queryOptions({
+    queryKey: ["session-logs", username, sessionId],
+    queryFn: () => client.getTestSessionLogs(sessionId, undefined, { device }),
+    retry: false,
+    staleTime: Infinity,
+  });

@@ -11,6 +11,7 @@ import { InsightsPage } from "@/pages/insights";
 import { InsightsProjectPage } from "@/pages/insights-project";
 import { RunsPage } from "@/pages/runs";
 import { ComparePage } from "@/pages/compare";
+import { SessionPage } from "@/pages/session";
 import { BuildPage } from "@/pages/build";
 
 const queryClient = new QueryClient({
@@ -35,6 +36,7 @@ createRoot(rootEl).render(
               <Route path="/runs" element={<RunsPage />} />
               <Route path="/runs/compare" element={<ComparePage />} />
               <Route path="/builds/:buildId" element={<BuildPage />} />
+              <Route path="/builds/:buildId/sessions/:sessionId" element={<SessionPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/insights" replace />} />
           </Routes>
