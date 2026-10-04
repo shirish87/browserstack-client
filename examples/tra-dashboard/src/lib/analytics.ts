@@ -189,7 +189,7 @@ function pooledPassRate(points: BuildPoint[]): number | null {
 
 export function summarize(points: BuildPoint[]): Summary {
   const finished = points.filter((p) => p.status !== "pending");
-  const durations = finished.map((p) => p.durationMs).filter((d): d is number => d != null);
+  const durations = finished.map((p) => p.durationMs).filter((d): d is number => d != null && d >= 0);
   const failedBuilds = finished.filter((p) => p.status === "failed").length;
   const mid = Math.floor(points.length / 2);
   const older = pooledPassRate(points.slice(0, mid));

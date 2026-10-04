@@ -4,7 +4,8 @@ import { Activity, AlertTriangle, CheckCircle2, Eye, MinusCircle } from "lucide-
 import { useTraClient } from "@/lib/auth";
 import { healthOf, summarize, toSeries, type Health } from "@/lib/analytics";
 import { formatDuration, formatPercent, formatRelative } from "@/lib/format";
-import { projectsQuery, windowQuery } from "@/lib/queries";
+import { planQuery, projectsQuery, windowQuery } from "@/lib/queries";
+import { parallelUsage } from "@/lib/extras";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -54,6 +55,8 @@ export function InsightsPage() {
         <Stat label="Pass rate" value={stillLoading ? "…" : formatPercent(overall.passRate)} hint="passed ÷ (passed + failed)" />
         <Stat label="Needs attention" value={stillLoading ? "…" : attention} hint="projects on Watch or At risk" />
       </section>
+
+      <DeviceCapacity />
 
       {list.length === 0 ? (
         <EmptyState title="No projects yet" hint="Projects appear once a build is reported to Test Reporting & Analytics." />
@@ -120,5 +123,30 @@ function PortfolioSkeleton() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">{Array.from({ length: 4 }, (_, i) => <Skeleton key={i} className="h-24" />)}</div>
       <div className="grid gap-4 md:grid-cols-3">{Array.from({ length: 3 }, (_, i) => <Card key={i}><Skeleton className="h-44" /></Card>)}</div>
     </div>
+  );
+}
+
+/** Live parallel-session capacity per product: how many are running, how many are queued, and how close to the limit. */
+function DeviceCapacity() {
+  const { username } = useTraClient();
+  const products = [{ id: "automate", label: "Automate (web)" }, { id: "app-automate", label: "App Automate (mobile)" }] as const;
+  const plans = useQueries({ queries: products.map((p) => planQuery(username, p.id)) });
+  const ready = plans.flatMap((q, i) => (q.data ? [{ ...products[i]!, usage: parallelUsage(q.data) }] : []));
+  if (ready.length === 0) return null;
+  return (
+    <section aria-label="Parallel session capacity" className="mb-8 grid gap-4 md:grid-cols-2">
+      {ready.map(({ id, label, usage }) => (
+        <Card key={id} className="px-5 py-4">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-muted">{label} · parallel sessions</p>
+            {usage.saturated && <Badge tone="warning">All slots busy</Badge>}
+          </div>
+          <p className="mt-1 text-[22px] font-semibold tracking-[-0.4px]">{usage.running} <span className="text-[14px] font-normal text-muted">of {usage.maxRunning} running · {usage.queued} queued</span></p>
+          <div className="mt-3 h-2 rounded-full bg-neutral-bg" role="img" aria-label={`${usage.running} of ${usage.maxRunning} parallel sessions running, ${usage.queued} of ${usage.maxQueued} queue slots used`}>
+            <div className={usage.saturated ? "h-full rounded-full bg-warning" : "h-full rounded-full bg-primary"} style={{ width: `${usage.maxRunning > 0 ? Math.min(100, (usage.running / usage.maxRunning) * 100) : 0}%` }} />
+          </div>
+        </Card>
+      ))}
+    </section>
   );
 }

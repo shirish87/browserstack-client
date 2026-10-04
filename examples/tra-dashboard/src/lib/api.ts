@@ -1,8 +1,10 @@
+import type { z } from "zod";
 import { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
 import { TestManagementClient } from "@dot-slash/browserstack-test-management";
 import { TmCasesSchema, TmProjectsSchema, TmRunsSchema } from "./tm";
 import { buildDateRange, flattenTests, type FlatTest } from "./analytics";
 import { normalizeHierarchy } from "./hierarchy";
+import { PlanSchema, ProfilingSamplesSchema, ProfilingV2Schema } from "./extras";
 import {
   BuildDetailsSchema,
   BuildListResponseSchema,
@@ -32,6 +34,20 @@ export function createTmClient(): TestManagementClient {
     middleware: [(req, next) => next({ ...req, url: `/gateway?url=${encodeURIComponent(req.url)}` })],
   });
 }
+
+/** A GET through the same gateway for endpoints the SDK doesn't wrap; the body is validated like every other response. */
+export async function gatewayJson<S extends z.ZodType>(url: string, schema: S): Promise<z.infer<S>> {
+  const res = await fetch(`/gateway?url=${encodeURIComponent(url)}`, { headers: { accept: "application/json" } });
+  if (!res.ok) throw new Error(`${res.status} ${(await res.text()).slice(0, 200)}`);
+  return schema.parse(await res.json());
+}
+
+const API = "https://api.browserstack.com";
+export const extrasApi = {
+  profiling: (buildId: string, sessionId: string) => gatewayJson(`${API}/app-automate/builds/${buildId}/sessions/${sessionId}/appprofiling`, ProfilingSamplesSchema),
+  profilingV2: (buildId: string, sessionId: string) => gatewayJson(`${API}/app-automate/builds/${buildId}/sessions/${sessionId}/appprofiling/v2`, ProfilingV2Schema),
+  plan: (product: "automate" | "app-automate") => gatewayJson(`${API}/${product}/plan.json`, PlanSchema),
+};
 
 /** Test Management responses, validated at the boundary like TRA's. */
 export const tmApi = {

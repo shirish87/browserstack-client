@@ -114,6 +114,10 @@ describe("series and summary", () => {
     expect(s.passRate).toBeCloseTo(290 / 300);
     expect(s.passRateDelta).toBeLessThan(0);
   });
+  it("ignores negative durations TRA reports for builds that never ran", () => {
+    const odd = toSeries(identified([mk(1, 5, 0, "2026-10-01T00:00:00Z", -37_652), mk(2, 5, 0, "2026-10-02T00:00:00Z", 1000)]));
+    expect(summarize(odd).avgDurationMs).toBe(1000);
+  });
   it("handles an empty window", () => {
     expect(summarize([])).toMatchObject({ count: 0, passRate: null, avgDurationMs: null, passRateDelta: null });
   });

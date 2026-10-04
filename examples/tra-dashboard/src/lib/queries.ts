@@ -2,7 +2,7 @@ import { isLiveSession, LIVE_LOG_POLL_MS } from "./session";
 import { queryOptions } from "@tanstack/react-query";
 import type { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
 import type { TestManagementClient } from "@dot-slash/browserstack-test-management";
-import { tmApi, traApi } from "./api";
+import { extrasApi, tmApi, traApi } from "./api";
 import { isNamedProject, type NamedProject } from "./schemas";
 
 /** Poll interval while a build is running (TRA has no push events). */
@@ -82,3 +82,17 @@ export const tmCasesQuery = (client: TestManagementClient, username: string, pro
 
 export const tmRunsQuery = (client: TestManagementClient, username: string, projectId: string) =>
   queryOptions({ queryKey: ["tm-runs", username, projectId], queryFn: () => tmApi.runs(client, projectId), retry: false });
+
+/** App Automate resource profiling for a session; sessions run without profiling answer 4xx, which the page shows as "not captured". */
+export const profilingQuery = (username: string, buildId: string, sessionId: string, live = false) =>
+  queryOptions({
+    queryKey: ["profiling", username, sessionId],
+    queryFn: async () => ({ samples: await extrasApi.profiling(buildId, sessionId), v2: await extrasApi.profilingV2(buildId, sessionId).catch(() => undefined) }),
+    retry: false,
+    staleTime: live ? 0 : Infinity,
+    ...(live ? { refetchInterval: LIVE_LOG_POLL_MS } : {}),
+  });
+
+export const PLAN_POLL_MS = 15000;
+export const planQuery = (username: string, product: "automate" | "app-automate") =>
+  queryOptions({ queryKey: ["plan", username, product], queryFn: () => extrasApi.plan(product), retry: false, refetchInterval: PLAN_POLL_MS });

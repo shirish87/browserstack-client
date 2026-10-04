@@ -371,6 +371,9 @@ export interface FetchedLogs {
   appium?: LogOutcome<string>;
   console?: LogOutcome<string>;
   network?: LogOutcome<HarArchive>;
+  device?: LogOutcome<string>;
+  selenium?: LogOutcome<string>;
+  playwright?: LogOutcome<string>;
 }
 
 export interface LogNote {
@@ -383,6 +386,8 @@ export interface SessionEvidence {
   commands: Command[];
   rows: NetworkRow[];
   consoleText: string | undefined;
+  /** Whole logs shown as-is in their own tabs. */
+  extra: Partial<Record<"device" | "selenium" | "playwright", string>>;
   /** Why a log is absent. A missing log is normal (e.g. network logs not captured); it is shown, not hidden. */
   notes: LogNote[];
 }
@@ -400,5 +405,10 @@ export function sessionEvidence(logs: FetchedLogs): SessionEvidence {
   const har = read("network", logs.network);
   const consoleText = read("console", logs.console);
   const lines = text !== undefined ? parseTextLog(text) : appium !== undefined ? parseAppiumLog(appium) : [];
-  return { lines, commands: commandsFromLog(lines), rows: har ? toNetworkRows(har) : [], consoleText, notes };
+  const extra: SessionEvidence["extra"] = {};
+  for (const kind of ["device", "selenium", "playwright"] as const) {
+    const log = read(kind, logs[kind]);
+    if (log !== undefined) extra[kind] = log;
+  }
+  return { lines, commands: commandsFromLog(lines), rows: har ? toNetworkRows(har) : [], consoleText, extra, notes };
 }
