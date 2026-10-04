@@ -27,6 +27,8 @@ const binaries = [
 
 const TEST_TIMEOUT_SLOW_API = 30000;
 const TEST_TIMEOUT_TUNNEL = 60000;
+// Upper bound on queueing behind the other suites' tunnel tests.
+const TUNNEL_LOCK_WAIT_TIMEOUT = 10 * TEST_TIMEOUT_TUNNEL;
 
 // The binary suites run concurrently against the same account, and starting
 // BrowserStack Local tunnels in parallel makes `local start` fail. The lock is
@@ -38,15 +40,6 @@ function acquireTunnelLock(): Promise<() => void> {
   const acquired = tunnelLockTail.then(() => release);
   tunnelLockTail = tunnelLockTail.then(() => held);
   return acquired;
-}
-
-async function withTunnelLock<T>(fn: () => Promise<T>): Promise<T> {
-  const release = await acquireTunnelLock();
-  try {
-    return await fn();
-  } finally {
-    release();
-  }
 }
 
 // Failure message that shows what the CLI printed, not just its exit code.
@@ -514,13 +507,34 @@ describe("CLI E2E Orchestrator", () => {
     describe.sequential("local integration", () => {
       let startedLocalIdentifier: string | undefined;
 
-      beforeEach(() => {
+      // Queueing for the lock happens here, in a hook with its own generous
+      // timeout, so time spent behind other suites never counts against the
+      // 60s budget of the test itself.
+      let releaseTunnelLock: (() => void) | undefined;
+      const releaseLock = () => {
+        releaseTunnelLock?.();
+        releaseTunnelLock = undefined;
+      };
+
+      // The lock is held only until the tunnel is up (run-with holds it for its
+      // whole short run, since it starts the tunnel internally).
+      const startTunnel = async () => {
+        try {
+          return await runReal(["local", "start"]);
+        } finally {
+          releaseLock();
+        }
+      };
+
+      beforeEach(async () => {
         startedLocalIdentifier = undefined;
-      });
+        if (hasRealCreds) releaseTunnelLock = await acquireTunnelLock();
+      }, TUNNEL_LOCK_WAIT_TIMEOUT);
 
       // Stop whatever a test left running so a failed assertion cannot leak a
       // tunnel into the next test.
       afterEach(async () => {
+        releaseLock();
         if (hasRealCreds && startedLocalIdentifier) await runReal(["local", "stop"]);
       });
 
@@ -528,7 +542,7 @@ describe("CLI E2E Orchestrator", () => {
         if (!hasRealCreds) return;
 
         // start
-        const startResult = await withTunnelLock(() => runReal(["local", "start"]));
+        const startResult = await startTunnel();
         expect(startResult.exitCode, diag(startResult)).toBe(0);
         // stdout: "<localIdentifier>: Connected"
         expect(startResult.stdout).toMatch(/^[a-z0-9]+: connected$/im);
@@ -553,7 +567,7 @@ describe("CLI E2E Orchestrator", () => {
       it("local stop with specific --local-identifier stops only that tunnel", async () => {
         if (!hasRealCreds) return;
 
-        const startResult = await withTunnelLock(() => runReal(["local", "start"]));
+        const startResult = await startTunnel();
         expect(startResult.exitCode, diag(startResult)).toBe(0);
         startedLocalIdentifier = startResult.stdout.trim().split(":")[0].trim();
 
@@ -568,7 +582,7 @@ describe("CLI E2E Orchestrator", () => {
       it("local stop with specific local-identifier argument stops only that tunnel", async () => {
         if (!hasRealCreds) return;
 
-        const startResult = await withTunnelLock(() => runReal(["local", "start"]));
+        const startResult = await startTunnel();
         expect(startResult.exitCode, diag(startResult)).toBe(0);
         startedLocalIdentifier = startResult.stdout.trim().split(":")[0].trim();
 
@@ -583,7 +597,7 @@ describe("CLI E2E Orchestrator", () => {
       it("local stop on an already-stopped tunnel does not error", async () => {
         if (!hasRealCreds) return;
 
-        const startResult = await withTunnelLock(() => runReal(["local", "start"]));
+        const startResult = await startTunnel();
         expect(startResult.exitCode, diag(startResult)).toBe(0);
         startedLocalIdentifier = startResult.stdout.trim().split(":")[0].trim();
 
@@ -600,10 +614,10 @@ describe("CLI E2E Orchestrator", () => {
         // (args are passed directly to the OS, no shell interpolation).
         const sep = process.platform === "win32" ? "---" : "--";
 
-        const result = await withTunnelLock(() => runReal([
+        const result = await runReal([
           "local", "run-with", sep,
           process.execPath, "-e", "assert(process.env.BROWSERSTACK_LOCAL_IDENTIFIER);",
-        ]));
+        ]);
         expect(result.exitCode, diag(result)).toBe(0);
         const lines = (result.stdout + result.stderr).split("\n").map((l: string) => l.trim()).filter(Boolean);
         const connectedLine = lines.find((l: string) => /connected/i.test(l));
@@ -616,10 +630,10 @@ describe("CLI E2E Orchestrator", () => {
       it("local run-with exits non-zero when child command fails", async () => {
         if (!hasRealCreds) return;
         const sep = process.platform === "win32" ? "---" : "--";
-        const result = await withTunnelLock(() => runReal([
+        const result = await runReal([
           "local", "run-with", sep,
           "node", "-e", "process.exit(42)",
-        ]));
+        ]);
         expect(result.exitCode, diag(result)).not.toBe(0);
         const listResult = await runReal(["local", "list"]);
         expect(listResult.stdout.trim()).toBe("");
