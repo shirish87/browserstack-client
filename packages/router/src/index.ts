@@ -17,6 +17,12 @@ export interface RouterOptions {
   maxTimeout?: number;
 }
 
+/**
+ * The only caller headers sent upstream. The browser's own identity (User-Agent, cookies, origin, sec-*) is left out:
+ * BrowserStack's edge answers a browser User-Agent with an HTML bot challenge instead of the data.
+ */
+const FORWARDED_HEADERS = ["accept", "accept-language", "content-type", "if-none-match", "if-modified-since", "range"];
+
 function isAllowedHost(url: URL, allowedHosts: string[]): boolean {
   return allowedHosts.includes(url.hostname);
 }
@@ -62,9 +68,11 @@ export function createWebRouter(options: RouterOptions) {
       }
     }
 
-    const headers = new Headers(request.headers);
-    headers.delete("host");
-    headers.delete("x-browserstack-timeout");
+    const headers = new Headers();
+    for (const name of FORWARDED_HEADERS) {
+      const value = request.headers.get(name);
+      if (value !== null) headers.set(name, value);
+    }
     headers.set("Authorization", authHeader);
 
     const timeoutController = new AbortController();
