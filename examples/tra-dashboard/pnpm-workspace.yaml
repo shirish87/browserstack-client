@@ -1,6 +1,8 @@
 packages:
   - "."
   - "../../packages/core"
+  - "../../packages/automate"
+  - "../../packages/app-automate"
   - "../../packages/openapi"
   - "../../packages/openapi-transforms"
   - "../../packages/router"

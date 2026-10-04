@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@dot-slash/browserstack-automate':
+        specifier: link:../../packages/automate
+        version: link:../../packages/automate
       '@dot-slash/browserstack-router':
         specifier: link:../../packages/router
         version: link:../../packages/router
@@ -103,6 +106,63 @@ importers:
         specifier: ^3.2.4
         version: 3.2.7(@types/node@22.20.5)(jiti@2.7.0)(jsdom@27.4.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1)
 
+  ../../packages/app-automate:
+    devDependencies:
+      '@dot-slash/browserstack-core':
+        specifier: workspace:*
+        version: link:../core
+      '@dot-slash/browserstack-openapi':
+        specifier: workspace:*
+        version: link:../openapi
+      '@dot-slash/browserstack-openapi-transforms':
+        specifier: workspace:*
+        version: link:../openapi-transforms
+      '@types/node':
+        specifier: 20.0.0
+        version: 20.0.0
+      fflate:
+        specifier: ^0.8.3
+        version: 0.8.3
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^4.1.4
+        version: 4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
+      zod:
+        specifier: ^4.4.3
+        version: 4.6.5
+
+  ../../packages/automate:
+    devDependencies:
+      '@dot-slash/browserstack-core':
+        specifier: workspace:*
+        version: link:../core
+      '@dot-slash/browserstack-openapi':
+        specifier: workspace:*
+        version: link:../openapi
+      '@dot-slash/browserstack-openapi-transforms':
+        specifier: workspace:*
+        version: link:../openapi-transforms
+      '@types/node':
+        specifier: 20.0.0
+        version: 20.0.0
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^4.1.4
+        version: 4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
+      zod:
+        specifier: ^4.4.3
+        version: 4.6.5
+
   ../../packages/core:
     dependencies:
       '@dot-slash/browserstack-openapi-transforms':
@@ -117,7 +177,7 @@ importers:
         version: 20.0.0
       tsup:
         specifier: ^8.5.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(typescript@6.0.3)(yaml@2.9.1)
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -158,13 +218,13 @@ importers:
         version: 4.10.2
       tsup:
         specifier: ^8.5.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(typescript@6.0.3)(yaml@2.9.1)
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
       vitest:
         specifier: ^4.1.4
-        version: 4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.1))
+        version: 4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
       yaml:
         specifier: ^2.8.3
         version: 2.9.1
@@ -180,15 +240,22 @@ importers:
         version: 20.0.0
       tsup:
         specifier: ^8.5.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(typescript@6.0.3)(yaml@2.9.1)
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
       vitest:
         specifier: ^4.1.4
-        version: 4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.1))
+        version: 4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
 
   ../../packages/test-reporting:
+    dependencies:
+      '@dot-slash/browserstack-app-automate':
+        specifier: workspace:*
+        version: link:../app-automate
+      '@dot-slash/browserstack-automate':
+        specifier: workspace:*
+        version: link:../automate
     devDependencies:
       '@dot-slash/browserstack-core':
         specifier: workspace:*
@@ -204,13 +271,16 @@ importers:
         version: 20.0.0
       tsup:
         specifier: ^8.5.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(typescript@6.0.3)(yaml@2.9.1)
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
       vitest:
         specifier: ^4.1.4
-        version: 4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.1))
+        version: 4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
+      zod:
+        specifier: ^4.4.3
+        version: 4.6.5
 
 packages:
 
@@ -1453,6 +1523,9 @@ packages:
       picomatch:
         optional: true
 
+  fflate@0.8.3:
+    resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
+
   finalhandler@2.1.1:
     resolution: {integrity: sha512-S8KoZgRZN+a5rNwqTxlZZePjT/4cnm0ROV70LedRHZ0p8u9fRID0hJUZQpkKLzro8LfmC8sx23bY6tVNxv8pQA==}
     engines: {node: '>= 18.0.0'}
@@ -2403,7 +2476,7 @@ snapshots:
       '@babel/types': 7.29.8
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -2487,7 +2560,7 @@ snapshots:
       '@babel/parser': 7.29.9
       '@babel/template': 7.29.7
       '@babel/types': 7.29.8
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -3039,13 +3112,13 @@ snapshots:
     optionalDependencies:
       vite: 7.3.6(@types/node@22.20.5)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1)
 
-  '@vitest/mocker@4.1.11(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.1))':
+  '@vitest/mocker@4.1.11(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))':
     dependencies:
       '@vitest/spy': 4.1.11
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.1)
+      vite: 7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1)
 
   '@vitest/pretty-format@3.2.7':
     dependencies:
@@ -3149,7 +3222,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 2.1.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       http-errors: 2.0.1
       iconv-lite: 0.7.3
       on-finished: 2.4.1
@@ -3275,10 +3348,6 @@ snapshots:
     dependencies:
       whatwg-mimetype: 5.0.0
       whatwg-url: 15.1.0
-
-  debug@4.4.3:
-    dependencies:
-      ms: 2.1.3
 
   debug@4.4.3(supports-color@10.2.2):
     dependencies:
@@ -3409,7 +3478,7 @@ snapshots:
       content-type: 1.0.5
       cookie: 0.7.2
       cookie-signature: 1.2.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       depd: 2.0.0
       encodeurl: 2.0.0
       escape-html: 1.0.3
@@ -3446,9 +3515,11 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.7
 
+  fflate@0.8.3: {}
+
   finalhandler@2.1.1:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -3523,14 +3594,7 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.3
-    transitivePeerDependencies:
-      - supports-color
-
-  https-proxy-agent@7.0.6:
-    dependencies:
-      agent-base: 7.1.4
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -3579,7 +3643,7 @@ snapshots:
       decimal.js: 10.6.0
       html-encoding-sniffer: 6.0.0
       http-proxy-agent: 7.0.2
-      https-proxy-agent: 7.0.6
+      https-proxy-agent: 7.0.6(supports-color@10.2.2)
       is-potential-custom-element-name: 1.0.1
       parse5: 8.0.1
       saxes: 6.0.0
@@ -3784,14 +3848,6 @@ snapshots:
       tsx: 4.23.15
       yaml: 2.9.1
 
-  postcss-load-config@6.0.1(jiti@2.7.0)(postcss@8.5.28)(yaml@2.9.1):
-    dependencies:
-      lilconfig: 3.1.3
-    optionalDependencies:
-      jiti: 2.7.0
-      postcss: 8.5.28
-      yaml: 2.9.1
-
   postcss@8.5.28:
     dependencies:
       nanoid: 3.3.19
@@ -3886,7 +3942,7 @@ snapshots:
 
   router@2.2.0:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       depd: 2.0.0
       is-promise: 4.0.0
       parseurl: 1.3.3
@@ -3910,7 +3966,7 @@ snapshots:
 
   send@1.2.1:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -4070,7 +4126,7 @@ snapshots:
       cac: 6.7.14
       chokidar: 4.0.3
       consola: 3.4.2
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       esbuild: 0.27.7
       fix-dts-default-cjs-exports: 1.0.1
       joycon: 3.1.1
@@ -4092,7 +4148,7 @@ snapshots:
       - tsx
       - yaml
 
-  tsup@8.5.1(jiti@2.7.0)(postcss@8.5.28)(typescript@6.0.3)(yaml@2.9.1):
+  tsup@8.5.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(typescript@6.0.3)(yaml@2.9.1):
     dependencies:
       bundle-require: 5.1.0(esbuild@0.27.7)
       cac: 6.7.14
@@ -4103,7 +4159,7 @@ snapshots:
       fix-dts-default-cjs-exports: 1.0.1
       joycon: 3.1.1
       picocolors: 1.1.1
-      postcss-load-config: 6.0.1(jiti@2.7.0)(postcss@8.5.28)(yaml@2.9.1)
+      postcss-load-config: 6.0.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.15)(yaml@2.9.1)
       resolve-from: 5.0.0
       rollup: 4.64.0
       source-map: 0.7.6
@@ -4157,7 +4213,7 @@ snapshots:
   vite-node@3.2.4(@types/node@22.20.5)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1):
     dependencies:
       cac: 6.7.14
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       es-module-lexer: 1.7.0
       pathe: 2.0.3
       vite: 7.3.6(@types/node@22.20.5)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1)
@@ -4175,7 +4231,7 @@ snapshots:
       - tsx
       - yaml
 
-  vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.1):
+  vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1):
     dependencies:
       esbuild: 0.28.2
       fdir: 6.5.0(picomatch@4.0.7)
@@ -4188,6 +4244,7 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.7.0
       lightningcss: 1.32.0
+      tsx: 4.23.15
       yaml: 2.9.1
 
   vite@7.3.6(@types/node@22.20.5)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1):
@@ -4217,7 +4274,7 @@ snapshots:
       '@vitest/spy': 3.2.7
       '@vitest/utils': 3.2.7
       chai: 5.3.3
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@10.2.2)
       expect-type: 1.4.0
       magic-string: 0.30.21
       pathe: 2.0.3
@@ -4248,10 +4305,10 @@ snapshots:
       - tsx
       - yaml
 
-  vitest@4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.1)):
+  vitest@4.1.11(@types/node@20.0.0)(jsdom@27.4.0)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1)):
     dependencies:
       '@vitest/expect': 4.1.11
-      '@vitest/mocker': 4.1.11(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.1))
+      '@vitest/mocker': 4.1.11(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1))
       '@vitest/pretty-format': 4.1.11
       '@vitest/runner': 4.1.11
       '@vitest/snapshot': 4.1.11
@@ -4268,7 +4325,7 @@ snapshots:
       tinyexec: 1.3.1
       tinyglobby: 0.2.17
       tinyrainbow: 3.2.0
-      vite: 7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.1)
+      vite: 7.3.6(@types/node@20.0.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)(yaml@2.9.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 20.0.0
