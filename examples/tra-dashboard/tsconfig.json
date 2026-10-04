@@ -23,5 +23,5 @@
       "@dot-slash/browserstack-core": ["../../packages/core/src/index.ts"]
     }
   },
-  "include": ["src", "server", "vite.config.ts", "vitest.config.ts"]
+  "include": ["src", "server", "vite.config.ts", "vitest.config.ts", "tsup.config.ts"]
 }

@@ -171,11 +171,6 @@ export const SelfHealingReportSchema = z.object({
 });
 export type SelfHealingReport = z.infer<typeof SelfHealingReportSchema>;
 
-/** Header names the browser sends to the gateway. */
-export const GATEWAY_USERNAME_HEADER = "x-browserstack-username";
-export const GATEWAY_ACCESS_KEY_HEADER = "x-browserstack-access-key";
-
-export const GatewayHeadersSchema = z.object({
-  [GATEWAY_USERNAME_HEADER]: z.string().min(1),
-  [GATEWAY_ACCESS_KEY_HEADER]: z.string().min(1),
-});
+/** Response of `GET/POST /api/session`. The access key never leaves the server. */
+export const SessionResponseSchema = z.object({ username: z.string() });
+export type SessionResponse = z.infer<typeof SessionResponseSchema>;

@@ -4,8 +4,15 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 
 export function AppShell() {
-  const { credentials, signOut } = useAuth();
-  if (!credentials) return <Navigate to="/login" replace />;
+  const { state, signOut } = useAuth();
+  if (state.status === "loading") {
+    return (
+      <div className="grid min-h-screen place-items-center text-muted" role="status">
+        Loading…
+      </div>
+    );
+  }
+  if (state.status === "anonymous") return <Navigate to="/login" replace />;
 
   return (
     <div className="min-h-screen">
@@ -19,9 +26,9 @@ export function AppShell() {
           </Link>
           <div className="flex items-center gap-3">
             <span className="text-muted">
-              Signed in as <span className="font-mono text-[12px] font-medium text-text">{credentials.username}</span>
+              Signed in as <span className="font-mono text-[12px] font-medium text-text">{state.username}</span>
             </span>
-            <Button variant="outline" size="sm" onClick={signOut}>
+            <Button variant="outline" size="sm" onClick={() => void signOut()}>
               <LogOut className="size-3.5" aria-hidden /> Sign out
             </Button>
           </div>

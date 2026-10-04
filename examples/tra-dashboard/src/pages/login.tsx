@@ -2,20 +2,18 @@ import { useState, type FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { createTraClient } from "@/lib/api";
-import { traApi } from "@/lib/api";
 import { CredentialsSchema } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { errorMessage } from "@/lib/utils";
 
 export function LoginPage() {
-  const { credentials, signIn } = useAuth();
+  const { state, signIn } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  if (credentials) return <Navigate to="/projects" replace />;
+  if (state.status === "authenticated") return <Navigate to="/projects" replace />;
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,9 +26,7 @@ export function LoginPage() {
     setBusy(true);
     setError(null);
     try {
-      // Verify the credentials before entering the app.
-      await traApi.projects(createTraClient(parsed.data));
-      signIn(parsed.data);
+      await signIn(parsed.data);
       void navigate("/projects", { replace: true });
     } catch (err) {
       setError(`Couldn’t sign in: ${errorMessage(err)}`);
@@ -72,7 +68,7 @@ export function LoginPage() {
             {busy ? "Verifying…" : "Continue"}
           </Button>
           <p className="text-[12px] text-muted">
-            Credentials stay in this browser tab (session storage) and are only sent to this app’s own gateway.
+            Your access key is sent once to this app’s server and kept there for the session. It is never stored in the browser.
           </p>
         </form>
       </div>

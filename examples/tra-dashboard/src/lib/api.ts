@@ -2,34 +2,21 @@ import { TestReportingClient } from "@dot-slash/browserstack-test-reporting";
 import {
   BuildDetailsSchema,
   BuildsResponseSchema,
-  GATEWAY_ACCESS_KEY_HEADER,
-  GATEWAY_USERNAME_HEADER,
   ProjectsResponseSchema,
   QualityGateSettingsSchema,
   QualityGateStatusSchema,
   SelfHealingReportSchema,
   TestRunsResponseSchema,
-  type Credentials,
 } from "./schemas";
 
 /**
  * The browser never talks to browserstack.com directly: every SDK request is rewritten to
- * `/gateway?url=…` on this origin, which forwards it with the user's credentials.
+ * `/gateway?url=…` on this origin. The server attaches the signed-in user's credentials
+ * (held in a server-side session behind an HttpOnly cookie), so none exist in the browser.
  */
-export function createTraClient(creds: Credentials): TestReportingClient {
+export function createTraClient(): TestReportingClient {
   return new TestReportingClient({
-    middleware: [
-      (req, next) =>
-        next({
-          ...req,
-          url: `/gateway?url=${encodeURIComponent(req.url)}`,
-          headers: {
-            ...req.headers,
-            [GATEWAY_USERNAME_HEADER]: creds.username,
-            [GATEWAY_ACCESS_KEY_HEADER]: creds.accessKey,
-          },
-        }),
-    ],
+    middleware: [(req, next) => next({ ...req, url: `/gateway?url=${encodeURIComponent(req.url)}` })],
   });
 }
 
