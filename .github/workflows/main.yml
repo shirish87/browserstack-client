@@ -83,6 +83,11 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # Every published package must ship the declarations it advertises, and those must not import
+      # anything a consumer cannot resolve (see scripts/check-declarations.mjs).
+      - name: Check shipped TypeScript declarations
+        run: node scripts/check-declarations.mjs
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
