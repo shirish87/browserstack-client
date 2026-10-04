@@ -86,8 +86,8 @@ describe("Server-Side Router", () => {
     );
 
     const sent = fetchMock.mock.calls[0]?.[1]?.headers;
-    expect(sent).toBeInstanceOf(Headers);
-    const h = sent as Headers;
+    if (!(sent instanceof Headers)) throw new Error("expected Headers");
+    const h = sent;
     for (const name of ["user-agent", "cookie", "origin", "referer", "sec-fetch-mode", "sec-ch-ua"]) expect(h.has(name), name).toBe(false);
     expect(h.get("accept")).toBe("application/json");
     expect(h.get("content-type")).toBe("application/json");
