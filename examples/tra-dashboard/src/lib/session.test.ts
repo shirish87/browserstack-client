@@ -144,6 +144,11 @@ const test = (over: Partial<FlatTest> = {}): FlatTest => ({
   startedAt: "2026-10-04T16:00:10.000Z",
   sessionId: "s1",
   platform: {},
+  testCases: [],
+  muted: false,
+  runCount: null,
+  tags: [],
+  autoAnalyzed: false,
   ...over,
 });
 const at = (offsetMs: number): number => Date.parse("2026-10-04T16:00:10.000Z") + offsetMs;

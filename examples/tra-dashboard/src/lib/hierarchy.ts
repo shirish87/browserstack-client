@@ -15,6 +15,11 @@ export interface Platform {
   file?: string;
 }
 
+export interface LinkedCase {
+  identifier: string | undefined;
+  name: string | undefined;
+}
+
 export interface TestNode {
   id: string;
   name: string;
@@ -33,6 +38,13 @@ export interface TestNode {
   failures: Failure[];
   platform: Platform;
   observabilityUrl: string | undefined;
+  /** Test Management cases this test is linked to (e.g. TC-590). */
+  testCases: LinkedCase[];
+  muted: boolean;
+  /** How many times TRA has recorded this test. */
+  runCount: number | null;
+  tags: string[];
+  autoAnalyzed: boolean;
   children: TestNode[];
   /** Roll-up of leaf statuses under this node (a leaf counts itself). */
   counts: Outcomes;
@@ -114,6 +126,11 @@ export function normalizeHierarchy(nodes: TestRunNode[], parentId = "", inherite
       failures: failuresOf(node),
       platform,
       observabilityUrl: d?.observabilityUrl ?? undefined,
+      testCases: (d?.testCases ?? []).map((c) => ({ identifier: c.identifier ?? undefined, name: c.name ?? undefined })),
+      muted: d?.isMuted === true,
+      runCount: d?.runCount ?? null,
+      tags: d?.tags ?? [],
+      autoAnalyzed: d?.isAutoAnalyzed === true,
       children,
       counts,
       leafCount,

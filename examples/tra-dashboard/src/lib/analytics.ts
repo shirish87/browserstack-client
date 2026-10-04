@@ -1,4 +1,4 @@
-import type { Failure, NormStatus, Platform, TestNode } from "./hierarchy";
+import type { Failure, LinkedCase, NormStatus, Platform, TestNode } from "./hierarchy";
 import { normalizeStatus } from "./hierarchy";
 import { outcomes, type Outcomes } from "./format";
 import type { IdentifiedBuild, StatusStats } from "./schemas";
@@ -22,6 +22,11 @@ export interface FlatTest {
   /** Automate / App Automate session this test ran in (shared by the tests of one file). */
   sessionId: string | undefined;
   platform: Platform;
+  testCases: LinkedCase[];
+  muted: boolean;
+  runCount: number | null;
+  tags: string[];
+  autoAnalyzed: boolean;
 }
 
 /** A leaf of the normalized tree as a flat row. */
@@ -40,6 +45,11 @@ export function toFlatTest(node: TestNode, path: string[]): FlatTest {
     startedAt: node.startedAt,
     sessionId: node.sessionId,
     platform: node.platform,
+    testCases: node.testCases,
+    muted: node.muted,
+    runCount: node.runCount,
+    tags: node.tags,
+    autoAnalyzed: node.autoAnalyzed,
   };
 }
 

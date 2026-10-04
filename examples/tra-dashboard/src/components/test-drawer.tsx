@@ -64,8 +64,31 @@ export function TestDrawer({ item, onClose }: { item: DrawerTest | null; onClose
         <div className="space-y-6 px-6 py-5">
           <section aria-label="Outcome">
             <h3 className="mb-2 text-[13px] font-medium text-muted">Outcome</h3>
-            <KeyValue rows={[["Build", buildLabel], ["Duration", formatDuration(test.durationMs)]]} />
+            <KeyValue
+              rows={[
+                ["Build", buildLabel],
+                ["Duration", formatDuration(test.durationMs)],
+                ["Recorded runs", test.runCount == null ? null : String(test.runCount)],
+                ["Muted", test.muted ? "Yes" : null],
+                ["Auto-analysed", test.autoAnalyzed ? "Yes" : null],
+                ["Tags", test.tags.length > 0 ? test.tags.join(", ") : null],
+              ]}
+            />
           </section>
+
+          {test.testCases.length > 0 && (
+            <section aria-label="Linked test cases">
+              <h3 className="mb-2 text-[13px] font-medium text-muted">Linked test cases</h3>
+              <ul className="space-y-1">
+                {test.testCases.map((c, i) => (
+                  <li key={c.identifier ?? i} className="flex items-baseline gap-2">
+                    {c.identifier && <span className="font-mono text-[12px] text-muted">{c.identifier}</span>}
+                    <span>{c.name ?? "Untitled case"}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section aria-label="Errors">
             <h3 className="mb-2 text-[13px] font-medium text-muted">{test.status === "failed" ? "Failure" : "Errors"}</h3>

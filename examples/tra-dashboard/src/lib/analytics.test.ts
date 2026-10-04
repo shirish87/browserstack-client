@@ -51,6 +51,11 @@ const ft = (key: string, status: FlatTest["status"], over: Partial<FlatTest> = {
   startedAt: undefined,
   sessionId: undefined,
   platform: {},
+  testCases: [],
+  muted: false,
+  runCount: null,
+  tags: [],
+  autoAnalyzed: false,
   ...over,
 });
 
@@ -124,6 +129,20 @@ describe("aggregateTestHealth", () => {
     const h = aggregateTestHealth(runs);
     expect(h[0]).toMatchObject({ key: "x", failedRuns: 2, runs: 3, lastError: "e1" });
     expect(h.find((t) => t.key === "y")).toMatchObject({ flakyRuns: 2, failedRuns: 0 });
+  });
+});
+
+describe("test details TRA reports beyond status", () => {
+  const [t] = flattenTests(tree([node("ROOT", "root", [leaf("a", "passed", { isMuted: true, runCount: 3, tags: ["smoke", "web"], isAutoAnalyzed: true, testCases: [{ identifier: "TC-590", name: "Title check" }, { name: "no id" }] })])]));
+
+  it("keeps linked test management cases, muted state, run count, tags and auto-analysis on each flat test", () => {
+    expect(t).toMatchObject({ muted: true, runCount: 3, tags: ["smoke", "web"], autoAnalyzed: true });
+    expect(t?.testCases).toEqual([{ identifier: "TC-590", name: "Title check" }, { identifier: undefined, name: "no id" }]);
+  });
+
+  it("defaults to nothing when TRA reports none", () => {
+    const [bare] = flattenTests(tree([node("ROOT", "root", [leaf("b", "passed")])]));
+    expect(bare).toMatchObject({ muted: false, runCount: null, tags: [], autoAnalyzed: false, testCases: [] });
   });
 });
 
