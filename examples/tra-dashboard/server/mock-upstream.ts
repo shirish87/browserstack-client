@@ -234,6 +234,10 @@ export function createMockUpstream(): typeof fetch {
       if (decodeURIComponent(qgSettings[1]) === "Default Project") return json({ message: "Cannot access this feature with existing plan" }, 403);
       return json({ enabled: true, should_override_build_status: true, quality_profiles: [{ id: "p1", name: "Release gate", rules_count: 3, enabled: true, is_global_profile: true }, { id: "p2", name: "Smoke only", rules_count: 1, enabled: false, is_global_profile: false }] });
     }
+    const qgProfile = path.match(/^\/quality-gates\/([^/]+)\/profiles\/([^/]+)$/);
+    if (qgProfile?.[2]) {
+      return json({ id: qgProfile[2], name: qgProfile[2] === "p1" ? "Release gate" : "Smoke only", enabled: qgProfile[2] === "p1", is_global_profile: qgProfile[2] === "p1", rule_status: "fail", hooks_visibility: "failed", applicable_builds: {}, rules: [{ name: "Failed tests", operator: "<=", threshold: "1" }, { name: "Pass rate", operator: ">=", threshold: "95%" }] });
+    }
     const qg = path.match(/^\/quality-gates\/([^/]+)$/);
     if (qg?.[1]) {
       const ref = parseBuildId(qg[1]);

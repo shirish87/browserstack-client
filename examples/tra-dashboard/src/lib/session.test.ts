@@ -311,8 +311,7 @@ describe("isLiveSession", () => {
     expect(isLiveSession("failed")).toBe(false);
     expect(isLiveSession(undefined)).toBe(false);
   });
-  it("polls often enough to feel live but not hammer the API", () => {
-    expect(LIVE_LOG_POLL_MS).toBeGreaterThanOrEqual(2000);
-    expect(LIVE_LOG_POLL_MS).toBeLessThanOrEqual(10000);
+  it("polls every 10 seconds: live enough to tail, well inside TRA's 1600 requests per 5 minutes", () => {
+    expect(LIVE_LOG_POLL_MS).toBe(10_000);
   });
 });

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useTmClient, useTraClient } from "@/lib/auth";
 import { coverageOf, tallyBy } from "@/lib/tm";
 import { aggregateTestHealth, buildLabels, heatmapOf, summarize, toSeries, type FlatTest } from "@/lib/analytics";
@@ -9,6 +10,8 @@ import { formatDate, formatDuration, formatPercent } from "@/lib/format";
 import { buildQuery, testsQuery, tmCasesQuery, tmProjectQuery, tmRunsQuery, windowQuery } from "@/lib/queries";
 import { traApi } from "@/lib/api";
 import { displayValue, errorMessage } from "@/lib/utils";
+import type { QualityGateSettings } from "@/lib/schemas";
+import { RulesTable } from "@/components/rules-table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabBar } from "@/components/ui/tabs";
@@ -252,12 +255,7 @@ function QualityGate({ projectName }: { projectName: string | undefined }) {
           <CardContent className="text-muted">No quality gate profiles configured.</CardContent>
         ) : (
           <ul className="divide-y divide-border">
-            {profiles.map((p, i) => (
-              <li key={p.id ?? i} className="flex items-center justify-between gap-4 px-5 py-3">
-                <div><p className="font-medium">{p.name ?? "Untitled profile"}</p><p className="text-muted">{p.rulesCount ?? 0} rules{p.isGlobalProfile ? " · Global" : ""}</p></div>
-                <Badge tone={p.enabled ? "success" : "neutral"}>{p.enabled ? "Enabled" : "Disabled"}</Badge>
-              </li>
-            ))}
+            {profiles.map((p, i) => <ProfileRow key={p.id ?? i} projectName={projectName} profile={p} />)}
           </ul>
         )}
       </Card>
@@ -337,5 +335,43 @@ function TestManagement({ projectName }: { projectName: string | undefined }) {
         </div>
       </Card>
     </div>
+  );
+}
+
+type SettingsProfile = NonNullable<QualityGateSettings["qualityProfiles"]>[number];
+
+/** One profile in the gate settings; opening it reads the profile itself, which carries the rules the list only counts. */
+function ProfileRow({ projectName, profile }: { projectName: string; profile: SettingsProfile }) {
+  const { client, username } = useTraClient();
+  const [open, setOpen] = useState(false);
+  const id = profile.id ?? undefined;
+  const q = useQuery({
+    queryKey: ["qg-profile", username, projectName, id],
+    queryFn: () => traApi.qualityGateProfile(client, projectName, id ?? ""),
+    enabled: open && !!id,
+    retry: false,
+  });
+  return (
+    <li>
+      <button type="button" disabled={!id} aria-expanded={open} onClick={() => setOpen((o) => !o)} className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-3 text-left hover:bg-surface-2 disabled:cursor-default">
+        <span className="flex items-center gap-2">
+          {id && (open ? <ChevronDown className="size-4 text-muted" aria-hidden /> : <ChevronRight className="size-4 text-muted" aria-hidden />)}
+          <span><span className="block font-medium">{profile.name ?? "Untitled profile"}</span><span className="block text-muted">{profile.rulesCount ?? 0} {profile.rulesCount === 1 ? "rule" : "rules"}{profile.isGlobalProfile ? " · Global" : ""}</span></span>
+        </span>
+        <Badge tone={profile.enabled ? "success" : "neutral"}>{profile.enabled ? "Enabled" : "Disabled"}</Badge>
+      </button>
+      {open && (
+        <div className="border-t border-border bg-surface-1 py-3">
+          {q.isPending ? <Skeleton className="mx-5 h-16" /> : q.isError ? <p className="px-5 text-muted">{errorMessage(q.error)}</p> : (
+            <div className="space-y-3">
+              <div className="px-5">
+                <KeyValue rows={[["Rule status", q.data.ruleStatus], ["Hooks shown", q.data.hooksVisibility], ["Applies to", q.data.applicableBuilds && Object.keys(q.data.applicableBuilds).length > 0 ? <code className="font-mono text-[12px] break-all">{JSON.stringify(q.data.applicableBuilds)}</code> : "every build"]]} />
+              </div>
+              <RulesTable rules={q.data.rules ?? []} />
+            </div>
+          )}
+        </div>
+      )}
+    </li>
   );
 }

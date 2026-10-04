@@ -200,3 +200,37 @@ export function PassSparkline({ points, label }: { points: { value: number | nul
     </div>
   );
 }
+
+const SERIES_COLORS = ["var(--primary)", "var(--warning)", "var(--success)", "var(--danger)"];
+
+/** One or more metrics over seconds-since-start. `null` samples are skipped, so a gap is a gap and never a zero. */
+export function MetricChart<T extends { t: number }>({
+  rows,
+  series,
+  yLabel,
+  height = 200,
+}: {
+  rows: T[];
+  series: { key: keyof T & string; label: string }[];
+  yLabel: string;
+  height?: number;
+}) {
+  const long = useMemo(
+    () => series.flatMap((s) => rows.flatMap((r) => { const value = r[s.key]; return typeof value === "number" ? [{ t: r.t, value, series: s.label }] : []; })),
+    [rows, series],
+  );
+  const definition = useMemo(
+    () =>
+      defineChart({
+        marks: series.map((s) => lineY(long.filter((d) => d.series === s.label), { x: "t", y: "value", color: "series", strokeWidth: 1.5 })),
+        scales: {
+          x: { scale: scaleLinear, axis: { label: "Seconds into the session" } },
+          y: { scale: scaleLinear, nice: true, grid: true, axis: { label: yLabel } },
+        },
+        color: { domain: series.map((s) => s.label), range: SERIES_COLORS.slice(0, series.length), legend: colorLegend({ label: yLabel }) },
+        tooltip,
+      }),
+    [long, series, yLabel],
+  );
+  return <Chart definition={definition} height={height} ariaLabel={`${yLabel} over the session`} />;
+}

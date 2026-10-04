@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTraClient } from "@/lib/auth";
-import { linkedSessionQuery, sessionLogsQuery, testsQuery } from "@/lib/queries";
+import { linkedSessionQuery, profilingQuery, sessionLogsQuery, telemetryAvailableQuery, testsQuery } from "@/lib/queries";
+import { type ProfilingRow, profilingSeries, telemetryDownloadUrl, profilingV2Rows, sessionInsights, videoOffsetSec } from "@/lib/extras";
+import { MetricChart } from "@/components/tra-charts";
 import { buildTimeline, eventsBefore, formatBytes, isLiveSession, LIVE_LOG_POLL_MS, sessionEvidence, signalsIn, waterfallOf, windowOf, type SessionEvidence } from "@/lib/session";
 import { formatDuration } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
@@ -13,13 +15,23 @@ import { StatusBadge } from "@/components/status";
 import { Breadcrumbs, EmptyState, ErrorState, ExternalLink, KeyValue, PageTitle } from "@/components/common";
 import { cn } from "@/lib/utils";
 
-type Tab = "commands" | "network" | "console" | "log";
-const TABS = [
+type MetricSeries = { key: keyof ProfilingRow & string; label: string };
+type Tab = "commands" | "network" | "console" | "log" | "device" | "selenium" | "playwright" | "profiling";
+const BASE_TABS: { value: Tab; label: string }[] = [
   { value: "commands", label: "Commands" },
   { value: "network", label: "Network" },
   { value: "console", label: "Console" },
   { value: "log", label: "Raw log" },
-] as const;
+];
+/** The base tabs plus a tab for each extra log the session actually has, and Profiling for App Automate. */
+function tabsFor(evidence: SessionEvidence | undefined, mobile: boolean): { value: Tab; label: string }[] {
+  const extra: { value: Tab; label: string }[] = [];
+  if (evidence?.extra.device !== undefined) extra.push({ value: "device", label: "Device log" });
+  if (evidence?.extra.selenium !== undefined) extra.push({ value: "selenium", label: "Selenium" });
+  if (evidence?.extra.playwright !== undefined) extra.push({ value: "playwright", label: "Playwright" });
+  if (mobile) extra.push({ value: "profiling", label: "Profiling" });
+  return [...BASE_TABS, ...extra];
+}
 
 const clock = (ms: number): string => new Date(ms).toISOString().slice(11, 23);
 
@@ -40,6 +52,16 @@ export function SessionPage() {
   const logs = useQuery({ ...sessionLogsQuery(client, username, sessionId, device, live), enabled: !!linked.data });
   const evidence = useMemo(() => (logs.data ? sessionEvidence(logs.data) : undefined), [logs.data]);
 
+  const telemetry = useQuery({ ...telemetryAvailableQuery(username, sessionId), enabled: linked.data?.product === "automate" });
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const seekVideo = (ms: number) => {
+    const at = videoOffsetSec(ms, linked.data?.session.createdAt);
+    const el = videoRef.current;
+    if (el && at !== undefined) {
+      el.currentTime = at;
+      el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  };
   const crumbs = [{ label: "Insights", to: "/insights" }, { label: "Build", to: `/builds/${encodeURIComponent(buildId)}` }, { label: "Session" }];
 
   if (linked.isPending) return <Skeleton className="h-64" />;
@@ -54,6 +76,9 @@ export function SessionPage() {
   }
 
   const s = linked.data.session;
+  const mobile = linked.data.product === "app-automate";
+  const insights = sessionInsights("insights" in s ? s.insights : undefined);
+  const tabs = tabsFor(evidence, mobile);
   const window = selected ? windowOf(selected) : undefined;
   return (
     <div className="space-y-6">
@@ -67,6 +92,7 @@ export function SessionPage() {
             <Badge tone="outline">{linked.data.product === "automate" ? "Automate" : "App Automate"}</Badge>
             {s.duration ? <span>{formatDuration(s.duration * 1000)}</span> : null}
             {s.publicUrl && <ExternalLink href={s.publicUrl}>Open in BrowserStack</ExternalLink>}
+            {telemetry.data && <a href={telemetryDownloadUrl(sessionId)} download={`telemetrylogs-${sessionId}.gz`} className="text-primary underline-offset-2 hover:underline">Download telemetry logs (.gz)</a>}
           </span>
         }
       />
@@ -78,19 +104,52 @@ export function SessionPage() {
               ["Browser / device", [s.browser ?? s.device, s.browserVersion].filter(Boolean).join(" ") || "—"],
               ["Build", s.buildName ?? "—"],
               ["Tests in this session", String(sessionTests.length)],
+              ["Ended because", s.reason && s.status !== "passed" ? <span className="whitespace-pre-wrap break-words">{s.reason}</span> : s.reason],
+              ...("appDetails" in s && s.appDetails ? ([["App", [s.appDetails.appName, s.appDetails.appVersion].filter(Boolean).join(" ")], ["App file", s.appDetails.appFilename]] as [string, string | undefined][]) : []),
             ]}
           />
         </CardContent>
       </Card>
 
+      {insights && (
+        <Card>
+          <CardHeader><CardTitle>Where the time went</CardTitle></CardHeader>
+          <CardContent className="space-y-3 py-4">
+            <div className="flex h-3 overflow-hidden rounded-full bg-neutral-bg" role="img" aria-label={insights.parts.map((p) => `${p.label} ${p.seconds}s`).join(", ")}>
+              {insights.parts.map((p, i) => <div key={p.label} className={i === 0 ? "bg-primary" : "bg-warning"} style={{ width: `${(p.seconds / Math.max(1, insights.parts.reduce((a, x) => a + x.seconds, 0))) * 100}%` }} />)}
+            </div>
+            <p className="flex flex-wrap gap-x-5 gap-y-1 text-[12px] text-muted">
+              {insights.parts.map((p, i) => <span key={p.label}><i className={cn("mr-1.5 inline-block size-2 rounded-full", i === 0 ? "bg-primary" : "bg-warning")} />{p.label} {p.seconds}s</span>)}
+            </p>
+            {insights.capabilities.length > 0 && (
+              <p className="text-[12px] text-muted">Capabilities slowing the session: {insights.capabilities.map((c) => `${c.name} (${c.impact})`).join(", ")}.</p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {s.videoUrl && (
+        <Card>
+          <CardHeader><CardTitle>Session video</CardTitle></CardHeader>
+          <CardContent className="py-4">
+            <video ref={videoRef} src={s.videoUrl} controls preload="metadata" className="max-h-[420px] w-full rounded-md bg-black" aria-label="Session video" />
+            <p className="mt-2 text-[12px] text-muted">Select a time in the Commands tab to jump here. Positions are approximate: the video starts when the session is created, before the first command.</p>
+          </CardContent>
+        </Card>
+      )}
+
       {selected && window && evidence && <TestWindow name={selected.name} status={selected.status} evidence={evidence} startMs={window.startMs} endMs={window.endMs} />}
       {evidence && <TimelineCard tests={sessionTests} evidence={evidence} />}
 
       <div className="space-y-3">
-        <TabBar tabs={TABS} value={tab} onChange={setTab} label="Session evidence" />
-        {logs.isPending && <Skeleton className="h-48" />}
-        {logs.isError && <ErrorState error={logs.error} onRetry={() => void logs.refetch()} />}
-        {evidence && <Evidence tab={tab} evidence={evidence} live={live} />}
+        <div className="overflow-x-auto"><TabBar tabs={tabs} value={tab} onChange={setTab} label="Session evidence" /></div>
+        {tab === "profiling" && mobile && s.buildHashedId ? <ProfilingPanel buildId={s.buildHashedId} sessionId={sessionId} live={live} /> : (
+          <>
+            {logs.isPending && <Skeleton className="h-48" />}
+            {logs.isError && <ErrorState error={logs.error} onRetry={() => void logs.refetch()} />}
+            {evidence && <Evidence tab={tab} evidence={evidence} live={live} onSeek={s.videoUrl ? seekVideo : undefined} />}
+          </>
+        )}
       </div>
     </div>
   );
@@ -191,7 +250,7 @@ function ScrollPane({ children, label, follow = false, version }: { children: Re
 
 const TH = "sticky top-0 bg-surface-1 px-3 py-1.5 text-left text-[11px] font-medium uppercase tracking-wide text-muted";
 
-function Evidence({ tab, evidence, live }: { tab: Tab; evidence: SessionEvidence; live: boolean }) {
+function Evidence({ tab, evidence, live, onSeek }: { tab: Tab; evidence: SessionEvidence; live: boolean; onSeek: ((ms: number) => void) | undefined }) {
   const note = evidence.notes.find((n) => (tab === "commands" || tab === "log" ? n.kind === "text" : n.kind === tab));
   if (tab === "commands") {
     return evidence.commands.length === 0 ? <EmptyState title="No commands" {...(note ? { hint: note.message } : {})} /> : (
@@ -200,7 +259,9 @@ function Evidence({ tab, evidence, live }: { tab: Tab; evidence: SessionEvidence
         <tbody>
         {evidence.commands.map((c, i) => (
           <tr key={i} className={cn("border-b border-border last:border-0", c.failed && "bg-danger-bg")}>
-            <td className="whitespace-nowrap px-3 py-1.5 font-mono text-muted">{clock(c.startMs)}</td>
+            <td className="whitespace-nowrap px-3 py-1.5 font-mono text-muted">
+              {onSeek ? <button type="button" onClick={() => onSeek(c.startMs)} className="cursor-pointer underline-offset-2 hover:text-foreground hover:underline" title="Jump to this moment in the video">▶ {clock(c.startMs)}</button> : clock(c.startMs)}
+            </td>
             <td className="break-all px-3 py-1.5 font-mono">{c.method} {c.path}</td>
             <td className="whitespace-nowrap px-3 py-1.5 text-right text-muted">{c.durationMs === undefined ? "" : `${c.durationMs} ms`}</td>
             <td className="px-3 py-1.5 text-danger">{c.error}</td>
@@ -247,6 +308,11 @@ function Evidence({ tab, evidence, live }: { tab: Tab; evidence: SessionEvidence
       </Card>
     );
   }
+  if (tab === "device" || tab === "selenium" || tab === "playwright") {
+    const text = evidence.extra[tab];
+    const names = { device: "Device log", selenium: "Selenium log", playwright: "Playwright log" } as const;
+    return text === undefined ? <EmptyState title={`No ${names[tab].toLowerCase()}`} {...(note ? { hint: note.message } : {})} /> : <LogBlock text={text} label={names[tab]} live={live} />;
+  }
   if (tab === "console") {
     return evidence.consoleText === undefined ? <EmptyState title="No console log" {...(note ? { hint: note.message } : {})} /> : <LogBlock text={evidence.consoleText} label="Console log" live={live} />;
   }
@@ -259,6 +325,39 @@ function LogBlock({ text, label, live }: { text: string; label: string; live: bo
       <ScrollPane label={label} follow={live} version={text.length}>
         <pre className="whitespace-pre-wrap break-all p-4 font-mono text-[12px] leading-[1.5]">{text}</pre>
       </ScrollPane>
+    </div>
+  );
+}
+
+/** App Automate resource profiling: device and app CPU, memory, battery and temperature, plus network and v2's measured values. */
+function ProfilingPanel({ buildId, sessionId, live }: { buildId: string; sessionId: string; live: boolean }) {
+  const { username } = useTraClient();
+  const q = useQuery(profilingQuery(username, buildId, sessionId, live));
+  const series = useMemo(() => (q.data ? profilingSeries(q.data.samples) : undefined), [q.data]);
+  if (q.isPending) return <Skeleton className="h-64" />;
+  if (q.isError) return <EmptyState title="No profiling data" hint="Resource profiling wasn't captured for this session. Enable it with the appProfiling capability." />;
+  if (!series || series.rows.length === 0) return <EmptyState title="No profiling samples" hint="The session reported no resource samples." />;
+  const v2 = q.data.v2 ? profilingV2Rows(q.data.v2) : [];
+  const hasApp = series.app !== undefined;
+  const hasNet = series.rows.some((r) => r.netReceived !== null || r.netSent !== null);
+  const last = series.rows[series.rows.length - 1];
+  const cpuSeries: MetricSeries[] = [{ key: "cpu", label: "Device" }, ...(hasApp ? [{ key: "appCpu" as const, label: "App" }] : [])];
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card><CardHeader><CardTitle>CPU</CardTitle></CardHeader><CardContent><MetricChart rows={series.rows} yLabel="CPU %" series={cpuSeries} /></CardContent></Card>
+        <Card><CardHeader><CardTitle>Device memory</CardTitle></CardHeader><CardContent><MetricChart rows={series.rows} yLabel="Available MB" series={[{ key: "memFreeMb", label: "Available" }]} /></CardContent></Card>
+        {hasApp && <Card><CardHeader><CardTitle>App memory</CardTitle></CardHeader><CardContent><MetricChart rows={series.rows} yLabel="App memory MB" series={[{ key: "appMemMb", label: "App" }]} /></CardContent></Card>}
+        <Card><CardHeader><CardTitle>Battery</CardTitle></CardHeader><CardContent><MetricChart rows={series.rows} yLabel="Battery %" series={[{ key: "battery", label: "Battery" }]} /></CardContent></Card>
+        <Card><CardHeader><CardTitle>Temperature</CardTitle></CardHeader><CardContent><MetricChart rows={series.rows} yLabel="Temperature °C" series={[{ key: "temp", label: "Device" }]} /></CardContent></Card>
+        {hasNet && <Card className="lg:col-span-2"><CardHeader><CardTitle>App network</CardTitle></CardHeader><CardContent><MetricChart rows={series.rows} yLabel="Network KB" series={[{ key: "netReceived", label: "Received" }, { key: "netSent", label: "Sent" }]} /></CardContent></Card>}
+      </div>
+      <Card>
+        <CardHeader><CardTitle>Summary</CardTitle></CardHeader>
+        <CardContent className="py-4">
+          <KeyValue rows={[["App", series.app], ["Samples", `${series.rows.length} over ${Math.round(last?.t ?? 0)}s`], ["Device memory", last?.memTotalMb != null ? `${Math.round(last.memTotalMb)} MB` : undefined], ...v2]} />
+        </CardContent>
+      </Card>
     </div>
   );
 }

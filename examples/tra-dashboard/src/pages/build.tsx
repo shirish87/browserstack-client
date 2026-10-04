@@ -22,8 +22,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TabBar } from "@/components/ui/tabs";
 import { StatusBadge, StatusBar, StatusIcon, StatusLegend } from "@/components/status";
 import { Breadcrumbs, ErrorState, ExternalLink, KeyValue, LoadMore, PageTitle, Stat } from "@/components/common";
-import { detailRows, displayValue, errorMessage, humanize } from "@/lib/utils";
+import { detailRows, errorMessage, humanize } from "@/lib/utils";
 import { TallyChart } from "@/components/tra-charts";
+import { RulesTable } from "@/components/rules-table";
 
 const FIRST_PAGE: string | undefined = undefined;
 
@@ -264,33 +265,6 @@ function SmartTags({ tags }: { tags: BuildDetails["smartTags"] }) {
         <CardContent className="text-muted">No smart tags reported.</CardContent>
       )}
     </Card>
-  );
-}
-
-const RuleSchema = z.record(z.string(), z.unknown());
-
-function RulesTable({ rules }: { rules: z.infer<typeof RuleSchema>[] }) {
-  const columns = [...new Set(rules.flatMap((r) => Object.keys(r)))];
-  if (columns.length === 0) return <p className="px-5 py-3 text-muted">No rules.</p>;
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-left">
-        <thead className="border-y border-border bg-surface-2 text-[13px] text-muted">
-          <tr>{columns.map((c) => <th key={c} scope="col" className="px-5 py-2 font-medium">{humanize(c)}</th>)}</tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {rules.map((r, i) => (
-            <tr key={i}>
-              {columns.map((c) => (
-                <td key={c} className="px-5 py-2">
-                  {c.toLowerCase() === "result" ? <StatusBadge status={displayValue(r[c])} /> : displayValue(r[c])}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
   );
 }
 
