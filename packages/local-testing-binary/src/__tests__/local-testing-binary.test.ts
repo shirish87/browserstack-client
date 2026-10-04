@@ -1,7 +1,8 @@
 import { env } from "@dot-slash/browserstack-core";
 import { LocalTestingBinary } from "@dot-slash/browserstack-local-testing";
-import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import type { BrowserStackTestContext } from "@dot-slash/browserstack-core/__tests__/test-utils";
+import { acquireTunnelLock } from "../../../core/src/__tests__/tunnel-lock.ts";
 import { localTestingBinaryContext } from "./setup.ts";
 
 const LONG_TIMEOUT = 60_000;
@@ -12,12 +13,26 @@ describe("LocalBinary", () => {
   });
 
   describe("Test instance start-stop", () => {
+    // Serialise with the CLI e2e tunnels (other worker processes); see
+    // core's tunnel-lock.ts. Queueing happens in the hook so it does not count
+    // against the test timeout.
+    let releaseTunnelLock: (() => Promise<void>) | undefined;
+
+    beforeEach(async () => {
+      releaseTunnelLock = await acquireTunnelLock();
+    }, 15 * LONG_TIMEOUT);
+
     afterEach<BrowserStackTestContext>(
       async () => {
-        const { client } = localTestingBinaryContext;
-        if (client.state !== "stopped") {
-          // BrowserStackLocal process instance not found
-          await client.stop().catch(() => null);
+        try {
+          const { client } = localTestingBinaryContext;
+          if (client.state !== "stopped") {
+            // BrowserStackLocal process instance not found
+            await client.stop().catch(() => null);
+          }
+        } finally {
+          await releaseTunnelLock?.();
+          releaseTunnelLock = undefined;
         }
       },
       LONG_TIMEOUT
