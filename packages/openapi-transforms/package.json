@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@standard-schema/spec": "^1.1.0",
-    "@streamparser/json": "^0.0.22"
+    "@streamparser/json": "^0.0.26"
   },
   "devDependencies": {
     "@types/node": "20.0.0",
