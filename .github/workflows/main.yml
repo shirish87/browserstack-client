@@ -254,7 +254,14 @@ jobs:
           chmod +x packages/cli/golang/dist/browserstack-client-linux-*
 
       - name: Test
-        run: pnpm test
+        run: pnpm test --reporter=default --reporter=junit --outputFile.junit=junit.xml
+
+      # Dogfooding: report this run's results to BrowserStack Test Reporting & Analytics via our own SDK.
+      # Best-effort only; never affects the job result.
+      - name: Report results to BrowserStack TRA
+        if: always()
+        continue-on-error: true
+        run: node scripts/ci-report/ci-report.mjs junit.xml linux
 
   # ── 2b. CLI binary tests on macOS and Windows ────────────────────────────────
   test-cli:
@@ -301,7 +308,14 @@ jobs:
           chmod +x packages/cli/golang/dist/browserstack-client-darwin-*
 
       - name: Test CLI
-        run: pnpm test -- --project cli -t "LocalCLI"
+        run: pnpm test -- --project cli -t "LocalCLI" --reporter=default --reporter=junit --outputFile.junit=junit.xml
+
+      # Dogfooding: report this run's results to BrowserStack Test Reporting & Analytics via our own SDK.
+      # Best-effort only; never affects the job result.
+      - name: Report results to BrowserStack TRA
+        if: always()
+        continue-on-error: true
+        run: node scripts/ci-report/ci-report.mjs junit.xml ${{ matrix.os }}
 
   # ── 3. Publish docs (main branch only) ───────────────────────────────────────
   publish-docs:
