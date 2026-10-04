@@ -1,7 +1,7 @@
 {
   "name": "@dot-slash/browserstack-openapi",
   "private": true,
-  "version": "7.1.0",
+  "version": "7.1.1",
   "type": "module",
   "description": "OpenAPI specs and generated TypeScript types for BrowserStack APIs",
   "files": [
@@ -49,7 +49,7 @@
     "@apidevtools/swagger-parser": "^12.1.0",
     "openapi-typescript": "^7.13.0",
     "typescript": "^6.0.3",
-    "yaml": "^2.8.3"
+    "yaml": "^2.9.1"
   },
   "dependencies": {
     "@dot-slash/browserstack-openapi-transforms": "workspace:*"
