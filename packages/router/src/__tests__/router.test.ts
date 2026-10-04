@@ -64,6 +64,36 @@ describe("Server-Side Router", () => {
     expect(fetchMock).toHaveBeenCalledOnce();
   });
 
+  // BrowserStack's edge answers a browser User-Agent with a bot challenge (HTML) instead of the log, and the
+  // browser's cookies and origin say nothing about the upstream, so only the caller's request intent is forwarded.
+  it("does not forward the browser's identity headers upstream", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => new Response("ok"));
+    const router = createWebRouter({ username: "user", accessKey: "key", allowedHosts, fetchFn: fetchMock });
+
+    await router(
+      new Request("http://localhost/gateway?url=https://api.browserstack.com/automate/projects.json", {
+        headers: {
+          "user-agent": "Mozilla/5.0 HeadlessChrome/141",
+          cookie: "tra_session=abc",
+          origin: "http://localhost:3000",
+          referer: "http://localhost:3000/builds/x",
+          "sec-fetch-mode": "cors",
+          "sec-ch-ua": '"Chromium";v="141"',
+          accept: "application/json",
+          "content-type": "application/json",
+        },
+      }),
+    );
+
+    const sent = fetchMock.mock.calls[0]?.[1]?.headers;
+    if (!(sent instanceof Headers)) throw new Error("expected Headers");
+    const h = sent;
+    for (const name of ["user-agent", "cookie", "origin", "referer", "sec-fetch-mode", "sec-ch-ua"]) expect(h.has(name), name).toBe(false);
+    expect(h.get("accept")).toBe("application/json");
+    expect(h.get("content-type")).toBe("application/json");
+    expect(h.get("authorization")).toBe("Basic dXNlcjprZXk=");
+  });
+
   it("respects and caps timeout header", async () => {
     let fetchOptions: any;
     const fetchMock = vi.fn<typeof fetch>(async (_url, init) => {
