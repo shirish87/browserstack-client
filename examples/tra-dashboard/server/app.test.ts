@@ -1,5 +1,8 @@
 import { afterEach, describe, expect, it } from "vitest";
 import type { Server } from "node:http";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { z } from "zod";
 import { createApp } from "./app";
 
@@ -137,6 +140,23 @@ describe("gateway", () => {
     const { cookie } = await login(base);
     const res = await fetch(`${base}/gateway?url=${encodeURIComponent("https://evil.example.com/x")}`, { headers: { cookie } });
     expect(res.status).toBe(403);
+  });
+});
+
+describe("static frontend", () => {
+  it("rate-limits file serving, so one client cannot hammer the disk", async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "tra-pub-"));
+    writeFileSync(path.join(dir, "index.html"), "<html></html>");
+    const app = createApp({ fetchFn: upstream, publicDir: dir, cookieSecure: false, sessionTtlMs: 60_000, staticRateLimit: 3 });
+    const s = await new Promise<Server>((resolve) => {
+      const l = app.listen(0, () => resolve(l));
+    });
+    server = s;
+    const addr = s.address();
+    if (addr === null || typeof addr === "string") throw new Error("not listening");
+    const statuses: number[] = [];
+    for (let i = 0; i < 5; i++) statuses.push((await fetch(`http://127.0.0.1:${addr.port}/some/page`)).status);
+    expect(statuses).toEqual([200, 200, 200, 429, 429]);
   });
 });
 

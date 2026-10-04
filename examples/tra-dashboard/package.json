@@ -27,6 +27,7 @@
     "clsx": "^2.1.1",
     "cookie": "^1.1.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
     "lucide-react": "^0.545.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

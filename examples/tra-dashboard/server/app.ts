@@ -1,4 +1,5 @@
 import express, { type Express, type NextFunction, type Request, type RequestHandler, type Response } from "express";
+import { rateLimit } from "express-rate-limit";
 import { parse, serialize } from "cookie";
 import path from "node:path";
 import { createGateway } from "@dot-slash/browserstack-router";
@@ -21,6 +22,8 @@ export interface AppOptions {
   publicDir: string | undefined;
   cookieSecure: boolean;
   sessionTtlMs: number;
+  /** Requests per client per minute for static files and the SPA page. Default 600. */
+  staticRateLimit?: number;
 }
 
 type SessionHandler = (req: Request, res: Response, next: NextFunction, credentials: Credentials) => void;
@@ -144,6 +147,7 @@ export function createApp(options: AppOptions): Express {
   // --- static frontend + SPA fallback ------------------------------------------------------
   const publicDir = options.publicDir;
   if (publicDir) {
+    app.use(rateLimit({ windowMs: 60_000, limit: options.staticRateLimit ?? 600, standardHeaders: true, legacyHeaders: false }));
     app.use(express.static(publicDir, { index: false, maxAge: "1h", setHeaders: (res, file) => {
       // Hashed assets are immutable; everything else (index.html) must revalidate.
       if (file.includes(`${path.sep}assets${path.sep}`)) res.setHeader("cache-control", "public, max-age=31536000, immutable");
