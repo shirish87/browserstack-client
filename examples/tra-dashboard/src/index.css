@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+/* Design tokens: Clerk-inspired, near-monochrome. Status hues are the only chroma. */
+@theme {
+  --color-primary: #131316;
+  --color-on-primary: #ffffff;
+  --color-background: #f7f7f8;
+  --color-surface: #ffffff;
+  --color-border: #e6e6ea;
+  --color-border-strong: #2f3037;
+  --color-text: #000000;
+  --color-muted: #5e5f6e;
+  --color-accent: #747686;
+
+  --color-success: #15803d;
+  --color-success-bg: #ecf8f0;
+  --color-danger: #b91c1c;
+  --color-danger-bg: #fdf0f0;
+  --color-warning: #b45309;
+  --color-warning-bg: #fdf5e8;
+  --color-neutral-bg: #efeff2;
+
+  --font-sans: geistNumbers, suisse, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-mono: soehneMono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 12px;
+
+  --shadow-card: rgba(0, 0, 0, 0.06) 0 0 0 1px, rgba(0, 0, 0, 0.04) 0 4px 6px 0, rgba(0, 0, 0, 0.04) 0 5px 15px 0;
+  --shadow-elevated: rgba(0, 0, 0, 0.06) 0 0 0 1px, rgba(0, 0, 0, 0.08) 0 5px 15px 0, rgba(47, 48, 55, 0.2) 0 15px 35px -5px;
+
+  --ease-clerk: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+  font-family: var(--font-sans);
+  /* Readability: body is 13px rather than the 11px measured on clerk.com. */
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text);
+  background: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+}
+
+body { margin: 0; min-height: 100vh; }
+
+h1, h2, h3 { letter-spacing: -0.01em; }
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.t-fast { transition-duration: 150ms; transition-timing-function: var(--ease-clerk); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
