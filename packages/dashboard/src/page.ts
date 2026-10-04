@@ -41,7 +41,7 @@ const fmtMs = (ms) => (ms == null ? "" : ms < 1000 ? ms + " ms" : (ms / 1000).to
 async function projects() {
   crumbs.textContent = "Projects";
   const data = await api("/api/projects");
-  const rows = (data.projects ?? []).map((p) =>
+  const rows = (Array.isArray(data) ? data : data.projects ?? []).map((p) =>
     '<tr><td><a href="#/projects/' + esc(p.id) + '">' + esc(p.name) + '</a></td><td class="muted">' + esc(p.id) + "</td></tr>").join("");
   view.innerHTML = "<table><tr><th>Project</th><th>Id</th></tr>" + rows + "</table>";
 }
@@ -50,7 +50,7 @@ async function builds(projectId) {
   crumbs.innerHTML = '<a href="#/">Projects</a> › Builds';
   const data = await api("/api/projects/" + encodeURIComponent(projectId) + "/builds");
   const rows = (data.builds ?? []).map((b) =>
-    '<tr><td><a href="#/builds/' + esc(b.buildUuid ?? b.id) + '">' + esc(b.name ?? b.buildUuid ?? b.id) + '</a></td><td class="' + cls(b.status) + '">' + esc(b.status) +
+    '<tr><td><a href="#/builds/' + esc(b.buildId) + '">' + esc(b.name ?? b.buildId) + '</a></td><td class="' + cls(b.status) + '">' + esc(b.status) +
     '</td><td class="muted">' + esc(b.startedAt) + "</td></tr>").join("");
   view.innerHTML = "<table><tr><th>Build</th><th>Status</th><th>Started</th></tr>" + rows + "</table>";
 }

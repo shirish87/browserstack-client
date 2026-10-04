@@ -38,6 +38,13 @@ describe("dashboard handler", () => {
     expect(await res.text()).toContain("<title>");
   });
 
+  it("links builds by the camelCased buildId the client returns", async () => {
+    const { handle } = setup();
+    const body = (await (await handle(get("/api/projects/123/builds"))).json()) as { builds: Array<{ buildId?: string }> };
+    expect(body.builds[0]?.buildId).toMatch(/^[0-9a-f]{40}$/);
+    expect(await (await handle(get("/"))).text()).toContain("b.buildId");
+  });
+
   it("lists a project's builds", async () => {
     const { handle, calls } = setup();
     const res = await handle(get("/api/projects/123/builds"));
