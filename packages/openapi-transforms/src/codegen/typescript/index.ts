@@ -111,3 +111,5 @@ export async function generateClientModule(opts: GenerateClientOptions): Promise
   }
   return emitModule({ className: opts.className, typesImportPath: opts.typesImportPath, methods, errorAliases, fieldOverrides });
 }
+
+export { emitZodModule, type EmitZodModuleInput, type ZodSchemaObject } from "./emit-zod";

@@ -344,8 +344,11 @@ export interface components {
         "5xx.InternalServerError": unknown;
         /** Browser */
         Browser: {
-            /** @example Chrome */
-            browser: string;
+            /**
+             * Null for App Automate sessions, which have no browser.
+             * @example Chrome
+             */
+            browser: string | null;
             /** @example 80.0 */
             browser_version: string;
         };
@@ -388,7 +391,7 @@ export interface components {
             /** @example 10 */
             os_version: string;
             /** @example null */
-            device?: string;
+            device?: string | null;
             /** @example null */
             real_mobile?: boolean;
         };
@@ -512,8 +515,35 @@ export interface components {
              */
             queued_sessions_max_allowed: number;
         };
-        /** AutomateSession */
-        AutomateSession: components["schemas"]["BrowserPlatform"] & {
+        /** AutomateBuildSessionContainer */
+        AutomateBuildSessionContainer: {
+            automation_session: components["schemas"]["AutomateBuildSession"];
+        };
+        /**
+         * AutomateBuildSession
+         * The lighter session summary embedded in a build's detail response. It has no log or video URLs; fetch the full session with getAutomateSession.
+         */
+        AutomateBuildSession: {
+            hashed_id?: string;
+            name?: string;
+            status?: string;
+            reason?: string;
+            duration?: number;
+            os?: string;
+            os_version?: string;
+            browser?: string;
+            browser_version?: string;
+            device?: string | null;
+            build_name?: string;
+            project_name?: string;
+            build_hashed_id?: string;
+            test_priority?: string | null;
+        };
+        /**
+         * AutomateSessionBase
+         * Fields common to Automate and App Automate sessions. Each product extends it with its own (AutomateSession, AppAutomateSession).
+         */
+        AutomateSessionBase: components["schemas"]["BrowserPlatform"] & {
             /**
              * Hashed ID of the session
              * @example 4207442b2b0567368956dba064c22a3235a76214
@@ -530,11 +560,11 @@ export interface components {
              */
             duration: number;
             /**
-             * Status of the session
+             * Outcome of the session. Observed live on Automate and App Automate: passed, failed. `running` and `timeout` are documented but not yet observed; `done` is a browserstack_status value, not a status.
              * @enum {string}
              */
-            status: "running" | "timeout" | "failed" | "done";
-            /** Execution status of the session */
+            status: "running" | "timeout" | "failed" | "done" | "passed";
+            /** Execution status of the session. Observed live: done, failed, passed. */
             browserstack_status: string;
             /**
              * Reason for test status
@@ -570,7 +600,7 @@ export interface components {
              * URL to view the Appium logs
              * @example https://api.browserstack.com/automate/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/appiumlogs
              */
-            appium_logs_url: string;
+            appium_logs_url?: string;
             /**
              * URL to view session video
              * @example https://automate.browserstack.com/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/video
@@ -580,27 +610,42 @@ export interface components {
              * URL to view browser console logs
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-aps/s3.ap-south-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-console-logs-v2.txt
              */
-            browser_console_logs_url: string;
+            browser_console_logs_url?: string;
             /**
              * URL to view browser logs
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-har-logs.txt
              */
-            har_logs_url: string;
+            har_logs_url?: string;
             /**
              * URL to view selenium logs
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-selenium-logs.txt
              */
-            selenium_logs_url: string;
+            selenium_logs_url?: string;
             /**
              * URL to view telemetry logs if it is enabled in your Selenium 4 session
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-selenium-logs.txt
              */
-            selenium_telemetry_logs_url: string;
+            selenium_telemetry_logs_url?: string;
             /**
              * Timestamp at which the session started executing
              * @example 2020-03-11T10:14:36.000Z
              */
             created_at: string;
+            /**
+             * Hashed ID of the Automate build this session belongs to. This is the Automate build id, not the Test Reporting build id.
+             * @example 5a2325a471c829812cd32ed5e63fdc5f8d2c0250
+             */
+            build_hashed_id?: string;
+            /** Presigned URL of the session's terminal logs. */
+            session_terminal_logs_url?: string;
+            /** Presigned URL of the build's terminal logs. */
+            build_terminal_logs_url?: string;
+            /** Priority label set on the session, if any. */
+            test_priority?: string | null;
+            /** Time breakdown for the session (totals, BrowserStack vs user time, and optimisation links). */
+            insights?: {
+                [key: string]: unknown;
+            };
         };
         /** Status */
         Status: {
@@ -637,9 +682,22 @@ export interface components {
              */
             browser_url?: string;
         };
+        /** Cursor pagination. `next_page` is an opaque cursor and is present even when `has_next` is false. Test lists paginate per file/platform, so a response with `has_next: true` can be followed by an empty final page. */
         Pagination: {
             has_next?: boolean;
-            next_page?: string;
+            next_page?: string | null;
+        };
+        ProjectListResponse: {
+            projects?: components["schemas"]["Project"][];
+            pagination?: components["schemas"]["Pagination"];
+        };
+        BuildListResponse: {
+            /** Project id. */
+            id?: number;
+            /** Project name. */
+            name?: string;
+            builds?: components["schemas"]["BuildSummary"][];
+            pagination?: components["schemas"]["Pagination"];
         };
         Project: {
             id?: number;
@@ -652,30 +710,42 @@ export interface components {
             updated_at?: string;
             observability_url?: string;
         };
+        /** Test counts by status. Live responses also include the keys below that contain spaces or are TCM-style statuses; a running build may report `in progress` rather than `pending`. */
         StatusStats: {
             passed?: number;
             failed?: number;
             pending?: number;
             skipped?: number;
             unknown?: number;
+            "in progress"?: number;
+            retest?: number;
+            blocked?: number;
+            untested?: number;
+            /** Present in a build's test summary when a test timed out. The same result can show as `unknown` in the build list until TRA finishes processing it. */
+            timeout?: number;
         };
         BuildSummary: {
             name?: string;
+            /** Observed values: passed, failed, running, skipped, unknown. */
             status?: string;
+            /** Build duration in milliseconds. */
             duration?: number;
             user?: string;
             tags?: string[];
+            /** TRA build id (an opaque 40-character id). It is not the Automate build `hashed_id`; use a test's `details.session_id` to reach Automate. */
             build_id?: string;
             original_name?: string;
             /** Format: date-time */
-            finished_at?: string;
+            finished_at?: string | null;
             /** Format: date-time */
             started_at?: string;
             status_stats?: components["schemas"]["StatusStats"];
+            is_manually_overridden?: boolean;
             build_number?: number;
             is_archived?: boolean;
             observability_url?: string;
-            tcm_test_run_identifier?: string;
+            /** Returned in camelCase by the API (the only camelCase key in this response). */
+            tcmTestRunIdentifier?: string;
         };
         BuildDetailsSmartTags: {
             is_flaky?: number;
@@ -684,34 +754,85 @@ export interface components {
             is_new_failure?: number;
         };
         BuildDetailsVcsInfo: {
-            name?: string;
-            sha?: string;
-            branch?: string;
+            name?: string | null;
+            sha?: string | null;
+            branch?: string | null;
+            remotes?: {
+                [key: string]: unknown;
+            } | null;
+            url?: string | null;
         };
         BuildDetailsCiInfo: {
-            job_name?: string;
-            name?: string;
-            build_number?: string;
-            build_url?: string;
+            job_name?: string | null;
+            name?: string | null;
+            build_number?: string | null;
+            build_url?: string | null;
+            url?: string | null;
         };
         BuildDetailsHostInfo: {
-            hostname?: string;
-            os?: string;
+            hostname?: string | null;
+            os?: string | null;
+        };
+        /** Framework and SDK versions that reported the build. Values are strings, including "null" and "false". */
+        BuildObservabilityVersion: {
+            framework_name?: string;
+            framework_version?: string;
+            sdk_version?: string;
+            cli_version?: string;
+            outdated_sdk_version?: string;
+            outdated_cli_version?: string;
+            is_sdk?: string;
+        };
+        BuildRunInformation: {
+            id?: string;
+            passed?: number;
+            failed?: number;
+            skipped?: number;
+            unknown?: number;
+            meta?: {
+                [key: string]: unknown;
+            } | null;
+            /** Returned in camelCase by the API. */
+            buildSdkLogs?: {
+                [key: string]: unknown;
+            }[];
         };
         BuildDetails: {
             name?: string;
             description?: string;
             status?: string;
+            /** Build duration in milliseconds. */
             duration?: number;
             user?: string;
+            user_id?: number;
             tags?: string[];
+            /** TRA build id; not the Automate build hashed_id. */
             build_id?: string;
+            /** Numeric build id. */
+            id?: number;
+            created_at?: string | null;
+            project_id?: number | null;
+            project_name?: string | null;
             build_number?: number;
             original_name?: string;
             /** Format: date-time */
-            finished_at?: string;
+            finished_at?: string | null;
             /** Format: date-time */
             started_at?: string;
+            is_manually_overridden?: boolean;
+            re_run?: {
+                [key: string]: unknown;
+            } | null;
+            build_error?: {
+                [key: string]: unknown;
+            } | null;
+            observability_version?: components["schemas"]["BuildObservabilityVersion"];
+            run_information?: components["schemas"]["BuildRunInformation"][];
+            /** Returned in camelCase by the API. */
+            tcmTestRunIdentifier?: string;
+            app_details?: {
+                [key: string]: unknown;
+            } | null;
             status_stats?: components["schemas"]["StatusStats"];
             failure_categories?: {
                 [key: string]: number;
@@ -724,17 +845,114 @@ export interface components {
             host_info?: components["schemas"]["BuildDetailsHostInfo"];
         };
         TestRunsResponse: {
+            /** Project name. */
             name?: string;
             project_id?: number;
+            group_id?: number;
             build_id?: string;
             build_name?: string;
             build_number?: number;
+            original_name?: string;
             test_summary?: components["schemas"]["StatusStats"];
+            is_manually_overridden?: boolean;
             is_archived?: boolean;
-            hierarchy?: {
+            app_details?: {
+                [key: string]: unknown;
+            } | null;
+            hierarchy?: components["schemas"]["TestRunNode"][];
+            pagination?: components["schemas"]["Pagination"];
+        };
+        /** A node of the test tree: `ROOT` (one per file and platform) → optional `DESCRIBE` groups → `TEST` or `HOOK` leaves. Only `ROOT` and `TEST`/`HOOK` nodes carry `details`; `DESCRIBE` nodes have `details: null`. Leaves have an empty `children` array. */
+        TestRunNode: {
+            /**
+             * Observed values: ROOT, DESCRIBE, TEST. HOOK is documented.
+             * @enum {string}
+             */
+            type?: "ROOT" | "DESCRIBE" | "TEST" | "HOOK";
+            /** Name to show; nodes have no separate `name` field. */
+            display_name?: string;
+            rank?: number;
+            summary?: components["schemas"]["TestRunNodeSummary"];
+            details?: components["schemas"]["TestRunNodeDetails"];
+            children?: components["schemas"]["TestRunNode"][];
+            is_before_all_hook?: boolean | null;
+            is_after_all_hook?: boolean | null;
+        };
+        /** Roll-up of leaf statuses under a node, plus `aggregate` (the leaf count). Null on leaves. */
+        TestRunNodeSummary: (components["schemas"]["StatusStats"] & {
+            aggregate?: number;
+        }) | null;
+        /** Shape depends on the node type. `TEST` nodes carry the execution fields (status, duration, retries, session_id, ...); `ROOT` nodes carry the platform fields (file_path, os, browser, device, ...). */
+        TestRunNodeDetails: {
+            /** Observed values: passed, failed, skipped. */
+            status?: string;
+            /** Test duration in milliseconds. */
+            duration?: number;
+            started_at?: string;
+            /** Automate session `hashed_id` for the session this test ran in (empty for sessionless runs). Sessions are per worker/file, so every test in a file shares one `session_id`; use it with the Automate API (`getSession`, `getSessionLogs`, `getSessionNetworkLogs`, ...). */
+            session_id?: string | null;
+            observability_url?: string;
+            is_flaky?: boolean;
+            is_always_failing?: boolean;
+            is_new_failure?: boolean;
+            is_muted?: boolean;
+            is_performance_anomaly?: boolean;
+            is_auto_analyzed?: boolean | null;
+            is_auto_analyzer_running?: boolean;
+            is_latest?: boolean;
+            run_count?: number;
+            tags?: string[];
+            last_executed_by?: string;
+            last_executed_by_id?: number;
+            pm_tool_details?: {
                 [key: string]: unknown;
             }[];
-            pagination?: components["schemas"]["Pagination"];
+            /** Linked Test Management cases. Returned in camelCase by the API. */
+            testCases?: components["schemas"]["TestRunLinkedTestCase"][];
+            /** One entry per attempt, oldest first. */
+            retries?: components["schemas"]["TestRunRetry"][];
+            file_path?: string;
+            vc_file_url?: string;
+            os?: components["schemas"]["TestRunPlatformEntry"];
+            browser?: components["schemas"]["TestRunPlatformEntry"];
+            device?: string | null;
+            /** Returned in camelCase by the API. */
+            isRealDevice?: boolean;
+            middle_scopes?: {
+                [key: string]: unknown;
+            } | null;
+            finished_at?: string | null;
+        } | null;
+        TestRunPlatformEntry: {
+            name?: string;
+            version?: string;
+            /** Comma-joined name and version, e.g. "Chrome,154.0". */
+            key?: string;
+        };
+        TestRunLinkedTestCase: {
+            id?: number;
+            identifier?: string;
+            folderId?: number;
+            projectId?: number;
+            thirdPartyIdentifier?: string | null;
+            name?: string;
+            isShared?: boolean;
+        };
+        TestRunRetry: {
+            uuid?: string;
+            status?: string;
+            /** Attempt duration in milliseconds. */
+            duration?: number;
+            /** Returned in camelCase by the API. */
+            workflowStatus?: string;
+            logs?: components["schemas"]["TestRunRetryLogs"];
+        };
+        /** Log content for an attempt. Keys are upper-case and left untouched by the client's camelCase conversion. Empty (`{}`) for passing attempts. Raw Selenium/Playwright/console/network logs are not here: fetch them with the Automate session API using `details.session_id`. */
+        TestRunRetryLogs: {
+            /** Error message and stack trace, one string per line. */
+            TEST_FAILURE?: string[];
+            /** Presigned URLs of uploaded log files. */
+            TEST_LOG?: string[];
         };
         ApplicableBuilds: {
             all_builds?: boolean;
@@ -945,10 +1163,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        projects?: components["schemas"]["Project"][];
-                        pagination?: components["schemas"]["Pagination"];
-                    };
+                    "application/json": components["schemas"]["ProjectListResponse"];
                 };
             };
         };
@@ -962,6 +1177,7 @@ export interface operations {
                 users?: string;
                 frameworks?: string;
                 is_archived?: boolean;
+                /** Start and end as epoch milliseconds, comma-separated: `startMs,endMs`. Anything else is rejected with a 400. Verified against the live API. */
                 date_range?: string;
                 next_page?: string;
             };
@@ -979,10 +1195,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        builds?: components["schemas"]["BuildSummary"][];
-                        pagination?: components["schemas"]["Pagination"];
-                    };
+                    "application/json": components["schemas"]["BuildListResponse"];
                 };
             };
         };
@@ -1277,13 +1490,32 @@ export interface operations {
     getTestReportingTestRuns: {
         parameters: {
             query?: {
+                /** Comma-separated re-run numbers (integers). Returns only tests from those re-runs, so it is empty for a build without re-runs. Verified against the live API. */
                 re_runs?: string;
                 test_statuses?: string;
+                /** Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group. */
                 is_flaky?: boolean;
+                /** Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group. */
                 is_new_failure?: boolean;
                 sort?: "EXECUTION_ORDER" | "TOP_LEVEL_NAME" | "DURATION" | "FAILED_TEST" | "PLATFORM";
                 order?: "Asc" | "Desc";
                 next_page?: string;
+                /** Comma-separated CI build numbers. Verified against the live API. */
+                ci_build_numbers?: string;
+                /** Comma-separated host names. Verified against the live API. */
+                host_names?: string;
+                /** Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group. */
+                has_performance_anomaly?: boolean;
+                /** Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group. */
+                is_always_failing?: boolean;
+                /** Verified against the live API. */
+                is_muted?: boolean;
+                /** Comma-separated failure categories. Verified against the live API. */
+                failure_categories?: string;
+                /** Comma-separated devices. Verified against the live API. */
+                devices?: string;
+                /** Comma-separated operating systems. Verified against the live API. */
+                os?: string;
             };
             header?: never;
             path: {

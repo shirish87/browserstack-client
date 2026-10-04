@@ -1,0 +1,76 @@
+{
+  "name": "tra-dashboard-verification appium",
+  "description": "",
+  "status": "failed",
+  "duration": 77762,
+  "user": "Test User",
+  "user_id": 1,
+  "tags": [
+    "verification"
+  ],
+  "build_id": "5f4ed4af29871da2e09c9a1e1eabc2db63415319",
+  "id": 161790895,
+  "created_at": null,
+  "project_id": null,
+  "project_name": null,
+  "build_number": 3,
+  "original_name": "tra-dashboard-verification appium",
+  "finished_at": "2026-10-04T16:29:05.075+00:00",
+  "started_at": "2026-10-04T16:27:47.313+00:00",
+  "status_stats": {
+    "passed": 3,
+    "failed": 1,
+    "in progress": 0,
+    "skipped": 1,
+    "retest": 0,
+    "blocked": 0,
+    "untested": 0,
+    "pending": 0,
+    "unknown": 0
+  },
+  "is_manually_overridden": false,
+  "re_run": null,
+  "build_error": null,
+  "is_archived": false,
+  "observability_version": {
+    "framework_version": "9.39.3",
+    "framework_name": "WebdriverIO-mocha",
+    "outdated_sdk_version": "false",
+    "sdk_version": "9.39.3",
+    "cli_version": "1.58.2",
+    "is_sdk": "null",
+    "outdated_cli_version": "null"
+  },
+  "vcs_info": {
+    "name": null,
+    "sha": null,
+    "branch": null,
+    "remotes": null,
+    "url": ""
+  },
+  "ci_info": {
+    "job_name": null,
+    "name": null,
+    "build_number": null,
+    "build_url": null,
+    "url": null
+  },
+  "host_info": {
+    "hostname": "vm",
+    "os": null
+  },
+  "run_information": [
+    {
+      "meta": null,
+      "buildSdkLogs": [],
+      "passed": 3,
+      "failed": 1,
+      "id": "161790895",
+      "skipped": 1,
+      "unknown": 0
+    }
+  ],
+  "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+appium/3",
+  "tcmTestRunIdentifier": "TR-698",
+  "app_details": null
+}

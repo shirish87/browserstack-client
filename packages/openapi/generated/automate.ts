@@ -343,6 +343,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/automate/sessions/{sessionId}/playwrightlogs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetches Playwright logs for a session
+         * Fetches the Playwright protocol logs for a Playwright session, as text. Responds with 200 and no Content-Type header, and with an XML 404 body when the session has no Playwright logs (for example a Selenium session).
+         */
+        get: operations["getAutomateSessionPlaywrightLogs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/automate/builds/{buildId}/terminallogs": {
         parameters: {
             query?: never;
@@ -669,8 +689,35 @@ export interface components {
              */
             queued_sessions_max_allowed: number;
         };
-        /** AutomateSession */
-        AutomateSession: components["schemas"]["BrowserPlatform"] & {
+        /** AutomateBuildSessionContainer */
+        AutomateBuildSessionContainer: {
+            automation_session: components["schemas"]["AutomateBuildSession"];
+        };
+        /**
+         * AutomateBuildSession
+         * The lighter session summary embedded in a build's detail response. It has no log or video URLs; fetch the full session with getAutomateSession.
+         */
+        AutomateBuildSession: {
+            hashed_id?: string;
+            name?: string;
+            status?: string;
+            reason?: string;
+            duration?: number;
+            os?: string;
+            os_version?: string;
+            browser?: string;
+            browser_version?: string;
+            device?: string | null;
+            build_name?: string;
+            project_name?: string;
+            build_hashed_id?: string;
+            test_priority?: string | null;
+        };
+        /**
+         * AutomateSessionBase
+         * Fields common to Automate and App Automate sessions. Each product extends it with its own (AutomateSession, AppAutomateSession).
+         */
+        AutomateSessionBase: components["schemas"]["BrowserPlatform"] & {
             /**
              * Hashed ID of the session
              * @example 4207442b2b0567368956dba064c22a3235a76214
@@ -687,11 +734,11 @@ export interface components {
              */
             duration: number;
             /**
-             * Status of the session
+             * Outcome of the session. Observed live on Automate and App Automate: passed, failed. `running` and `timeout` are documented but not yet observed; `done` is a browserstack_status value, not a status.
              * @enum {string}
              */
-            status: "running" | "timeout" | "failed" | "done";
-            /** Execution status of the session */
+            status: "running" | "timeout" | "failed" | "done" | "passed";
+            /** Execution status of the session. Observed live: done, failed, passed. */
             browserstack_status: string;
             /**
              * Reason for test status
@@ -727,7 +774,7 @@ export interface components {
              * URL to view the Appium logs
              * @example https://api.browserstack.com/automate/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/appiumlogs
              */
-            appium_logs_url: string;
+            appium_logs_url?: string;
             /**
              * URL to view session video
              * @example https://automate.browserstack.com/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/video
@@ -737,27 +784,42 @@ export interface components {
              * URL to view browser console logs
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-aps/s3.ap-south-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-console-logs-v2.txt
              */
-            browser_console_logs_url: string;
+            browser_console_logs_url?: string;
             /**
              * URL to view browser logs
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-har-logs.txt
              */
-            har_logs_url: string;
+            har_logs_url?: string;
             /**
              * URL to view selenium logs
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-selenium-logs.txt
              */
-            selenium_logs_url: string;
+            selenium_logs_url?: string;
             /**
              * URL to view telemetry logs if it is enabled in your Selenium 4 session
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-selenium-logs.txt
              */
-            selenium_telemetry_logs_url: string;
+            selenium_telemetry_logs_url?: string;
             /**
              * Timestamp at which the session started executing
              * @example 2020-03-11T10:14:36.000Z
              */
             created_at: string;
+            /**
+             * Hashed ID of the Automate build this session belongs to. This is the Automate build id, not the Test Reporting build id.
+             * @example 5a2325a471c829812cd32ed5e63fdc5f8d2c0250
+             */
+            build_hashed_id?: string;
+            /** Presigned URL of the session's terminal logs. */
+            session_terminal_logs_url?: string;
+            /** Presigned URL of the build's terminal logs. */
+            build_terminal_logs_url?: string;
+            /** Priority label set on the session, if any. */
+            test_priority?: string | null;
+            /** Time breakdown for the session (totals, BrowserStack vs user time, and optimisation links). */
+            insights?: {
+                [key: string]: unknown;
+            };
         };
         /** Status */
         Status: {
@@ -801,7 +863,14 @@ export interface components {
         /** AutomateBuildContainer */
         AutomateBuildContainer: {
             automation_build: components["schemas"]["AutomateBuild"];
-            sessions: components["schemas"]["AutomateSessionContainer"][];
+            sessions: components["schemas"]["AutomateBuildSessionContainer"][];
+        };
+        /** AutomateSession */
+        AutomateSession: components["schemas"]["AutomateSessionBase"] & {
+            /** Presigned URL of the Playwright protocol logs (Playwright sessions only). */
+            playwright_logs_url?: string;
+            /** URL of the browser profiling data, when profiling was enabled for the session. */
+            browser_profiling_url?: string;
         };
         /** AutomateSessionContainer */
         AutomateSessionContainer: {
@@ -847,10 +916,12 @@ export interface components {
              */
             hashed_id: string;
             /**
-             * Tag for the build
+             * Tag for the build (null when none was set)
              * @example pricing_project_build
              */
-            build_tag: string;
+            build_tag: string | null;
+            /** Shareable URL of the build */
+            public_url?: string;
             /**
              * Indicates whether the build is a delta build
              * @example false
@@ -875,6 +946,91 @@ export interface components {
              * @example 2020-09-18T09:45:57.000Z
              */
             updated_at?: string;
+        };
+        /** HAR (HTTP Archive) 1.2 document of the session's network traffic. */
+        HarArchive: {
+            log?: components["schemas"]["HarLog"];
+        };
+        HarLog: {
+            version?: string;
+            creator?: components["schemas"]["HarNameVersion"];
+            browser?: components["schemas"]["HarNameVersion"];
+            pages?: {
+                [key: string]: unknown;
+            }[];
+            entries?: components["schemas"]["HarEntry"][];
+        };
+        HarNameVersion: {
+            name?: string;
+            version?: string;
+            comment?: string;
+        };
+        HarEntry: {
+            pageref?: string;
+            startedDateTime?: string;
+            /** Total elapsed time in milliseconds. */
+            time?: number;
+            request?: components["schemas"]["HarRequest"];
+            response?: components["schemas"]["HarResponse"];
+            cache?: {
+                [key: string]: unknown;
+            };
+            timings?: {
+                [key: string]: unknown;
+            };
+            serverIPAddress?: string;
+            connection?: string;
+            /** BrowserStack extension (PascalCase, not part of HAR 1.2). */
+            FromDiskCache?: boolean;
+            /** BrowserStack extension (PascalCase, not part of HAR 1.2). What triggered the request. */
+            Initiator?: {
+                [key: string]: unknown;
+            };
+            /** BrowserStack extension (PascalCase, not part of HAR 1.2). Chrome resource priority. */
+            Priority?: string;
+        };
+        HarHeader: {
+            name?: string;
+            value?: string;
+        };
+        HarCookie: {
+            name?: string;
+            value?: string;
+            path?: string;
+            domain?: string;
+            expires?: string;
+            httpOnly?: boolean;
+            secure?: boolean;
+        };
+        HarRequest: {
+            method?: string;
+            url?: string;
+            httpVersion?: string;
+            cookies?: components["schemas"]["HarCookie"][];
+            headers?: components["schemas"]["HarHeader"][];
+            queryString?: components["schemas"]["HarHeader"][];
+            postData?: {
+                [key: string]: unknown;
+            };
+            headersSize?: number;
+            bodySize?: number;
+        };
+        HarResponse: {
+            status?: number;
+            statusText?: string;
+            httpVersion?: string;
+            cookies?: components["schemas"]["HarCookie"][];
+            headers?: components["schemas"]["HarHeader"][];
+            content?: {
+                [key: string]: unknown;
+            };
+            redirectURL?: string;
+            /** BrowserStack extension (PascalCase, not part of HAR 1.2). */
+            TransferSize?: number;
+            /** BrowserStack extension (PascalCase, not part of HAR 1.2). Set when the request failed. */
+            ErrorMessage?: string;
+            headersSize?: number;
+            bodySize?: number;
         };
         /** AutomateMediaFile */
         AutomateMediaFile: {
@@ -1341,7 +1497,7 @@ export interface operations {
                         /** AutomateBuildContainer */
                         build: {
                             automation_build: components["schemas"]["AutomateBuild"];
-                            sessions: components["schemas"]["AutomateSessionContainer"][];
+                            sessions: components["schemas"]["AutomateBuildSessionContainer"][];
                         };
                     };
                 };
@@ -1554,8 +1710,8 @@ export interface operations {
                 limit?: number;
                 /** Retrieve sessions from a specific point using the offset parameter */
                 offset?: number;
-                /** Status of the session */
-                status?: "running" | "timeout" | "failed" | "done";
+                /** Filter by session status. Verified live - passed and failed. `done` matches nothing, and an unknown value returns an empty list rather than an error. */
+                status?: "running" | "timeout" | "failed" | "done" | "passed";
             };
             header?: never;
             path: {
@@ -1690,6 +1846,34 @@ export interface operations {
         };
     };
     getAutomateSessionSeleniumLogs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** ID of your session */
+                sessionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+            400: components["schemas"]["400.BadRequest"];
+            401: components["schemas"]["401.Unauthorized"];
+            404: components["schemas"]["404.NotFound"];
+            422: components["schemas"]["422.UnprocessableEntity"];
+            500: components["schemas"]["5xx.InternalServerError"];
+        };
+    };
+    getAutomateSessionPlaywrightLogs: {
         parameters: {
             query?: never;
             header?: never;
@@ -1921,7 +2105,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": components["schemas"]["HarArchive"];
                 };
             };
             400: components["schemas"]["400.BadRequest"];

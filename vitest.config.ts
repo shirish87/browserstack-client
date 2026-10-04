@@ -7,6 +7,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const sharedAliases = {
+  // `/models` subpaths must come before the bare package aliases (prefix matching).
+  "@dot-slash/browserstack-openapi/automate/models": path.resolve(__dirname, "packages/openapi/generated/automate.models.ts"),
+  "@dot-slash/browserstack-openapi/app-automate/models": path.resolve(__dirname, "packages/openapi/generated/app-automate.models.ts"),
+  "@dot-slash/browserstack-openapi/test-reporting/models": path.resolve(__dirname, "packages/openapi/generated/test-reporting.models.ts"),
+  "@dot-slash/browserstack-automate/models": path.resolve(__dirname, "packages/automate/src/models.ts"),
+  "@dot-slash/browserstack-app-automate/models": path.resolve(__dirname, "packages/app-automate/src/models.ts"),
+  "@dot-slash/browserstack-test-reporting/models": path.resolve(__dirname, "packages/test-reporting/src/models.ts"),
   "@dot-slash/browserstack-core": path.resolve(__dirname, "packages/core/src/index.ts"),
   "@dot-slash/browserstack-openapi/automate/client": path.resolve(__dirname, "packages/openapi/generated/automate.client.ts"),
   "@dot-slash/browserstack-openapi/automate": path.resolve(__dirname, "packages/openapi/generated/automate.ts"),
@@ -78,6 +85,21 @@ export default defineConfig({
       project("test-reporting", "./packages/test-reporting", "packages/test-reporting/package.json"),
       project("sdk", "./packages/sdk", "packages/sdk/package.json"),
       project("router", "./packages/router", "packages/router/package.json"),
+      // Offline checks of the contract tooling (sanitiser, fixtures vs generated models).
+      {
+        ...project("contract-tests", "./packages/contract-tests", "packages/contract-tests/package.json"),
+        test: { name: "contract-tests", globals: true, environment: "node", include: ["src/**/*.test.ts"], exclude: ["src/live/**", "**/node_modules/**"] },
+      },
+      // Live API drift checks: only registered when explicitly enabled, because they need credentials
+      // and talk to the real BrowserStack APIs. Run with `pnpm test:contract`.
+      ...(process.env.BROWSERSTACK_CONTRACT === "1"
+        ? [
+            {
+              ...project("contract-live", "./packages/contract-tests", "packages/contract-tests/package.json"),
+              test: { name: "contract-live", globals: true, environment: "node", include: ["src/live/**/*.test.ts"], testTimeout: 120000, hookTimeout: 120000 },
+            },
+          ]
+        : []),
     ],
   },
 });

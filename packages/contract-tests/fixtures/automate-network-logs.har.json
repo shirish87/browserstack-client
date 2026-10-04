@@ -1,0 +1,385 @@
+{
+  "log": {
+    "version": "1.1",
+    "creator": {
+      "name": "BrowserUp Proxy",
+      "version": "${project.version}"
+    },
+    "pages": [
+      {
+        "startedDateTime": "2026-10-04T11:56:06.422-0400",
+        "id": "Page 0",
+        "title": "Page 0",
+        "pageTimings": {
+          "onContentLoad": -1,
+          "onLoad": -1
+        }
+      }
+    ],
+    "entries": [
+      {
+        "pageref": "Page 0",
+        "startedDateTime": "2026-10-04T11:56:07.769-0400",
+        "time": 69,
+        "request": {
+          "method": "GET",
+          "url": "https://www.google.com/async/folae",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Host",
+              "value": "www.google.com"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "name": "Sec-CH-UA-Full-Version-List",
+              "value": "\"Chromium\";v=\"154.0.8037.58\", \"Google Chrome\";v=\"154.0.8037.58\", \"Not A(Brand\";v=\"99.0.0.0\""
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "none"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "no-cors"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "empty"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.9"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "async",
+              "value": "_fmt:pb"
+            },
+            {
+              "name": "udm",
+              "value": "50"
+            },
+            {
+              "name": "client_locale",
+              "value": "en-US"
+            },
+            {
+              "name": "client_country",
+              "value": "us"
+            }
+          ],
+          "postData": {
+            "mimeType": "",
+            "params": [],
+            "text": ""
+          },
+          "headersSize": 528,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Version",
+              "value": "991478806"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/x-protobuffer"
+            },
+            {
+              "name": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "name": "Strict-Transport-Security",
+              "value": "max-age=31536000"
+            },
+            {
+              "name": "Cross-Origin-Opener-Policy",
+              "value": "same-origin-allow-popups; report-to=\"gws\""
+            },
+            {
+              "name": "Report-To",
+              "value": "{\"group\":\"gws\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/gws/none\"}]}"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Sec-CH-Prefers-Color-Scheme"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Downlink"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "RTT"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Sec-CH-UA-Form-Factors"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Sec-CH-UA-Platform"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Sec-CH-UA-Platform-Version"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Sec-CH-UA-Full-Version"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Sec-CH-UA-Arch"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Sec-CH-UA-Model"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Sec-CH-UA-Bitness"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Sec-CH-UA-Full-Version-List"
+            },
+            {
+              "name": "Accept-CH",
+              "value": "Sec-CH-UA-WoW64"
+            },
+            {
+              "name": "Permissions-Policy",
+              "value": "unload=()"
+            },
+            {
+              "name": "Content-Disposition",
+              "value": "attachment; filename=\"f.txt\""
+            },
+            {
+              "name": "Content-Encoding",
+              "value": "br"
+            },
+            {
+              "name": "Date",
+              "value": "Sun, 04 Oct 2026 15:56:07 GMT"
+            },
+            {
+              "name": "Server",
+              "value": "gws"
+            },
+            {
+              "name": "Content-Length",
+              "value": "350"
+            },
+            {
+              "name": "X-XSS-Protection",
+              "value": "0"
+            },
+            {
+              "name": "X-Frame-Options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "Alt-Svc",
+              "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+            }
+          ],
+          "content": {
+            "size": 0,
+            "mimeType": "application/x-protobuffer",
+            "text": ""
+          },
+          "redirectURL": "",
+          "headersSize": 1003,
+          "bodySize": 350
+        },
+        "cache": {},
+        "timings": {
+          "comment": "",
+          "blocked": 0,
+          "receive": 0,
+          "connect": 48,
+          "dns": 0,
+          "send": 0,
+          "wait": 21,
+          "ssl": 42
+        },
+        "serverIPAddress": "142.251.155.119"
+      },
+      {
+        "pageref": "Page 0",
+        "startedDateTime": "2026-10-04T11:56:08.315-0400",
+        "time": 114,
+        "request": {
+          "method": "GET",
+          "url": "https://example.com/",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Host",
+              "value": "example.com"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "Upgrade-Insecure-Requests",
+              "value": "1"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "none"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "navigate"
+            },
+            {
+              "name": "Sec-Fetch-User",
+              "value": "?1"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "document"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br, zstd"
+            }
+          ],
+          "queryString": [],
+          "postData": {
+            "mimeType": "",
+            "params": [],
+            "text": ""
+          },
+          "headersSize": 654,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Date",
+              "value": "Sun, 04 Oct 2026 15:56:08 GMT"
+            },
+            {
+              "name": "Content-Type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "name": "Server",
+              "value": "cloudflare"
+            },
+            {
+              "name": "last-modified",
+              "value": "Sun, 04 Oct 2026 07:03:47 GMT"
+            },
+            {
+              "name": "allow",
+              "value": "GET, HEAD"
+            },
+            {
+              "name": "Age",
+              "value": "13461"
+            },
+            {
+              "name": "cf-cache-status",
+              "value": "HIT"
+            },
+            {
+              "name": "Content-Encoding",
+              "value": "br"
+            },
+            {
+              "name": "CF-RAY",
+              "value": "a4555ff7fa9f9422-IAD"
+            },
+            {
+              "name": "alt-svc",
+              "value": "h3=\":443\"; ma=86400"
+            }
+          ],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html; charset=utf-8",
+            "text": ""
+          },
+          "redirectURL": "",
+          "headersSize": 350,
+          "bodySize": 334
+        },
+        "cache": {},
+        "timings": {
+          "comment": "",
+          "blocked": 0,
+          "receive": 1,
+          "connect": 98,
+          "dns": 7,
+          "send": 0,
+          "wait": 9,
+          "ssl": 94
+        },
+        "serverIPAddress": "172.66.147.243"
+      }
+    ]
+  }
+}

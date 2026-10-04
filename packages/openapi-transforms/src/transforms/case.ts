@@ -1,8 +1,18 @@
 // ─── Type-level transforms ────────────────────────────────────────────────────
 
+type IsLowerLetter<C extends string> = C extends Lowercase<C> ? (C extends Uppercase<C> ? false : true) : false;
+
+/**
+ * Mirrors `camelKey` at runtime: an underscore is only collapsed when a lowercase letter follows it.
+ * Keys such as `TEST_FAILURE` or `is_x_1` keep the underscore that precedes an uppercase letter or digit.
+ */
 type CamelKey<S extends string> =
   S extends `${infer H}_${infer T}`
-    ? `${H}${Capitalize<CamelKey<T>>}`
+    ? T extends `${infer C}${string}`
+      ? IsLowerLetter<C> extends true
+        ? `${H}${Capitalize<CamelKey<T>>}`
+        : `${H}_${CamelKey<T>}`
+      : S
     : S;
 
 type SnakeKey<S extends string, Acc extends string = ""> =

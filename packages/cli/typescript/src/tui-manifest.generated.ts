@@ -473,7 +473,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "status",
                 "label": "Status",
-                "description": "Status of the session",
+                "description": "Filter by session status. Verified live - passed and failed. `done` matches nothing, and an unknown value returns an empty list rather than an error.",
                 "type": "string",
                 "required": false,
                 "location": "query",
@@ -481,7 +481,8 @@ export const TUI_MANIFEST: TUIProduct[] = [
                   "running",
                   "timeout",
                   "failed",
-                  "done"
+                  "done",
+                  "passed"
                 ]
               }
             ]
@@ -570,6 +571,34 @@ export const TUI_MANIFEST: TUIProduct[] = [
             "id": "list-session-selenium-logs",
             "summary": "Fetches Selenium logs for a session",
             "description": "Fetches Selenium logs for a session. Raw Selenium logs for each session are available to you in text format.",
+            "section": "Session Logs",
+            "fields": [
+              {
+                "name": "sessionId",
+                "label": "SessionId",
+                "description": "ID of your session",
+                "type": "string",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "automate.list-sessions",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "buildId"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "list-session-playwright-logs",
+            "summary": "Fetches Playwright logs for a session",
+            "description": "Fetches the Playwright protocol logs for a Playwright session, as text. Responds with 200 and no Content-Type header, and with an XML 404 body when the session has no Playwright logs (for example a Selenium session).",
             "section": "Session Logs",
             "fields": [
               {
@@ -901,6 +930,65 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "type": "string",
                 "required": true,
                 "location": "path"
+              }
+            ]
+          },
+          {
+            "id": "list-sessions",
+            "summary": "Fetches list of sessions",
+            "description": "Fetches the sessions of a build. Verified live on a 3-session build; the default page size and maximum `limit` are not verified.",
+            "section": "Sessions",
+            "fields": [
+              {
+                "name": "buildId",
+                "label": "BuildId",
+                "description": "ID of your build",
+                "type": "string",
+                "required": true,
+                "location": "path",
+                "picker": {
+                  "source": "app-automate.list-builds",
+                  "valueField": "hashed_id",
+                  "labelFields": [
+                    "hashed_id",
+                    "name",
+                    "status"
+                  ],
+                  "filterBy": [
+                    "projectId"
+                  ]
+                }
+              },
+              {
+                "name": "limit",
+                "label": "Limit",
+                "description": "Number of sessions to return. Verified live (limit=1 and 2 on a 3-session build).",
+                "type": "number",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "offset",
+                "label": "Offset",
+                "description": "Skip this many sessions. Verified live; an offset past the end returns an empty list.",
+                "type": "number",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "status",
+                "label": "Status",
+                "description": "Filter by session status. Verified live - passed and failed. `done` matches nothing, and an unknown value returns an empty list rather than an error.",
+                "type": "string",
+                "required": false,
+                "location": "query",
+                "enum": [
+                  "running",
+                  "timeout",
+                  "failed",
+                  "done",
+                  "passed"
+                ]
               }
             ]
           },
@@ -6602,7 +6690,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "date_range",
                 "label": "Date Range",
-                "description": "",
+                "description": "Start and end as epoch milliseconds, comma-separated: `startMs,endMs`. Anything else is rejected with a 400. Verified against the live API.",
                 "type": "string",
                 "required": false,
                 "location": "query"
@@ -7391,7 +7479,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "re_runs",
                 "label": "Re Runs",
-                "description": "",
+                "description": "Comma-separated re-run numbers (integers). Returns only tests from those re-runs, so it is empty for a build without re-runs. Verified against the live API.",
                 "type": "string",
                 "required": false,
                 "location": "query"
@@ -7407,7 +7495,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "is_flaky",
                 "label": "Is Flaky",
-                "description": "",
+                "description": "Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group.",
                 "type": "boolean",
                 "required": false,
                 "location": "query"
@@ -7415,7 +7503,7 @@ export const TUI_MANIFEST: TUIProduct[] = [
               {
                 "name": "is_new_failure",
                 "label": "Is New Failure",
-                "description": "",
+                "description": "Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group.",
                 "type": "boolean",
                 "required": false,
                 "location": "query"
@@ -7451,6 +7539,70 @@ export const TUI_MANIFEST: TUIProduct[] = [
                 "name": "next_page",
                 "label": "Next Page",
                 "description": "",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "ci_build_numbers",
+                "label": "CI Build Numbers",
+                "description": "Comma-separated CI build numbers. Verified against the live API.",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "host_names",
+                "label": "Host Names",
+                "description": "Comma-separated host names. Verified against the live API.",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "has_performance_anomaly",
+                "label": "Has Performance Anomaly",
+                "description": "Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group.",
+                "type": "boolean",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "is_always_failing",
+                "label": "Is Always Failing",
+                "description": "Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group.",
+                "type": "boolean",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "is_muted",
+                "label": "Is Muted",
+                "description": "Verified against the live API.",
+                "type": "boolean",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "failure_categories",
+                "label": "Failure Categories",
+                "description": "Comma-separated failure categories. Verified against the live API.",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "devices",
+                "label": "Devices",
+                "description": "Comma-separated devices. Verified against the live API.",
+                "type": "string",
+                "required": false,
+                "location": "query"
+              },
+              {
+                "name": "os",
+                "label": "Os",
+                "description": "Comma-separated operating systems. Verified against the live API.",
                 "type": "string",
                 "required": false,
                 "location": "query"

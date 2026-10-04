@@ -75,6 +75,7 @@ export class GeneratedTestReportingClient extends APIClient {
 /**
  * Get Build List for Project
  *
+ * @param dateRange - Start and end as epoch milliseconds, comma-separated: `startMs,endMs`. Anything else is rejected with a 400. Verified against the live API.
  * @param options - Optional abort signal and other request options
  */
   getProjectBuilds(projectId: number, uniqueBuildNames?: string, buildTags?: string, buildStatus?: string, users?: string, frameworks?: string, isArchived?: string, dateRange?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingProjectBuilds"]["responses"][200]["content"]["application/json"]>> {
@@ -306,12 +307,23 @@ export class GeneratedTestReportingClient extends APIClient {
 /**
  * Get Test List
  *
+ * @param reRuns - Comma-separated re-run numbers (integers). Returns only tests from those re-runs, so it is empty for a build without re-runs. Verified against the live API.
+ * @param isFlaky - Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group.
+ * @param isNewFailure - Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group.
+ * @param ciBuildNumbers - Comma-separated CI build numbers. Verified against the live API.
+ * @param hostNames - Comma-separated host names. Verified against the live API.
+ * @param hasPerformanceAnomaly - Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group.
+ * @param isAlwaysFailing - Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group.
+ * @param isMuted - Verified against the live API.
+ * @param failureCategories - Comma-separated failure categories. Verified against the live API.
+ * @param devices - Comma-separated devices. Verified against the live API.
+ * @param os - Comma-separated operating systems. Verified against the live API.
  * @param options - Optional abort signal and other request options
  */
-  getTestRuns(buildId: string, reRuns?: string, testStatuses?: string, isFlaky?: string, isNewFailure?: string, sort?: string, order?: string, nextPage?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingTestRuns"]["responses"][200]["content"]["application/json"]>> {
+  getTestRuns(buildId: string, reRuns?: string, testStatuses?: string, isFlaky?: string, isNewFailure?: string, sort?: string, order?: string, nextPage?: string, ciBuildNumbers?: string, hostNames?: string, hasPerformanceAnomaly?: string, isAlwaysFailing?: string, isMuted?: string, failureCategories?: string, devices?: string, os?: string, options?: ExecuteOptions): Promise<DeepCamelCase<operations["getTestReportingTestRuns"]["responses"][200]["content"]["application/json"]>> {
     return (this.execute({
       path: "/builds/{buildId}/testRuns",
-      params: { path: { buildId: buildId }, query: { "re_runs": reRuns, "test_statuses": testStatuses, "is_flaky": isFlaky, "is_new_failure": isNewFailure, "sort": sort, "order": order, "next_page": nextPage } },
+      params: { path: { buildId: buildId }, query: { "re_runs": reRuns, "test_statuses": testStatuses, "is_flaky": isFlaky, "is_new_failure": isNewFailure, "sort": sort, "order": order, "next_page": nextPage, "ci_build_numbers": ciBuildNumbers, "host_names": hostNames, "has_performance_anomaly": hasPerformanceAnomaly, "is_always_failing": isAlwaysFailing, "is_muted": isMuted, "failure_categories": failureCategories, "devices": devices, "os": os } },
 
       requestCodec: "json",
       requestCodecConfig: {},

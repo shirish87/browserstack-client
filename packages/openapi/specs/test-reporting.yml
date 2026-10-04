@@ -25,14 +25,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  projects:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Project'
-                  pagination:
-                    $ref: '#/components/schemas/Pagination'
+                $ref: '#/components/schemas/ProjectListResponse'
 
   /projects/{projectId}/builds:
     get:
@@ -70,6 +63,7 @@ paths:
           schema: { type: boolean }
         - name: date_range
           in: query
+          description: "Start and end as epoch milliseconds, comma-separated: `startMs,endMs`. Anything else is rejected with a 400. Verified against the live API."
           schema: { type: string }
         - name: next_page
           in: query
@@ -80,14 +74,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  builds:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/BuildSummary'
-                  pagination:
-                    $ref: '#/components/schemas/Pagination'
+                $ref: '#/components/schemas/BuildListResponse'
 
   /builds/start:
     post:
@@ -435,15 +422,18 @@ paths:
           schema: { type: string }
         - name: re_runs
           in: query
+          description: "Comma-separated re-run numbers (integers). Returns only tests from those re-runs, so it is empty for a build without re-runs. Verified against the live API."
           schema: { type: string }
         - name: test_statuses
           in: query
           schema: { type: string }
         - name: is_flaky
           in: query
+          description: "Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group."
           schema: { type: boolean }
         - name: is_new_failure
           in: query
+          description: "Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group."
           schema: { type: boolean }
         - name: sort
           in: query
@@ -453,6 +443,38 @@ paths:
           schema: { type: string, enum: [Asc, Desc] }
         - name: next_page
           in: query
+          schema: { type: string }
+        - name: ci_build_numbers
+          in: query
+          description: Comma-separated CI build numbers. Verified against the live API.
+          schema: { type: string }
+        - name: host_names
+          in: query
+          description: Comma-separated host names. Verified against the live API.
+          schema: { type: string }
+        - name: has_performance_anomaly
+          in: query
+          description: "Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group."
+          schema: { type: boolean }
+        - name: is_always_failing
+          in: query
+          description: "Smart-tag filter. Needs a plan with smart tags; otherwise the API answers 4xx with: Smart tag filters cannot be used due to plan restrictions on your group."
+          schema: { type: boolean }
+        - name: is_muted
+          in: query
+          description: Verified against the live API.
+          schema: { type: boolean }
+        - name: failure_categories
+          in: query
+          description: Comma-separated failure categories. Verified against the live API.
+          schema: { type: string }
+        - name: devices
+          in: query
+          description: Comma-separated devices. Verified against the live API.
+          schema: { type: string }
+        - name: os
+          in: query
+          description: Comma-separated operating systems. Verified against the live API.
           schema: { type: string }
       responses:
         '200':
@@ -822,9 +844,39 @@ components:
   schemas:
     Pagination:
       type: object
+      description: >-
+        Cursor pagination. `next_page` is an opaque cursor and is present even when `has_next` is false.
+        Test lists paginate per file/platform, so a response with `has_next: true` can be followed by an
+        empty final page.
       properties:
         has_next: { type: boolean }
-        next_page: { type: string }
+        next_page: { type: string, nullable: true }
+
+    ProjectListResponse:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    BuildListResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Project id.
+        name:
+          type: string
+          description: Project name.
+        builds:
+          type: array
+          items:
+            $ref: '#/components/schemas/BuildSummary'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
 
     Project:
       type: object
@@ -839,31 +891,50 @@ components:
 
     StatusStats:
       type: object
+      description: >-
+        Test counts by status. Live responses also include the keys below that contain spaces or are
+        TCM-style statuses; a running build may report `in progress` rather than `pending`.
       properties:
         passed: { type: integer }
         failed: { type: integer }
         pending: { type: integer }
         skipped: { type: integer }
         unknown: { type: integer }
+        "in progress": { type: integer }
+        retest: { type: integer }
+        blocked: { type: integer }
+        untested: { type: integer }
+        timeout:
+          type: integer
+          description: >-
+            Present in a build's test summary when a test timed out. The same result can show as `unknown` in
+            the build list until TRA finishes processing it.
 
     BuildSummary:
       type: object
       properties:
         name: { type: string }
-        status: { type: string }
-        duration: { type: integer }
+        status: { type: string, description: "Observed values: passed, failed, running, skipped, unknown." }
+        duration: { type: integer, description: Build duration in milliseconds. }
         user: { type: string }
         tags: { type: array, items: { type: string } }
-        build_id: { type: string }
+        build_id:
+          type: string
+          description: >-
+            TRA build id (an opaque 40-character id). It is not the Automate build `hashed_id`; use a test's
+            `details.session_id` to reach Automate.
         original_name: { type: string }
-        finished_at: { type: string, format: date-time }
+        finished_at: { type: string, format: date-time, nullable: true }
         started_at: { type: string, format: date-time }
         status_stats:
           $ref: '#/components/schemas/StatusStats'
+        is_manually_overridden: { type: boolean }
         build_number: { type: integer }
         is_archived: { type: boolean }
         observability_url: { type: string }
-        tcm_test_run_identifier: { type: string }
+        tcmTestRunIdentifier:
+          type: string
+          description: Returned in camelCase by the API (the only camelCase key in this response).
 
     BuildDetailsSmartTags:
       type: object
@@ -875,35 +946,80 @@ components:
     BuildDetailsVcsInfo:
       type: object
       properties:
-        name: { type: string }
-        sha: { type: string }
-        branch: { type: string }
+        name: { type: string, nullable: true }
+        sha: { type: string, nullable: true }
+        branch: { type: string, nullable: true }
+        remotes: { type: object, additionalProperties: true, nullable: true }
+        url: { type: string, nullable: true }
     BuildDetailsCiInfo:
       type: object
       properties:
-        job_name: { type: string }
-        name: { type: string }
-        build_number: { type: string }
-        build_url: { type: string }
+        job_name: { type: string, nullable: true }
+        name: { type: string, nullable: true }
+        build_number: { type: string, nullable: true }
+        build_url: { type: string, nullable: true }
+        url: { type: string, nullable: true }
     BuildDetailsHostInfo:
       type: object
       properties:
-        hostname: { type: string }
-        os: { type: string }
+        hostname: { type: string, nullable: true }
+        os: { type: string, nullable: true }
+    BuildObservabilityVersion:
+      type: object
+      description: Framework and SDK versions that reported the build. Values are strings, including "null" and "false".
+      properties:
+        framework_name: { type: string }
+        framework_version: { type: string }
+        sdk_version: { type: string }
+        cli_version: { type: string }
+        outdated_sdk_version: { type: string }
+        outdated_cli_version: { type: string }
+        is_sdk: { type: string }
+    BuildRunInformation:
+      type: object
+      properties:
+        id: { type: string }
+        passed: { type: integer }
+        failed: { type: integer }
+        skipped: { type: integer }
+        unknown: { type: integer }
+        meta: { type: object, additionalProperties: true, nullable: true }
+        buildSdkLogs:
+          type: array
+          items: { type: object, additionalProperties: true }
+          description: Returned in camelCase by the API.
     BuildDetails:
       type: object
       properties:
         name: { type: string }
         description: { type: string }
         status: { type: string }
-        duration: { type: integer }
+        duration: { type: integer, description: Build duration in milliseconds. }
         user: { type: string }
+        user_id: { type: integer }
         tags: { type: array, items: { type: string } }
-        build_id: { type: string }
+        build_id: { type: string, description: TRA build id; not the Automate build hashed_id. }
+        id: { type: integer, description: Numeric build id. }
+        created_at: { type: string, nullable: true }
+        project_id: { type: integer, nullable: true }
+        project_name: { type: string, nullable: true }
         build_number: { type: integer }
         original_name: { type: string }
-        finished_at: { type: string, format: date-time }
+        finished_at: { type: string, format: date-time, nullable: true }
         started_at: { type: string, format: date-time }
+        is_manually_overridden: { type: boolean }
+        re_run: { type: object, additionalProperties: true, nullable: true }
+        build_error: { type: object, additionalProperties: true, nullable: true }
+        observability_version:
+          $ref: '#/components/schemas/BuildObservabilityVersion'
+        run_information:
+          type: array
+          items:
+            $ref: '#/components/schemas/BuildRunInformation'
+        tcmTestRunIdentifier:
+          type: string
+          description: Returned in camelCase by the API.
+        app_details: { type: object, additionalProperties: true, nullable: true }
         status_stats:
           $ref: '#/components/schemas/StatusStats'
         failure_categories:
@@ -923,21 +1039,150 @@ components:
     TestRunsResponse:
       type: object
       properties:
-        name: { type: string }
+        name: { type: string, description: Project name. }
         project_id: { type: integer }
+        group_id: { type: integer }
         build_id: { type: string }
         build_name: { type: string }
         build_number: { type: integer }
+        original_name: { type: string }
         test_summary:
           $ref: '#/components/schemas/StatusStats'
+        is_manually_overridden: { type: boolean }
         is_archived: { type: boolean }
+        app_details: { type: object, additionalProperties: true, nullable: true }
         hierarchy:
           type: array
           items:
-            type: object
-            additionalProperties: true
+            $ref: '#/components/schemas/TestRunNode'
         pagination:
           $ref: '#/components/schemas/Pagination'
+
+    TestRunNode:
+      type: object
+      description: >-
+        A node of the test tree: `ROOT` (one per file and platform) → optional `DESCRIBE` groups → `TEST` or
+        `HOOK` leaves. Only `ROOT` and `TEST`/`HOOK` nodes carry `details`; `DESCRIBE` nodes have
+        `details: null`. Leaves have an empty `children` array.
+      properties:
+        type: { type: string, description: "Observed values: ROOT, DESCRIBE, TEST. HOOK is documented.", enum: [ROOT, DESCRIBE, TEST, HOOK] }
+        display_name: { type: string, description: Name to show; nodes have no separate `name` field. }
+        rank: { type: integer }
+        summary:
+          $ref: '#/components/schemas/TestRunNodeSummary'
+        details:
+          $ref: '#/components/schemas/TestRunNodeDetails'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestRunNode'
+        is_before_all_hook: { type: boolean, nullable: true }
+        is_after_all_hook: { type: boolean, nullable: true }
+
+    TestRunNodeSummary:
+      description: Roll-up of leaf statuses under a node, plus `aggregate` (the leaf count). Null on leaves.
+      nullable: true
+      allOf:
+        - $ref: '#/components/schemas/StatusStats'
+        - type: object
+          properties:
+            aggregate: { type: integer }
+
+    TestRunNodeDetails:
+      type: object
+      nullable: true
+      description: >-
+        Shape depends on the node type. `TEST` nodes carry the execution fields (status, duration, retries,
+        session_id, ...); `ROOT` nodes carry the platform fields (file_path, os, browser, device, ...).
+      properties:
+        status: { type: string, description: "Observed values: passed, failed, skipped." }
+        duration: { type: integer, description: Test duration in milliseconds. }
+        started_at: { type: string }
+        session_id:
+          type: string
+          description: >-
+            Automate session `hashed_id` for the session this test ran in (empty for sessionless runs).
+            Sessions are per worker/file, so every test in a file shares one `session_id`; use it with the
+            Automate API (`getSession`, `getSessionLogs`, `getSessionNetworkLogs`, ...).
+          nullable: true
+        observability_url: { type: string }
+        is_flaky: { type: boolean }
+        is_always_failing: { type: boolean }
+        is_new_failure: { type: boolean }
+        is_muted: { type: boolean }
+        is_performance_anomaly: { type: boolean }
+        is_auto_analyzed: { type: boolean, nullable: true }
+        is_auto_analyzer_running: { type: boolean }
+        is_latest: { type: boolean }
+        run_count: { type: integer }
+        tags: { type: array, items: { type: string } }
+        last_executed_by: { type: string }
+        last_executed_by_id: { type: integer }
+        pm_tool_details: { type: array, items: { type: object, additionalProperties: true } }
+        testCases:
+          type: array
+          description: Linked Test Management cases. Returned in camelCase by the API.
+          items:
+            $ref: '#/components/schemas/TestRunLinkedTestCase'
+        retries:
+          type: array
+          description: One entry per attempt, oldest first.
+          items:
+            $ref: '#/components/schemas/TestRunRetry'
+        file_path: { type: string }
+        vc_file_url: { type: string }
+        os:
+          $ref: '#/components/schemas/TestRunPlatformEntry'
+        browser:
+          $ref: '#/components/schemas/TestRunPlatformEntry'
+        device: { type: string, nullable: true }
+        isRealDevice: { type: boolean, description: Returned in camelCase by the API. }
+        middle_scopes: { type: object, additionalProperties: true, nullable: true }
+        finished_at: { type: string, nullable: true }
+
+    TestRunPlatformEntry:
+      type: object
+      properties:
+        name: { type: string }
+        version: { type: string }
+        key: { type: string, description: 'Comma-joined name and version, e.g. "Chrome,154.0".' }
+
+    TestRunLinkedTestCase:
+      type: object
+      properties:
+        id: { type: integer }
+        identifier: { type: string }
+        folderId: { type: integer }
+        projectId: { type: integer }
+        thirdPartyIdentifier: { type: string, nullable: true }
+        name: { type: string }
+        isShared: { type: boolean }
+
+    TestRunRetry:
+      type: object
+      properties:
+        uuid: { type: string }
+        status: { type: string }
+        duration: { type: integer, description: Attempt duration in milliseconds. }
+        workflowStatus: { type: string, description: Returned in camelCase by the API. }
+        logs:
+          $ref: '#/components/schemas/TestRunRetryLogs'
+
+    TestRunRetryLogs:
+      type: object
+      description: >-
+        Log content for an attempt. Keys are upper-case and left untouched by the client's camelCase
+        conversion. Empty (`{}`) for passing attempts. Raw Selenium/Playwright/console/network logs are
+        not here: fetch them with the Automate session API using `details.session_id`.
+      properties:
+        TEST_FAILURE:
+          type: array
+          description: Error message and stack trace, one string per line.
+          items: { type: string }
+        TEST_LOG:
+          type: array
+          description: Presigned URLs of uploaded log files.
+          items: { type: string }
 
     ApplicableBuilds:
       type: object

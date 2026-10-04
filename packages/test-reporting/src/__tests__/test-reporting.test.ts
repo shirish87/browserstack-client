@@ -107,6 +107,49 @@ describe("TestReportingClient", () => {
     });
   });
 
+  describe("getTestRuns parameters", () => {
+    const capture = () => {
+      const urls: string[] = [];
+      const fetchFn: typeof fetch = async (input) => {
+        urls.push(String(input));
+        return new Response(JSON.stringify({ hierarchy: [], pagination: { has_next: false } }), { headers: { "content-type": "application/json" } });
+      };
+      return { urls, client: new TestReportingClient({ username: "u", accessKey: "k", fetchFn }) };
+    };
+
+    it("keeps the original positional order so existing callers are unaffected", async () => {
+      const { urls, client } = capture();
+      await client.getTestRuns("bld", "rerun", "failed", "true", "false", "DURATION", "Asc", "cursor");
+      const q = new URL(urls[0] ?? "").searchParams;
+      expect(Object.fromEntries(q)).toEqual({
+        re_runs: "rerun",
+        test_statuses: "failed",
+        is_flaky: "true",
+        is_new_failure: "false",
+        sort: "DURATION",
+        order: "Asc",
+        next_page: "cursor",
+      });
+    });
+
+    it("accepts the additional filters after the original parameters", async () => {
+      const { urls, client } = capture();
+      await client.getTestRuns("bld", undefined, undefined, undefined, undefined, undefined, undefined, "cursor", "12,13", "host-a", "true", "true", "true", "Timeout", "iPhone", "Windows");
+      const q = Object.fromEntries(new URL(urls[0] ?? "").searchParams);
+      expect(q).toEqual({
+        next_page: "cursor",
+        ci_build_numbers: "12,13",
+        host_names: "host-a",
+        has_performance_anomaly: "true",
+        is_always_failing: "true",
+        is_muted: "true",
+        failure_categories: "Timeout",
+        devices: "iPhone",
+        os: "Windows",
+      });
+    });
+  });
+
   describe("getBuild", () => {
     it("returns build detail with camelCase fields", async () => {
       const client = makeClient(BUILD_DETAIL_WIRE);

@@ -47,6 +47,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/app-automate/builds/{buildId}/sessions.json": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetches list of sessions
+         * Fetches the sessions of a build. Verified live on a 3-session build; the default page size and maximum `limit` are not verified.
+         */
+        get: operations["getAppAutomateSessions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/app-automate/builds/{buildId}/sessions/{sessionId}/logs": {
         parameters: {
             query?: never;
@@ -857,8 +877,11 @@ export interface components {
         "5xx.InternalServerError": unknown;
         /** Browser */
         Browser: {
-            /** @example Chrome */
-            browser: string;
+            /**
+             * Null for App Automate sessions (verified live), which have no browser.
+             * @example Chrome
+             */
+            browser: string | null;
             /** @example 80.0 */
             browser_version: string;
         };
@@ -1025,8 +1048,35 @@ export interface components {
              */
             queued_sessions_max_allowed: number;
         };
-        /** AutomateSession */
-        AutomateSession: components["schemas"]["BrowserPlatform"] & {
+        /** AutomateBuildSessionContainer */
+        AutomateBuildSessionContainer: {
+            automation_session: components["schemas"]["AutomateBuildSession"];
+        };
+        /**
+         * AutomateBuildSession
+         * The lighter session summary embedded in a build's detail response. It has no log or video URLs; fetch the full session with getAutomateSession.
+         */
+        AutomateBuildSession: {
+            hashed_id?: string;
+            name?: string;
+            status?: string;
+            reason?: string;
+            duration?: number;
+            os?: string;
+            os_version?: string;
+            browser?: string;
+            browser_version?: string;
+            device?: string | null;
+            build_name?: string;
+            project_name?: string;
+            build_hashed_id?: string;
+            test_priority?: string | null;
+        };
+        /**
+         * AutomateSessionBase
+         * Fields common to Automate and App Automate sessions. Each product extends it with its own (AutomateSession, AppAutomateSession).
+         */
+        AutomateSessionBase: components["schemas"]["BrowserPlatform"] & {
             /**
              * Hashed ID of the session
              * @example 4207442b2b0567368956dba064c22a3235a76214
@@ -1043,11 +1093,11 @@ export interface components {
              */
             duration: number;
             /**
-             * Status of the session
+             * Outcome of the session. Observed live on Automate and App Automate: passed, failed. `running` and `timeout` are documented but not yet observed; `done` is a browserstack_status value, not a status.
              * @enum {string}
              */
-            status: "running" | "timeout" | "failed" | "done";
-            /** Execution status of the session */
+            status: "running" | "timeout" | "failed" | "done" | "passed";
+            /** Execution status of the session. Observed live: done, failed, passed. */
             browserstack_status: string;
             /**
              * Reason for test status
@@ -1083,7 +1133,7 @@ export interface components {
              * URL to view the Appium logs
              * @example https://api.browserstack.com/automate/builds/5343932818f9330c5d2b5c72aaf9dd8fde77b428/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/appiumlogs
              */
-            appium_logs_url: string;
+            appium_logs_url?: string;
             /**
              * URL to view session video
              * @example https://automate.browserstack.com/sessions/550709149fe79e949363b581e774d5ebffa1b8fe/video
@@ -1093,27 +1143,42 @@ export interface components {
              * URL to view browser console logs
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-aps/s3.ap-south-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-console-logs-v2.txt
              */
-            browser_console_logs_url: string;
+            browser_console_logs_url?: string;
             /**
              * URL to view browser logs
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-har-logs.txt
              */
-            har_logs_url: string;
+            har_logs_url?: string;
             /**
              * URL to view selenium logs
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-selenium-logs.txt
              */
-            selenium_logs_url: string;
+            selenium_logs_url?: string;
             /**
              * URL to view telemetry logs if it is enabled in your Selenium 4 session
              * @example https://automate.browserstack.com/s3-upload/bs-selenium-logs-euw/s3.eu-west-1/550709149fe79e949363b581e774d5ebffa1b8fe/550709149fe79e949363b581e774d5ebffa1b8fe-selenium-logs.txt
              */
-            selenium_telemetry_logs_url: string;
+            selenium_telemetry_logs_url?: string;
             /**
              * Timestamp at which the session started executing
              * @example 2020-03-11T10:14:36.000Z
              */
             created_at: string;
+            /**
+             * Hashed ID of the Automate build this session belongs to. This is the Automate build id, not the Test Reporting build id.
+             * @example 5a2325a471c829812cd32ed5e63fdc5f8d2c0250
+             */
+            build_hashed_id?: string;
+            /** Presigned URL of the session's terminal logs. */
+            session_terminal_logs_url?: string;
+            /** Presigned URL of the build's terminal logs. */
+            build_terminal_logs_url?: string;
+            /** Priority label set on the session, if any. */
+            test_priority?: string | null;
+            /** Time breakdown for the session (totals, BrowserStack vs user time, and optimisation links). */
+            insights?: {
+                [key: string]: unknown;
+            };
         };
         /** Status */
         Status: {
@@ -1161,11 +1226,11 @@ export interface components {
         /** AppAutomateBuildContainer */
         AppAutomateBuildContainer: {
             automation_build: components["schemas"]["AutomateBuild"];
-            sessions: components["schemas"]["AppAutomateSessionContainer"][];
+            sessions: components["schemas"]["AutomateBuildSessionContainer"][];
         };
         /** AppAutomateSessionContainer */
         AppAutomateSessionContainer: {
-            automation_session: components["schemas"]["AutomateSession"];
+            automation_session: components["schemas"]["AppAutomateSession"];
         };
         /** AppAutomateApp */
         AppAutomateApp: {
@@ -1285,10 +1350,14 @@ export interface components {
             app_url?: string;
             app_custom_id?: string;
             uploaded_at?: string;
+            /** File name of the uploaded app (verified live, e.g. WikipediaSample.apk). */
+            app_filename?: string;
         };
         /** AppAutomateSession */
-        AppAutomateSession: components["schemas"]["AutomateSession"] & {
+        AppAutomateSession: components["schemas"]["AutomateSessionBase"] & {
             app_details: components["schemas"]["AppAutomateSessionAppDetails"];
+            /** URL of the device logs. */
+            device_logs_url?: string;
         };
         /** AppAutomateTestPackage */
         AppAutomateTestPackage: {
@@ -1363,12 +1432,12 @@ export interface components {
              */
             hashed_id: string;
             /**
-             * Tag for the build
+             * Tag for the build (null when none was set; verified live)
              * @example pricing_project_build
              */
-            build_tag: string;
+            build_tag: string | null;
             /** Public URL of the build */
-            public_url: string;
+            public_url?: string;
         };
         /** AutomateProject */
         AutomateProject: {
@@ -1554,6 +1623,41 @@ export interface operations {
                     "application/json": components["schemas"]["AppAutomateMediaFile"][] | {
                         message: string;
                     };
+                };
+            };
+            400: components["schemas"]["400.BadRequest"];
+            401: components["schemas"]["401.Unauthorized"];
+            404: components["schemas"]["404.NotFound"];
+            422: components["schemas"]["422.UnprocessableEntity"];
+            500: components["schemas"]["5xx.InternalServerError"];
+        };
+    };
+    getAppAutomateSessions: {
+        parameters: {
+            query?: {
+                /** Number of sessions to return. Verified live (limit=1 and 2 on a 3-session build). */
+                limit?: number;
+                /** Skip this many sessions. Verified live; an offset past the end returns an empty list. */
+                offset?: number;
+                /** Filter by session status. Verified live - passed and failed. `done` matches nothing, and an unknown value returns an empty list rather than an error. */
+                status?: "running" | "timeout" | "failed" | "done" | "passed";
+            };
+            header?: never;
+            path: {
+                /** ID of your build */
+                buildId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppAutomateSessionContainer"][];
                 };
             };
             400: components["schemas"]["400.BadRequest"];

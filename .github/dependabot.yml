@@ -1,3 +1,16 @@
 version: 2
-updates: []
-# Disabled — re-enable when ready for automated dependency updates
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    ignore:
+      # The CLI is bundled to CommonJS for its pkg binaries, and ink 4+ is ESM-only with top-level await.
+      # ink 3 also needs react 17, and ink 7 needs react 19, so these only move together. Not before the
+      # binary build supports ESM.
+      - dependency-name: ink
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]

@@ -5,6 +5,7 @@ export default defineConfig({
   define: { __PKG_VERSION__: JSON.stringify(pkg.version) },
   entry: {
     index: "src/index.ts",
+    models: "src/models.ts",
     "schemas/index": "src/schemas/index.ts",
     "schemas/v5/index": "src/schemas/v5/index.ts",
     "test/index": "src/test/index.ts",

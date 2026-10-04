@@ -1,0 +1,22 @@
+[
+  {
+    "automation_build": {
+      "name": "tra-dashboard-verification playwright  1",
+      "hashed_id": "3865ea44096bf4a585f9353be8c22e56e288c6fa",
+      "duration": 16,
+      "status": "failed",
+      "build_tag": null,
+      "public_url": "https://automate.browserstack.com/dashboard/v2/public-build/TOKEN"
+    }
+  },
+  {
+    "automation_build": {
+      "name": "tra-dashboard-verification selenium  1",
+      "hashed_id": "2b1bd4ac87d8ffc8dcbe267277b21af2c835764b",
+      "duration": 11,
+      "status": "failed",
+      "build_tag": null,
+      "public_url": "https://automate.browserstack.com/dashboard/v2/public-build/TOKEN"
+    }
+  }
+]

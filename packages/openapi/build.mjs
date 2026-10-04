@@ -5,7 +5,7 @@ import ts from "typescript";
 import { fileURLToPath } from "node:url";
 import yaml from "yaml";
 import { CodecRegistry, registerAllBuiltins } from "@dot-slash/browserstack-openapi-transforms";
-import { generateClientModule } from "@dot-slash/browserstack-openapi-transforms/codegen/typescript";
+import { generateClientModule, emitZodModule } from "@dot-slash/browserstack-openapi-transforms/codegen/typescript";
 import { generateGoModule } from "@dot-slash/browserstack-openapi-transforms/codegen/golang";
 import { extractCLIMetadata, generateTSConstants, generateTSSchemas, generateGoConstants, generateGoDispatch, generateTUIManifestTS, generateTUIManifestGo } from "@dot-slash/browserstack-openapi-transforms/codegen/cli";
 
@@ -121,6 +121,24 @@ async function loadSpecWithShared(specPath) {
   // shared schemas are the base; product schemas override on collision
   doc.components.schemas = { ...(shared.components?.schemas ?? {}), ...doc.components.schemas };
   return doc;
+}
+
+console.log("Generating zod models...");
+
+// One models module per product: the product's own component schemas plus whatever they reference
+// from shared.yml, with the same camelCase keys the clients return.
+for (const { product } of productSpecs) {
+  const specFile = path.join(__dirname, "specs", `${product}.yml`);
+  try {
+    const own = yaml.parse(await fs.readFile(specFile, "utf8"));
+    const merged = await loadSpecWithShared(specFile);
+    const src = emitZodModule({ schemas: merged.components.schemas, roots: Object.keys(own.components?.schemas ?? {}) });
+    await fs.writeFile(path.join(outDir, `${product}.models.ts`), src);
+    console.log(`  ✓ ${product}.models.ts`);
+  } catch (e) {
+    console.error(`  ✗ ${product} models:`, e.message);
+    process.exitCode = 1;
+  }
 }
 
 console.log("Generating Go client modules...");

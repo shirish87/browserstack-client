@@ -1,0 +1,177 @@
+{
+  "name": "tra-dashboard-verification",
+  "hierarchy": [
+    {
+      "summary": {
+        "aggregate": 2,
+        "passed": 1,
+        "failed": 1,
+        "pending": 0,
+        "skipped": 0,
+        "unknown": 0
+      },
+      "is_after_all_hook": null,
+      "children": [
+        {
+          "summary": {
+            "aggregate": 2,
+            "passed": 1,
+            "failed": 1,
+            "pending": 0,
+            "skipped": 0,
+            "unknown": 0
+          },
+          "is_after_all_hook": null,
+          "children": [
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319680,
+                    "identifier": "TC-588",
+                    "folderId": 58725310,
+                    "thirdPartyIdentifier": null,
+                    "name": "passes: example.com has the expected title",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+selenium/1",
+                "pm_tool_details": [],
+                "session_id": "1c526b9e2c185df734530be0ba60f23aa9b40f86",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 1265,
+                "retries": [
+                  {
+                    "uuid": "66472842-01b5-48f4-b466-b7350eb07d3d",
+                    "status": "passed",
+                    "duration": 1265,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T15:55:02.866+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "passes: example.com has the expected title",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319681,
+                    "identifier": "TC-589",
+                    "folderId": 58725310,
+                    "thirdPartyIdentifier": null,
+                    "name": "fails on purpose: asserts a heading that does not exist",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+selenium/1",
+                "pm_tool_details": [],
+                "session_id": "1c526b9e2c185df734530be0ba60f23aa9b40f86",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 6117,
+                "retries": [
+                  {
+                    "uuid": "04e78b86-fa24-4919-98a2-1d633c798f29",
+                    "status": "failed",
+                    "duration": 6117,
+                    "workflowStatus": "Failed",
+                    "logs": {
+                      "TEST_FAILURE": [
+                        "Can't call getText on element with selector \"h1\" because element wasn't found",
+                        "Error: Can't call getText on element with selector \"h1\" because element wasn't found\n    at async compareElement (/work/node_modules/expect-webdriverio/lib/matchers/element/toHaveText.js:7:24)\n    at async legacyMultipleElementResultsStrategy (/work/node_modules/expect-webdriverio/lib/util/executeCommand.js:56:31)\n    at async waitUntil.wait (/work/node_modules/expect-webdriverio/lib/matchers/element/toHaveText.js:20:16)\n    at async waitUntil (/work/node_modules/expect-webdriverio/lib/util/waitUntil.js:17:26)\n    at async Object.toHaveText (/work/node_modules/expect-webdriverio/lib/matchers/element/toHaveText.js:19:95)\n    at async Context.<anonymous> (/work/test/selenium.spec.js:10:5)"
+                      ]
+                    }
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T15:55:04.135+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "failed"
+              },
+              "type": "TEST",
+              "display_name": "fails on purpose: asserts a heading that does not exist",
+              "is_before_all_hook": null
+            }
+          ],
+          "rank": 1,
+          "details": null,
+          "type": "DESCRIBE",
+          "display_name": "tra-dashboard verification (selenium)",
+          "is_before_all_hook": null
+        }
+      ],
+      "rank": 0,
+      "details": {
+        "file_path": "test/selenium.spec.js",
+        "os": {
+          "name": "windows",
+          "version": "11",
+          "key": "Windows,11"
+        },
+        "finished_at": null,
+        "browser": {
+          "name": "chrome",
+          "version": "154.0",
+          "key": "Chrome,154.0"
+        },
+        "vc_file_url": "",
+        "isRealDevice": true,
+        "device": "",
+        "middle_scopes": null
+      },
+      "type": "ROOT",
+      "display_name": "selenium.spec.js",
+      "is_before_all_hook": null
+    }
+  ],
+  "pagination": {
+    "has_next": true,
+    "next_page": "eyJmaWxlTmFtZSI6InRlc3Qvc2VsZW5pdW0uc3BlYy5qcyIsIm9zIjoiV2luZG93cywxMSIsImRldmljZSI6Ik5BIiwiYnJvd3NlciI6IkNocm9tZSwxNTQuMCJ9"
+  },
+  "project_id": 2812405,
+  "group_id": 1,
+  "build_id": "5ae414df9bd1b0b6fa387a7ab00489b122aaf75a",
+  "build_name": "tra-dashboard-verification selenium",
+  "build_number": 1,
+  "original_name": "tra-dashboard-verification selenium",
+  "test_summary": {
+    "passed": 1,
+    "failed": 1,
+    "in progress": 0,
+    "skipped": 0,
+    "retest": 0,
+    "blocked": 0,
+    "untested": 0,
+    "pending": 0,
+    "unknown": 0
+  },
+  "is_manually_overridden": false,
+  "is_archived": false,
+  "app_details": null
+}

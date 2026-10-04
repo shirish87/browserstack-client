@@ -22,4 +22,15 @@ describe("defaultErrorMessage", () => {
   it("returns undefined when no known key matches", () => {
     expect(defaultErrorMessage({ foo: 1 })).toBeUndefined();
   });
+  it("extracts code and message from an S3-style XML error (Automate log endpoints)", () => {
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>abc/abc-selenium-logs.txt</Key><RequestId>X</RequestId></Error>`;
+    expect(defaultErrorMessage(xml)).toBe("NoSuchKey: The specified key does not exist.");
+  });
+  it("falls back to the code, or nothing, for sparse or non-error XML", () => {
+    expect(defaultErrorMessage("<Error><Code>AccessDenied</Code></Error>")).toBe("AccessDenied");
+    expect(defaultErrorMessage("<?xml version=\"1.0\"?><root><x>1</x></root>")).toBeUndefined();
+  });
+  it("leaves an nginx HTML error page without a message so the status line is used", () => {
+    expect(defaultErrorMessage("<html>\n<head><title>404 Not Found</title></head>\n<body><h1>404 Not Found</h1></body></html>")).toBeUndefined();
+  });
 });

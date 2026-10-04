@@ -1,6 +1,7 @@
 import { toPascalCase, toGoPackageName } from "./case";
 
 interface SchemaProperty {
+  nullable?: boolean;
   type?: string;
   title?: string;
   items?: { type?: string; $ref?: string };
@@ -74,7 +75,8 @@ function additionalPropsGoType(
 }
 
 function goType(prop: SchemaProperty, required: boolean, knownTypes: Set<string>, schemaName: string, fieldName: string): string {
-  const ptr = required ? "" : "*";
+  // A required field that may be null still needs a pointer to tell null apart from an empty value.
+  const ptr = required && !prop.nullable ? "" : "*";
   if (prop.$ref) {
     const name = toPascalCase(prop.$ref.replace(/^.*\//, ""));
     if (knownTypes.has(name)) {
@@ -105,14 +107,14 @@ function goType(prop: SchemaProperty, required: boolean, knownTypes: Set<string>
   }
 }
 
-function mergeAllOf(schema: SchemaObject, schemas?: Schemas): SchemaObject {
+function mergeAllOf(schema: SchemaObject, schemas?: Schemas, seen: ReadonlySet<string> = new Set()): SchemaObject {
   if (!schema.allOf) return schema;
   const merged: SchemaObject = { type: "object", properties: {}, required: [] };
   for (const part of schema.allOf) {
-    // Resolve $ref parts so their fields are flattened in.
-    const resolved = (part.$ref && schemas)
-      ? schemas[part.$ref.replace(/^.*\//, "")] ?? part
-      : part;
+    // Resolve $ref parts so their fields are flattened in, recursing when the target is itself an allOf.
+    const refName = part.$ref?.replace(/^.*\//, "");
+    const target = refName && schemas && !seen.has(refName) ? schemas[refName] : undefined;
+    const resolved = target ? mergeAllOf(target, schemas, new Set([...seen, refName as string])) : part;
     if (resolved.properties) {
       Object.assign(merged.properties!, resolved.properties);
     }

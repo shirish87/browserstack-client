@@ -2,7 +2,7 @@
   "name": "browserstack-client",
   "private": true,
   "type": "module",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "description": "BrowserStack client SDK monorepo",
   "packageManager": "pnpm@10.33.2",
   "engines": {
@@ -19,6 +19,7 @@
     "build:cli": "pnpm build:cli:go && pnpm build:cli:ts",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:contract": "BROWSERSTACK_CONTRACT=1 vitest run --project contract-live",
     "coverage": "vitest run --coverage",
     "lint": "eslint packages --ext .ts",
     "check": "tsc --build --noEmit packages/*/tsconfig.json packages/cli/typescript/tsconfig.json",

@@ -282,6 +282,31 @@ describe("AutomateClient", () => {
       expect(data).toContain("appium log");
     });
 
+    it("getSessionPlaywrightLogs returns text even when the API sends no Content-Type", async () => {
+      // The live endpoint answers 200 with no Content-Type header at all.
+      const noContentType = new Response(new TextEncoder().encode("pw:protocol SEND ► {\"id\":1}\n"));
+      expect(noContentType.headers.get("content-type")).toBeNull();
+      const client = makeClient(noContentType);
+      const data = await client.getSessionPlaywrightLogs("abc123session");
+      expect(typeof data).toBe("string");
+      expect(data).toContain("pw:protocol");
+    });
+
+    it("getSessionSeleniumLogs surfaces S3's XML 404 as a readable message", async () => {
+      const xml = '<?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message></Error>';
+      const client = makeClient(new Response(xml, { status: 404, headers: { "content-type": "application/xml" } }));
+      const err = await client.getSessionSeleniumLogs("abc123session").catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(HttpError);
+      expect((err as HttpError).status).toBe(404);
+      expect((err as HttpError).message).toBe("NoSuchKey: The specified key does not exist.");
+    });
+
+    it("an nginx HTML 404 becomes a plain status message", async () => {
+      const html = "<html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found</h1></center></body></html>";
+      const client = makeClient(new Response(html, { status: 404, statusText: "Not Found", headers: { "content-type": "text/html; charset=utf-8" } }));
+      await expect(client.getSession("missing")).rejects.toThrow(/404/);
+    });
+
     it("getSessionLogs throws HttpError on 404", async () => {
       const client = makeClient(makeErrorResponse(404, "Session not found"));
       await expect(client.getSessionLogs("notexist")).rejects.toThrow(HttpError);

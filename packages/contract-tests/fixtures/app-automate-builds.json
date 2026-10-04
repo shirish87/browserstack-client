@@ -1,0 +1,22 @@
+[
+  {
+    "automation_build": {
+      "name": "tra-dashboard-verification appium  3",
+      "hashed_id": "5d6b42f4bd2ce7832a5ac8bcab2317612f91b97e",
+      "duration": 72,
+      "status": "failed",
+      "build_tag": null,
+      "public_url": "https://app-automate.browserstack.com/dashboard/v2/public-build/TOKEN"
+    }
+  },
+  {
+    "automation_build": {
+      "name": "tra-dashboard-verification appium  2",
+      "hashed_id": "19732a308be879692f263aac6fd112c607f5ab6f",
+      "duration": 29,
+      "status": "failed",
+      "build_tag": null,
+      "public_url": "https://app-automate.browserstack.com/dashboard/v2/public-build/TOKEN"
+    }
+  }
+]

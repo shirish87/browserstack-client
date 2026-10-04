@@ -181,6 +181,14 @@ export type GetAutomateSessionSeleniumLogsError = HttpError<
   | (operations["getAutomateSessionSeleniumLogs"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
 >;
 
+export type GetAutomateSessionPlaywrightLogsError = HttpError<
+  | (operations["getAutomateSessionPlaywrightLogs"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["getAutomateSessionPlaywrightLogs"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["getAutomateSessionPlaywrightLogs"]["responses"][404] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["getAutomateSessionPlaywrightLogs"]["responses"][422] extends { content: { "application/json": infer E } } ? E : unknown)
+  | (operations["getAutomateSessionPlaywrightLogs"]["responses"][500] extends { content: { "application/json": infer E } } ? E : unknown)
+>;
+
 export type UploadAutomateBuildTerminalLogsError = HttpError<
   | (operations["uploadAutomateBuildTerminalLogs"]["responses"][400] extends { content: { "application/json": infer E } } ? E : unknown)
   | (operations["uploadAutomateBuildTerminalLogs"]["responses"][401] extends { content: { "application/json": infer E } } ? E : unknown)
@@ -631,7 +639,7 @@ export class GeneratedAutomateClient extends APIClient {
  * @param buildId - ID of your build
  * @param limit - Specify the number of results to be displayed. The default value is 10, and the maximum value is 100
  * @param offset - Retrieve sessions from a specific point using the offset parameter
- * @param status - Status of the session
+ * @param status - Filter by session status. Verified live - passed and failed. `done` matches nothing, and an unknown value returns an empty list rather than an error.
  * @param options - Optional abort signal and other request options
  */
   getSessions(buildId: string, limit?: string, offset?: string, status?: string, options?: ExecuteOptions): Promise<GetAutomateSessionsResult> {
@@ -733,6 +741,28 @@ export class GeneratedAutomateClient extends APIClient {
       responseCodecConfig: {},
       baseUrl: "sdk" as const,
       operationId: "getAutomateSessionSeleniumLogs",
+      method: "GET" as const,
+      signal: options?.signal,
+    }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;
+  }
+
+/**
+ * Fetches the Playwright protocol logs for a Playwright session, as text. Responds with 200 and no Content-Type header, and with an XML 404 body when the session has no Playwright logs (for example a Selenium session).
+ *
+ * @param sessionId - ID of your session
+ * @param options - Optional abort signal and other request options
+ */
+  getSessionPlaywrightLogs(sessionId: string, options?: ExecuteOptions): Promise<string> {
+    return (this.execute({
+      path: "/automate/sessions/{sessionId}/playwrightlogs",
+      params: { path: { sessionId: sessionId } },
+
+      requestCodec: "json",
+      requestCodecConfig: {},
+      responseCodec: "text",
+      responseCodecConfig: {},
+      baseUrl: "sdk" as const,
+      operationId: "getAutomateSessionPlaywrightLogs",
       method: "GET" as const,
       signal: options?.signal,
     }) as Promise<unknown>).then((r) => toCamelCase(r, undefined)) as Promise<string>;

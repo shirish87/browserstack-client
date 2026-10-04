@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "noEmit": true,
+    "types": ["node"],
+    "paths": {
+      "@dot-slash/browserstack-core": ["../core/src/index.ts"],
+      "@dot-slash/browserstack-openapi/*": ["../openapi/generated/*.ts"],
+      "@dot-slash/browserstack-openapi-transforms": ["../openapi-transforms/src/index.ts"],
+      "@dot-slash/browserstack-automate/models": ["../automate/src/models.ts"],
+      "@dot-slash/browserstack-automate": ["../automate/src/index.ts"],
+      "@dot-slash/browserstack-app-automate/models": ["../app-automate/src/models.ts"],
+      "@dot-slash/browserstack-app-automate": ["../app-automate/src/index.ts"],
+      "@dot-slash/browserstack-test-reporting/models": ["../test-reporting/src/models.ts"],
+      "@dot-slash/browserstack-test-reporting": ["../test-reporting/src/index.ts"]
+    }
+  },
+  "include": ["src", "scripts/*.d.mts"]
+}

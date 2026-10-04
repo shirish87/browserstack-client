@@ -43,6 +43,8 @@ components:
       properties:
         browser:
           type: string
+          nullable: true
+          description: Null for App Automate sessions, which have no browser.
           example: Chrome
         browser_version:
           type: string
@@ -131,6 +133,7 @@ components:
             example: '10'
           device:
             type: string
+            nullable: true
             example:
           real_mobile:
             type: boolean
@@ -275,8 +278,37 @@ components:
           type: number
           description: Maximum number of sessions that can be queued
           example: 240
-    AutomateSession:
-      title: AutomateSession
+    AutomateBuildSessionContainer:
+      title: AutomateBuildSessionContainer
+      type: object
+      required:
+      - automation_session
+      properties:
+        automation_session:
+          $ref: '#/components/schemas/AutomateBuildSession'
+    AutomateBuildSession:
+      title: AutomateBuildSession
+      type: object
+      description: The lighter session summary embedded in a build's detail response. It has no log or video URLs;
+        fetch the full session with getAutomateSession.
+      properties:
+        hashed_id: { type: string }
+        name: { type: string }
+        status: { type: string }
+        reason: { type: string }
+        duration: { type: number }
+        os: { type: string }
+        os_version: { type: string }
+        browser: { type: string }
+        browser_version: { type: string }
+        device: { type: string, nullable: true }
+        build_name: { type: string }
+        project_name: { type: string }
+        build_hashed_id: { type: string }
+        test_priority: { type: string, nullable: true }
+    AutomateSessionBase:
+      title: AutomateSessionBase
+      description: Fields common to Automate and App Automate sessions. Each product extends it with its own (AutomateSession, AppAutomateSession).
       allOf:
       - $ref: '#/components/schemas/BrowserPlatform'
       - type: object
@@ -292,12 +324,7 @@ components:
         - logs
         - browser_url
         - public_url
-        - appium_logs_url
         - video_url
-        - browser_console_logs_url
-        - har_logs_url
-        - selenium_logs_url
-        - selenium_telemetry_logs_url
         - created_at
         properties:
           hashed_id:
@@ -314,15 +341,19 @@ components:
             example: 10
           status:
             type: string
-            description: Status of the session
+            description: >-
+              Outcome of the session. Observed live on Automate and App Automate: passed, failed. `running` and
+              `timeout` are documented but not yet observed; `done` is a browserstack_status value, not a status.
             enum:
             - running
             - timeout
             - failed
             - done
+            - passed
           browserstack_status:
             type: string
-            description: Execution status of the session
+            description: >-
+              Execution status of the session. Observed live: done, failed, passed.
           reason:
             type: string
             description: Reason for test status
@@ -375,6 +406,26 @@ components:
             type: string
             description: Timestamp at which the session started executing
             example: '2020-03-11T10:14:36.000Z'
+          build_hashed_id:
+            type: string
+            description: >-
+              Hashed ID of the Automate build this session belongs to. This is the Automate build id, not the
+              Test Reporting build id.
+            example: 5a2325a471c829812cd32ed5e63fdc5f8d2c0250
+          session_terminal_logs_url:
+            type: string
+            description: Presigned URL of the session's terminal logs.
+          build_terminal_logs_url:
+            type: string
+            description: Presigned URL of the build's terminal logs.
+          test_priority:
+            type: string
+            nullable: true
+            description: Priority label set on the session, if any.
+          insights:
+            type: object
+            additionalProperties: true
+            description: Time breakdown for the session (totals, BrowserStack vs user time, and optimisation links).
     Status:
       title: Status
       type: object
