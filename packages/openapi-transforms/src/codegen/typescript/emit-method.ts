@@ -14,7 +14,7 @@ export interface EmitMethodInput {
   returnType: string;
   returnTypeAliases?: string[];
   annotations: OperationAnnotations;
-  baseUrl: "sdk" | "sdkCloud" | "sdkIngest";
+  baseUrl: "sdk" | "sdkCloud";
   overrides?: OperationOverrides;
   summary?: string;
   description?: string;

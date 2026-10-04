@@ -18,11 +18,11 @@ import {
 } from "./linked-sessions";
 
 export type * from "./linked-sessions";
+export { TestReportingIngestClient } from "./ingest";
+export type { IngestBuildRequest, IngestEvent, TestReportingIngestOptions } from "./ingest";
 
 export interface TestReportingClientOptions extends BrowserStackOptions {
   uploadBaseUrl?: string;
-  /** Base URL of the ingestion (collector) API: start/finish build, test and hook runs, build logs. */
-  ingestBaseUrl?: string;
   /**
    * Used to resolve a test's session and fetch its logs (see `getTestSession`). Defaults to a client built from
    * these same options, minus the Test Reporting base URLs. Pass one to customise it (base URL, timeout, ...).
@@ -44,8 +44,7 @@ export class TestReportingClient extends GeneratedTestReportingClient {
       options?.baseUrl ?? "https://api-automation.browserstack.com/ext/v1",
       options?.uploadBaseUrl ?? "https://upload-automation.browserstack.com",
       "@dot-slash/browserstack-test-reporting",
-      __PKG_VERSION__,
-      options?.ingestBaseUrl ?? "https://collector-observability.browserstack.com/ext/v1"
+      __PKG_VERSION__
     );
     const shared: TestReportingClientOptions = { ...options };
     this.automateClient = shared.automate;
@@ -53,7 +52,6 @@ export class TestReportingClient extends GeneratedTestReportingClient {
     // Those base URLs are Test Reporting's, so the sibling clients keep their own.
     delete shared.baseUrl;
     delete shared.uploadBaseUrl;
-    delete shared.ingestBaseUrl;
     delete shared.automate;
     delete shared.appAutomate;
     this.siblingOptions = shared;

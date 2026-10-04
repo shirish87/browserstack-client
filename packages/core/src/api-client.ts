@@ -50,7 +50,7 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
  */
 export class APIClient {
   /** Base URLs used for API requests. */
-  protected readonly baseUrls: { sdk: string; sdkCloud: string; sdkIngest?: string };
+  protected readonly baseUrls: { sdk: string; sdkCloud: string };
   /** HTTP Basic Auth header derived from username and access key. */
   protected readonly authHeader?: string;
   /** User-Agent string sent with every request. */
@@ -70,8 +70,7 @@ export class APIClient {
     baseUrl: string,
     cloudBaseUrl: string,
     pkgName: string,
-    pkgVersion: string,
-    ingestBaseUrl?: string
+    pkgVersion: string
   ) {
     const hasMiddleware = !!(options.middleware && options.middleware.length > 0);
     const usernameOptional = options.usernameOptional === true || hasMiddleware;
@@ -94,7 +93,6 @@ export class APIClient {
     this.baseUrls = {
       sdk: options.baseUrl ?? baseUrl,
       sdkCloud: cloudBaseUrl,
-      sdkIngest: ingestBaseUrl,
     };
     this.authHeader = (username && accessKey) ? buildBasicAuthHeader(username, accessKey) : undefined;
     this.userAgent = pkginfo.userAgent;
@@ -135,7 +133,7 @@ export class APIClient {
     requestInput?: unknown;
     responseCodec: string;
     responseCodecConfig: unknown;
-    baseUrl?: "sdk" | "sdkCloud" | "sdkIngest";
+    baseUrl?: "sdk" | "sdkCloud";
     signal?: AbortSignal;
     [key: string]: unknown;
   }): Promise<T> {
@@ -181,7 +179,6 @@ export class APIClient {
 
     try {
       const base = this.baseUrls[spec.baseUrl ?? "sdk"];
-      if (!base) throw new BrowserStackError(`No base URL configured for "${spec.baseUrl}"`);
       let interpolated = spec.path;
       for (const [k, v] of Object.entries(spec.params?.path ?? {})) {
         interpolated = interpolated.replace(`{${k}}`, encodeURIComponent(String(v)));

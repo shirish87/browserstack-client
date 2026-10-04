@@ -4,6 +4,7 @@
 // Best-effort: every API error is logged and swallowed, so an unreachable BrowserStack never fails CI.
 import { relative } from "node:path";
 import os from "node:os";
+import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 
 const warn = (what, e) => console.warn(`[tra] ${what} failed (ignored): ${e instanceof Error ? e.message : e}`);
@@ -17,17 +18,18 @@ export class TraReporter {
     // The GitHub Actions event payload (push / pull_request) has the commit and PR details env vars lack.
     this.event = event ?? (env.GITHUB_EVENT_PATH ? JSON.parse(readFileSync(env.GITHUB_EVENT_PATH, "utf-8")) : {});
     this.enabled = Boolean(client);
-    this.build = undefined; // Promise<string | undefined> (buildHashedId)
-    this.tests = new Map(); // test id -> Promise<{ buildId, uuid } | undefined>
-    this.logs = []; // pending build log entries, flushed at the end of the run
+    this.started = false;
+    this.chain = Promise.resolve();
+    this.uuids = new Map(); // vitest test id -> run uuid
+    this.startedAt = new Map();
   }
 
   static async fromEnv(env = process.env) {
     const username = env.BROWSERSTACK_USERNAME;
     const accessKey = env.BROWSERSTACK_ACCESS_KEY || env.BROWSERSTACK_KEY;
     if (!username || !accessKey) return new TraReporter({ env });
-    const { TestReportingClient } = await import("../../packages/test-reporting/dist/index.js");
-    return new TraReporter({ client: new TestReportingClient({ username, accessKey }), env });
+    const { TestReportingIngestClient } = await import("../../packages/test-reporting/dist/index.js");
+    return new TraReporter({ client: new TestReportingIngestClient({ username, accessKey }), env });
   }
 
   buildRequest() {
@@ -73,99 +75,129 @@ export class TraReporter {
     return req;
   }
 
+  // Events are sent one at a time, in order, and never throw.
+  enqueue(what, fn) {
+    this.chain = this.chain.then(async () => {
+      if (!this.started) return;
+      try {
+        await fn();
+      } catch (e) {
+        warn(what, e);
+      }
+    });
+    return this.chain;
+  }
+
   async onTestRunStart() {
     if (!this.enabled) return;
-    this.build = this.client
-      .startBuild(this.buildRequest())
-      .then((res) => res?.buildHashedId ?? res?.build_hashed_id)
-      .catch((e) => (warn("startBuild", e), undefined));
-    await this.build;
-  }
-
-  async onTestCaseReady(testCase) {
-    if (!this.enabled) return;
-    const started = (async () => {
-      const buildId = await this.build;
-      if (!buildId) return undefined;
-      try {
-        const parts = testCase.fullName.split(" > ");
-        const res = await this.client.startTestRun(buildId, {
-          name: testCase.name,
-          fileName: relative(this.cwd, testCase.module.moduleId).replaceAll("\\", "/"),
-          scopes: [testCase.project.name, ...parts.slice(0, -1)].slice(0, 20),
-          startedAt: iso(),
-          ...(testCase.location ? { location: `${testCase.location.line}:${testCase.location.column}` } : {}),
-        });
-        const uuid = res?.uuid ?? res?.testRunId;
-        return uuid ? { buildId, uuid, startedAt: Date.now() } : undefined;
-      } catch (e) {
-        warn("startTestRun", e);
-        return undefined;
-      }
-    })();
-    this.tests.set(testCase.id, started);
-    await started;
-  }
-
-  async onUserConsoleLog(log) {
-    if (!this.enabled || !log.taskId) return;
-    const run = await this.tests.get(log.taskId);
-    if (!run) return;
-    this.logs.push({
-      kind: "TEST_LOG",
-      testRunUuid: run.uuid,
-      level: log.type === "stderr" ? "ERROR" : "INFO",
-      message: String(log.content).replace(/\n$/, "").slice(0, 10000),
-      timestamp: new Date(log.time ?? Date.now()).toISOString(),
-    });
-  }
-
-  async onTestCaseResult(testCase) {
-    if (!this.enabled) return;
-    const run = await this.tests.get(testCase.id);
-    if (!run) return;
     try {
-      const result = testCase.result();
-      const state = result.state === "pending" ? "skipped" : result.state;
-      const parts = testCase.fullName.split(" > ");
+      await this.client.startBuild(this.buildRequest());
+      this.started = true;
+    } catch (e) {
+      warn("startBuild", e);
+    }
+  }
+
+  runData(testCase, extra) {
+    const parts = testCase.fullName.split(" > ");
+    const file = relative(this.cwd, testCase.module.moduleId).replaceAll("\\", "/");
+    return {
+      uuid: this.uuids.get(testCase.id),
+      type: "test",
+      name: testCase.name,
+      scope: testCase.fullName,
+      scopes: [testCase.project.name, ...parts.slice(0, -1)].slice(0, 20),
+      identifier: `${file} > ${testCase.fullName}`,
+      file_name: file,
+      location: file,
+      framework: "vitest",
+      ...extra,
+    };
+  }
+
+  onTestCaseReady(testCase) {
+    if (!this.enabled) return;
+    this.uuids.set(testCase.id, randomUUID());
+    const started = iso();
+    this.startedAt.set(testCase.id, Date.now());
+    return this.enqueue("TestRunStarted", () =>
+      this.client.sendEvents([{ event_type: "TestRunStarted", test_run: this.runData(testCase, { started_at: started, result: "pending" }) }])
+    );
+  }
+
+  onUserConsoleLog(log) {
+    if (!this.enabled) return;
+    const uuid = this.uuids.get(log.taskId);
+    if (!uuid) return;
+    return this.enqueue("LogCreated", () =>
+      this.client.sendEvents([
+        {
+          event_type: "LogCreated",
+          logs: [
+            {
+              kind: "TEST_LOG",
+              test_run_uuid: uuid,
+              level: log.type === "stderr" ? "ERROR" : "INFO",
+              message: String(log.content).replace(/\n$/, "").slice(0, 10000),
+              timestamp: new Date(log.time ?? Date.now()).toISOString(),
+              http_response: {},
+            },
+          ],
+        },
+      ])
+    );
+  }
+
+  onTestCaseResult(testCase) {
+    if (!this.enabled || !this.uuids.has(testCase.id)) return;
+    const result = testCase.result();
+    const state = result.state === "pending" ? "skipped" : result.state;
+    const errors = (result.errors ?? []).slice(0, 100);
+    const extra = {
+      finished_at: iso(),
+      result: state,
+      duration_in_ms: Math.round(testCase.diagnostic()?.duration ?? Date.now() - this.startedAt.get(testCase.id)),
+    };
+    if (state === "failed" && errors.length) {
+      extra.failure = errors.map((x) => ({ backtrace: [x.message, x.stack ?? ""] }));
+      extra.failure_reason = errors[0].message;
+      extra.failure_type = /AssertionError/.test(errors[0].name ?? errors[0].message ?? "") ? "AssertionError" : "UnhandledError";
+    }
+    return this.enqueue("TestRunFinished", async () => {
+      const uuid = this.uuids.get(testCase.id);
+      const events = [];
       if (state === "failed") {
-        for (const x of result.errors ?? []) {
-          this.logs.push({ kind: "TEST_LOG", testRunUuid: run.uuid, level: "ERROR", message: String(x.stack ?? x.message).slice(0, 10000), timestamp: iso(), failure: true });
+        for (const x of errors) {
+          events.push({
+            event_type: "LogCreated",
+            logs: [{ kind: "TEST_LOG", test_run_uuid: uuid, level: "ERROR", message: String(x.stack ?? x.message).slice(0, 10000), timestamp: iso(), http_response: {}, failure: true }],
+          });
         }
       }
-      await this.client.finishTestRun(run.buildId, run.uuid, {
-        result: state,
-        finishedAt: iso(),
-        fileName: relative(this.cwd, testCase.module.moduleId).replaceAll("\\", "/"),
-        scopes: [testCase.project.name, ...parts.slice(0, -1)].slice(0, 20),
-        durationInMs: Math.round(testCase.diagnostic()?.duration ?? Date.now() - run.startedAt),
-        ...(state === "failed" ? { failure: (result.errors ?? []).slice(0, 100).map((x) => ({ error: x.message, backtrace: x.stack })) } : {}),
-      });
-    } catch (e) {
-      warn("finishTestRun", e);
-    }
+      events.push({ event_type: "TestRunFinished", test_run: this.runData(testCase, extra) });
+      await this.client.sendEvents(events);
+    });
   }
 
   async onTestRunEnd(_modules, errors = []) {
     if (!this.enabled) return;
-    await Promise.all(this.tests.values());
-    const buildId = await this.build;
-    if (!buildId) return;
-    // Unhandled errors (outside any test) belong to the build itself.
+    // Unhandled errors happen outside any test: report each as a failed run so they show up in the build.
     for (const x of errors) {
-      this.logs.push({ kind: "TEST_LOG", level: "ERROR", message: String(x.stack ?? x.message).slice(0, 10000), timestamp: iso(), failure: true });
+      const uuid = randomUUID();
+      const now = iso();
+      const run = {
+        uuid, type: "test", name: `Unhandled ${x.name ?? "error"}`, scope: "unhandled errors", scopes: ["unhandled errors"],
+        identifier: `unhandled > ${x.message}`, file_name: "unhandled", framework: "vitest", started_at: now, finished_at: now,
+        result: "failed", duration_in_ms: 0, failure: [{ backtrace: [x.message, x.stack ?? ""] }], failure_reason: x.message, failure_type: "UnhandledError",
+      };
+      this.enqueue("unhandled error", () => this.client.sendEvents([{ event_type: "TestRunStarted", test_run: { ...run, finished_at: undefined, result: "pending" } }, { event_type: "TestRunFinished", test_run: run }]));
     }
-    for (let i = 0; i < this.logs.length; i += 500) {
-      try {
-        await this.client.addBuildLogs(buildId, { logs: this.logs.slice(i, i + 500) });
-      } catch (e) {
-        warn("addBuildLogs", e);
-      }
-    }
+    await this.chain;
+    if (!this.started) return;
     try {
-      await this.client.finishBuild(buildId, { finishedAt: iso() });
+      await this.client.stopBuild(iso());
     } catch (e) {
-      warn("finishBuild", e);
+      warn("stopBuild", e);
     }
   }
 }
