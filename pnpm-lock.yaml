@@ -76,8 +76,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.9.1))
       zod:
-        specifier: ^4.4.3
-        version: 4.4.3
+        specifier: ^4.6.5
+        version: 4.6.5
 
   packages/accessibility:
     devDependencies:
@@ -130,8 +130,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.9.1))
       zod:
-        specifier: ^4.4.3
-        version: 4.4.3
+        specifier: ^4.6.5
+        version: 4.6.5
 
   packages/automate:
     devDependencies:
@@ -157,8 +157,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.9.1))
       zod:
-        specifier: ^4.4.3
-        version: 4.4.3
+        specifier: ^4.6.5
+        version: 4.6.5
 
   packages/cli/typescript:
     dependencies:
@@ -175,8 +175,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       zod:
-        specifier: ^4.4.3
-        version: 4.4.3
+        specifier: ^4.6.5
+        version: 4.6.5
     devDependencies:
       '@dot-slash/browserstack-accessibility':
         specifier: workspace:*
@@ -236,8 +236,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.9.1))
       zod:
-        specifier: ^4.4.3
-        version: 4.4.3
+        specifier: ^4.6.5
+        version: 4.6.5
 
   packages/core:
     dependencies:
@@ -283,8 +283,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.9.1))
       zod:
-        specifier: ^4.4.3
-        version: 4.4.3
+        specifier: ^4.6.5
+        version: 4.6.5
 
   packages/local-testing-binary:
     dependencies:
@@ -404,8 +404,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.9.1))
       zod:
-        specifier: ^4.4.3
-        version: 4.4.3
+        specifier: ^4.6.5
+        version: 4.6.5
 
   packages/sdk:
     dependencies:
@@ -502,8 +502,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@20.0.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@20.0.0)(esbuild@0.27.7)(yaml@2.9.1))
       zod:
-        specifier: ^4.4.3
-        version: 4.4.3
+        specifier: ^4.6.5
+        version: 4.6.5
 
   packages/website-scanner:
     devDependencies:
@@ -3477,8 +3477,8 @@ packages:
     resolution: {integrity: sha512-YnOmtSbv4MTf7RGJMK0FvZ+KD8OEe/J5BNnR0GHhD8J/XcG/Qvxgszm0Un6FTHWW4uHlTgP0IztiXQnGyIR45g==}
     engines: {node: '>=8'}
 
-  zod@4.4.3:
-    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
+  zod@4.6.5:
+    resolution: {integrity: sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -6511,6 +6511,6 @@ snapshots:
     dependencies:
       '@types/yoga-layout': 1.9.2
 
-  zod@4.4.3: {}
+  zod@4.6.5: {}
 
   zwitch@2.0.4: {}

@@ -13,6 +13,6 @@
     "@dot-slash/browserstack-automate": "workspace:*",
     "@dot-slash/browserstack-test-reporting": "workspace:*",
     "vitest": "^4.1.4",
-    "zod": "^4.4.3"
+    "zod": "^4.6.5"
   }
 }

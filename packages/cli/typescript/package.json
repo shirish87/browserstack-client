@@ -80,7 +80,7 @@
     "ink": "^3.2.0",
     "react": "^17.0.2",
     "signal-exit": "^4.1.0",
-    "zod": "^4.4.3"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@dot-slash/browserstack-accessibility": "workspace:*",
