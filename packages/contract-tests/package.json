@@ -12,7 +12,7 @@
   "devDependencies": {
     "@dot-slash/browserstack-automate": "workspace:*",
     "@dot-slash/browserstack-test-reporting": "workspace:*",
-    "vitest": "^4.1.4",
-    "zod": "^4.4.3"
+    "vitest": "^4.1.11",
+    "zod": "^4.6.5"
   }
 }

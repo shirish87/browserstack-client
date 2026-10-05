@@ -62,7 +62,10 @@ export function parseArgs<T extends z.ZodObject<z.ZodRawShape>>(
   args: string[],
   argNames?: string[]
 ): ParsedArgs {
-  const positionalSchema = schema.shape.positional as z.ZodTuple<any>;
+  const positionalSchema = schema.shape.positional;
+  if (!(positionalSchema instanceof z.ZodTuple)) {
+    throw new BrowserStackError("CLI schema is missing a positional tuple");
+  }
   const positionalCount = positionalSchema._def.items.length;
 
   const positionalArgs = args.slice(0, positionalCount);

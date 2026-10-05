@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "7.2.1",
+  "version": "7.2.2",
   "type": "module",
   "description": "Secure server-side router for BrowserStack client SDKs",
   "engines": {
@@ -28,9 +28,9 @@
     "@dot-slash/browserstack-core": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "20.0.0",
+    "@types/node": "20.19.43",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.11"
   }
 }

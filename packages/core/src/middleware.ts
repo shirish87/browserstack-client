@@ -23,6 +23,29 @@ export type MiddlewareFunction = (
   next: MiddlewareNext
 ) => Promise<MiddlewareResponse>;
 
+const HTTP_METHODS: readonly HttpMethod[] = ["GET", "POST", "PUT", "PATCH", "DELETE"];
+
+function toHttpMethod(method: string): HttpMethod {
+  const upper = method.toUpperCase();
+  const match = HTTP_METHODS.find((m) => m === upper);
+  if (!match) {
+    throw new TypeError(`Unsupported HTTP method: ${method}`);
+  }
+  return match;
+}
+
+function isHeadersLike(headers: HeadersInit): headers is Headers {
+  return "forEach" in headers && typeof headers.forEach === "function";
+}
+
+function isStreamBody(body: BodyInit | undefined): boolean {
+  if (typeof body !== "object" || body === null) return false;
+  return (
+    ("getReader" in body && typeof body.getReader === "function") ||
+    ("pipe" in body && typeof body.pipe === "function")
+  );
+}
+
 function normalizeHeaders(headers?: HeadersInit): Record<string, string> {
   if (!headers) return {};
   const record: Record<string, string> = {};
@@ -37,8 +60,8 @@ function normalizeHeaders(headers?: HeadersInit): Record<string, string> {
     return record;
   }
 
-  if (typeof (headers as any).forEach === "function") {
-    (headers as any).forEach((value: string, key: string) => {
+  if (isHeadersLike(headers)) {
+    headers.forEach((value: string, key: string) => {
       record[String(key).toLowerCase()] = String(value);
     });
     return record;
@@ -58,7 +81,7 @@ export function composeMiddleware(
     let resolvedUrl = "";
     let resolvedMethod = "GET";
     let resolvedHeaders: Record<string, string> = {};
-    let resolvedBody: any = undefined;
+    let resolvedBody: BodyInit | null | undefined = undefined;
     let resolvedSignal: AbortSignal | undefined = undefined;
     let requestInitOptions: RequestInit = {};
 
@@ -99,7 +122,7 @@ export function composeMiddleware(
 
     const initialRequest: MiddlewareRequest = {
       url: resolvedUrl,
-      method: resolvedMethod as any,
+      method: toHttpMethod(resolvedMethod),
       headers: resolvedHeaders,
       body: resolvedBody ?? undefined,
       signal: resolvedSignal ?? undefined,
@@ -117,7 +140,7 @@ export function composeMiddleware(
       index = i;
       const fn = middleware[i];
       if (!fn) {
-        const fetchInit: RequestInit = {
+        const fetchInit: RequestInit & { duplex?: "half" } = {
           ...requestInitOptions,
           ...rest,
           method: req.method,
@@ -126,12 +149,8 @@ export function composeMiddleware(
           signal: req.signal,
         };
         // Set duplex: "half" for streams (WHATWG ReadableStream or Node.js Readable stream)
-        const isStream = req.body && (
-          typeof (req.body as any).getReader === "function" ||
-          typeof (req.body as any).pipe === "function"
-        );
-        if (isStream && !(fetchInit as any).duplex) {
-          (fetchInit as any).duplex = "half";
+        if (isStreamBody(req.body) && !fetchInit.duplex) {
+          fetchInit.duplex = "half";
         }
         return await fallbackFetch(req.url, fetchInit);
       }

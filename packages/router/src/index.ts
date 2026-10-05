@@ -82,8 +82,7 @@ export function createWebRouter(options: RouterOptions) {
 
     let signal: AbortSignal;
     if (request.signal) {
-      // @ts-ignore
-      signal = AbortSignal.any ? AbortSignal.any([request.signal, timeoutController.signal]) : timeoutController.signal;
+      signal = typeof AbortSignal.any === "function" ? AbortSignal.any([request.signal, timeoutController.signal]) : timeoutController.signal;
     } else {
       signal = timeoutController.signal;
     }
@@ -128,7 +127,7 @@ export function createGateway(options: RouterOptions) {
     next?: (err?: unknown) => void
   ) {
     try {
-      const protocol = (req.socket as any).encrypted ? "https" : "http";
+      const protocol = "encrypted" in req.socket && req.socket.encrypted === true ? "https" : "http";
       const host = req.headers.host ?? "localhost";
       const fullUrl = new URL(req.url ?? "/", `${protocol}://${host}`).toString();
 
@@ -136,13 +135,13 @@ export function createGateway(options: RouterOptions) {
         ? Readable.toWeb(req) as ReadableStream
         : undefined;
 
-      const webRequest = new Request(fullUrl, {
+      const requestInit: RequestInit & { duplex: "half" } = {
         method: req.method,
         headers: req.headers as Record<string, string>,
         body,
-        // @ts-ignore
         duplex: "half",
-      });
+      };
+      const webRequest = new Request(fullUrl, requestInit);
 
       const webResponse = await webRouter(webRequest);
 

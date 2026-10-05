@@ -4,6 +4,10 @@
 //  2. every bare module a shipped .d.ts imports is a declared dependency/peer of that package that itself
 //     ships declarations (or a Node built-in). Anything else becomes `any` for consumers, or an error under
 //     `noImplicitAny` without `skipLibCheck`.
+//  3. no publishable package has a runtime dependency on a private workspace package: those are never
+//     published, so installing the package from npm fails. Bundle them instead (tsup `noExternal`), and
+//  4. every bare module the shipped JavaScript imports is a declared dependency/peer (or a Node built-in);
+//     strict installers (pnpm, Yarn PnP) do not let a package resolve anything it has not declared.
 // Run after `pnpm build`. Exits 1 and lists every problem.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { builtinModules } from "node:module";
@@ -48,6 +52,17 @@ function typesPaths(pkg) {
   return [...found];
 }
 
+function javascriptFiles(dir) {
+  const out = [];
+  if (!existsSync(dir)) return out;
+  for (const name of readdirSync(dir)) {
+    const p = path.join(dir, name);
+    if (statSync(p).isDirectory()) out.push(...javascriptFiles(p));
+    else if (/\.[cm]?js$/.test(name)) out.push(p);
+  }
+  return out;
+}
+
 function declarationFiles(dir) {
   const out = [];
   if (!existsSync(dir)) return out;
@@ -60,6 +75,9 @@ function declarationFiles(dir) {
 }
 
 const IMPORT = /(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g;
+const RUNTIME_IMPORT = /(?:\bfrom\s*|\bimport\s*\(\s*|\brequire\s*\(\s*)['"]([^'"]+)['"]/g;
+// Bundled code can contain strings that look like imports (e.g. `"from " + x`); only real package names count.
+const PACKAGE_SPECIFIER = /^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*(?:\/.*)?$/;
 const builtins = new Set([...builtinModules, ...builtinModules.map((m) => `node:${m}`)]);
 
 function packageNameOf(specifier) {
@@ -83,6 +101,13 @@ function shipsTypes(name, fromDir) {
   const typed = typesPaths(pkg);
   return typed.length > 0 ? typed.every((t) => existsSync(path.join(dir, t))) : existsSync(path.join(dir, "index.d.ts"));
 }
+
+const privateNames = new Set(
+  packageDirs()
+    .map((dir) => JSON.parse(readFileSync(path.join(dir, "package.json"), "utf8")))
+    .filter((pkg) => pkg.private && pkg.name)
+    .map((pkg) => pkg.name),
+);
 
 for (const dir of packageDirs()) {
   const pkg = JSON.parse(readFileSync(path.join(dir, "package.json"), "utf8"));
@@ -114,6 +139,23 @@ for (const dir of packageDirs()) {
     problems.push(...mine);
     if (mine.length === 0 && knownGaps[pkg.name]) problems.push(`${pkg.name}: declarations are fine now; remove it from scripts/declarations-known-gaps.json`);
   }
+
+  // Never covered by known gaps: an unpublished runtime dependency breaks installation outright.
+  for (const name of shipped) {
+    if (privateNames.has(name)) problems.push(`${pkg.name}: depends on "${name}", which is private and never published, so installing ${pkg.name} from npm fails; bundle it (tsup noExternal) and move it to devDependencies`);
+  }
+  const undeclared = new Map();
+  for (const file of javascriptFiles(path.join(dir, "dist"))) {
+    for (const m of readFileSync(file, "utf8").matchAll(RUNTIME_IMPORT)) {
+      const spec = m[1];
+      if (!PACKAGE_SPECIFIER.test(spec) || builtins.has(spec)) continue;
+      const name = packageNameOf(spec);
+      if (name !== pkg.name && !shipped.has(name) && !undeclared.has(name)) undeclared.set(name, path.relative(root, file));
+    }
+  }
+  for (const [name, file] of undeclared) {
+    problems.push(`${pkg.name}: ${file} imports "${name}" at runtime, which is not a dependency or peer, so strict installers cannot resolve it`);
+  }
 }
 
 for (const [name, n] of problemsByPackage) console.warn(`known gap: ${name} (${n} problem(s)): ${knownGaps[name]}`);
@@ -122,4 +164,4 @@ if (problems.length > 0) {
   console.error(`${problems.length} declaration problem(s):\n${problems.map((p) => `  - ${p}`).join("\n")}`);
   process.exit(1);
 }
-console.log("Declarations OK: every declared types file exists and every imported module resolves for consumers.");
+console.log("Declarations OK: every declared types file exists, every imported module resolves for consumers, and no package depends on an unpublished one.");

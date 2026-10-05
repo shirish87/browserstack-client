@@ -239,7 +239,7 @@ describe("main arg parsing", () => {
     const { logger } = makeLogger();
     try {
       await runLocal(["run-with", "--", "echo", "--", "extra"], logger, ["--", "---"], { commandTimeoutMs: 100 });
-    } catch (err: any) {
+    } catch (err) {
       expect(String(err)).not.toMatch(/separator/i);
       expect(String(err)).not.toMatch(/no command/i);
     }

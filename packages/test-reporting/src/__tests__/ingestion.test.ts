@@ -5,8 +5,10 @@ import { TestReportingClient } from "../index.ts";
 
 const COLLECTOR = "https://collector-observability.browserstack.com";
 
+const firstEvent = (body: unknown): unknown => (Array.isArray(body) ? body[0] : undefined);
+
 function setup(startBody: unknown = { build_hashed_id: "bld", jwt: "tok" }) {
-  const calls: Array<{ url: string; method: string; headers: Record<string, string>; body: any }> = [];
+  const calls: Array<{ url: string; method: string; headers: Record<string, string>; body: unknown }> = [];
   const queue: Array<{ status?: number; body: unknown }> = [{ body: startBody }];
   const fetchFn = (async (url: string | URL | Request, init?: RequestInit) => {
     calls.push({ url: url.toString(), method: init?.method ?? "GET", headers: Object.fromEntries(new Headers(init?.headers).entries()), body: init?.body ? JSON.parse(init.body as string) : undefined });
@@ -73,7 +75,7 @@ describe("live ingestion (TestReportingClient)", () => {
       durationInMs: 1000,
       failure: [{ error: "AssertionError: boom", backtrace: "at x" }],
     });
-    expect(calls[2].body[0]).toMatchObject({
+    expect(firstEvent(calls[2].body)).toMatchObject({
       event_type: "TestRunFinished",
       test_run: { uuid, name: "t", started_at: "2026-01-01T00:00:01Z", finished_at: "2026-01-01T00:00:02Z", result: "failed", duration_in_ms: 1000, failure: [{ backtrace: ["AssertionError: boom", "at x"] }], failure_reason: "AssertionError: boom", failure_type: "AssertionError" },
     });
@@ -83,8 +85,8 @@ describe("live ingestion (TestReportingClient)", () => {
     const { client, calls, id } = await started();
     const { uuid } = await client.startHookRun(id, { hookType: "BEFORE_ALL", name: "setup", fileName: "a.test.ts", scopes: ["unit"], startedAt: "2026-01-01T00:00:01Z" });
     await client.finishHookRun(id, uuid as string, { hookType: "BEFORE_ALL", result: "passed", finishedAt: "2026-01-01T00:00:02Z", fileName: "a.test.ts", scopes: ["unit"] });
-    expect(calls[1].body[0]).toMatchObject({ event_type: "HookRunStarted", hook_run: { uuid, type: "hook", hook_type: "BEFORE_ALL" } });
-    expect(calls[2].body[0]).toMatchObject({ event_type: "HookRunFinished", hook_run: { uuid, result: "passed" } });
+    expect(firstEvent(calls[1].body)).toMatchObject({ event_type: "HookRunStarted", hook_run: { uuid, type: "hook", hook_type: "BEFORE_ALL" } });
+    expect(firstEvent(calls[2].body)).toMatchObject({ event_type: "HookRunFinished", hook_run: { uuid, result: "passed" } });
   });
 
   it("addBuildLogs sends a LogCreated event with snake_case fields", async () => {
@@ -116,7 +118,7 @@ describe("live ingestion (TestReportingClient)", () => {
     const { client, calls, id } = await started();
     await client.addTestScreenshots(id, [{ testRunUuid: "run1", base64: "aGk=" }]);
     expect(calls[1].url).toBe(`${COLLECTOR}/api/v1/screenshots`);
-    expect(calls[1].body[0]).toMatchObject({ event_type: "LogCreated", logs: [expect.objectContaining({ kind: "TEST_SCREENSHOT", test_run_uuid: "run1", message: "aGk=" })] });
+    expect(firstEvent(calls[1].body)).toMatchObject({ event_type: "LogCreated", logs: [expect.objectContaining({ kind: "TEST_SCREENSHOT", test_run_uuid: "run1", message: "aGk=" })] });
   });
 
   it("rejects runs and logs for a build this client did not start", async () => {

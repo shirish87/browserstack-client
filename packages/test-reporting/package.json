@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "7.2.1",
+  "version": "7.2.2",
   "type": "module",
   "description": "BrowserStack Test Reporting & Analytics API client",
   "engines": {
@@ -38,11 +38,11 @@
     "@dot-slash/browserstack-core": "workspace:*",
     "@dot-slash/browserstack-openapi": "workspace:*",
     "@dot-slash/browserstack-openapi-transforms": "workspace:*",
-    "@types/node": "20.0.0",
+    "@types/node": "20.19.43",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.4",
-    "zod": "^4.4.3"
+    "vitest": "^4.1.11",
+    "zod": "^4.6.5"
   },
   "peerDependencies": {
     "zod": "^4.0.0"

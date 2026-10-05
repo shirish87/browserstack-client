@@ -148,7 +148,7 @@ export class APIClient {
       );
     }
 
-    let timeoutId: any = undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
     let timeoutSignal: AbortSignal | undefined = undefined;
     let signal = spec.signal;
 
