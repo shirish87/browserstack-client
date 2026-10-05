@@ -21,7 +21,7 @@ import {
 } from "./session";
 import type { FlatTest } from "./analytics";
 
-const fixture = (name: string): string => readFileSync(new URL(`../../../../packages/contract-tests/fixtures/${name}`, import.meta.url), "utf8");
+const fixture = (name: string): string => readFileSync(new URL(`./__fixtures__/${name}`, import.meta.url), "utf8");
 const T0 = Date.UTC(2026, 9, 4, 16, 28, 3, 343);
 
 describe("parseTextLog (Automate / App Automate text log)", () => {

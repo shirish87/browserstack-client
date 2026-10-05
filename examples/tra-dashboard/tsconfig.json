@@ -19,8 +19,7 @@
     "types": ["vite/client", "node"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@dot-slash/browserstack-core": ["../../packages/core/src/index.ts"]
+      "@/*": ["src/*"]
     }
   },
   "include": ["src", "server", "vite.config.ts", "vitest.config.ts", "tsup.config.ts"]

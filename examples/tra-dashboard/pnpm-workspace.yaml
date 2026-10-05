@@ -1,12 +1,16 @@
 packages:
   - "."
-  - "../../packages/core"
-  - "../../packages/automate"
-  - "../../packages/app-automate"
-  - "../../packages/openapi"
-  - "../../packages/openapi-transforms"
-  - "../../packages/router"
-  - "../../packages/test-reporting"
 
 allowBuilds:
   esbuild: true
+
+minimumReleaseAgeExclude:
+  - "@dot-slash/*"
+
+overrides:
+  "@csstools/css-calc": "3.4.1"
+  "@csstools/css-color-parser": "4.2.4"
+  "@csstools/css-parser-algorithms": "4.0.1"
+  "@csstools/css-syntax-patches-for-csstree": "1.1.14"
+  "@types/node@22": "22.20.4"
+  "source-map-js": "1.2.1"

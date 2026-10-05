@@ -5,7 +5,6 @@
   "@dot-slash/browserstack-core": "Declares types it does not ship (dts disabled in tsup). Pre-existing since before 7.1.0; fix by enabling declarations as done for automate, app-automate and test-reporting.",
   "@dot-slash/browserstack-local-testing": "Declares types it does not ship (dts disabled in tsup). Pre-existing since before 7.1.0; fix by enabling declarations as done for automate, app-automate and test-reporting.",
   "@dot-slash/browserstack-local-testing-api": "Declares types it does not ship (dts disabled in tsup). Pre-existing since before 7.1.0; fix by enabling declarations as done for automate, app-automate and test-reporting.",
-  "@dot-slash/browserstack-router": "Declares types it does not ship (dts disabled in tsup). Pre-existing since before 7.1.0; fix by enabling declarations as done for automate, app-automate and test-reporting.",
   "@dot-slash/browserstack-screenshots": "Declares types it does not ship (dts disabled in tsup). Pre-existing since before 7.1.0; fix by enabling declarations as done for automate, app-automate and test-reporting.",
   "@dot-slash/browserstack-test-management": "Declares types it does not ship (dts disabled in tsup). Pre-existing since before 7.1.0; fix by enabling declarations as done for automate, app-automate and test-reporting.",
   "@dot-slash/browserstack-website-scanner": "Declares types it does not ship (dts disabled in tsup). Pre-existing since before 7.1.0; fix by enabling declarations as done for automate, app-automate and test-reporting."

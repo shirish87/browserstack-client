@@ -1,0 +1,418 @@
+{
+  "name": "tra-dashboard-verification",
+  "hierarchy": [
+    {
+      "summary": {
+        "aggregate": 2,
+        "passed": 1,
+        "failed": 1,
+        "pending": 0,
+        "skipped": 0,
+        "unknown": 0
+      },
+      "is_after_all_hook": null,
+      "children": [
+        {
+          "summary": {
+            "aggregate": 2,
+            "passed": 1,
+            "failed": 1,
+            "pending": 0,
+            "skipped": 0,
+            "unknown": 0
+          },
+          "is_after_all_hook": null,
+          "children": [
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142320188,
+                    "identifier": "TC-620",
+                    "folderId": 58725734,
+                    "thirdPartyIdentifier": null,
+                    "name": "passes: searching the Wikipedia sample app returns results",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+appium/3",
+                "pm_tool_details": [],
+                "session_id": "332602d7630802850b7ec1702e0497199992aec7",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 7958,
+                "retries": [
+                  {
+                    "uuid": "242f7224-8c4c-455f-befd-affdf8ea29c5",
+                    "status": "passed",
+                    "duration": 7958,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:28:08.260+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "passes: searching the Wikipedia sample app returns results",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142320189,
+                    "identifier": "TC-621",
+                    "folderId": 58725734,
+                    "thirdPartyIdentifier": null,
+                    "name": "fails on purpose: looks for an element that does not exist",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+appium/3",
+                "pm_tool_details": [],
+                "session_id": "332602d7630802850b7ec1702e0497199992aec7",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 4858,
+                "retries": [
+                  {
+                    "uuid": "913315bf-26de-4a06-babf-f3869b459626",
+                    "status": "failed",
+                    "duration": 4858,
+                    "workflowStatus": "Failed",
+                    "logs": {
+                      "TEST_FAILURE": [
+                        "element (\"~This element does not exist\") still not displayed after 4000ms",
+                        "Error: element (\"~This element does not exist\") still not displayed after 4000ms\n    at async Context.<anonymous> (/work/test/appium-a.spec.js:16:5)"
+                      ]
+                    }
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:28:16.223+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "failed"
+              },
+              "type": "TEST",
+              "display_name": "fails on purpose: looks for an element that does not exist",
+              "is_before_all_hook": null
+            }
+          ],
+          "rank": 1,
+          "details": null,
+          "type": "DESCRIBE",
+          "display_name": "tra-dashboard verification (appium)",
+          "is_before_all_hook": null
+        }
+      ],
+      "rank": 0,
+      "details": {
+        "file_path": "test/appium-a.spec.js",
+        "os": {
+          "name": "android",
+          "version": "13.0",
+          "key": "Android,13.0"
+        },
+        "finished_at": null,
+        "browser": {
+          "name": "",
+          "version": "app",
+          "key": "Unknown,app"
+        },
+        "vc_file_url": "",
+        "isRealDevice": true,
+        "device": "Google Pixel 7",
+        "middle_scopes": null
+      },
+      "type": "ROOT",
+      "display_name": "appium-a.spec.js",
+      "is_before_all_hook": null
+    },
+    {
+      "summary": {
+        "aggregate": 1,
+        "passed": 1,
+        "failed": 0,
+        "pending": 0,
+        "skipped": 0,
+        "unknown": 0
+      },
+      "is_after_all_hook": null,
+      "children": [
+        {
+          "summary": {
+            "aggregate": 1,
+            "passed": 1,
+            "failed": 0,
+            "pending": 0,
+            "skipped": 0,
+            "unknown": 0
+          },
+          "is_after_all_hook": null,
+          "children": [
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142320190,
+                    "identifier": "TC-622",
+                    "folderId": 58725735,
+                    "thirdPartyIdentifier": null,
+                    "name": "passes: the sample app launches and shows the search box",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+appium/3",
+                "pm_tool_details": [],
+                "session_id": "424ed952f8bdd340a57bab609c23a8838dfb2bef",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 1494,
+                "retries": [
+                  {
+                    "uuid": "3573b1be-dd3d-43c4-ad7f-7df80f6c3f16",
+                    "status": "passed",
+                    "duration": 1494,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:28:40.179+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "passes: the sample app launches and shows the search box",
+              "is_before_all_hook": null
+            }
+          ],
+          "rank": 1,
+          "details": null,
+          "type": "DESCRIBE",
+          "display_name": "tra-dashboard verification (appium, second spec)",
+          "is_before_all_hook": null
+        }
+      ],
+      "rank": 0,
+      "details": {
+        "file_path": "test/appium-b.spec.js",
+        "os": {
+          "name": "android",
+          "version": "13.0",
+          "key": "Android,13.0"
+        },
+        "finished_at": null,
+        "browser": {
+          "name": "",
+          "version": "app",
+          "key": "Unknown,app"
+        },
+        "vc_file_url": "",
+        "isRealDevice": true,
+        "device": "Google Pixel 7",
+        "middle_scopes": null
+      },
+      "type": "ROOT",
+      "display_name": "appium-b.spec.js",
+      "is_before_all_hook": null
+    },
+    {
+      "summary": {
+        "aggregate": 2,
+        "passed": 1,
+        "failed": 0,
+        "pending": 0,
+        "skipped": 1,
+        "unknown": 0
+      },
+      "is_after_all_hook": null,
+      "children": [
+        {
+          "summary": {
+            "aggregate": 2,
+            "passed": 1,
+            "failed": 0,
+            "pending": 0,
+            "skipped": 1,
+            "unknown": 0
+          },
+          "is_after_all_hook": null,
+          "children": [
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142320192,
+                    "identifier": "TC-623",
+                    "folderId": 58725737,
+                    "thirdPartyIdentifier": null,
+                    "name": "passes: opening search shows the text input",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+appium/3",
+                "pm_tool_details": [],
+                "session_id": "09b7375e00b7884bbfe475dd7b15c25d1491a4ed",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 2783,
+                "retries": [
+                  {
+                    "uuid": "e50ea0e7-aaf6-40cd-b892-2ef5cf317b65",
+                    "status": "passed",
+                    "duration": 2783,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:29:00.490+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "passes: opening search shows the text input",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142320194,
+                    "identifier": "TC-624",
+                    "folderId": 58725737,
+                    "thirdPartyIdentifier": null,
+                    "name": "skipped: pending feature",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+appium/3",
+                "pm_tool_details": [],
+                "session_id": "09b7375e00b7884bbfe475dd7b15c25d1491a4ed",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 336,
+                "retries": [
+                  {
+                    "uuid": "8690edc8-ee22-4984-9c50-8fd11de2daf4",
+                    "status": "skipped",
+                    "duration": 336,
+                    "workflowStatus": "Skipped",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:29:03.278+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "skipped"
+              },
+              "type": "TEST",
+              "display_name": "skipped: pending feature",
+              "is_before_all_hook": null
+            }
+          ],
+          "rank": 1,
+          "details": null,
+          "type": "DESCRIBE",
+          "display_name": "tra-dashboard verification (appium, third spec)",
+          "is_before_all_hook": null
+        }
+      ],
+      "rank": 0,
+      "details": {
+        "file_path": "test/appium-c.spec.js",
+        "os": {
+          "name": "android",
+          "version": "13.0",
+          "key": "Android,13.0"
+        },
+        "finished_at": null,
+        "browser": {
+          "name": "",
+          "version": "app",
+          "key": "Unknown,app"
+        },
+        "vc_file_url": "",
+        "isRealDevice": true,
+        "device": "Google Pixel 7",
+        "middle_scopes": null
+      },
+      "type": "ROOT",
+      "display_name": "appium-c.spec.js",
+      "is_before_all_hook": null
+    }
+  ],
+  "pagination": {
+    "has_next": true,
+    "next_page": "eyJmaWxlTmFtZSI6InRlc3QvYXBwaXVtLWMuc3BlYy5qcyIsIm9zIjoiQW5kcm9pZCwxMy4wIiwiZGV2aWNlIjoiR29vZ2xlIFBpeGVsIDciLCJicm93c2VyIjoiVW5rbm93bixhcHAifQ=="
+  },
+  "project_id": 2812405,
+  "group_id": 1,
+  "build_id": "5f4ed4af29871da2e09c9a1e1eabc2db63415319",
+  "build_name": "tra-dashboard-verification appium",
+  "build_number": 3,
+  "original_name": "tra-dashboard-verification appium",
+  "test_summary": {
+    "passed": 3,
+    "failed": 1,
+    "in progress": 0,
+    "skipped": 1,
+    "retest": 0,
+    "blocked": 0,
+    "untested": 0,
+    "pending": 0,
+    "unknown": 0
+  },
+  "is_manually_overridden": false,
+  "is_archived": false,
+  "app_details": null
+}

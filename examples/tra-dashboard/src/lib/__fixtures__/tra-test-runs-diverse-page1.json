@@ -1,0 +1,1491 @@
+{
+  "name": "tra-dashboard-verification",
+  "hierarchy": [
+    {
+      "summary": {
+        "aggregate": 6,
+        "passed": 1,
+        "failed": 5,
+        "pending": 0,
+        "skipped": 0,
+        "unknown": 0
+      },
+      "is_after_all_hook": null,
+      "children": [
+        {
+          "summary": {
+            "aggregate": 6,
+            "passed": 1,
+            "failed": 5,
+            "pending": 0,
+            "skipped": 0,
+            "unknown": 0
+          },
+          "is_after_all_hook": null,
+          "children": [
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319830,
+                    "identifier": "TC-592",
+                    "folderId": 58725433,
+                    "thirdPartyIdentifier": null,
+                    "name": "assertion failure: wrong heading",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "97fef8f49fed19b1afd06c69feead0a17a0e1777",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 45832,
+                "retries": [
+                  {
+                    "uuid": "5c169a31-4590-5776-b123-d12cbb32c611",
+                    "status": "failed",
+                    "duration": 45832,
+                    "workflowStatus": "Failed",
+                    "logs": {
+                      "TEST_FAILURE": [
+                        "Error: expect(locator).toHaveText(expected) failed",
+                        "",
+                        "Locator: locator('h1')",
+                        "Expected: \"Definitely not the heading\"",
+                        "Timeout: 3000ms",
+                        "Error: element(s) not found",
+                        "",
+                        "Call log:",
+                        "  - Expect \"toHaveText\" locator('h1') with timeout 3000ms",
+                        "  - waiting for locator('h1')",
+                        "",
+                        "    at /work/tests/failures.spec.js:7:38"
+                      ]
+                    }
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T15:59:34.867+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "failed"
+              },
+              "type": "TEST",
+              "display_name": "assertion failure: wrong heading",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319842,
+                    "identifier": "TC-604",
+                    "folderId": 58725433,
+                    "thirdPartyIdentifier": null,
+                    "name": "timeout: waiting for an element that never appears",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "d5cadbb04c3225a27756c3e3b85d4a56d28ff728",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 40933,
+                "retries": [
+                  {
+                    "uuid": "609f1612-6145-58be-92ea-fb9686ac49b2",
+                    "status": "failed",
+                    "duration": 40933,
+                    "workflowStatus": "Failed",
+                    "logs": {
+                      "TEST_FAILURE": [
+                        "TimeoutError: page.waitForSelector: Timeout 2500ms exceeded.",
+                        "Call log:",
+                        "  - waiting for locator('#never-there') to be visible",
+                        "",
+                        "    at /work/tests/failures.spec.js:12:16"
+                      ]
+                    }
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:00:22.447+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "failed"
+              },
+              "type": "TEST",
+              "display_name": "timeout: waiting for an element that never appears",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319851,
+                    "identifier": "TC-613",
+                    "folderId": 58725433,
+                    "thirdPartyIdentifier": null,
+                    "name": "network error: unresolvable host",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "d09815a024fd6006bf751ee486c73100d93488f3",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 33203,
+                "retries": [
+                  {
+                    "uuid": "5ed9027c-7348-5d9b-a3a0-e0368a8adf2c",
+                    "status": "failed",
+                    "duration": 33203,
+                    "workflowStatus": "Failed",
+                    "logs": {
+                      "TEST_FAILURE": [
+                        "Error: page.goto: net::ERR_TUNNEL_CONNECTION_FAILED at https://this-host-does-not-exist.invalid/",
+                        "Call log:",
+                        "  - navigating to \"https://this-host-does-not-exist.invalid/\", waiting until \"load\"",
+                        "",
+                        "    at /work/tests/failures.spec.js:16:16"
+                      ]
+                    }
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:01:05.387+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "failed"
+              },
+              "type": "TEST",
+              "display_name": "network error: unresolvable host",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319853,
+                    "identifier": "TC-615",
+                    "folderId": 58725433,
+                    "thirdPartyIdentifier": null,
+                    "name": "always failing: fails in every run",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "085b381ae7f49dd80c36113cfdbe29925e0b6c6f",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 41332,
+                "retries": [
+                  {
+                    "uuid": "351e494f-c6fa-5073-8842-26e0e5366b82",
+                    "status": "failed",
+                    "duration": 41332,
+                    "workflowStatus": "Failed",
+                    "logs": {
+                      "TEST_FAILURE": [
+                        "Error: expect(received).toBe(expected) // Object.is equality",
+                        "",
+                        "Expected: \"Never matches\"",
+                        "Received: \"Example Domain\"",
+                        "    at /work/tests/failures.spec.js:25:32"
+                      ]
+                    }
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:01:46.366+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "failed"
+              },
+              "type": "TEST",
+              "display_name": "always failing: fails in every run",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319854,
+                    "identifier": "TC-616",
+                    "folderId": 58725433,
+                    "thirdPartyIdentifier": null,
+                    "name": "new failure: passes in run 1, fails from run 2",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "fc7309b9459831d134afefb3fad72cd69c2aea32",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 8586,
+                "retries": [
+                  {
+                    "uuid": "e98c3755-abee-5fc7-ad0e-f211fec95c70",
+                    "status": "passed",
+                    "duration": 8586,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:02:29.472+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "new failure: passes in run 1, fails from run 2",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319855,
+                    "identifier": "TC-617",
+                    "folderId": 58725433,
+                    "thirdPartyIdentifier": null,
+                    "name": "fixed: fails in run 1, passes from run 2",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "4a9c00c03219bc429dc884d0479dc300ae5e70a4",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 26630,
+                "retries": [
+                  {
+                    "uuid": "2a43c7c6-b366-5923-adf7-f3c92285bcce",
+                    "status": "failed",
+                    "duration": 26630,
+                    "workflowStatus": "Failed",
+                    "logs": {
+                      "TEST_FAILURE": [
+                        "Error: still broken in run 1",
+                        "",
+                        "expect(received).toBe(expected) // Object.is equality",
+                        "",
+                        "Expected: true",
+                        "Received: false",
+                        "    at /work/tests/failures.spec.js:35:52"
+                      ]
+                    }
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:02:38.057+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "failed"
+              },
+              "type": "TEST",
+              "display_name": "fixed: fails in run 1, passes from run 2",
+              "is_before_all_hook": null
+            }
+          ],
+          "rank": 1,
+          "details": null,
+          "type": "DESCRIBE",
+          "display_name": "Failure categories",
+          "is_before_all_hook": null
+        }
+      ],
+      "rank": 0,
+      "details": {
+        "file_path": "tests/failures.spec.js",
+        "os": {
+          "name": "windows",
+          "version": "11",
+          "key": "Windows,11"
+        },
+        "finished_at": null,
+        "browser": {
+          "name": "chrome",
+          "version": "154.0",
+          "key": "Chrome,154.0"
+        },
+        "vc_file_url": "",
+        "isRealDevice": true,
+        "device": "",
+        "middle_scopes": null
+      },
+      "type": "ROOT",
+      "display_name": "failures.spec.js",
+      "is_before_all_hook": null
+    },
+    {
+      "summary": {
+        "aggregate": 7,
+        "passed": 5,
+        "failed": 1,
+        "pending": 0,
+        "skipped": 1,
+        "unknown": 0
+      },
+      "is_after_all_hook": null,
+      "children": [
+        {
+          "summary": {
+            "aggregate": 7,
+            "passed": 5,
+            "failed": 1,
+            "pending": 0,
+            "skipped": 1,
+            "unknown": 0
+          },
+          "is_after_all_hook": null,
+          "children": [
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319833,
+                    "identifier": "TC-595",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "passes: title is correct",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "1a3243c802cbc5f31ddafab2f2c4607c02e9198c",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 10082,
+                "retries": [
+                  {
+                    "uuid": "363e7537-913b-56b5-8301-09b37acec6ff",
+                    "status": "passed",
+                    "duration": 10082,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T15:59:36.094+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "passes: title is correct",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319844,
+                    "identifier": "TC-606",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "passes: tagged @smoke @regression",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "bb3d7f2edec495d71b73d21cb96205c30242aab6",
+                "is_muted": false,
+                "tags": [
+                  "regression",
+                  "smoke"
+                ],
+                "run_count": 0,
+                "duration": 10196,
+                "retries": [
+                  {
+                    "uuid": "04a3c883-97fa-5810-be60-8bf01d64f022",
+                    "status": "passed",
+                    "duration": 10196,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:00:27.110+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "passes: tagged @smoke @regression",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319847,
+                    "identifier": "TC-609",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "skipped: unconditionally",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "bb3d7f2edec495d71b73d21cb96205c30242aab6",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 52,
+                "retries": [
+                  {
+                    "uuid": "3ea4e725-34a4-56d2-a477-5613516a6100",
+                    "status": "skipped",
+                    "duration": 52,
+                    "workflowStatus": "Skipped",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:00:37.304+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "skipped"
+              },
+              "type": "TEST",
+              "display_name": "skipped: unconditionally",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319846,
+                    "identifier": "TC-608",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "parameterized: loads /",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "bb3d7f2edec495d71b73d21cb96205c30242aab6",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 1376,
+                "retries": [
+                  {
+                    "uuid": "a6315c61-2c3a-53a5-b431-d76f18831132",
+                    "status": "passed",
+                    "duration": 1376,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:00:37.356+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "parameterized: loads /",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319848,
+                    "identifier": "TC-610",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "parameterized: loads /?a=1",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "bb3d7f2edec495d71b73d21cb96205c30242aab6",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 1383,
+                "retries": [
+                  {
+                    "uuid": "e7b9ef6e-5369-532e-9305-1c09c3e5e150",
+                    "status": "passed",
+                    "duration": 1383,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:00:38.731+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "parameterized: loads /?a=1",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319849,
+                    "identifier": "TC-611",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "parameterized: loads /?b=2",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "bb3d7f2edec495d71b73d21cb96205c30242aab6",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 15501,
+                "retries": [
+                  {
+                    "uuid": "0d17cc7f-bdff-5387-b60a-0216de5a78a3",
+                    "status": "passed",
+                    "duration": 15501,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:00:40.113+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "parameterized: loads /?b=2",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": {
+                "aggregate": 1,
+                "passed": 0,
+                "failed": 1,
+                "pending": 0,
+                "skipped": 0,
+                "unknown": 0
+              },
+              "is_after_all_hook": null,
+              "children": [
+                {
+                  "summary": {
+                    "aggregate": 1,
+                    "passed": 0,
+                    "failed": 1,
+                    "pending": 0,
+                    "skipped": 0,
+                    "unknown": 0
+                  },
+                  "is_after_all_hook": null,
+                  "children": [
+                    {
+                      "summary": null,
+                      "is_after_all_hook": null,
+                      "children": [],
+                      "rank": 5,
+                      "details": {
+                        "last_executed_by": "Test User",
+                        "is_auto_analyzed": null,
+                        "testCases": [
+                          {
+                            "id": 142319835,
+                            "identifier": "TC-597",
+                            "folderId": 58725436,
+                            "thirdPartyIdentifier": null,
+                            "name": "passes: heading is visible",
+                            "projectId": 4199269,
+                            "isShared": false
+                          }
+                        ],
+                        "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                        "pm_tool_details": [],
+                        "session_id": "9abc59240e7a127fc57efd1b3b27d0d05af4d02f",
+                        "is_muted": false,
+                        "tags": [],
+                        "run_count": 0,
+                        "duration": 39113,
+                        "retries": [
+                          {
+                            "uuid": "0f50f300-a7a9-59e6-88ef-ab82ef5f668d",
+                            "status": "failed",
+                            "duration": 39113,
+                            "workflowStatus": "Failed",
+                            "logs": {
+                              "TEST_FAILURE": [
+                                "Error: expect(locator).toBeVisible() failed",
+                                "",
+                                "Locator: locator('h1')",
+                                "Expected: visible",
+                                "Timeout: 5000ms",
+                                "Error: element(s) not found",
+                                "",
+                                "Call log:",
+                                "  - Expect \"toBeVisible\" locator('h1') with timeout 5000ms",
+                                "  - waiting for locator('h1')",
+                                "",
+                                "    at /work/tests/basics.spec.js:13:42"
+                              ]
+                            }
+                          }
+                        ],
+                        "is_auto_analyzer_running": false,
+                        "started_at": "2026-10-04T15:59:46.174+00:00",
+                        "is_latest": true,
+                        "last_executed_by_id": 1,
+                        "status": "failed"
+                      },
+                      "type": "TEST",
+                      "display_name": "passes: heading is visible",
+                      "is_before_all_hook": null
+                    }
+                  ],
+                  "rank": 3,
+                  "details": null,
+                  "type": "DESCRIBE",
+                  "display_name": "Deeper group",
+                  "is_before_all_hook": null
+                }
+              ],
+              "rank": 2,
+              "details": null,
+              "type": "DESCRIBE",
+              "display_name": "Nested group",
+              "is_before_all_hook": null
+            }
+          ],
+          "rank": 1,
+          "details": null,
+          "type": "DESCRIBE",
+          "display_name": "Basics",
+          "is_before_all_hook": null
+        }
+      ],
+      "rank": 0,
+      "details": {
+        "file_path": "tests/basics.spec.js",
+        "os": {
+          "name": "windows",
+          "version": "11",
+          "key": "Windows,11"
+        },
+        "finished_at": null,
+        "browser": {
+          "name": "chrome",
+          "version": "154.0",
+          "key": "Chrome,154.0"
+        },
+        "vc_file_url": "",
+        "isRealDevice": true,
+        "device": "",
+        "middle_scopes": null
+      },
+      "type": "ROOT",
+      "display_name": "basics.spec.js",
+      "is_before_all_hook": null
+    },
+    {
+      "summary": {
+        "aggregate": 7,
+        "passed": 5,
+        "failed": 1,
+        "pending": 0,
+        "skipped": 1,
+        "unknown": 0
+      },
+      "is_after_all_hook": null,
+      "children": [
+        {
+          "summary": {
+            "aggregate": 7,
+            "passed": 5,
+            "failed": 1,
+            "pending": 0,
+            "skipped": 1,
+            "unknown": 0
+          },
+          "is_after_all_hook": null,
+          "children": [
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319833,
+                    "identifier": "TC-595",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "passes: title is correct",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "01d40395e076a372a8a99770147c688e0029adb3",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 15885,
+                "retries": [
+                  {
+                    "uuid": "4ed3be21-41cc-56a3-bbad-44f64ca10a0b",
+                    "status": "passed",
+                    "duration": 15885,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:00:28.601+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "passes: title is correct",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319844,
+                    "identifier": "TC-606",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "passes: tagged @smoke @regression",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "1783cb04bbe95f2dcfabdf787fbbf421320984ee",
+                "is_muted": false,
+                "tags": [
+                  "regression",
+                  "smoke"
+                ],
+                "run_count": 0,
+                "duration": 19571,
+                "retries": [
+                  {
+                    "uuid": "d9c41461-3705-5606-802b-0b0666dee33d",
+                    "status": "passed",
+                    "duration": 19571,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:01:53.403+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "passes: tagged @smoke @regression",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319847,
+                    "identifier": "TC-609",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "skipped: unconditionally",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "1783cb04bbe95f2dcfabdf787fbbf421320984ee",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 35,
+                "retries": [
+                  {
+                    "uuid": "e43ac718-cc32-522e-b102-b36ee21c05ee",
+                    "status": "skipped",
+                    "duration": 35,
+                    "workflowStatus": "Skipped",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:02:12.974+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "skipped"
+              },
+              "type": "TEST",
+              "display_name": "skipped: unconditionally",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319846,
+                    "identifier": "TC-608",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "parameterized: loads /",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "1783cb04bbe95f2dcfabdf787fbbf421320984ee",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 1589,
+                "retries": [
+                  {
+                    "uuid": "6617d10a-61ce-56e4-8beb-2fee6c68cf2a",
+                    "status": "passed",
+                    "duration": 1589,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:02:13.008+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "parameterized: loads /",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319848,
+                    "identifier": "TC-610",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "parameterized: loads /?a=1",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "1783cb04bbe95f2dcfabdf787fbbf421320984ee",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 1691,
+                "retries": [
+                  {
+                    "uuid": "b8648eab-16ff-5d1e-8b3a-915702673ee2",
+                    "status": "passed",
+                    "duration": 1691,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:02:14.597+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "parameterized: loads /?a=1",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319849,
+                    "identifier": "TC-611",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "parameterized: loads /?b=2",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": "1783cb04bbe95f2dcfabdf787fbbf421320984ee",
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 1490,
+                "retries": [
+                  {
+                    "uuid": "2674e53c-d7e8-57e6-bc9e-305136489cde",
+                    "status": "passed",
+                    "duration": 1490,
+                    "workflowStatus": "Passed",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:02:16.287+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "passed"
+              },
+              "type": "TEST",
+              "display_name": "parameterized: loads /?b=2",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": {
+                "aggregate": 1,
+                "passed": 0,
+                "failed": 1,
+                "pending": 0,
+                "skipped": 0,
+                "unknown": 0
+              },
+              "is_after_all_hook": null,
+              "children": [
+                {
+                  "summary": {
+                    "aggregate": 1,
+                    "passed": 0,
+                    "failed": 1,
+                    "pending": 0,
+                    "skipped": 0,
+                    "unknown": 0
+                  },
+                  "is_after_all_hook": null,
+                  "children": [
+                    {
+                      "summary": null,
+                      "is_after_all_hook": null,
+                      "children": [],
+                      "rank": 5,
+                      "details": {
+                        "last_executed_by": "Test User",
+                        "is_auto_analyzed": null,
+                        "testCases": [
+                          {
+                            "id": 142319835,
+                            "identifier": "TC-597",
+                            "folderId": 58725436,
+                            "thirdPartyIdentifier": null,
+                            "name": "passes: heading is visible",
+                            "projectId": 4199269,
+                            "isShared": false
+                          }
+                        ],
+                        "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                        "pm_tool_details": [],
+                        "session_id": "2392e16f8806e50d020b8d5c6a435d253557aba2",
+                        "is_muted": false,
+                        "tags": [],
+                        "run_count": 0,
+                        "duration": 67123,
+                        "retries": [
+                          {
+                            "uuid": "d60f899f-5e8c-5f87-9b61-9431523eb85b",
+                            "status": "failed",
+                            "duration": 67123,
+                            "workflowStatus": "Failed",
+                            "logs": {
+                              "TEST_FAILURE": [
+                                "Error: expect(locator).toBeVisible() failed",
+                                "",
+                                "Locator: locator('h1')",
+                                "Expected: visible",
+                                "Timeout: 5000ms",
+                                "Error: element(s) not found",
+                                "",
+                                "Call log:",
+                                "  - Expect \"toBeVisible\" locator('h1') with timeout 5000ms",
+                                "  - waiting for locator('h1')",
+                                "",
+                                "    at /work/tests/basics.spec.js:13:42"
+                              ]
+                            }
+                          }
+                        ],
+                        "is_auto_analyzer_running": false,
+                        "started_at": "2026-10-04T16:00:44.485+00:00",
+                        "is_latest": true,
+                        "last_executed_by_id": 1,
+                        "status": "failed"
+                      },
+                      "type": "TEST",
+                      "display_name": "passes: heading is visible",
+                      "is_before_all_hook": null
+                    }
+                  ],
+                  "rank": 3,
+                  "details": null,
+                  "type": "DESCRIBE",
+                  "display_name": "Deeper group",
+                  "is_before_all_hook": null
+                }
+              ],
+              "rank": 2,
+              "details": null,
+              "type": "DESCRIBE",
+              "display_name": "Nested group",
+              "is_before_all_hook": null
+            }
+          ],
+          "rank": 1,
+          "details": null,
+          "type": "DESCRIBE",
+          "display_name": "Basics",
+          "is_before_all_hook": null
+        }
+      ],
+      "rank": 0,
+      "details": {
+        "file_path": "tests/basics.spec.js",
+        "os": {
+          "name": "windows",
+          "version": "11",
+          "key": "Windows,11"
+        },
+        "finished_at": null,
+        "browser": {
+          "name": "playwright-firefox",
+          "version": "155.0",
+          "key": "playwright-firefox,155.0"
+        },
+        "vc_file_url": "",
+        "isRealDevice": true,
+        "device": "",
+        "middle_scopes": null
+      },
+      "type": "ROOT",
+      "display_name": "basics.spec.js",
+      "is_before_all_hook": null
+    },
+    {
+      "summary": {
+        "aggregate": 2,
+        "passed": 0,
+        "failed": 0,
+        "pending": 0,
+        "skipped": 0,
+        "unknown": 2
+      },
+      "is_after_all_hook": null,
+      "children": [
+        {
+          "summary": {
+            "aggregate": 2,
+            "passed": 0,
+            "failed": 0,
+            "pending": 0,
+            "skipped": 0,
+            "unknown": 2
+          },
+          "is_after_all_hook": null,
+          "children": [
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319845,
+                    "identifier": "TC-607",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "fixme: known broken",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": null,
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": null,
+                "retries": [
+                  {
+                    "uuid": "686dcb46-a881-56a7-af26-1c0e75c2bc83",
+                    "status": "pending",
+                    "duration": null,
+                    "workflowStatus": "In Progress",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:00:37.355+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "pending"
+              },
+              "type": "TEST",
+              "display_name": "fixme: known broken",
+              "is_before_all_hook": null
+            },
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319845,
+                    "identifier": "TC-607",
+                    "folderId": 58725436,
+                    "thirdPartyIdentifier": null,
+                    "name": "fixme: known broken",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": null,
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": null,
+                "retries": [
+                  {
+                    "uuid": "d59af437-c215-5ddb-9a7d-5baab4f0199e",
+                    "status": "pending",
+                    "duration": null,
+                    "workflowStatus": "In Progress",
+                    "logs": {}
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:02:13.008+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "pending"
+              },
+              "type": "TEST",
+              "display_name": "fixme: known broken",
+              "is_before_all_hook": null
+            }
+          ],
+          "rank": 1,
+          "details": null,
+          "type": "DESCRIBE",
+          "display_name": "Basics",
+          "is_before_all_hook": null
+        }
+      ],
+      "rank": 0,
+      "details": {
+        "file_path": "tests/basics.spec.js",
+        "os": {
+          "name": "",
+          "version": "",
+          "key": "NA"
+        },
+        "finished_at": null,
+        "browser": {
+          "name": "",
+          "version": "",
+          "key": "NA"
+        },
+        "vc_file_url": "",
+        "isRealDevice": true,
+        "device": "",
+        "middle_scopes": null
+      },
+      "type": "ROOT",
+      "display_name": "basics.spec.js",
+      "is_before_all_hook": null
+    },
+    {
+      "summary": {
+        "aggregate": 1,
+        "passed": 0,
+        "failed": 1,
+        "pending": 0,
+        "skipped": 0,
+        "unknown": 0
+      },
+      "is_after_all_hook": null,
+      "children": [
+        {
+          "summary": {
+            "aggregate": 1,
+            "passed": 0,
+            "failed": 1,
+            "pending": 0,
+            "skipped": 0,
+            "unknown": 0
+          },
+          "is_after_all_hook": null,
+          "children": [
+            {
+              "summary": null,
+              "is_after_all_hook": null,
+              "children": [],
+              "rank": 3,
+              "details": {
+                "last_executed_by": "Test User",
+                "is_auto_analyzed": null,
+                "testCases": [
+                  {
+                    "id": 142319852,
+                    "identifier": "TC-614",
+                    "folderId": 58725433,
+                    "thirdPartyIdentifier": null,
+                    "name": "thrown error: plain exception",
+                    "projectId": 4199269,
+                    "isShared": false
+                  }
+                ],
+                "observability_url": "https://observability.browserstack.com/projects/tra-dashboard-verification/builds/tra-dashboard-verification+playwright-diverse/1",
+                "pm_tool_details": [],
+                "session_id": null,
+                "is_muted": false,
+                "tags": [],
+                "run_count": 0,
+                "duration": 4100,
+                "retries": [
+                  {
+                    "uuid": "5645f65a-f849-546e-bbf6-cec348d9cef9",
+                    "status": "failed",
+                    "duration": 4100,
+                    "workflowStatus": "Failed",
+                    "logs": {
+                      "TEST_FAILURE": [
+                        "Error: Custom application error: invariant violated (code E_INVARIANT)",
+                        "    at /work/tests/failures.spec.js:20:11"
+                      ]
+                    }
+                  }
+                ],
+                "is_auto_analyzer_running": false,
+                "started_at": "2026-10-04T16:04:27.925+00:00",
+                "is_latest": true,
+                "last_executed_by_id": 1,
+                "status": "failed"
+              },
+              "type": "TEST",
+              "display_name": "thrown error: plain exception",
+              "is_before_all_hook": null
+            }
+          ],
+          "rank": 1,
+          "details": null,
+          "type": "DESCRIBE",
+          "display_name": "Failure categories",
+          "is_before_all_hook": null
+        }
+      ],
+      "rank": 0,
+      "details": {
+        "file_path": "tests/failures.spec.js",
+        "os": {
+          "name": "",
+          "version": "",
+          "key": "NA"
+        },
+        "finished_at": null,
+        "browser": {
+          "name": "",
+          "version": "",
+          "key": "NA"
+        },
+        "vc_file_url": "",
+        "isRealDevice": true,
+        "device": "",
+        "middle_scopes": null
+      },
+      "type": "ROOT",
+      "display_name": "failures.spec.js",
+      "is_before_all_hook": null
+    }
+  ],
+  "pagination": {
+    "has_next": true,
+    "next_page": "eyJmaWxlTmFtZSI6InRlc3RzL2ZhaWx1cmVzLnNwZWMuanMiLCJvcyI6IldpbmRvd3MsMTEiLCJkZXZpY2UiOiJOQSIsImJyb3dzZXIiOiJDaHJvbWUsMTU0LjAifQ=="
+  },
+  "project_id": 2812405,
+  "group_id": 1,
+  "build_id": "dd164532c423a7baa7c5be5105f17f242ea70b24",
+  "build_name": "tra-dashboard-verification playwright-diverse",
+  "build_number": 1,
+  "original_name": "tra-dashboard-verification playwright-diverse",
+  "test_summary": {
+    "passed": 28,
+    "failed": 19,
+    "in progress": 1,
+    "skipped": 2,
+    "retest": 0,
+    "blocked": 0,
+    "untested": 0,
+    "pending": 0,
+    "unknown": 0
+  },
+  "is_manually_overridden": false,
+  "is_archived": false,
+  "app_details": null
+}

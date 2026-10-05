@@ -7,7 +7,7 @@ import { CredentialsSchema, TestRunsResponseSchema, hasBuildId, isNamedProject, 
 import { detailRows } from "./utils";
 
 /** Real, sanitised API captures shared with the contract tests. */
-const fixture = (name: string): string => readFileSync(new URL(`../../../../packages/contract-tests/fixtures/${name}`, import.meta.url), "utf8");
+const fixture = (name: string): string => readFileSync(new URL(`./__fixtures__/${name}`, import.meta.url), "utf8");
 
 /** Runs a capture through the real client, so the dashboard parses exactly what it will receive. */
 async function testRuns(name: string) {

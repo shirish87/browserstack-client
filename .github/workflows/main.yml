@@ -470,7 +470,7 @@ jobs:
       - name: Pack SDK tarballs
         run: |
           mkdir -p release-assets/sdk
-          for pkg in automate app-automate screenshots local-testing local-testing-binary accessibility test-management test-reporting; do
+          for pkg in automate app-automate screenshots local-testing local-testing-binary accessibility test-management test-reporting router; do
             pnpm --filter "@dot-slash/browserstack-$pkg" pack --pack-destination release-assets/sdk
           done
 
@@ -527,7 +527,7 @@ jobs:
             echo "npm install https://github.com/shirish87/browserstack-client/releases/download/${TAG}/browserstack-client-automate-${VERSION}.tgz"
             echo "\`\`\`"
             echo ""
-            echo "Available packages: \`automate\`, \`app-automate\`, \`screenshots\`, \`local-testing\`, \`local-testing-binary\`, \`accessibility\`, \`test-management\`, \`test-reporting\`"
+            echo "Available packages: \`automate\`, \`app-automate\`, \`screenshots\`, \`local-testing\`, \`local-testing-binary\`, \`accessibility\`, \`test-management\`, \`test-reporting\`, \`router\`"
             echo ""
             echo "## Changes"
             echo ""
