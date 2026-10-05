@@ -10,5 +10,12 @@ export default defineConfig({
   resolve: { alias: { "@": path.resolve(import.meta.dirname, "src") } },
   // Static assets are served by the Express server from ./public.
   build: { outDir: "public", emptyOutDir: true },
-  server: { proxy: { "/api": API, "/gateway": API } },
+  // Keep the browser's Host header so the server's same-origin check matches Origin (the string
+  // shorthand would set changeOrigin: true and every POST would be refused).
+  server: {
+    proxy: {
+      "/api": { target: API, changeOrigin: false },
+      "/gateway": { target: API, changeOrigin: false },
+    },
+  },
 });
