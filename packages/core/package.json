@@ -37,5 +37,10 @@
     "@types/node": "20.0.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shirish87/browserstack-client.git",
+    "directory": "packages/core"
   }
 }

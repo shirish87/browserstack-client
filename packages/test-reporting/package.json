@@ -51,5 +51,10 @@
     "zod": {
       "optional": true
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shirish87/browserstack-client.git",
+    "directory": "packages/test-reporting"
   }
 }

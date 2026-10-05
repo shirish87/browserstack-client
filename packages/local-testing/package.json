@@ -50,5 +50,10 @@
     "typescript": "^6.0.3",
     "vitest": "^4.1.4",
     "zod": "^4.4.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shirish87/browserstack-client.git",
+    "directory": "packages/local-testing"
   }
 }

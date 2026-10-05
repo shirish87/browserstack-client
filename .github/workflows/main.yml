@@ -383,6 +383,9 @@ jobs:
     environment: BrowserStackEnv
     permissions:
       contents: read
+      # npm trusted publishing (OIDC): npm exchanges this token for a
+      # short-lived publish credential, so no long-lived NPM token is stored.
+      id-token: write
     outputs:
       published: ${{ steps.check-version.outputs.already_published == 'false' }}
       version: ${{ steps.get-version.outputs.version }}
@@ -404,6 +407,10 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # Trusted publishing needs npm >= 11.5.1 (pnpm publish delegates to npm).
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@^11.5.1
 
       - name: Download build artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -433,9 +440,7 @@ jobs:
             TAG="latest"
           fi
           echo "Publishing version $VERSION with tag $TAG"
-          pnpm publish -r --tag $TAG --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: "${{ secrets.NPM_PUBLISH_TOKEN }}"
+          pnpm publish -r --tag $TAG --no-git-checks --provenance
 
   # ── 6. Create GitHub Release (main branch only, if published) ────────────────
   release:

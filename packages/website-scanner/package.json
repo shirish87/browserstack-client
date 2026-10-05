@@ -38,5 +38,10 @@
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shirish87/browserstack-client.git",
+    "directory": "packages/website-scanner"
   }
 }
