@@ -46,7 +46,7 @@ describe("Server-Side Router", () => {
   it("injects Basic Auth header and forwards whitelisted request", async () => {
     const fetchMock = vi.fn<typeof fetch>(async (url, init) => {
       expect(url).toBe("https://api.browserstack.com/automate/projects.json");
-      expect((init?.headers as any).get("Authorization")).toBe("Basic dXNlcjprZXk="); // base64 of 'user:key'
+      expect(new Headers(init?.headers).get("Authorization")).toBe("Basic dXNlcjprZXk="); // base64 of 'user:key'
       return new Response('{"ok":true}', { status: 200 });
     });
 
@@ -95,7 +95,7 @@ describe("Server-Side Router", () => {
   });
 
   it("respects and caps timeout header", async () => {
-    let fetchOptions: any;
+    let fetchOptions: RequestInit | undefined;
     const fetchMock = vi.fn<typeof fetch>(async (_url, init) => {
       fetchOptions = init;
       return new Response("{}", { status: 200 });
@@ -119,7 +119,7 @@ describe("Server-Side Router", () => {
     await router(request);
     
     // Header should be deleted from forwarded headers so it doesn't propagate upstream
-    const forwardedHeaders = fetchOptions.headers;
+    const forwardedHeaders = new Headers(fetchOptions?.headers);
     expect(forwardedHeaders.get("x-browserstack-timeout")).toBeNull();
   });
 
@@ -299,19 +299,19 @@ describe("Server-Side Router", () => {
     req.headers = { host: "localhost:3000" };
 
     // Create mock res
-    const headers: Record<string, any> = {};
-    const chunks: any[] = [];
+    const headers: Record<string, unknown> = {};
+    const chunks: Uint8Array[] = [];
     let ended = false;
 
     const res = {
       socket,
       statusCode: 200,
       statusMessage: "",
-      setHeader(name: string, value: any) {
+      setHeader(name: string, value: unknown) {
         headers[name.toLowerCase()] = value;
       },
-      write(chunk: any) {
-        chunks.push(Buffer.from(chunk));
+      write(chunk: Uint8Array) {
+        chunks.push(new Uint8Array(chunk));
       },
       end() {
         ended = true;

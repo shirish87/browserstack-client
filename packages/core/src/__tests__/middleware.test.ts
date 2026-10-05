@@ -188,13 +188,11 @@ describe("composeMiddleware", () => {
     const mockFetch = vi.fn<typeof fetch>(async () => new Response("ok"));
     const composed = composeMiddleware([], mockFetch);
 
-    const mockStream = {
-      getReader: () => {},
-    };
+    const mockStream = new ReadableStream();
 
     await composed("https://api.browserstack.com/test", {
       method: "POST",
-      body: mockStream as any,
+      body: mockStream,
     });
 
     expect(mockFetch).toHaveBeenCalledWith(
@@ -216,7 +214,8 @@ describe("composeMiddleware", () => {
 
     await composed("https://api.browserstack.com/test", {
       method: "POST",
-      body: mockStream as any,
+      // @ts-expect-error -- Node.js streams are accepted at runtime but are not a BodyInit
+      body: mockStream,
     });
 
     expect(mockFetch).toHaveBeenCalledWith(
@@ -232,12 +231,9 @@ describe("composeMiddleware", () => {
     const mockFetch = vi.fn<typeof fetch>(async () => new Response("ok"));
     const composed = composeMiddleware([], mockFetch);
 
+    // @ts-expect-error -- deliberately malformed header entries
     await composed("https://api.browserstack.com/test", {
-      headers: [
-        ["X-Good-Header", "good"],
-        ["X-Bad-Header-Short"],
-        "X-Bad-String-Header",
-      ] as any,
+      headers: [["X-Good-Header", "good"], ["X-Bad-Header-Short"], "X-Bad-String-Header"],
     });
 
     expect(mockFetch).toHaveBeenCalledWith(
@@ -252,7 +248,8 @@ describe("composeMiddleware", () => {
 
   it("coerces non-string header keys to string correctly", async () => {
     const composed = composeMiddleware([], vi.fn<typeof fetch>(async () => new Response("ok")));
-    const res = await composed("http://api.x", { headers: [[123 as any, "value"]] });
+    // @ts-expect-error -- deliberately non-string header key
+    const res = await composed("http://api.x", { headers: [[123, "value"]] });
     expect(res).toBeDefined();
   });
 
@@ -277,14 +274,21 @@ describe("composeMiddleware", () => {
 });
 
 import { APIClient } from "../api-client";
+import type { BrowserStackOptions, HttpMethod } from "../api-client";
 import { BrowserStackError } from "../error";
 
 class TestClient extends APIClient {
-  constructor(options: any) {
+  constructor(options: BrowserStackOptions) {
     super(options, "http://api.x", "http://api-cloud.x", "test-pkg", "1.0.0");
   }
-  public run(spec: any) {
-    return this.execute(spec);
+  public run<T = unknown>(spec: {
+    operationId: string;
+    method: HttpMethod;
+    path: string;
+    responseCodec: string;
+    responseCodecConfig: unknown;
+  }) {
+    return this.execute<T>(spec);
   }
 }
 
@@ -302,7 +306,7 @@ describe("Client Middleware Pipeline", () => {
 
     const fetchMock = vi.fn<typeof fetch>(async (url, init) => {
       expect(url).toBe("http://api.x/a/extra");
-      expect((init?.headers as any)["X-Custom"]).toBe("transformed");
+      expect(new Headers(init?.headers).get("X-Custom")).toBe("transformed");
       return new Response('{"success":true}', { status: 200, headers: { "content-type": "application/json" } });
     });
 
@@ -343,10 +347,10 @@ describe("Client Middleware Pipeline", () => {
 
   it("prevents circular/runaway executions", async () => {
     const loopMiddleware: MiddlewareFunction = async (_req, _next) => {
-      return await client.run({
+      return await client.run<Response>({
         operationId: "op", method: "GET", path: "/a",
         responseCodec: "json", responseCodecConfig: {},
-      }) as any;
+      });
     };
     const client = new TestClient({
       middleware: [loopMiddleware],

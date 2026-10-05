@@ -57,7 +57,7 @@ jobs:
   # ── 1. Build everything once + SonarQube scan ────────────────────────────────
   build:
     name: "Build"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
       contents: read
@@ -141,7 +141,7 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.tests=. \
             -Dsonar.test.inclusions="**/*.test.ts,**/*.spec.ts,**/*_test.go,**/__tests__/**,**/test/**" \
-            -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/dist-binary/**,**/generated/**,**/*.generated.ts" \
+            -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/dist-binary/**,**/generated/**,**/*.generated.ts,**/*.generated.go" \
             -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.token=$SONAR_TOKEN
           
@@ -219,7 +219,7 @@ jobs:
   # ── 2a. Full test suite on Linux (SDK + CLI) ─────────────────────────────────
   test-sdk:
     name: "Test (linux, node.js lts)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     needs: [build]
     environment: BrowserStackEnv
@@ -310,17 +310,10 @@ jobs:
           TRA_LABEL: ${{ matrix.os }}
         run: pnpm test -- --project cli -t "LocalCLI" --reporter=default --reporter=./scripts/ci-report/tra-reporter.mjs
 
-      # Dogfooding: report this run's results to BrowserStack Test Reporting & Analytics via our own SDK.
-      # Best-effort only; never affects the job result.
-      - name: Report results to BrowserStack TRA
-        if: always()
-        continue-on-error: true
-        run: node scripts/ci-report/ci-report.mjs junit.xml ${{ matrix.os }}
-
   # ── 3. Publish docs (main branch only) ───────────────────────────────────────
   publish-docs:
     name: "Publish Docs"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     needs: [test-sdk, test-cli]
     if: github.event_name != 'pull_request'
@@ -376,7 +369,7 @@ jobs:
   # ── 5. Publish to npm (main branch only) ─────────────────────────────────────
   publish-npm:
     name: "Publish npm"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     needs: [test-sdk, test-cli]
     if: github.event_name != 'pull_request'
@@ -440,7 +433,7 @@ jobs:
   # ── 6. Create GitHub Release (main branch only, if published) ────────────────
   release:
     name: "Create GitHub Release"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     needs: [publish-npm]
     if: needs.publish-npm.outputs.published == 'true'

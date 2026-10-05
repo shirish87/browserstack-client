@@ -44,6 +44,13 @@ export interface TestReportingClientOptions extends BrowserStackOptions {
   appAutomate?: AppAutomateClient;
 }
 
+type RunStartBody =
+  | Parameters<GeneratedTestReportingClient["startTestRun"]>[1]
+  | Parameters<GeneratedTestReportingClient["startHookRun"]>[1];
+type RunFinishBody =
+  | Parameters<GeneratedTestReportingClient["finishTestRun"]>[2]
+  | Parameters<GeneratedTestReportingClient["finishHookRun"]>[2];
+
 export class TestReportingClient extends GeneratedTestReportingClient {
   private readonly siblingOptions: BrowserStackOptions;
   private automateClient: AutomateClient | undefined;
@@ -216,7 +223,7 @@ export class TestReportingClient extends GeneratedTestReportingClient {
     return this.finishRun("hook", buildHashedId, hookRunUuid, body) as ReturnType<GeneratedTestReportingClient["finishHookRun"]>;
   }
 
-  private async startRun(type: "test" | "hook", buildHashedId: string, body: Record<string, any>) {
+  private async startRun(type: "test" | "hook", buildHashedId: string, body: RunStartBody) {
     const build = this.buildState(buildHashedId);
     const run: RunStart = {
       type,
@@ -227,16 +234,21 @@ export class TestReportingClient extends GeneratedTestReportingClient {
       startedAt: body.startedAt,
       tags: body.tags,
       location: body.location,
-      hookType: body.hookType,
+      hookType: "hookType" in body ? body.hookType : undefined,
       framework: build.framework,
     };
-    const data = runFields(run, { result: body.result ?? "pending", environment: body.environment, custom_metadata: body.customMetadata, test_run_id: body.testRunId });
+    const data = runFields(run, {
+      result: ("result" in body ? body.result : undefined) ?? "pending",
+      environment: "environment" in body ? body.environment : undefined,
+      custom_metadata: body.customMetadata,
+      test_run_id: "testRunId" in body ? body.testRunId : undefined,
+    });
     await this.sendEvents(buildHashedId, [{ event_type: type === "test" ? "TestRunStarted" : "HookRunStarted", [type === "test" ? "test_run" : "hook_run"]: data }]);
     build.runs.set(run.uuid, run);
     return { success: true, uuid: run.uuid };
   }
 
-  private async finishRun(type: "test" | "hook", buildHashedId: string, uuid: string, body: Record<string, any>) {
+  private async finishRun(type: "test" | "hook", buildHashedId: string, uuid: string, body: RunFinishBody) {
     const build = this.buildState(buildHashedId);
     const run = build.runs.get(uuid);
     if (!run) throw new BrowserStackError(`${type} run ${uuid} was not started by this client`);

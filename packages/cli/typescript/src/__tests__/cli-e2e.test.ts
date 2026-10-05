@@ -43,6 +43,16 @@ const realAccessKey = process.env.BROWSERSTACK_ACCESS_KEY ?? process.env.BROWSER
 const hasRealCreds = realUsername !== "" && realAccessKey !== "" &&
   realUsername !== "dummy-user" && realAccessKey !== "dummy-key";
 
+function toExecFailureResult(error: unknown) {
+  const failure: { stdout?: unknown; stderr?: unknown; code?: unknown } =
+    typeof error === "object" && error !== null ? error : {};
+  return {
+    stdout: typeof failure.stdout === "string" ? failure.stdout : "",
+    stderr: typeof failure.stderr === "string" ? failure.stderr : "",
+    exitCode: typeof failure.code === "number" ? failure.code : 1,
+  };
+}
+
 async function runCliWithRealCreds(binary: typeof binaries[number], args: string[], binHome: string) {
   const spawnPath = binary.type === "node" ? "node" : binary.path;
   const spawnArgs = binary.type === "node" ? [binary.entry!, ...args] : args;
@@ -58,12 +68,8 @@ async function runCliWithRealCreds(binary: typeof binaries[number], args: string
       timeout: TEST_TIMEOUT_TUNNEL,
     });
     return { stdout, stderr, exitCode: 0 };
-  } catch (error: any) {
-    return {
-      stdout: error.stdout ?? "",
-      stderr: error.stderr ?? "",
-      exitCode: typeof error.code === "number" ? error.code : 1,
-    };
+  } catch (error) {
+    return toExecFailureResult(error);
   }
 }
 
@@ -81,12 +87,8 @@ async function runCli(binary: typeof binaries[number], args: string[], binHome: 
       }
     });
     return { stdout, stderr, exitCode: 0 };
-  } catch (error: any) {
-    return {
-      stdout: error.stdout ?? "",
-      stderr: error.stderr ?? "",
-      exitCode: typeof error.code === "number" ? error.code : 1
-    };
+  } catch (error) {
+    return toExecFailureResult(error);
   }
 }
 

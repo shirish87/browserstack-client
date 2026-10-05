@@ -11,5 +11,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   splitting: false,
+  // openapi-transforms is private (never published), so it must be inlined rather than imported.
+  noExternal: ["@dot-slash/browserstack-openapi-transforms"],
   external: [],
 });

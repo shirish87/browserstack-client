@@ -1,4 +1,5 @@
 import { defineConfig } from "tsup";
+import pkg from "./package.json" with { type: "json" };
 
 export default defineConfig({
   entry: {
@@ -24,7 +25,7 @@ export default defineConfig({
     options.jsx = "automatic";
   },
   define: {
-    __PKG_VERSION__: JSON.stringify(require("./package.json").version),
+    __PKG_VERSION__: JSON.stringify(pkg.version),
   },
   noExternal: [
     "@dot-slash/browserstack-core",

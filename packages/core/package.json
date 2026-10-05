@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "7.2.1",
+  "version": "7.2.2",
   "type": "module",
   "description": "Shared runtime utilities: APIClient base, auth, error handling, HTTP adapters",
   "engines": {
@@ -29,12 +29,10 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit || true"
   },
-  "dependencies": {
-    "@dot-slash/browserstack-openapi-transforms": "workspace:*"
-  },
   "devDependencies": {
     "@dot-slash/browserstack-openapi": "workspace:*",
-    "@types/node": "20.0.0",
+    "@dot-slash/browserstack-openapi-transforms": "workspace:*",
+    "@types/node": "20.19.43",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"
   }

@@ -3,7 +3,7 @@ import tsparser from "@typescript-eslint/parser";
 
 export default [
   {
-    ignores: ["**/dist/**", "**/dist-binary/**", "**/*.d.ts"],
+    ignores: ["**/dist/**", "**/dist-binary/**", "**/*.d.ts", "**/*.generated.ts"],
   },
   {
     files: ["packages/**/*.ts"],
@@ -20,6 +20,10 @@ export default [
     rules: {
       ...tseslint.configs.recommended.rules,
       "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
+      ],
     },
   },
 ];

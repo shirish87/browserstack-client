@@ -39,7 +39,7 @@ describe("executeOperation happy path", () => {
     expect(headers["content-type"]).toBe("application/json");
   });
   it("passes operationId and baseUrl to fetchFn options", async () => {
-    let capturedOptions: any;
+    let capturedOptions: (RequestInit & { operationId?: string; baseUrl?: string }) | undefined;
     const fetchFn = vi.fn<typeof fetch>(async (_url, init) => {
       capturedOptions = init;
       return new Response('{"ok":true}', { status: 200 });

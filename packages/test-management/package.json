@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "7.2.1",
+  "version": "7.2.2",
   "type": "module",
   "description": "BrowserStack Test Management API client",
   "engines": {
@@ -29,14 +29,21 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit || true"
   },
-  "dependencies": {},
   "devDependencies": {
     "@dot-slash/browserstack-core": "workspace:*",
     "@dot-slash/browserstack-openapi": "workspace:*",
     "@dot-slash/browserstack-openapi-transforms": "workspace:*",
-    "@types/node": "20.0.0",
+    "@types/node": "20.19.43",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.11"
+  },
+  "peerDependencies": {
+    "vitest": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vitest": {
+      "optional": true
+    }
   }
 }
