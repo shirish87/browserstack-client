@@ -28,6 +28,7 @@ export default withMermaid(defineConfig({
       { text: "Architecture", link: "/architecture" },
       { text: "Recipes", link: "/recipes" },
       { text: "CLI", link: "/cli" },
+      { text: "Router", link: "/router" },
       ...typedocSidebar,
     ],
   },

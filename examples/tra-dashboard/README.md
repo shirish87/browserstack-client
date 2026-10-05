@@ -24,11 +24,7 @@ steps and screenshots open in BrowserStack; there is no push, so live views poll
 ## Run
 
 ```bash
-# once, from the repo root
-pnpm install && pnpm build:types
-pnpm -r --filter ./packages/core --filter ./packages/test-reporting --filter ./packages/router build
-
-cd examples/tra-dashboard && pnpm install
+pnpm install
 
 pnpm dev                     # Express :3000 (watch) + Vite :5173 with /api and /gateway proxied
 TRA_MOCK=1 pnpm dev          # same, with offline fixtures (any credentials work)
