@@ -47,7 +47,7 @@
     "@streamparser/json": "^0.0.26"
   },
   "devDependencies": {
-    "@types/node": "20.19.43",
+    "@types/node": "26.6.5",
     "fast-check": "^4.10.2",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
