@@ -46,7 +46,7 @@
     "node": ">=22.0.0"
   },
   "devDependencies": {
-    "@apidevtools/swagger-parser": "^12.1.0",
+    "@apidevtools/swagger-parser": "^13.1.0",
     "openapi-typescript": "^7.13.0",
     "typescript": "^6.0.3",
     "yaml": "^2.9.1"
