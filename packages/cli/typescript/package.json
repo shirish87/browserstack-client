@@ -95,7 +95,7 @@
     "@dot-slash/browserstack-test-reporting": "workspace:*",
     "@types/node": "20.19.43",
     "@types/react": "^17.0.93",
-    "@yao-pkg/pkg": "~6.19.0",
+    "@yao-pkg/pkg": "~6.23.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"
   }
