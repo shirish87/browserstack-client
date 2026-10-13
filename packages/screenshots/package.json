@@ -43,7 +43,7 @@
     "@dot-slash/browserstack-core": "workspace:*",
     "@dot-slash/browserstack-openapi": "workspace:*",
     "@dot-slash/browserstack-openapi-transforms": "workspace:*",
-    "@types/node": "20.19.43",
+    "@types/node": "26.6.5",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11",
