@@ -231,9 +231,11 @@ function expand(span: Record<string, unknown>, resource: Attrs): LiveEvent[] {
   const attrs: Attrs = { ...inherited, ...spanAttrs };
   const name = typeof span.name === "string" && span.name.length > 0 ? span.name : "span";
   const localKindAttrs: Attrs = { ...attrs };
-  if ("browserstack.span.kind" in spanAttrs) localKindAttrs["browserstack.span.kind"] = spanAttrs["browserstack.span.kind"]!;
+  const spanKind = spanAttrs["browserstack.span.kind"];
+  if (spanKind !== undefined) localKindAttrs["browserstack.span.kind"] = spanKind;
   else delete localKindAttrs["browserstack.span.kind"];
-  if ("pytest.span_type" in spanAttrs) localKindAttrs["pytest.span_type"] = spanAttrs["pytest.span_type"]!;
+  const pytestType = spanAttrs["pytest.span_type"];
+  if (pytestType !== undefined) localKindAttrs["pytest.span_type"] = pytestType;
   else delete localKindAttrs["pytest.span_type"];
   const resolved = detectKind(name, localKindAttrs);
   if (resolved === "ignore") return [];

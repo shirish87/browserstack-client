@@ -8,8 +8,48 @@ export type {
   OtelIngestOptions,
 } from "./otel/ingest.ts";
 export type { TraceSnapshot, TraIngestClient } from "./otel/types.ts";
-import type { IncomingMessage, ServerResponse } from "node:http";
+import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "node:http";
+import type { Socket } from "node:net";
 import { Readable } from "node:stream";
+
+function isEncrypted(socket: Socket): boolean {
+  return "encrypted" in socket && socket.encrypted === true;
+}
+
+function headersOf(headers: IncomingHttpHeaders): Headers {
+  const out = new Headers();
+  for (const [key, value] of Object.entries(headers)) {
+    if (typeof value === "string") out.set(key, value);
+    else if (Array.isArray(value)) {
+      for (const item of value) out.append(key, item);
+    }
+  }
+  return out;
+}
+
+function requestInit(method: string | undefined, headers: Headers, body: BodyInit | undefined): RequestInit {
+  const init: RequestInit & { duplex?: "half" } = { method, headers, body };
+  if (body !== undefined) init.duplex = "half";
+  return init;
+}
+
+function bodyOf(req: IncomingMessage): BodyInit | undefined {
+  if (req.method === "GET" || req.method === "HEAD") return undefined;
+  const reader = Readable.toWeb(req).getReader();
+  return new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      const next = await reader.read();
+      if (next.done) {
+        controller.close();
+        return;
+      }
+      if (next.value instanceof Uint8Array) controller.enqueue(next.value);
+    },
+    cancel(reason) {
+      return reader.cancel(reason);
+    },
+  });
+}
 
 export interface RouterOptions {
   /** Secure BrowserStack Username */
@@ -81,13 +121,9 @@ export function createWebRouter(options: RouterOptions) {
       timeoutController.abort(new Error("Request Timeout"));
     }, timeout);
 
-    let signal: AbortSignal;
-    if (request.signal) {
-      // @ts-ignore
-      signal = AbortSignal.any ? AbortSignal.any([request.signal, timeoutController.signal]) : timeoutController.signal;
-    } else {
-      signal = timeoutController.signal;
-    }
+    const signal = request.signal
+      ? AbortSignal.any([request.signal, timeoutController.signal])
+      : timeoutController.signal;
 
     try {
       const response = await fetchFn(targetUrl.toString(), {
@@ -129,21 +165,11 @@ export function createGateway(options: RouterOptions) {
     next?: (err?: unknown) => void
   ) {
     try {
-      const protocol = (req.socket as any).encrypted ? "https" : "http";
+      const protocol = isEncrypted(req.socket) ? "https" : "http";
       const host = req.headers.host ?? "localhost";
       const fullUrl = new URL(req.url ?? "/", `${protocol}://${host}`).toString();
 
-      const body = req.method !== "GET" && req.method !== "HEAD"
-        ? Readable.toWeb(req) as ReadableStream
-        : undefined;
-
-      const webRequest = new Request(fullUrl, {
-        method: req.method,
-        headers: req.headers as Record<string, string>,
-        body,
-        // @ts-ignore
-        duplex: "half",
-      });
+      const webRequest = new Request(fullUrl, requestInit(req.method, headersOf(req.headers), bodyOf(req)));
 
       const webResponse = await webRouter(webRequest);
 
@@ -155,10 +181,20 @@ export function createGateway(options: RouterOptions) {
 
       if (webResponse.body) {
         const reader = webResponse.body.getReader();
-        while (true) {
+        const maxChunks = 1_000_000;
+        let chunks = 0;
+        while (chunks < maxChunks) {
           const { done, value } = await reader.read();
           if (done) break;
-          res.write(value);
+          if (value) res.write(value);
+          chunks += 1;
+        }
+        if (chunks >= maxChunks) {
+          const extra = await reader.read();
+          if (!extra.done) {
+            await reader.cancel();
+            throw new Error("Upstream response exceeded the chunk limit");
+          }
         }
       }
       res.end();

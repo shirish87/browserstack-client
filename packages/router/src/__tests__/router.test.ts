@@ -297,4 +297,42 @@ describe("Server-Side Router", () => {
     expect(responseBody).toBe("hello from upstream");
     expect(ended).toBe(true);
   });
+
+  it("gateway forwards a POST body", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async (_url, init) => {
+      const headers = new Headers(init?.headers);
+      expect(headers.get("Authorization")).toBe("Basic dXNlcjprZXk=");
+      expect(init?.body ? await new Response(init.body).text() : "").toBe('{"a":1}');
+      return new Response("ok", { status: 200 });
+    });
+
+    const gateway = createGateway({
+      username: "user",
+      accessKey: "key",
+      allowedHosts,
+      fetchFn: fetchMock,
+    });
+
+    const socket = new Socket();
+    const req = new IncomingMessage(socket);
+    req.method = "POST";
+    req.url = "/gateway?url=https://api.browserstack.com/automate/projects.json";
+    req.headers = { host: "localhost:3000", "content-type": "application/json" };
+    req.push(Buffer.from('{"a":1}'));
+    req.push(null);
+
+    const res = {
+      socket,
+      statusCode: 200,
+      statusMessage: "",
+      setHeader() {},
+      write() {},
+      end() {},
+    } as unknown as ServerResponse;
+
+    await gateway(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
 });

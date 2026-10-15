@@ -67,6 +67,15 @@ interface TraceState {
 
 const PAIR_KINDS: PairKind[] = ["build", "test", "hook", "step"];
 const MAX_DEPTH = 32;
+const MAX_RETAINED_TRACES = 256;
+const MAX_FINISH_PASSES = 1000;
+const MAX_ERROR_NOTES = 100;
+const MAX_RECORDED_ERRORS = 20;
+const MAX_MESSAGE_CHARS = 10_000;
+
+function clip(value: string, max: number): string {
+  return value.length <= max ? value : value.slice(0, max);
+}
 
 function emptyPairs(): Record<PairKind, PairCounts> {
   return {
@@ -155,6 +164,7 @@ export class OtelSessionStore {
   private trace(traceId: string, now = this.now()): TraceState {
     let trace = this.traces.get(traceId);
     if (!trace) {
+      this.evictClosed();
       trace = {
         traceId,
         spans: new Map(),
@@ -173,6 +183,14 @@ export class OtelSessionStore {
       this.traces.set(traceId, trace);
     }
     return trace;
+  }
+
+  private evictClosed(): void {
+    if (this.traces.size < MAX_RETAINED_TRACES) return;
+    for (const [id, candidate] of this.traces) {
+      if (this.traces.size < MAX_RETAINED_TRACES) return;
+      if (candidate.closed) this.traces.delete(id);
+    }
   }
 
   private async applyEvent(event: LiveEvent, now: number): Promise<void> {
@@ -287,32 +305,36 @@ export class OtelSessionStore {
         trace.buildOwnerSpanId = span.spanId;
         trace.syntheticBuild = span.synthetic;
         span.traId = response.buildHashedId;
-      } else if (span.kind === "test") {
-        const response = await this.client.startTestRun(trace.buildHashedId!, {
-          name: span.name,
-          fileName: span.fileName,
-          scopes: span.scopes,
-          startedAt: iso(span.startMs),
-          tags: span.tags,
-          location: span.location,
-        });
-        const uuid = response.uuid ?? response.testRunId;
-        if (!uuid) throw new Error("TRA startTestRun response did not include uuid");
-        span.traId = uuid;
-      } else if (span.kind === "hook") {
-        const response = await this.client.startHookRun(trace.buildHashedId!, {
-          hookType: span.hookType,
-          name: span.name,
-          fileName: span.fileName,
-          scopes: span.scopes,
-          startedAt: iso(span.startMs),
-          testRunId: this.parentTestUuid(trace, span),
-          tags: span.tags,
-          location: span.location,
-        });
-        const uuid = response.uuid ?? response.testRunId;
-        if (!uuid) throw new Error("TRA startHookRun response did not include uuid");
-        span.traId = uuid;
+      } else if (span.kind === "test" || span.kind === "hook") {
+        const buildHashedId = trace.buildHashedId;
+        if (!buildHashedId) throw new Error(`TRA build id missing for ${span.kind} "${span.name}"`);
+        if (span.kind === "test") {
+          const response = await this.client.startTestRun(buildHashedId, {
+            name: span.name,
+            fileName: span.fileName,
+            scopes: span.scopes,
+            startedAt: iso(span.startMs),
+            tags: span.tags,
+            location: span.location,
+          });
+          const uuid = response.uuid ?? response.testRunId;
+          if (!uuid) throw new Error("TRA startTestRun response did not include uuid");
+          span.traId = uuid;
+        } else {
+          const response = await this.client.startHookRun(buildHashedId, {
+            hookType: span.hookType,
+            name: span.name,
+            fileName: span.fileName,
+            scopes: span.scopes,
+            startedAt: iso(span.startMs),
+            testRunId: this.nearestTestUuid(trace, span),
+            tags: span.tags,
+            location: span.location,
+          });
+          const uuid = response.uuid ?? response.testRunId;
+          if (!uuid) throw new Error("TRA startHookRun response did not include uuid");
+          span.traId = uuid;
+        }
       }
       span.state = "open";
       span.countedStart = true;
@@ -453,7 +475,7 @@ export class OtelSessionStore {
     const duration = Math.max(0, finishedAtMs - span.startMs);
     const failure = this.failureFor(span, reason, result);
     if ((span.kind === "test" || span.kind === "hook") && failure && trace.buildHashedId) {
-      await this.emitLogs(trace, failure.slice(0, 20).map((item) => this.failureLog(trace, span, finishedAtMs, item)));
+      await this.emitLogs(trace, failure.slice(0, MAX_RECORDED_ERRORS).map((item) => this.failureLog(trace, span, finishedAtMs, item)));
     }
 
     if (span.kind === "step") {
@@ -498,17 +520,21 @@ export class OtelSessionStore {
             kind: "TEST_LOG",
             timestamp: iso(finishedAtMs),
             level: trace.sawTimeout || trace.sawFailure || trace.sawImbalance ? "ERROR" : "INFO",
-            message: message.length <= 10000 ? message : message.slice(0, 10000),
+            message: clip(message, MAX_MESSAGE_CHARS),
             failure: trace.sawTimeout || trace.sawFailure || trace.sawImbalance || undefined,
           }]);
         }
-        await this.client.finishBuild(trace.buildHashedId!, { finishedAt: iso(finishedAtMs) });
+        if (!trace.buildHashedId) throw new Error(`TRA build id missing for build "${span.name}"`);
+        await this.client.finishBuild(trace.buildHashedId, { finishedAt: iso(finishedAtMs) });
         trace.closed = true;
         if (reason === "end" && span.exitCode !== undefined && !trace.sawTimeout) {
           trace.explicitExitCode = span.exitCode;
         }
       } else if (span.kind === "test") {
-        await this.client.finishTestRun(trace.buildHashedId!, span.traId!, {
+        const buildHashedId = trace.buildHashedId;
+        const testRunUuid = span.traId;
+        if (!buildHashedId || !testRunUuid) throw new Error(`TRA id missing for test "${span.name}"`);
+        await this.client.finishTestRun(buildHashedId, testRunUuid, {
           result,
           finishedAt: iso(finishedAtMs),
           fileName: span.fileName,
@@ -517,7 +543,10 @@ export class OtelSessionStore {
           failure,
         });
       } else {
-        await this.client.finishHookRun(trace.buildHashedId!, span.traId!, {
+        const buildHashedId = trace.buildHashedId;
+        const hookRunUuid = span.traId;
+        if (!buildHashedId || !hookRunUuid) throw new Error(`TRA id missing for hook "${span.name}"`);
+        await this.client.finishHookRun(buildHashedId, hookRunUuid, {
           hookType: span.hookType,
           result,
           finishedAt: iso(finishedAtMs),
@@ -573,19 +602,14 @@ export class OtelSessionStore {
 
   private async finishTrace(trace: TraceState, reason: "timeout" | "idle" | "shutdown", now: number): Promise<void> {
     const childReason: CloseReason = reason === "idle" ? "timeout" : reason;
-    let guard = 0;
-    while (guard++ < 1000) {
+    for (let pass = 0; pass < MAX_FINISH_PASSES; pass += 1) {
       const open = [...trace.spans.values()].filter((span) => span.state !== "closed" && span.kind !== "build");
       if (open.length === 0) break;
-      if (reason === "idle" || reason === "shutdown" || reason === "timeout") {
-        if (reason !== "shutdown" || open.length > 0) {
-          if (reason === "idle" || reason === "timeout") trace.sawTimeout = true;
-        }
-      }
+      if (reason === "idle" || reason === "timeout") trace.sawTimeout = true;
       open.sort((a, b) => this.depth(trace, b.spanId) - this.depth(trace, a.spanId));
       const target = open[0];
       if (!target) break;
-      const closed = await this.closeSpan(trace, target, reason === "shutdown" && target.state !== "closed" ? "shutdown" : childReason, now);
+      const closed = await this.closeSpan(trace, target, childReason, now);
       if (!closed) return;
     }
     const build = this.ownerBuild(trace);
@@ -681,11 +705,11 @@ export class OtelSessionStore {
     const text = backtrace ? `${error}\n${backtrace}` : error;
     return {
       kind: span.kind === "hook" ? "HOOK_LOG" : "TEST_LOG",
-      testRunUuid: span.kind === "test" ? span.traId : this.parentTestUuid(trace, span),
+      testRunUuid: this.nearestTestUuid(trace, span),
       hookRunUuid: span.kind === "hook" ? span.traId : undefined,
       timestamp: iso(finishedAtMs),
       level: "ERROR",
-      message: text.length <= 10000 ? text : text.slice(0, 10000),
+      message: clip(text, MAX_MESSAGE_CHARS),
       failure: true,
     };
   }
@@ -693,7 +717,7 @@ export class OtelSessionStore {
   private recordedErrors(trace: TraceState): string {
     const lines: string[] = [];
     for (const span of trace.spans.values()) {
-      if (lines.length >= 20 || !span.exception) continue;
+      if (lines.length >= MAX_RECORDED_ERRORS || !span.exception) continue;
       if (span.kind !== "test" && span.kind !== "hook") continue;
       lines.push(`${span.kind} "${span.name}": ${span.exception.error}`);
     }
@@ -727,17 +751,10 @@ export class OtelSessionStore {
     return `Build finished (exit ${code})`;
   }
 
-  private parentTestUuid(trace: TraceState, span: Tracked): string | undefined {
-    return this.nearestTestUuid(trace, span);
-  }
-
   private nearestTestUuid(trace: TraceState, span: Tracked): string | undefined {
-    if (span.kind === "test" && span.traId) return span.traId;
     let current: Tracked | undefined = span;
-    let guard = 0;
-    while (current && guard++ < MAX_DEPTH) {
-      if (current.kind === "test" && current.traId && current.spanId !== span.spanId) return current.traId;
-      if (current.kind === "test" && current.traId && span.kind !== "test") return current.traId;
+    for (let guard = 0; current && guard < MAX_DEPTH; guard += 1) {
+      if (current.kind === "test" && current.traId) return current.traId;
       if (!current.parentSpanId) return undefined;
       current = trace.spans.get(current.parentSpanId);
     }
@@ -747,8 +764,7 @@ export class OtelSessionStore {
   private nearestHookUuid(trace: TraceState, span: Tracked): string | undefined {
     if (span.kind === "hook") return span.traId;
     let current = span.parentSpanId ? trace.spans.get(span.parentSpanId) : undefined;
-    let guard = 0;
-    while (current && guard++ < MAX_DEPTH) {
+    for (let guard = 0; current && guard < MAX_DEPTH; guard += 1) {
       if (current.kind === "hook" && current.traId) return current.traId;
       current = current.parentSpanId ? trace.spans.get(current.parentSpanId) : undefined;
     }
@@ -785,7 +801,7 @@ export class OtelSessionStore {
   }
 
   private note(trace: TraceState, error: TraceError): void {
-    if (trace.errors.length >= 100) return;
+    if (trace.errors.length >= MAX_ERROR_NOTES) return;
     trace.errors.push(error);
   }
 

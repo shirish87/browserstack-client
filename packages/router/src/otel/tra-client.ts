@@ -3,6 +3,13 @@ import type { TraFailure, TraIngestClient, TraLog, TestResult } from "./types.ts
 
 export const DEFAULT_TRA_BASE_URL = "https://api-automation.browserstack.com/ext/v1";
 
+function recordOf(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const out: Record<string, unknown> = {};
+  for (const [key, item] of Object.entries(value)) out[key] = item;
+  return out;
+}
+
 function idFrom(body: Record<string, unknown>, ...keys: string[]): string | undefined {
   for (const key of keys) {
     const value = body[key];
@@ -36,8 +43,7 @@ export function createTraIngestClient(options: {
     }
     if (!text) return {};
     const parsed: unknown = JSON.parse(text);
-    if (!parsed || typeof parsed !== "object") return {};
-    return parsed as Record<string, unknown>;
+    return recordOf(parsed);
   }
 
   return {

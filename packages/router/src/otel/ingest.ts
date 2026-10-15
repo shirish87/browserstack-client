@@ -168,33 +168,63 @@ function isProtobuf(contentType: string): boolean {
 function decodePayload(body: Uint8Array, contentType: string): unknown | undefined {
   try {
     if (isProtobuf(contentType)) return decodeOtlpProtobuf(body);
-    return JSON.parse(new TextDecoder().decode(body)) as unknown;
+    const parsed: unknown = JSON.parse(new TextDecoder().decode(body));
+    return parsed;
   } catch {
     return undefined;
   }
 }
 
-async function readBody(req: IncomingMessage, limit: number): Promise<Uint8Array> {
-  const chunks: Buffer[] = [];
-  let total = 0;
-  for await (const chunk of req) {
-    const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-    total += buf.length;
-    if (total > limit) {
-      const error = new Error("payload too large");
-      (error as Error & { status?: number }).status = 413;
-      throw error;
-    }
-    chunks.push(buf);
+class PayloadTooLargeError extends Error {
+  constructor() {
+    super("payload too large");
+    this.name = "PayloadTooLargeError";
   }
-  return Buffer.concat(chunks as unknown as Uint8Array[]) as unknown as Uint8Array;
+}
+
+function copyChunk(chunk: Buffer | string): Uint8Array {
+  const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+  const copy = new Uint8Array(buf.byteLength);
+  copy.set(buf);
+  return copy;
+}
+
+function concatChunks(chunks: Uint8Array[], total: number): Uint8Array {
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    out.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return out;
+}
+
+async function readBody(req: IncomingMessage, limit: number): Promise<Uint8Array> {
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  let seen = 0;
+  for await (const chunk of req) {
+    seen += 1;
+    if (seen > limit) throw new PayloadTooLargeError();
+    const copy = copyChunk(chunk);
+    total += copy.byteLength;
+    if (total > limit) throw new PayloadTooLargeError();
+    if (copy.byteLength > 0) chunks.push(copy);
+  }
+  return concatChunks(chunks, total);
+}
+
+function requestBody(bytes: Uint8Array): BodyInit {
+  const copy = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(copy).set(bytes);
+  return new Blob([copy]);
 }
 
 export function createOtelGateway(options: OtelIngestOptions): OtelGateway {
   const ingest = createOtelIngest(options);
   const limit = options.maxBodyBytes ?? DEFAULT_OTEL_TIMEOUTS.maxBodyBytes;
 
-  const middleware = async function otelGateway(
+  const handle = async function otelGateway(
     req: IncomingMessage,
     res: ServerResponse,
     next?: (err?: unknown) => void,
@@ -216,7 +246,7 @@ export function createOtelGateway(options: OtelIngestOptions): OtelGateway {
       const result = await ingest.handle(new Request(url, {
         method,
         headers: { "content-type": contentType },
-        body: method === "GET" || method === "HEAD" ? undefined : (body ?? new Uint8Array()) as unknown as BodyInit,
+        body: method === "GET" || method === "HEAD" ? undefined : requestBody(body ?? new Uint8Array()),
       }));
       const text = await result.text();
       res.statusCode = result.status;
@@ -225,22 +255,19 @@ export function createOtelGateway(options: OtelIngestOptions): OtelGateway {
       if (exitCode) res.setHeader("x-browserstack-exit-code", exitCode);
       res.end(text);
     } catch (error) {
-      const status = (error as { status?: number }).status;
-      if (status === 413) {
+      if (error instanceof PayloadTooLargeError) {
         writeJson(res, { status: 413, body: { error: "Payload too large" }, exitCode: null });
         return;
       }
       if (next) next(error);
-      else {
-        res.statusCode = 500;
-        res.end("Internal Gateway Error");
-      }
+      else writeJson(res, { status: 500, body: { error: "Internal Gateway Error" }, exitCode: null });
     }
-  } as OtelGateway;
+  };
 
-  middleware.sweep = (now) => ingest.sweep(now);
-  middleware.shutdown = (now) => ingest.shutdown(now);
-  return middleware;
+  return Object.assign(handle, {
+    sweep: (now?: number) => ingest.sweep(now),
+    shutdown: (now?: number) => ingest.shutdown(now),
+  });
 }
 
 function writeJson(res: ServerResponse, result: IngestResult): void {

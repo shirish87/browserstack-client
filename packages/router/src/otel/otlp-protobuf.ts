@@ -86,11 +86,13 @@ function nextField(r: Reader): Field | undefined {
 function fields(buf: Uint8Array): Field[] {
   const r = reader(buf);
   const out: Field[] = [];
-  while (r.pos < r.end) {
+  const maxFields = buf.length + 1;
+  while (r.pos < r.end && out.length < maxFields) {
     const field = nextField(r);
     if (!field) break;
     out.push(field);
   }
+  if (r.pos < r.end) throw new Error("protobuf field limit");
   return out;
 }
 
