@@ -1,4 +1,13 @@
 import { buildBasicAuthHeader } from "@dot-slash/browserstack-core";
+
+export { createOtelGateway, createOtelIngest } from "./otel/ingest.ts";
+export { DEFAULT_OTEL_TIMEOUTS, EXIT_FAILURE, EXIT_OK, EXIT_TIMEOUT } from "./otel/types.ts";
+export type {
+  OtelGateway,
+  OtelIngest,
+  OtelIngestOptions,
+} from "./otel/ingest.ts";
+export type { TraceSnapshot, TraIngestClient } from "./otel/types.ts";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 
